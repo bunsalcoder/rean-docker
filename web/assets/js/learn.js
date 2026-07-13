@@ -81,8 +81,13 @@ function splitGuide(markdown) {
 
 function enhanceCodeBlocks(root) {
   root.querySelectorAll("pre").forEach((pre) => {
-    if (pre.querySelector(".copy-btn")) return;
-    pre.style.position = "relative";
+    if (pre.closest(".code-block")) return;
+
+    const wrap = document.createElement("div");
+    wrap.className = "code-block";
+    pre.parentNode.insertBefore(wrap, pre);
+    wrap.appendChild(pre);
+
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "copy-btn";
@@ -99,7 +104,7 @@ function enhanceCodeBlocks(root) {
         btn.textContent = "Failed";
       }
     });
-    pre.appendChild(btn);
+    wrap.appendChild(btn);
   });
 }
 
@@ -187,8 +192,8 @@ async function initLearnPage() {
       const prev = chapters[index - 1];
       const next = chapters[index + 1];
       pagerEl.innerHTML = `
-        ${prev ? `<a href="${chapterHref(prev.id)}"><span>Previous</span>${prev.title}</a>` : "<span></span>"}
-        ${next ? `<a href="${chapterHref(next.id)}" style="text-align:right"><span>Next</span>${next.title}</a>` : "<span></span>"}
+        ${prev ? `<a class="pager-prev" href="${chapterHref(prev.id)}"><span>Previous</span>${prev.title}</a>` : ""}
+        ${next ? `<a class="pager-next" href="${chapterHref(next.id)}"><span>Next</span>${next.title}</a>` : ""}
       `;
     }
 
@@ -236,8 +241,8 @@ async function initLabPage() {
     const prev = LABS[index - 1];
     const next = LABS[index + 1];
     pagerEl.innerHTML = `
-      ${prev ? `<a href="${labHref(prev.id)}"><span>Previous lab</span>${prev.title}</a>` : "<span></span>"}
-      ${next ? `<a href="${labHref(next.id)}" style="text-align:right"><span>Next lab</span>${next.title}</a>` : "<span></span>"}
+      ${prev ? `<a class="pager-prev" href="${labHref(prev.id)}"><span>Previous lab</span>${prev.title}</a>` : ""}
+      ${next ? `<a class="pager-next" href="${labHref(next.id)}"><span>Next lab</span>${next.title}</a>` : ""}
     `;
   }
 }
