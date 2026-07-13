@@ -605,8 +605,9 @@ p {
 }
 
 .content-pane {
+  width: min(100%, 48rem);
+  margin-inline: auto;
   padding: clamp(1.5rem, 4vw, 2.75rem) clamp(1rem, 4vw, 3rem) 4rem;
-  max-width: 48rem;
 }
 
 .content-pane .toolbar {
