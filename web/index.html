@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>rean-docker — Learn Docker from zero to hero</title>
+    <meta
+      name="description"
+      content="rean-docker is a hands-on path to learn Docker — from first containers to Compose, volumes, networks, and production practices."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Manrope:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Syne:wght@700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+  </head>
+  <body class="bg-mesh">
+    <header class="site-header">
+      <div class="wrap">
+        <a class="logo" href="./index.html">rean<span>-docker</span></a>
+        <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+        <nav class="nav" data-nav>
+          <a href="./index.html" aria-current="page">Home</a>
+          <a href="./learn.html">Learn</a>
+          <a href="./labs.html">Labs</a>
+          <a href="./learn.html?c=17">Cheat sheet</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-visual" aria-hidden="true">
+          <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" class="drift">
+            <defs>
+              <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#dce9f2" />
+                <stop offset="45%" stop-color="#eef3f7" />
+                <stop offset="100%" stop-color="#cfe0ea" />
+              </linearGradient>
+              <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#0f766e" stop-opacity="0.15" />
+                <stop offset="100%" stop-color="#0b1628" stop-opacity="0.08" />
+              </linearGradient>
+            </defs>
+            <rect width="1440" height="900" fill="url(#sky)" />
+            <path d="M0 620 C 220 560 380 680 620 640 C 880 595 1040 700 1440 630 L1440 900 L0 900 Z" fill="url(#sea)" />
+            <!-- pier -->
+            <rect x="120" y="610" width="980" height="18" rx="4" fill="#243044" opacity="0.55" />
+            <rect x="180" y="628" width="18" height="90" fill="#243044" opacity="0.35" />
+            <rect x="420" y="628" width="18" height="110" fill="#243044" opacity="0.35" />
+            <rect x="700" y="628" width="18" height="100" fill="#243044" opacity="0.35" />
+            <rect x="980" y="628" width="18" height="80" fill="#243044" opacity="0.35" />
+            <!-- containers -->
+            <g transform="translate(260 430)">
+              <rect width="150" height="90" rx="6" fill="#0f766e" />
+              <rect x="12" y="14" width="126" height="10" rx="2" fill="#d9f3ef" opacity="0.45" />
+              <rect x="12" y="34" width="126" height="10" rx="2" fill="#d9f3ef" opacity="0.35" />
+              <rect x="12" y="54" width="126" height="10" rx="2" fill="#d9f3ef" opacity="0.25" />
+            </g>
+            <g transform="translate(430 430)">
+              <rect width="150" height="90" rx="6" fill="#c45c26" />
+              <rect x="12" y="14" width="126" height="10" rx="2" fill="#ffe8da" opacity="0.45" />
+              <rect x="12" y="34" width="126" height="10" rx="2" fill="#ffe8da" opacity="0.35" />
+              <rect x="12" y="54" width="126" height="10" rx="2" fill="#ffe8da" opacity="0.25" />
+            </g>
+            <g transform="translate(600 430)">
+              <rect width="150" height="90" rx="6" fill="#0b1628" />
+              <rect x="12" y="14" width="126" height="10" rx="2" fill="#9fb4c9" opacity="0.35" />
+              <rect x="12" y="34" width="126" height="10" rx="2" fill="#9fb4c9" opacity="0.25" />
+              <rect x="12" y="54" width="126" height="10" rx="2" fill="#9fb4c9" opacity="0.2" />
+            </g>
+            <g transform="translate(345 340)">
+              <rect width="150" height="90" rx="6" fill="#148f86" />
+              <rect x="12" y="14" width="126" height="10" rx="2" fill="#d9f3ef" opacity="0.4" />
+              <rect x="12" y="34" width="126" height="10" rx="2" fill="#d9f3ef" opacity="0.3" />
+            </g>
+            <g transform="translate(515 340)">
+              <rect width="150" height="90" rx="6" fill="#243044" />
+              <rect x="12" y="14" width="126" height="10" rx="2" fill="#cfe0ea" opacity="0.3" />
+              <rect x="12" y="34" width="126" height="10" rx="2" fill="#cfe0ea" opacity="0.22" />
+            </g>
+            <!-- crane -->
+            <g transform="translate(860 220)" fill="#0b1628" opacity="0.7">
+              <rect x="70" y="0" width="14" height="390" />
+              <rect x="0" y="40" width="220" height="12" />
+              <rect x="200" y="40" width="10" height="120" />
+              <rect x="170" y="150" width="70" height="36" rx="3" fill="#0f766e" />
+            </g>
+          </svg>
+        </div>
+
+        <div class="hero-copy">
+          <h1 class="brand">rean<span class="accent">-docker</span></h1>
+          <p
+            class="lead"
+            style="
+              font-family: var(--font-ui);
+              font-weight: 700;
+              color: var(--ink);
+              font-size: clamp(1.25rem, 2.8vw, 1.75rem);
+              letter-spacing: -0.02em;
+              margin-bottom: 0.65rem;
+            "
+          >
+            Learn Docker from zero to hero
+          </p>
+          <p class="lead">
+            A clear, hands-on path — concepts, commands, and labs you run yourself — built for every screen.
+          </p>
+          <div class="cta-row">
+            <a class="btn btn-primary" href="./learn.html">Start learning</a>
+            <a class="btn btn-ghost" href="./labs.html">Open labs</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="wrap">
+          <div class="section-head">
+            <p class="eyebrow">The path</p>
+            <h2>One curriculum. Eighteen chapters. Seven labs.</h2>
+            <p>Read a chapter, then practice. The site mirrors the handbook in this repository.</p>
+          </div>
+
+          <ol class="path-list">
+            <li>
+              <a href="./learn.html?c=1">
+                <span class="num">01</span>
+                <span class="title">Why Docker exists</span>
+                <span class="meta">Beginner</span>
+              </a>
+            </li>
+            <li>
+              <a href="./learn.html?c=4">
+                <span class="num">04</span>
+                <span class="title">Your first containers</span>
+                <span class="meta">Beginner · Lab 01</span>
+              </a>
+            </li>
+            <li>
+              <a href="./learn.html?c=6">
+                <span class="num">06</span>
+                <span class="title">Write a Dockerfile</span>
+                <span class="meta">Beginner · Lab 02</span>
+              </a>
+            </li>
+            <li>
+              <a href="./learn.html?c=10">
+                <span class="num">10</span>
+                <span class="title">Compose multi-service apps</span>
+                <span class="meta">Intermediate · Lab 03</span>
+              </a>
+            </li>
+            <li>
+              <a href="./learn.html?c=12">
+                <span class="num">12</span>
+                <span class="title">Production habits</span>
+                <span class="meta">Advanced · Lab 07</span>
+              </a>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="section" style="padding-top: 0">
+        <div class="wrap split">
+          <div>
+            <p class="eyebrow">How it works</p>
+            <h2>Type the commands. Don’t only read them.</h2>
+            <p>
+              Each lesson maps to files under <code>labs/</code> in the repo. Use this site as your guide, and your
+              terminal as the workout room.
+            </p>
+            <div class="cta-row">
+              <a class="btn btn-primary" href="./labs.html">Browse labs</a>
+            </div>
+            <div class="stat-line">
+              <div><strong>18</strong> chapters</div>
+              <div><strong>7</strong> labs</div>
+              <div><strong>1</strong> capstone</div>
+            </div>
+          </div>
+          <div class="panel" aria-label="Example command">
+            <pre><code>$ docker run --rm hello-world
+$ docker compose up --build
+$ curl http://localhost:3000/health</code></pre>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+        <span>Static learning UI · responsive on phone, tablet, and desktop</span>
+      </div>
+    </footer>
+
+    <script src="./assets/js/site.js"></script>
+  </body>
+</html>

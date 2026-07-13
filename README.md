@@ -1,10 +1,28 @@
 # rean-docker
 
-Learn Docker from absolute beginner to advanced — guided path with a full handbook and runnable labs.
+Learn Docker from absolute beginner to advanced — guided path with a full handbook, runnable labs, and a responsive static learning site.
 
-## Start here
+## Learning website (UI)
 
-Open the handbook:
+Open the static site in `web/`:
+
+```bash
+cd /home/bunsal/project/personal/reansot/rean-docker/web
+python3 -m http.server 4173
+```
+
+Then open [http://localhost:4173](http://localhost:4173).
+
+| Page | Purpose |
+|------|---------|
+| `web/index.html` | Home / brand landing |
+| `web/learn.html` | Handbook chapters (sidebar reader) |
+| `web/labs.html` | Labs index |
+| `web/lab.html` | Individual lab instructions |
+
+> The Learn and Lab pages load Markdown over HTTP, so open them via a local server (not as `file://`).
+
+## Handbook (Markdown)
 
 **[docs/DOCKER_FROM_ZERO_TO_HERO.md](docs/DOCKER_FROM_ZERO_TO_HERO.md)**
 
