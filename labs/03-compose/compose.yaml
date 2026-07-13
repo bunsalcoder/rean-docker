@@ -1,0 +1,45 @@
+services:
+  api:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: "3000"
+      DATABASE_URL: postgres://rean:secret@db:5432/rean
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - rean
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: rean
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: rean
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rean -d rean"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    networks:
+      - rean
+
+  redis:
+    image: redis:7-alpine
+    networks:
+      - rean
+
+volumes:
+  pgdata:
+
+networks:
+  rean:
