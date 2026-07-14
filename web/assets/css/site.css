@@ -657,11 +657,15 @@ p {
   list-style: none;
   margin: 0;
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
 }
 
 .side-nav a {
   display: block;
-  padding: 0.5rem 0.65rem;
+  position: relative;
+  padding: 0.5rem 0.65rem 0.5rem 0.8rem;
   border-radius: 7px;
   text-decoration: none;
   color: var(--ink-soft);
@@ -669,13 +673,65 @@ p {
   font-size: 0.86rem;
   font-weight: 550;
   line-height: 1.35;
-  transition: background 0.2s, color 0.2s;
+  background: transparent;
+  transform: translateX(0);
+  transition:
+    background 0.32s var(--ease),
+    color 0.32s var(--ease),
+    transform 0.32s var(--ease);
 }
 
-.side-nav a:hover,
+.side-nav a::before {
+  content: "";
+  position: absolute;
+  left: 0.2rem;
+  top: 50%;
+  width: 2.5px;
+  height: 0;
+  border-radius: 2px;
+  background: var(--ocean);
+  transform: translateY(-50%);
+  opacity: 0;
+  transition:
+    height 0.32s var(--ease),
+    opacity 0.28s var(--ease);
+}
+
+.side-nav a:hover {
+  background: rgba(14, 124, 134, 0.07);
+  color: var(--ocean-deep);
+  transform: translateX(3px);
+}
+
 .side-nav a.is-active {
   background: var(--ocean-glow);
   color: var(--ocean-deep);
+  transform: translateX(0);
+}
+
+.side-nav a.is-active::before {
+  height: 58%;
+  opacity: 1;
+}
+
+.side-nav a.is-active:hover {
+  background: rgba(14, 124, 134, 0.18);
+  transform: translateX(0);
+}
+
+.md-body.is-switching {
+  animation: chapter-in 0.42s var(--ease);
+}
+
+@keyframes chapter-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.55rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .content-pane {

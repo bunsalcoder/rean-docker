@@ -151,7 +151,10 @@ function setupSidebarToggle() {
     else open();
   });
   backdrop?.addEventListener("click", close);
-  sidebar.querySelectorAll("a").forEach((a) => a.addEventListener("click", close));
+  // Delegate so links added after init still close the drawer
+  sidebar.addEventListener("click", (event) => {
+    if (event.target.closest("a")) close();
+  });
 }
 
 async function initLearnPage() {
@@ -170,35 +173,94 @@ async function initLearnPage() {
     const chapters = splitGuide(raw);
     if (!chapters.length) throw new Error("No chapters found");
 
-    let currentId = getRouteId("c") || chapters[0].id;
-    let index = chapters.findIndex((c) => c.id === currentId);
-    if (index < 0) index = 0;
-    currentId = chapters[index].id;
+    let currentIndex = -1;
+
+    const resolveIndex = (id) => {
+      let index = chapters.findIndex((c) => c.id === id);
+      if (index < 0) index = 0;
+      return index;
+    };
+
+    const setActiveNav = (id) => {
+      navEl.querySelectorAll("a[data-chapter-id]").forEach((a) => {
+        a.classList.toggle("is-active", a.dataset.chapterId === id);
+      });
+    };
+
+    const renderPager = (index) => {
+      if (!pagerEl) return;
+      const prev = chapters[index - 1];
+      const next = chapters[index + 1];
+      pagerEl.innerHTML = `
+        ${prev ? `<a class="pager-prev" href="${chapterHref(prev.id)}" data-chapter-id="${prev.id}"><span>Previous</span>${prev.title}</a>` : ""}
+        ${next ? `<a class="pager-next" href="${chapterHref(next.id)}" data-chapter-id="${next.id}"><span>Next</span>${next.title}</a>` : ""}
+      `;
+    };
+
+    const showChapter = (id, { push = false, animate = true } = {}) => {
+      const index = resolveIndex(id);
+      const chapter = chapters[index];
+
+      // Same chapter click: keep URL in sync, skip re-render flicker
+      if (index === currentIndex) {
+        if (push) history.replaceState({ c: chapter.id }, "", chapterHref(chapter.id));
+        return;
+      }
+      currentIndex = index;
+
+      setActiveNav(chapter.id);
+      if (titleEl) titleEl.textContent = chapter.title;
+      if (progressEl) progressEl.textContent = `Chapter ${index + 1} of ${chapters.length}`;
+      document.title = `${chapter.title} — rean-docker`;
+
+      renderMarkdown(bodyEl, chapter.body);
+      renderPager(index);
+
+      if (animate) {
+        bodyEl.classList.remove("is-switching");
+        void bodyEl.offsetWidth;
+        bodyEl.classList.add("is-switching");
+      }
+
+      if (push) {
+        history.pushState({ c: chapter.id }, "", chapterHref(chapter.id));
+      }
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
 
     navEl.innerHTML = chapters
       .map((c, i) => {
         const n = String(i + 1).padStart(2, "0");
-        const active = c.id === currentId ? "is-active" : "";
-        return `<li><a href="${chapterHref(c.id)}" class="${active}"><small style="display:block;opacity:.55;font-size:.72rem;font-weight:700;letter-spacing:.06em">${n}</small>${c.title}</a></li>`;
+        return `<li><a href="${chapterHref(c.id)}" data-chapter-id="${c.id}"><small style="display:block;opacity:.55;font-size:.72rem;font-weight:700;letter-spacing:.06em">${n}</small>${c.title}</a></li>`;
       })
       .join("");
 
-    const chapter = chapters[index];
-    if (titleEl) titleEl.textContent = chapter.title;
-    if (progressEl) progressEl.textContent = `Chapter ${index + 1} of ${chapters.length}`;
-    renderMarkdown(bodyEl, chapter.body);
+    const goToChapter = (id, opts) => {
+      if (!id) return;
+      showChapter(id, opts);
+    };
 
-    if (pagerEl) {
-      const prev = chapters[index - 1];
-      const next = chapters[index + 1];
-      pagerEl.innerHTML = `
-        ${prev ? `<a class="pager-prev" href="${chapterHref(prev.id)}"><span>Previous</span>${prev.title}</a>` : ""}
-        ${next ? `<a class="pager-next" href="${chapterHref(next.id)}"><span>Next</span>${next.title}</a>` : ""}
-      `;
-    }
+    navEl.addEventListener("click", (event) => {
+      const link = event.target.closest("a[data-chapter-id]");
+      if (!link) return;
+      event.preventDefault();
+      goToChapter(link.dataset.chapterId, { push: true, animate: true });
+    });
 
-    // Smooth content entrance
-    bodyEl.style.animation = "rise 0.55s cubic-bezier(0.22, 1, 0.36, 1)";
+    pagerEl?.addEventListener("click", (event) => {
+      const link = event.target.closest("a[data-chapter-id]");
+      if (!link) return;
+      event.preventDefault();
+      goToChapter(link.dataset.chapterId, { push: true, animate: true });
+    });
+
+    window.addEventListener("popstate", () => {
+      goToChapter(getRouteId("c") || chapters[0].id, { push: false, animate: true });
+    });
+
+    const initialId = getRouteId("c") || chapters[0].id;
+    showChapter(initialId, { push: false, animate: true });
   } catch (err) {
     bodyEl.innerHTML = `<div class="error"><strong>Could not load lessons.</strong><br>${err.message}<br><br>Serve the <code>web/</code> folder over HTTP (for example <code>npx serve web</code>), then open the site from that URL.</div>`;
   }
