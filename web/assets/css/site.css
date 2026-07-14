@@ -461,14 +461,69 @@ p {
   text-decoration: none;
   color: inherit;
   font-family: var(--font-ui);
-  transition:
-    padding-left 0.35s var(--ease),
-    background 0.35s;
+  position: relative;
+  isolation: isolate;
 }
 
-.path-list a:hover {
-  padding-left: 0.75rem;
-  background: linear-gradient(90deg, var(--ocean-glow), transparent 55%);
+.path-list a::before {
+  content: "";
+  position: absolute;
+  inset: 0 -0.35rem;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--ocean-glow), transparent 58%);
+  opacity: 0;
+  transform: translateX(-0.4rem);
+  transition:
+    opacity 0.45s var(--ease),
+    transform 0.45s var(--ease);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.path-list a::after {
+  content: "";
+  position: absolute;
+  left: -0.1rem;
+  top: 22%;
+  bottom: 22%;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--ocean);
+  opacity: 0;
+  transform: scaleY(0.35);
+  transition:
+    opacity 0.4s var(--ease),
+    transform 0.45s var(--ease);
+  pointer-events: none;
+}
+
+.path-list a:hover::before,
+.path-list a:focus-visible::before {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.path-list a:hover::after,
+.path-list a:focus-visible::after {
+  opacity: 1;
+  transform: scaleY(1);
+}
+
+.path-list .num,
+.path-list .title,
+.path-list .meta {
+  transition:
+    transform 0.45s var(--ease),
+    color 0.4s var(--ease);
+}
+
+.path-list a:hover .num,
+.path-list a:hover .title,
+.path-list a:hover .meta,
+.path-list a:focus-visible .num,
+.path-list a:focus-visible .title,
+.path-list a:focus-visible .meta {
+  transform: translateX(0.55rem);
 }
 
 .path-list .num {
@@ -485,10 +540,20 @@ p {
   letter-spacing: -0.02em;
 }
 
+.path-list a:hover .title,
+.path-list a:focus-visible .title {
+  color: var(--ocean-deep);
+}
+
 .path-list .meta {
   color: var(--muted);
   font-size: 0.85rem;
   font-weight: 500;
+}
+
+.path-list a:hover .meta,
+.path-list a:focus-visible .meta {
+  color: var(--ink-soft);
 }
 
 .split {
