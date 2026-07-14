@@ -59,43 +59,43 @@
       </section>
 
       <section class="section">
-        <div class="wrap">
-          <div class="section-head reveal">
+        <div class="wrap reveal-block">
+          <div class="section-head" style="--reveal-i: 0">
             <p class="eyebrow">The path</p>
             <h2>Eighteen chapters. Seven labs. One clear route.</h2>
             <p>Read a chapter, then practice. The site mirrors the handbook in this repository.</p>
           </div>
 
-          <ol class="path-list reveal">
-            <li>
+          <ol class="path-list">
+            <li style="--reveal-i: 1">
               <a href="./learn.html?c=1">
                 <span class="num">01</span>
                 <span class="title">Why Docker exists</span>
                 <span class="meta">Beginner</span>
               </a>
             </li>
-            <li>
+            <li style="--reveal-i: 2">
               <a href="./learn.html?c=4">
                 <span class="num">04</span>
                 <span class="title">Your first containers</span>
                 <span class="meta">Beginner · Lab 01</span>
               </a>
             </li>
-            <li>
+            <li style="--reveal-i: 3">
               <a href="./learn.html?c=6">
                 <span class="num">06</span>
                 <span class="title">Write a Dockerfile</span>
                 <span class="meta">Beginner · Lab 02</span>
               </a>
             </li>
-            <li>
+            <li style="--reveal-i: 4">
               <a href="./learn.html?c=10">
                 <span class="num">10</span>
                 <span class="title">Compose multi-service apps</span>
                 <span class="meta">Intermediate · Lab 03</span>
               </a>
             </li>
-            <li>
+            <li style="--reveal-i: 5">
               <a href="./learn.html?c=12">
                 <span class="num">12</span>
                 <span class="title">Production habits</span>
@@ -107,8 +107,8 @@
       </section>
 
       <section class="section" style="padding-top: 0">
-        <div class="wrap split reveal">
-          <div>
+        <div class="wrap split reveal-block">
+          <div style="--reveal-i: 0">
             <p class="eyebrow">How it works</p>
             <h2>Type the commands. Don’t only read them.</h2>
             <p>
@@ -119,7 +119,7 @@
               <a class="btn btn-primary" href="./labs.html">Browse labs</a>
             </div>
           </div>
-          <div class="terminal" aria-label="Example commands">
+          <div class="terminal" style="--reveal-i: 1" aria-label="Example commands">
             <pre><code><span class="prompt">$</span> docker run --rm hello-world
 <span class="prompt">$</span> docker compose up --build
 <span class="prompt">$</span> curl http://localhost:3000/health</code></pre>

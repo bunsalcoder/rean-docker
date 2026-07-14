@@ -23,6 +23,13 @@
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
   --max: 70rem;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 0.2s;
+  --dur: 0.28s;
+  --dur-med: 0.38s;
+  --dur-slow: 0.55s;
+  --dur-enter: 0.7s;
+  --dur-chapter: 0.38s;
+  --dur-drift: 28s;
 }
 
 *,
@@ -160,7 +167,7 @@ p {
   backdrop-filter: blur(16px) saturate(1.2);
   background: rgba(242, 246, 250, 0.75);
   border-bottom: 1px solid transparent;
-  transition: border-color 0.35s var(--ease), background 0.35s var(--ease);
+  transition: border-color var(--dur) var(--ease), background var(--dur) var(--ease);
 }
 
 .site-header.is-scrolled {
@@ -202,7 +209,7 @@ p {
   color: var(--ink-soft);
   text-decoration: none;
   position: relative;
-  transition: color 0.25s;
+  transition: color var(--dur-fast);
 }
 
 .nav a::after {
@@ -215,7 +222,7 @@ p {
   background: var(--ocean);
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 0.4s var(--ease);
+  transition: transform var(--dur-med) var(--ease);
 }
 
 .nav a:hover,
@@ -247,7 +254,7 @@ p {
   width: 1.1rem;
   height: 2px;
   background: var(--ink);
-  transition: transform 0.3s var(--ease), opacity 0.3s;
+  transition: transform var(--dur) var(--ease), opacity var(--dur);
 }
 
 .nav-toggle[aria-expanded="true"] span:nth-child(1) {
@@ -278,10 +285,10 @@ p {
   border: 1px solid transparent;
   cursor: pointer;
   transition:
-    transform 0.3s var(--ease),
-    background 0.25s,
-    color 0.25s,
-    border-color 0.25s;
+    transform var(--dur) var(--ease),
+    background var(--dur-fast),
+    color var(--dur-fast),
+    border-color var(--dur-fast);
 }
 
 .btn:hover {
@@ -333,6 +340,7 @@ p {
   z-index: -1;
   overflow: hidden;
   background: #9eb6c8;
+  animation: hero-visual-in 0.85s var(--ease) both;
 }
 
 .hero-visual::after {
@@ -356,7 +364,22 @@ p {
   width: min(100% - 2rem, var(--max));
   margin: 0 auto;
   padding: clamp(3rem, 10vh, 6rem) 0 clamp(3.75rem, 12vh, 7.5rem);
-  animation: rise 1s var(--ease) both;
+}
+
+.hero-copy > * {
+  animation: rise var(--dur-enter) var(--ease) both;
+}
+
+.hero-copy > *:nth-child(1) {
+  animation-delay: 0.04s;
+}
+
+.hero-copy > *:nth-child(2) {
+  animation-delay: 0.12s;
+}
+
+.hero-copy > *:nth-child(3) {
+  animation-delay: 0.22s;
 }
 
 .hero h1 {
@@ -378,7 +401,7 @@ p {
 @keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(1.5rem);
+    transform: translateY(2.75rem);
   }
   to {
     opacity: 1;
@@ -398,7 +421,7 @@ p {
 @keyframes fade-up {
   from {
     opacity: 0;
-    transform: translateY(1.25rem);
+    transform: translateY(2.25rem);
   }
   to {
     opacity: 1;
@@ -406,22 +429,39 @@ p {
   }
 }
 
+@keyframes hero-visual-in {
+  from {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 .hero-visual .drift {
-  animation: drift 28s ease-in-out infinite alternate;
+  animation: drift var(--dur-drift) ease-in-out infinite alternate;
   transform-origin: center;
 }
 
-.reveal {
+.reveal-block .section-head,
+.reveal-block .path-list > li,
+.reveal-block.split > * {
   opacity: 0;
-  transform: translateY(1.25rem);
+  transform: translateY(4.25rem);
   transition:
-    opacity 0.7s var(--ease),
-    transform 0.7s var(--ease);
+    opacity 1.05s var(--ease),
+    transform 1.05s var(--ease);
+  transition-delay: 0s;
 }
 
-.reveal.is-in {
+.reveal-block.is-in .section-head,
+.reveal-block.is-in .path-list > li,
+.reveal-block.is-in.split > * {
   opacity: 1;
   transform: translateY(0);
+  transition-delay: calc(var(--reveal-i, 0) * 125ms);
 }
 
 /* Sections */
@@ -474,8 +514,8 @@ p {
   opacity: 0;
   transform: translateX(-0.4rem);
   transition:
-    opacity 0.45s var(--ease),
-    transform 0.45s var(--ease);
+    opacity var(--dur-med) var(--ease),
+    transform var(--dur-med) var(--ease);
   z-index: -1;
   pointer-events: none;
 }
@@ -492,8 +532,8 @@ p {
   opacity: 0;
   transform: scaleY(0.35);
   transition:
-    opacity 0.4s var(--ease),
-    transform 0.45s var(--ease);
+    opacity var(--dur-med) var(--ease),
+    transform var(--dur-med) var(--ease);
   pointer-events: none;
 }
 
@@ -513,8 +553,8 @@ p {
 .path-list .title,
 .path-list .meta {
   transition:
-    transform 0.45s var(--ease),
-    color 0.4s var(--ease);
+    transform var(--dur-med) var(--ease),
+    color var(--dur-med) var(--ease);
 }
 
 .path-list a:hover .num,
@@ -676,9 +716,9 @@ p {
   background: transparent;
   transform: translateX(0);
   transition:
-    background 0.32s var(--ease),
-    color 0.32s var(--ease),
-    transform 0.32s var(--ease);
+    background var(--dur) var(--ease),
+    color var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
 }
 
 .side-nav a::before {
@@ -693,8 +733,8 @@ p {
   transform: translateY(-50%);
   opacity: 0;
   transition:
-    height 0.32s var(--ease),
-    opacity 0.28s var(--ease);
+    height var(--dur) var(--ease),
+    opacity var(--dur-fast) var(--ease);
 }
 
 .side-nav a:hover {
@@ -720,7 +760,7 @@ p {
 }
 
 .md-body.is-switching {
-  animation: chapter-in 0.42s var(--ease);
+  animation: chapter-in var(--dur-chapter) var(--ease);
 }
 
 @keyframes chapter-in {
@@ -929,7 +969,7 @@ p {
   color: #fff;
   padding: 0.3rem 0.55rem;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background var(--dur-fast);
 }
 
 .copy-btn:hover {
@@ -952,7 +992,7 @@ p {
   color: var(--ink);
   font-weight: 650;
   letter-spacing: -0.02em;
-  transition: color 0.2s;
+  transition: color var(--dur-fast);
   overflow-wrap: break-word;
 }
 
@@ -1020,8 +1060,8 @@ p {
   text-decoration: none;
   color: inherit;
   transition:
-    background 0.3s,
-    padding-left 0.35s var(--ease);
+    background var(--dur),
+    padding-left var(--dur) var(--ease);
 }
 
 .lab-grid a:hover {
@@ -1083,7 +1123,7 @@ p {
     width: min(19rem, 88vw);
     z-index: 40;
     transform: translateX(-105%);
-    transition: transform 0.35s var(--ease);
+    transition: transform var(--dur) var(--ease);
     box-shadow: 8px 0 32px rgba(11, 26, 40, 0.12);
     background: var(--surface);
   }
@@ -1143,7 +1183,7 @@ p {
 
   .nav.is-open {
     display: flex;
-    animation: rise 0.35s var(--ease);
+    animation: rise var(--dur) var(--ease);
   }
 
   .nav a {
@@ -1202,7 +1242,9 @@ p {
     transition: none !important;
   }
 
-  .reveal {
+  .reveal-block .section-head,
+  .reveal-block .path-list > li,
+  .reveal-block.split > * {
     opacity: 1;
     transform: none;
   }
