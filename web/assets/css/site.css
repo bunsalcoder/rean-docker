@@ -818,6 +818,7 @@ body > main.section > .wrap {
 
 .md-body.is-leaving,
 .content-pane.is-chapter-leaving [data-chapter-title],
+.content-pane.is-chapter-leaving [data-lab-title],
 .content-pane.is-chapter-leaving .eyebrow,
 .content-pane.is-chapter-leaving [data-progress],
 .content-pane.is-chapter-leaving [data-pager] {
@@ -826,13 +827,15 @@ body > main.section > .wrap {
 
 .md-body.is-switching,
 .content-pane.is-chapter-switching [data-chapter-title],
+.content-pane.is-chapter-switching [data-lab-title],
 .content-pane.is-chapter-switching .eyebrow,
 .content-pane.is-chapter-switching [data-progress],
 .content-pane.is-chapter-switching [data-pager] {
   animation: chapter-in var(--dur-chapter) var(--ease-chapter) both;
 }
 
-.content-pane.is-chapter-switching [data-chapter-title] {
+.content-pane.is-chapter-switching [data-chapter-title],
+.content-pane.is-chapter-switching [data-lab-title] {
   animation-delay: 0.04s;
 }
 
