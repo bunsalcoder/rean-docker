@@ -29,7 +29,8 @@
   --dur-slow: 0.8s;
   --dur-enter: 1.05s;
   --dur-page: 0.7s;
-  --dur-chapter: 0.55s;
+  --dur-chapter: 0.95s;
+  --ease-chapter: cubic-bezier(0.22, 1, 0.36, 1);
   --dur-drift: 32s;
 }
 
@@ -772,9 +773,9 @@ body > main.section > .wrap {
   background: transparent;
   transform: translateX(0);
   transition:
-    background var(--dur) var(--ease),
-    color var(--dur) var(--ease),
-    transform var(--dur) var(--ease);
+    background var(--dur-med) var(--ease-chapter),
+    color var(--dur-med) var(--ease-chapter),
+    transform var(--dur-med) var(--ease-chapter);
 }
 
 .side-nav a::before {
@@ -789,8 +790,8 @@ body > main.section > .wrap {
   transform: translateY(-50%);
   opacity: 0;
   transition:
-    height var(--dur) var(--ease),
-    opacity var(--dur-fast) var(--ease);
+    height var(--dur-med) var(--ease-chapter),
+    opacity var(--dur) var(--ease-chapter);
 }
 
 .side-nav a:hover {
@@ -815,14 +816,49 @@ body > main.section > .wrap {
   transform: translateX(0);
 }
 
-.md-body.is-switching {
-  animation: chapter-in var(--dur-chapter) var(--ease);
+.md-body.is-leaving,
+.content-pane.is-chapter-leaving [data-chapter-title],
+.content-pane.is-chapter-leaving .eyebrow,
+.content-pane.is-chapter-leaving [data-progress],
+.content-pane.is-chapter-leaving [data-pager] {
+  animation: chapter-out 0.28s var(--ease-chapter) both;
+}
+
+.md-body.is-switching,
+.content-pane.is-chapter-switching [data-chapter-title],
+.content-pane.is-chapter-switching .eyebrow,
+.content-pane.is-chapter-switching [data-progress],
+.content-pane.is-chapter-switching [data-pager] {
+  animation: chapter-in var(--dur-chapter) var(--ease-chapter) both;
+}
+
+.content-pane.is-chapter-switching [data-chapter-title] {
+  animation-delay: 0.04s;
+}
+
+.content-pane.is-chapter-switching .md-body.is-switching {
+  animation-delay: 0.08s;
+}
+
+.content-pane.is-chapter-switching [data-pager] {
+  animation-delay: 0.14s;
+}
+
+@keyframes chapter-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-0.4rem);
+  }
 }
 
 @keyframes chapter-in {
   from {
     opacity: 0;
-    transform: translateY(0.85rem);
+    transform: translateY(0.7rem);
   }
   to {
     opacity: 1;
