@@ -11,10 +11,10 @@
 1. Read each chapter in order (they build on each other).
 2. Type the commands yourself — do not only read them.
 3. After each beginner/intermediate chapter, complete the matching lab under `labs/`.
-4. Keep a terminal open in this project root:
+4. Keep a terminal open in this project root (wherever you cloned or downloaded the repo):
 
 ```bash
-cd /home/bunsal/project/personal/reansot/rean-docker
+cd path/to/rean-docker
 ```
 
 **Conventions used here**
@@ -139,7 +139,167 @@ Images are stacks of **layers**. Each Dockerfile instruction often creates a lay
 
 ## 3. Install & verify
 
-This machine already has Docker. Always verify:
+You need Docker on **your** computer before the labs will work. Most learners install **Docker Desktop** (Windows, macOS, or Linux). On Linux servers you can install **Docker Engine** instead.
+
+Official downloads and docs: [https://docs.docker.com/get-started/get-docker/](https://docs.docker.com/get-started/get-docker/)
+
+Pick your operating system below, then finish with the shared **Verify** steps.
+
+### Windows
+
+**Recommended:** Docker Desktop with the **WSL 2** backend.
+
+1. **Check requirements**
+   - 64-bit Windows 10 (version 22H2+) or Windows 11
+   - Virtualization enabled in BIOS/UEFI (often labeled *Intel VT-x*, *AMD-V*, or *SVM*)
+   - About 4 GB RAM free (8 GB+ recommended)
+
+2. **Install WSL 2** (required for the recommended setup)
+   - Open **PowerShell as Administrator** and run:
+
+```powershell
+wsl --install
+```
+
+   - Restart when Windows asks you to.
+   - After reboot, finish any Ubuntu (or other distro) first-time setup if a terminal opens.
+   - Confirm WSL is ready:
+
+```powershell
+wsl --status
+```
+
+3. **Download Docker Desktop for Windows**
+   - Go to [Docker Desktop for Windows](https://docs.docker.com/desktop/setup/install/windows-install/)
+   - Download the installer for your CPU (AMD64 for most PCs, ARM64 for Snapdragon/ARM devices)
+
+4. **Run the installer**
+   - Double-click `Docker Desktop Installer.exe`
+   - Prefer the default options
+   - Ensure **Use WSL 2 instead of Hyper-V** is selected when offered
+   - Finish the wizard and start Docker Desktop when prompted
+
+5. **Accept the terms and wait for the engine**
+   - Open Docker Desktop from the Start menu if it is not already running
+   - Accept the Docker Subscription Service Agreement (personal / learning use is allowed under Docker’s terms)
+   - Wait until the whale icon in the system tray shows Docker is **running** (not “starting”)
+
+6. **Verify in a terminal**
+   - Open **PowerShell**, **Windows Terminal**, or a **WSL** shell and continue with the Verify section below
+
+**If something fails on Windows**
+
+- Restart the PC after installing WSL, then start Docker Desktop again
+- In Docker Desktop → Settings → General, confirm WSL 2 is selected
+- In Docker Desktop → Settings → Resources → WSL Integration, enable your installed distro
+- Run `wsl --update` in an elevated PowerShell if WSL is outdated
+
+### macOS
+
+**Recommended:** Docker Desktop for Mac.
+
+1. **Check requirements**
+   - A supported macOS version (current release and the two previous majors are typically supported)
+   - Apple Silicon (M1/M2/M3/M4…) **or** Intel Mac
+   - About 4 GB RAM free (8 GB+ recommended)
+
+2. **Download the correct installer**
+   - Go to [Docker Desktop for Mac](https://docs.docker.com/desktop/setup/install/mac-install/)
+   - Choose **Apple Silicon** or **Intel Chip** to match your Mac
+   - Tip: Apple menu → About This Mac shows the chip type
+
+3. **Install Docker Desktop**
+   - Open the downloaded `Docker.dmg`
+   - Drag the Docker icon into **Applications**
+   - Eject the disk image when finished
+
+4. **Start Docker for the first time**
+   - Open **Applications → Docker**
+   - Approve macOS security / privacy prompts (Password or Touch ID may be required)
+   - Accept the Docker Subscription Service Agreement
+   - Wait until the menu-bar whale icon shows Docker is **running**
+
+5. **Verify in Terminal**
+   - Open **Terminal** (or iTerm) and continue with the Verify section below
+
+**If something fails on macOS**
+
+- System Settings → Privacy & Security: allow Docker if macOS blocked it
+- Quit Docker completely (whale menu → Quit), then reopen it
+- Confirm you installed the Apple Silicon build on an M-series Mac (Intel builds will not run well there)
+
+### Linux
+
+You have two common choices:
+
+| Option | Best when |
+|--------|-----------|
+| **Docker Desktop for Linux** | You want a GUI and an easy all-in-one setup |
+| **Docker Engine** (daemon + CLI) | You prefer a lighter install on Ubuntu/Debian/Fedora/etc. |
+
+#### Option A — Docker Desktop for Linux
+
+1. Confirm your distro is supported (Ubuntu, Debian, and Fedora are common choices): [Desktop for Linux](https://docs.docker.com/desktop/setup/install/linux/)
+2. Install the package for your distro (`.deb` or `.rpm`) from the official page
+3. Launch Docker Desktop from your app menu
+4. Accept the agreement and wait until the engine shows as running
+5. Continue with Verify below
+
+#### Option B — Docker Engine (CLI) on Ubuntu/Debian-family
+
+These steps are the usual path for many Linux learners. For other distros, follow Docker’s Engine docs for your family ([Install Docker Engine](https://docs.docker.com/engine/install/)).
+
+1. **Update packages and install prerequisites**
+
+```bash
+sudo apt-get update
+sudo apt-get install ca-certificates curl
+```
+
+2. **Add Docker’s official GPG key and apt repository**
+
+```bash
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] \
+  https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt-get update
+```
+
+> On Debian, use Docker’s Debian instructions (`download.docker.com/linux/debian`) instead of the Ubuntu URL above.
+
+3. **Install Engine, CLI, Compose plugin, and helpers**
+
+```bash
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+```
+
+4. **Start Docker and enable it on boot**
+
+```bash
+sudo systemctl enable --now docker
+sudo systemctl status docker
+```
+
+You want `active (running)`.
+
+5. **(Recommended) Use Docker without typing `sudo` every time**
+
+```bash
+sudo usermod -aG docker $USER
+```
+
+Then **log out and log back in** (or reboot) so the group membership applies. Until you do, keep using `sudo docker …`.
+
+### Verify (all platforms)
+
+After Docker is installed and running, open a terminal and run:
 
 ```bash
 docker --version
@@ -150,10 +310,12 @@ docker run --rm hello-world
 
 **What you should see**
 
-- A Docker version (Engine)
-- Compose version (plugin: `docker compose`, not only old `docker-compose`)
+- A Docker version (Engine / Desktop)
+- Compose version (plugin: `docker compose`, not only the old `docker-compose` binary)
 - `docker info` shows server details (storage driver, CPUs, memory)
 - `hello-world` downloads a tiny image and prints a success message
+
+If `docker info` or `hello-world` fails, Docker is not fully running yet — start Docker Desktop (or `sudo systemctl start docker` on Linux Engine) and try again.
 
 ### Important Linux note: permissions
 
@@ -173,9 +335,11 @@ sudo docker ps
 - **Daemon:** `dockerd` background service that actually creates containers
 
 ```bash
-# Is the daemon running?
-sudo systemctl status docker   # on many Linux distros
+# Is the daemon running? (Linux Engine / many distros)
+sudo systemctl status docker
 ```
+
+On Windows and macOS with Docker Desktop, the daemon runs inside Desktop’s Linux VM — keep the Desktop app running while you work.
 
 ---
 
