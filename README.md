@@ -7,7 +7,7 @@ Learn Docker from absolute beginner to advanced — guided path with a full hand
 Open the static site in `web/`:
 
 ```bash
-cd /home/bunsal/project/personal/reansot/rean-docker/web
+cd path/to/rean-docker/web
 python3 -m http.server 4173
 ```
 
