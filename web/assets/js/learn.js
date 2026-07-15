@@ -294,7 +294,7 @@ async function initLabPage() {
     renderMarkdown(bodyEl, md);
     const h1 = bodyEl.querySelector("h1");
     if (h1) h1.remove();
-    bodyEl.style.animation = "rise 0.45s cubic-bezier(0.22, 1, 0.36, 1)";
+    bodyEl.style.animation = "rise 0.7s cubic-bezier(0.25, 0.85, 0.25, 1)";
   } catch (err) {
     bodyEl.innerHTML = `<div class="error"><strong>Could not load lab.</strong><br>${err.message}<br><br>Serve the <code>web/</code> folder over HTTP.</div>`;
   }
