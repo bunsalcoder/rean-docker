@@ -174,6 +174,11 @@ async function initLearnPage() {
     if (!chapters.length) throw new Error("No chapters found");
 
     let currentIndex = -1;
+    let transitionToken = 0;
+    const paneEl = bodyEl.closest(".content-pane");
+    const CHAPTER_OUT_MS = 280;
+    const prefersReducedMotion = () =>
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const resolveIndex = (id) => {
       let index = chapters.findIndex((c) => c.id === id);
@@ -197,7 +202,28 @@ async function initLearnPage() {
       `;
     };
 
-    const showChapter = (id, { push = false, animate = true } = {}) => {
+    const clearChapterMotion = () => {
+      bodyEl.classList.remove("is-leaving", "is-switching");
+      paneEl?.classList.remove("is-chapter-leaving", "is-chapter-switching");
+    };
+
+    const playChapterIn = () => {
+      clearChapterMotion();
+      void bodyEl.offsetWidth;
+      bodyEl.classList.add("is-switching");
+      paneEl?.classList.add("is-chapter-switching");
+    };
+
+    const applyChapter = (chapter, index) => {
+      setActiveNav(chapter.id);
+      if (titleEl) titleEl.textContent = chapter.title;
+      if (progressEl) progressEl.textContent = `Chapter ${index + 1} of ${chapters.length}`;
+      document.title = `${chapter.title} — rean-docker`;
+      renderMarkdown(bodyEl, chapter.body);
+      renderPager(index);
+    };
+
+    const showChapter = async (id, { push = false, animate = true } = {}) => {
       const index = resolveIndex(id);
       const chapter = chapters[index];
 
@@ -206,27 +232,34 @@ async function initLearnPage() {
         if (push) history.replaceState({ c: chapter.id }, "", chapterHref(chapter.id));
         return;
       }
+
+      const token = ++transitionToken;
+      const hadChapter = currentIndex >= 0;
       currentIndex = index;
-
-      setActiveNav(chapter.id);
-      if (titleEl) titleEl.textContent = chapter.title;
-      if (progressEl) progressEl.textContent = `Chapter ${index + 1} of ${chapters.length}`;
-      document.title = `${chapter.title} — rean-docker`;
-
-      renderMarkdown(bodyEl, chapter.body);
-      renderPager(index);
-
-      if (animate) {
-        bodyEl.classList.remove("is-switching");
-        void bodyEl.offsetWidth;
-        bodyEl.classList.add("is-switching");
-      }
 
       if (push) {
         history.pushState({ c: chapter.id }, "", chapterHref(chapter.id));
       }
 
       window.scrollTo({ top: 0, behavior: "smooth" });
+
+      const shouldAnimate = animate && !prefersReducedMotion();
+
+      if (shouldAnimate && hadChapter) {
+        clearChapterMotion();
+        bodyEl.classList.add("is-leaving");
+        paneEl?.classList.add("is-chapter-leaving");
+        await new Promise((resolve) => setTimeout(resolve, CHAPTER_OUT_MS));
+        if (token !== transitionToken) return;
+      }
+
+      applyChapter(chapter, index);
+
+      if (shouldAnimate) {
+        playChapterIn();
+      } else {
+        clearChapterMotion();
+      }
     };
 
     navEl.innerHTML = chapters
