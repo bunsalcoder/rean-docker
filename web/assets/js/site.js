@@ -2,6 +2,8 @@
   const header = document.querySelector(".site-header");
   const nav = document.querySelector("[data-nav]");
   const toggle = document.querySelector("[data-nav-toggle]");
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const NAV_INDICATOR_KEY = "rean-nav-indicator";
 
   const onScroll = () => {
     if (!header) return;
@@ -44,11 +46,113 @@
     a.setAttribute("aria-current", "page");
   });
 
+  // Flying underline: one transform-only slide after each page load
+  const initNavIndicator = () => {
+    if (!nav || window.matchMedia("(max-width: 720px)").matches) return;
+
+    let indicator = nav.querySelector(".nav-indicator");
+    if (!indicator) {
+      indicator = document.createElement("span");
+      indicator.className = "nav-indicator";
+      indicator.setAttribute("aria-hidden", "true");
+      nav.appendChild(indicator);
+    }
+
+    const measure = (link) => {
+      if (!link) return null;
+      const navRect = nav.getBoundingClientRect();
+      const linkRect = link.getBoundingClientRect();
+      return {
+        left: linkRect.left - navRect.left,
+        width: Math.max(linkRect.width, 1),
+      };
+    };
+
+    const setTransform = (pos) => {
+      indicator.style.transform = `translate3d(${pos.left}px, 0, 0) scaleX(${pos.width})`;
+    };
+
+    const apply = (pos, { instant = false } = {}) => {
+      if (!pos) {
+        indicator.classList.remove("is-ready");
+        return;
+      }
+      if (instant || reduceMotion) {
+        indicator.style.transition = "none";
+        setTransform(pos);
+        indicator.classList.add("is-ready");
+        void indicator.offsetWidth;
+        indicator.style.transition = "";
+        return;
+      }
+      indicator.classList.add("is-ready");
+      setTransform(pos);
+    };
+
+    const save = (pos) => {
+      if (!pos) return;
+      try {
+        sessionStorage.setItem(NAV_INDICATOR_KEY, JSON.stringify(pos));
+      } catch {
+        /* private mode */
+      }
+    };
+
+    const readSaved = () => {
+      try {
+        const raw = sessionStorage.getItem(NAV_INDICATOR_KEY);
+        return raw ? JSON.parse(raw) : null;
+      } catch {
+        return null;
+      }
+    };
+
+    const current = nav.querySelector('a[aria-current="page"]');
+    const next = measure(current);
+    const prev = readSaved();
+    const shouldFly =
+      prev &&
+      next &&
+      !reduceMotion &&
+      (Math.abs(prev.left - next.left) > 1 || Math.abs(prev.width - next.width) > 1);
+
+    if (shouldFly) {
+      // Sit at the previous tab instantly, then one uninterrupted glide
+      apply(prev, { instant: true });
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => apply(next));
+      });
+    } else {
+      apply(next, { instant: true });
+    }
+    save(next);
+
+    // Only remember origin — do not animate mid-navigation (that causes the hitch)
+    nav.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("pointerdown", () => {
+        const from = measure(nav.querySelector('a[aria-current="page"]'));
+        if (from) save(from);
+      });
+    });
+
+    let resizeTimer = 0;
+    window.addEventListener("resize", () => {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => {
+        if (window.matchMedia("(max-width: 720px)").matches) return;
+        const pos = measure(nav.querySelector('a[aria-current="page"]'));
+        apply(pos, { instant: true });
+        save(pos);
+      }, 80);
+    });
+  };
+
+  initNavIndicator();
+
   // Below-fold reveals: armed after leaving the hero, then one soft staggered pass per section
   const revealBlocks = document.querySelectorAll(".reveal-block");
   if (!revealBlocks.length) return;
 
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (reduceMotion || !("IntersectionObserver" in window)) {
     revealBlocks.forEach((el) => el.classList.add("is-in"));
     return;
