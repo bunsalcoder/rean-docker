@@ -34,37 +34,6 @@
   --dur-drift: 32s;
 }
 
-/* Cross-document fades between Home / Learn / Labs / Cheat sheet */
-@view-transition {
-  navigation: auto;
-}
-
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation-duration: var(--dur-page);
-  animation-timing-function: var(--ease);
-}
-
-::view-transition-old(root) {
-  animation-name: vt-fade-out;
-}
-
-::view-transition-new(root) {
-  animation-name: vt-fade-in;
-}
-
-@keyframes vt-fade-out {
-  to {
-    opacity: 0;
-  }
-}
-
-@keyframes vt-fade-in {
-  from {
-    opacity: 0;
-  }
-}
-
 *,
 *::before,
 *::after {
@@ -1330,10 +1299,6 @@ body > main.section > .wrap {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  @view-transition {
-    navigation: none;
-  }
-
   .nav-indicator {
     transition: none;
   }
