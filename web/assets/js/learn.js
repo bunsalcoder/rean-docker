@@ -309,37 +309,140 @@ async function initLabPage() {
 
   setupSidebarToggle();
 
-  const currentId = getRouteId("id") || LABS[0].id;
-  let index = LABS.findIndex((l) => l.id === currentId);
-  if (index < 0) index = 0;
-  const lab = LABS[index];
+  let currentIndex = -1;
+  let transitionToken = 0;
+  const paneEl = bodyEl.closest(".content-pane");
+  const cache = new Map();
+  const LAB_OUT_MS = 280;
+  const prefersReducedMotion = () =>
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  navEl.innerHTML = LABS.map(
-    (l) =>
-      `<li><a href="${labHref(l.id)}" class="${l.id === lab.id ? "is-active" : ""}">${l.title}<br><span style="opacity:.6;font-weight:500;font-size:.8rem">${l.level}</span></a></li>`
-  ).join("");
+  const resolveIndex = (id) => {
+    let index = LABS.findIndex((l) => l.id === id);
+    if (index < 0) index = 0;
+    return index;
+  };
 
-  if (titleEl) titleEl.textContent = lab.title;
-  if (progressEl) progressEl.textContent = `Lab ${index + 1} of ${LABS.length} · ${lab.level}`;
+  const setActiveNav = (id) => {
+    navEl.querySelectorAll("a[data-lab-id]").forEach((a) => {
+      a.classList.toggle("is-active", a.dataset.labId === id);
+    });
+  };
 
-  try {
-    const md = await loadText(`./content/labs/${lab.id}.md`);
-    renderMarkdown(bodyEl, md);
-    const h1 = bodyEl.querySelector("h1");
-    if (h1) h1.remove();
-    bodyEl.style.animation = "rise 0.7s cubic-bezier(0.25, 0.85, 0.25, 1)";
-  } catch (err) {
-    bodyEl.innerHTML = `<div class="error"><strong>Could not load lab.</strong><br>${err.message}<br><br>Serve the <code>web/</code> folder over HTTP.</div>`;
-  }
-
-  if (pagerEl) {
+  const renderPager = (index) => {
+    if (!pagerEl) return;
     const prev = LABS[index - 1];
     const next = LABS[index + 1];
     pagerEl.innerHTML = `
-      ${prev ? `<a class="pager-prev" href="${labHref(prev.id)}"><span>Previous lab</span>${prev.title}</a>` : ""}
-      ${next ? `<a class="pager-next" href="${labHref(next.id)}"><span>Next lab</span>${next.title}</a>` : ""}
+      ${prev ? `<a class="pager-prev" href="${labHref(prev.id)}" data-lab-id="${prev.id}"><span>Previous lab</span>${prev.title}</a>` : ""}
+      ${next ? `<a class="pager-next" href="${labHref(next.id)}" data-lab-id="${next.id}"><span>Next lab</span>${next.title}</a>` : ""}
     `;
-  }
+  };
+
+  const clearLabMotion = () => {
+    bodyEl.classList.remove("is-leaving", "is-switching");
+    bodyEl.style.animation = "";
+    paneEl?.classList.remove("is-chapter-leaving", "is-chapter-switching");
+  };
+
+  const playLabIn = () => {
+    clearLabMotion();
+    void bodyEl.offsetWidth;
+    bodyEl.classList.add("is-switching");
+    paneEl?.classList.add("is-chapter-switching");
+  };
+
+  const loadLabMarkdown = async (id) => {
+    if (cache.has(id)) return cache.get(id);
+    const md = await loadText(`./content/labs/${id}.md`);
+    cache.set(id, md);
+    return md;
+  };
+
+  const applyLab = async (lab, index) => {
+    setActiveNav(lab.id);
+    if (titleEl) titleEl.textContent = lab.title;
+    if (progressEl) progressEl.textContent = `Lab ${index + 1} of ${LABS.length} · ${lab.level}`;
+    document.title = `${lab.title} — rean-docker`;
+    renderPager(index);
+
+    try {
+      const md = await loadLabMarkdown(lab.id);
+      renderMarkdown(bodyEl, md);
+      bodyEl.querySelector("h1")?.remove();
+    } catch (err) {
+      bodyEl.innerHTML = `<div class="error"><strong>Could not load lab.</strong><br>${err.message}<br><br>Serve the <code>web/</code> folder over HTTP.</div>`;
+    }
+  };
+
+  const showLab = async (id, { push = false, animate = true } = {}) => {
+    const index = resolveIndex(id);
+    const lab = LABS[index];
+
+    if (index === currentIndex) {
+      if (push) history.replaceState({ id: lab.id }, "", labHref(lab.id));
+      return;
+    }
+
+    const token = ++transitionToken;
+    const hadLab = currentIndex >= 0;
+    currentIndex = index;
+
+    if (push) {
+      history.pushState({ id: lab.id }, "", labHref(lab.id));
+    }
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    const shouldAnimate = animate && !prefersReducedMotion();
+
+    if (shouldAnimate && hadLab) {
+      clearLabMotion();
+      bodyEl.classList.add("is-leaving");
+      paneEl?.classList.add("is-chapter-leaving");
+      await new Promise((resolve) => setTimeout(resolve, LAB_OUT_MS));
+      if (token !== transitionToken) return;
+    }
+
+    await applyLab(lab, index);
+    if (token !== transitionToken) return;
+
+    if (shouldAnimate) {
+      playLabIn();
+    } else {
+      clearLabMotion();
+    }
+  };
+
+  navEl.innerHTML = LABS.map(
+    (l) =>
+      `<li><a href="${labHref(l.id)}" data-lab-id="${l.id}">${l.title}<br><span style="opacity:.6;font-weight:500;font-size:.8rem">${l.level}</span></a></li>`
+  ).join("");
+
+  const goToLab = (id, opts) => {
+    if (!id) return;
+    showLab(id, opts);
+  };
+
+  navEl.addEventListener("click", (event) => {
+    const link = event.target.closest("a[data-lab-id]");
+    if (!link) return;
+    event.preventDefault();
+    goToLab(link.dataset.labId, { push: true, animate: true });
+  });
+
+  pagerEl?.addEventListener("click", (event) => {
+    const link = event.target.closest("a[data-lab-id]");
+    if (!link) return;
+    event.preventDefault();
+    goToLab(link.dataset.labId, { push: true, animate: true });
+  });
+
+  window.addEventListener("popstate", () => {
+    goToLab(getRouteId("id") || LABS[0].id, { push: false, animate: true });
+  });
+
+  goToLab(getRouteId("id") || LABS[0].id, { push: false, animate: true });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
