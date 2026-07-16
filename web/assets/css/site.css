@@ -684,13 +684,13 @@ body > main.section > .wrap {
   user-select: none;
 }
 
-/* Learn / Labs shell */
+/* Learn / Labs shell — sidebar + article as one centered reading unit */
 .app-shell {
   display: grid;
   grid-template-columns: 16.5rem minmax(0, 1fr);
   min-height: calc(100svh - var(--nav-h));
-  width: 100%;
-  max-width: 100%;
+  width: min(100%, var(--max));
+  margin-inline: auto;
 }
 
 .sidebar {
@@ -842,7 +842,7 @@ body > main.section > .wrap {
   width: 100%;
   max-width: 48rem;
   min-width: 0;
-  margin-inline: auto;
+  margin-inline: 0;
   padding: clamp(1.5rem, 4vw, 2.75rem) clamp(1rem, 4vw, 3rem) 4rem;
   box-sizing: border-box;
 }
