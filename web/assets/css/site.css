@@ -45,6 +45,9 @@ html {
   overflow-x: clip;
   /* Keep header width stable when pages gain/lose a scrollbar (e.g. Learn → Home) */
   scrollbar-gutter: stable;
+  /* Match browser chrome / overscroll on iOS Safari & Android Chrome */
+  background-color: #f2f6fa;
+  color-scheme: light;
 }
 
 body {

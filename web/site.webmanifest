@@ -1,0 +1,9 @@
+{
+  "name": "rean-docker",
+  "short_name": "rean-docker",
+  "description": "Learn Docker from zero to hero",
+  "start_url": "./index.html",
+  "display": "browser",
+  "background_color": "#f2f6fa",
+  "theme_color": "#f2f6fa"
+}
