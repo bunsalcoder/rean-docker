@@ -701,6 +701,12 @@ body > main.section > .wrap {
   top: var(--nav-h);
   height: calc(100svh - var(--nav-h));
   overflow: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.sidebar::-webkit-scrollbar {
+  display: none;
 }
 
 .sidebar h2 {
