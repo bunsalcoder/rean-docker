@@ -30,7 +30,7 @@
           <a href="./index.html">Home</a>
           <a href="./learn.html">Learn</a>
           <a href="./labs.html" aria-current="page">Labs</a>
-          <a href="./learn.html?c=17">Cheat sheet</a>
+          <a href="./learn.html?c=18">Cheat sheet</a>
         </nav>
       </div>
     </header>
@@ -41,56 +41,63 @@
           <p class="eyebrow">Practice</p>
           <h1 class="lab-page-title">Labs</h1>
           <p>
-            Work through these in order. Each lab lives in the repo under <code>labs/</code> — open a terminal next to
-            this page.
+            Work through these in order. Lab 01 is beginner isolation practice (not advanced theory). Lab 02 is the
+            everyday Docker workflow. Each lab lives under <code>labs/</code> — open a terminal next to this page.
           </p>
         </div>
 
         <div class="lab-grid reveal">
-          <a href="./lab.html?id=01-hello">
+          <a href="./lab.html?id=01-isolation-basics">
             <span class="num">01</span>
+            <div>
+              <h3>Isolation basics</h3>
+              <p>Beginner: see process, file, network, and memory isolation.</p>
+            </div>
+          </a>
+          <a href="./lab.html?id=02-hello">
+            <span class="num">02</span>
             <div>
               <h3>Hello containers</h3>
               <p>Run, publish ports, read logs, clean up.</p>
             </div>
           </a>
-          <a href="./lab.html?id=02-dockerfile">
-            <span class="num">02</span>
+          <a href="./lab.html?id=03-dockerfile">
+            <span class="num">03</span>
             <div>
               <h3>Your first Dockerfile</h3>
               <p>Build and run a small Node API image.</p>
             </div>
           </a>
-          <a href="./lab.html?id=03-compose">
-            <span class="num">03</span>
+          <a href="./lab.html?id=04-compose">
+            <span class="num">04</span>
             <div>
               <h3>Compose stack</h3>
               <p>API + Postgres + Redis with healthchecks.</p>
             </div>
           </a>
-          <a href="./lab.html?id=04-networks">
-            <span class="num">04</span>
+          <a href="./lab.html?id=05-networks">
+            <span class="num">05</span>
             <div>
               <h3>Networks &amp; DNS</h3>
               <p>Reach services by container name.</p>
             </div>
           </a>
-          <a href="./lab.html?id=05-volumes">
-            <span class="num">05</span>
+          <a href="./lab.html?id=06-volumes">
+            <span class="num">06</span>
             <div>
               <h3>Volumes &amp; persistence</h3>
               <p>Keep database data after containers die.</p>
             </div>
           </a>
-          <a href="./lab.html?id=06-multi-stage">
-            <span class="num">06</span>
+          <a href="./lab.html?id=07-multi-stage">
+            <span class="num">07</span>
             <div>
               <h3>Multi-stage builds</h3>
               <p>Compare fat vs slim production images.</p>
             </div>
           </a>
-          <a href="./lab.html?id=07-production">
-            <span class="num">07</span>
+          <a href="./lab.html?id=08-production">
+            <span class="num">08</span>
             <div>
               <h3>Production practices</h3>
               <p>Healthchecks, limits, read-only rootfs.</p>

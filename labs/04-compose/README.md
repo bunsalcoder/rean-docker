@@ -1,4 +1,4 @@
-# Lab 03 — Docker Compose (API + Postgres + Redis)
+# Lab 04 — Docker Compose (API + Postgres + Redis)
 
 ## Goal
 
@@ -7,7 +7,7 @@ Run a multi-container app with service DNS, volumes, and healthchecks.
 ## Steps
 
 ```bash
-cd labs/03-compose
+cd labs/04-compose
 
 docker compose up --build
 # or detached:

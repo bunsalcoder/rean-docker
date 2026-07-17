@@ -1,4 +1,4 @@
-# Lab 02 — Your first Dockerfile
+# Lab 03 — Your first Dockerfile
 
 ## Goal
 
@@ -7,13 +7,13 @@ Build a custom image for a tiny Node/Express API and run it.
 ## Steps
 
 ```bash
-cd labs/02-dockerfile
+cd labs/03-dockerfile
 
 # Build (the trailing dot is the build context)
 docker build -t rean-hello:1.0 .
 
 # Run
-docker run --rm -p 3000:3000 --name lab02-api rean-hello:1.0
+docker run --rm -p 3000:3000 --name lab03-api rean-hello:1.0
 ```
 
 In another terminal:

@@ -26,7 +26,7 @@ Then open [http://localhost:4173](http://localhost:4173).
 
 **[docs/DOCKER_FROM_ZERO_TO_HERO.md](docs/DOCKER_FROM_ZERO_TO_HERO.md)**
 
-It covers concepts, commands, Compose, volumes, networks, multi-stage builds, production habits, security, and a capstone project.
+It covers containerization foundations (beginner), commands, Compose, volumes, networks, multi-stage builds, production habits, security, and a capstone project.
 
 ## Labs (hands-on)
 
@@ -34,13 +34,14 @@ Work in order:
 
 | Lab | Topic | Path |
 |-----|--------|------|
-| 01 | First containers | [labs/01-hello](labs/01-hello) |
-| 02 | Dockerfile | [labs/02-dockerfile](labs/02-dockerfile) |
-| 03 | Compose (API + Postgres + Redis) | [labs/03-compose](labs/03-compose) |
-| 04 | Networks | [labs/04-networks](labs/04-networks) |
-| 05 | Volumes | [labs/05-volumes](labs/05-volumes) |
-| 06 | Multi-stage builds | [labs/06-multi-stage](labs/06-multi-stage) |
-| 07 | Production practices | [labs/07-production](labs/07-production) |
+| 01 | Isolation basics (beginner) | [labs/01-isolation-basics](labs/01-isolation-basics) |
+| 02 | First containers | [labs/02-hello](labs/02-hello) |
+| 03 | Dockerfile | [labs/03-dockerfile](labs/03-dockerfile) |
+| 04 | Compose (API + Postgres + Redis) | [labs/04-compose](labs/04-compose) |
+| 05 | Networks | [labs/05-networks](labs/05-networks) |
+| 06 | Volumes | [labs/06-volumes](labs/06-volumes) |
+| 07 | Multi-stage builds | [labs/07-multi-stage](labs/07-multi-stage) |
+| 08 | Production practices | [labs/08-production](labs/08-production) |
 
 ## Prerequisites
 
