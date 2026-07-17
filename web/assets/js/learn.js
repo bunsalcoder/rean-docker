@@ -116,7 +116,66 @@ async function loadText(url) {
   return res.text();
 }
 
-function renderMarkdown(target, md) {
+function checklistStorageKey(scope) {
+  return `rean-docker:checklist:${scope}`;
+}
+
+function checklistItemKey(li, index) {
+  const text = (li?.textContent || "").replace(/\s+/g, " ").trim().toLowerCase();
+  return text || `item-${index}`;
+}
+
+function enhanceChecklists(root, scope) {
+  const boxes = root.querySelectorAll('li > input[type="checkbox"]');
+  if (!boxes.length) return;
+
+  let saved = {};
+  try {
+    saved = JSON.parse(localStorage.getItem(checklistStorageKey(scope)) || "{}");
+  } catch {
+    saved = {};
+  }
+
+  boxes.forEach((input, index) => {
+    const li = input.closest("li");
+    if (!li) return;
+
+    li.classList.add("task-item");
+    input.disabled = false;
+    input.removeAttribute("disabled");
+
+    if (!li.querySelector(".task-label")) {
+      const label = document.createElement("label");
+      label.className = "task-label";
+      const text = document.createElement("span");
+      text.className = "task-text";
+      while (input.nextSibling) {
+        text.appendChild(input.nextSibling);
+      }
+      label.appendChild(input);
+      label.appendChild(text);
+      li.appendChild(label);
+    }
+
+    const key = checklistItemKey(li, index);
+    if (Object.prototype.hasOwnProperty.call(saved, key)) {
+      input.checked = Boolean(saved[key]);
+    }
+    li.classList.toggle("is-done", input.checked);
+
+    input.addEventListener("change", () => {
+      saved[key] = input.checked;
+      li.classList.toggle("is-done", input.checked);
+      try {
+        localStorage.setItem(checklistStorageKey(scope), JSON.stringify(saved));
+      } catch {
+        /* ignore quota / private mode */
+      }
+    });
+  });
+}
+
+function renderMarkdown(target, md, { checklistScope } = {}) {
   // Prefer marked if present; fallback to basic preformatted text
   if (window.marked) {
     marked.setOptions({
@@ -128,6 +187,7 @@ function renderMarkdown(target, md) {
     target.innerHTML = `<pre>${md.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]))}</pre>`;
   }
   enhanceCodeBlocks(target);
+  if (checklistScope) enhanceChecklists(target, checklistScope);
 }
 
 function setupSidebarToggle() {
@@ -221,7 +281,7 @@ async function initLearnPage() {
       if (titleEl) titleEl.textContent = chapter.title;
       if (progressEl) progressEl.textContent = `Chapter ${index + 1} of ${chapters.length}`;
       document.title = `${chapter.title} — rean-docker`;
-      renderMarkdown(bodyEl, chapter.body);
+      renderMarkdown(bodyEl, chapter.body, { checklistScope: `learn:${chapter.id}` });
       renderPager(index);
     };
 
@@ -370,7 +430,7 @@ async function initLabPage() {
 
     try {
       const md = await loadLabMarkdown(lab.id);
-      renderMarkdown(bodyEl, md);
+      renderMarkdown(bodyEl, md, { checklistScope: `lab:${lab.id}` });
       bodyEl.querySelector("h1")?.remove();
     } catch (err) {
       bodyEl.innerHTML = `<div class="error"><strong>Could not load lab.</strong><br>${err.message}<br><br>Serve the <code>web/</code> folder over HTTP.</div>`;
