@@ -927,6 +927,64 @@ body > main.section > .wrap {
   margin-bottom: 0.35rem;
 }
 
+.md-body li.task-item {
+  list-style: none;
+  margin-left: -1.25rem;
+  padding-left: 0.15rem;
+}
+
+.md-body li.task-item .task-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  cursor: pointer;
+}
+
+.md-body li.task-item input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  flex-shrink: 0;
+  width: 1.05rem;
+  height: 1.05rem;
+  margin: 0.35rem 0 0;
+  border: 1.5px solid var(--line);
+  border-radius: 3px;
+  background: var(--surface);
+  cursor: pointer;
+  transition:
+    border-color var(--dur-fast) var(--ease),
+    background var(--dur-fast) var(--ease),
+    box-shadow var(--dur-fast) var(--ease);
+}
+
+.md-body li.task-item .task-label:hover input[type="checkbox"] {
+  border-color: var(--ocean);
+  box-shadow: 0 0 0 3px var(--ocean-glow);
+}
+
+.md-body li.task-item input[type="checkbox"]:focus-visible {
+  outline: 2px solid var(--ocean);
+  outline-offset: 2px;
+}
+
+.md-body li.task-item input[type="checkbox"]:checked {
+  border-color: var(--ocean);
+  background: var(--ocean);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' d='M2.5 6.5 4.8 9 9.5 3.5'/%3E%3C/svg%3E");
+  background-size: 0.7rem;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.md-body li.task-item.is-done {
+  color: var(--muted);
+}
+
+.md-body li.task-item.is-done .task-text {
+  text-decoration: line-through;
+  text-decoration-color: color-mix(in srgb, var(--muted) 55%, transparent);
+}
+
 .md-body img {
   max-width: 100%;
   height: auto;
