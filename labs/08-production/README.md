@@ -1,4 +1,4 @@
-# Lab 07 — Production-minded container
+# Lab 08 — Production-minded container
 
 ## Goal
 
@@ -7,7 +7,7 @@ Run an API with healthchecks, restart policy, read-only rootfs, and resource lim
 ## Steps
 
 ```bash
-cd labs/07-production
+cd labs/08-production
 
 docker compose up --build -d
 docker compose ps
@@ -28,4 +28,4 @@ docker compose down
 ## Success criteria
 
 - [ ] Container reports healthy
-- [ ] You can list at least 5 production practices from the main guide chapter 12
+- [ ] You can list at least 5 production practices from the main guide chapter 13

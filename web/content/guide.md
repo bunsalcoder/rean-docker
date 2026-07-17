@@ -30,23 +30,24 @@ cd path/to/rean-docker
 ## Table of contents
 
 1. [What problem does Docker solve?](#1-what-problem-does-docker-solve)
-2. [Core mental model](#2-core-mental-model)
-3. [Install & verify](#3-install--verify)
-4. [Your first containers](#4-your-first-containers)
-5. [Images deeply explained](#5-images-deeply-explained)
-6. [Dockerfile — build your own images](#6-dockerfile--build-your-own-images)
-7. [Volumes — keep data alive](#7-volumes--keep-data-alive)
-8. [Networks — how containers talk](#8-networks--how-containers-talk)
-9. [Environment, secrets, and config](#9-environment-secrets-and-config)
-10. [Docker Compose — multi-container apps](#10-docker-compose--multi-container-apps)
-11. [Multi-stage builds & image size](#11-multi-stage-builds--image-size)
-12. [Production-minded practices](#12-production-minded-practices)
-13. [Debugging & troubleshooting](#13-debugging--troubleshooting)
-14. [Security essentials](#14-security-essentials)
-15. [Advanced topics](#15-advanced-topics)
-16. [Capstone project](#16-capstone-project)
-17. [Cheat sheet](#17-cheat-sheet)
-18. [Learning path checklist](#18-learning-path-checklist)
+2. [Containerization foundations](#2-containerization-foundations)
+3. [Core mental model](#3-core-mental-model)
+4. [Install & verify](#4-install--verify)
+5. [Your first containers](#5-your-first-containers)
+6. [Images deeply explained](#6-images-deeply-explained)
+7. [Dockerfile — build your own images](#7-dockerfile--build-your-own-images)
+8. [Volumes — keep data alive](#8-volumes--keep-data-alive)
+9. [Networks — how containers talk](#9-networks--how-containers-talk)
+10. [Environment, secrets, and config](#10-environment-secrets-and-config)
+11. [Docker Compose — multi-container apps](#11-docker-compose--multi-container-apps)
+12. [Multi-stage builds & image size](#12-multi-stage-builds--image-size)
+13. [Production-minded practices](#13-production-minded-practices)
+14. [Debugging & troubleshooting](#14-debugging--troubleshooting)
+15. [Security essentials](#15-security-essentials)
+16. [Advanced topics](#16-advanced-topics)
+17. [Capstone project](#17-capstone-project)
+18. [Cheat sheet](#18-cheat-sheet)
+19. [Learning path checklist](#19-learning-path-checklist)
 
 ---
 
@@ -83,6 +84,8 @@ That unit:
 
 **Analogy:** A VM is a whole house. A container is an apartment in a building that shares plumbing and electricity (the host kernel), but has its own locked rooms (filesystem, process tree, network namespace).
 
+Next, **Chapter 2** explains containerization in plain language (beginner foundations), then **Lab 01** lets you feel isolation with simple commands.
+
 ### What Docker is (and is not)
 
 **Docker is:**
@@ -99,7 +102,351 @@ That unit:
 
 ---
 
-## 2. Core mental model
+## 2. Containerization foundations
+
+Containerization is the **idea**. Docker is the **tool most people use to practice that idea**.
+
+**This chapter is beginner foundations**, not an advanced systems course. Skim the deep parts (namespaces, OCI, `runc`) on a first read if you want — the matching lab only needs simple `docker` commands.
+
+**Lab pairing:** after (or while) reading this chapter, do **`labs/01-isolation-basics`** (Lab 01 — Isolation basics). Then continue to Lab 02 for everyday workflow.
+
+This chapter explains containerization in general, then in enough detail that Docker’s later commands feel inevitable — not magical.
+
+### In one sentence
+
+**Containerization** packages an application together with everything it needs to run (runtime, libraries, config) into an isolated unit that shares the host’s OS kernel but has its own view of processes, files, and network.
+
+That unit is a **container**.
+
+### The general picture (start here)
+
+Think of three layers of “how do I run software?”:
+
+| Approach | What you ship | Isolation | Typical size / start |
+|----------|---------------|-----------|----------------------|
+| Bare metal / host install | App + hope the machine matches | Almost none | Fast, fragile |
+| Virtual machine | App + full guest OS | Strong (separate kernel) | Heavy, slow to start |
+| Container | App + userland deps (no full guest OS) | Process-level (shared kernel) | Light, starts in seconds |
+
+**Containerization’s bet:** most apps do not need a whole second operating system. They need a **consistent filesystem and libraries**, plus **enough isolation** so one app doesn’t break another.
+
+#### Everyday analogy
+
+- A **VM** is renting a whole house (foundation, plumbing, electrical panel = guest OS).
+- A **container** is an apartment: private rooms (your files, processes, ports), shared building systems (the host kernel).
+- An **image** is the furnished apartment blueprint; a **container** is a rented unit started from that blueprint.
+
+#### What problem it solves (beyond “Docker”)
+
+1. **Reproducibility** — same bits run on laptop, CI, and server.
+2. **Density** — many apps per machine without a VM per app.
+3. **Speed** — start/stop in seconds for deploys and tests.
+4. **Portability** — move the unit between environments without reinstalling the world.
+5. **Clear boundaries** — dependencies live *inside* the unit, not “somewhere on the host.”
+
+#### Containerization vs Docker vs Kubernetes
+
+| Term | What it is |
+|------|------------|
+| **Containerization** | The *concept*: isolate + package + run with a shared kernel |
+| **Docker** | A popular *platform* to build, ship, and run containers |
+| **OCI** | Open standards for images and runtimes (so tools can interoperate) |
+| **Kubernetes** | An *orchestrator*: schedules many containers across many machines |
+
+You can containerize without Docker (Podman, containerd, nerdctl, etc.). You usually learn Docker first because the workflow is clear and the ecosystem is huge.
+
+```
+  Concept: containerization
+       │
+       ▼
+  Standards: OCI image + runtime
+       │
+       ▼
+  Engines/tools: Docker, containerd, Podman, …
+       │
+       ▼
+  Orchestration (optional): Kubernetes, Swarm, Nomad, …
+```
+
+### A short history (why this exists)
+
+1. **chroot** (Unix) — change the apparent root filesystem for a process (filesystem jail; weak alone).
+2. **Linux namespaces + cgroups** — the kernel features that make real containers possible (isolate identity; limit CPU/RAM).
+3. **LXC** and others — early “Linux containers” using those features.
+4. **Docker (2013+)** — made the *developer experience* mainstream: Dockerfile, images, Hub, simple CLI.
+5. **OCI** — standardized image/runtime formats so the ecosystem isn’t locked to one vendor forever.
+
+You do not need to memorize history. Remember: **containers are a Linux kernel feature set + a packaging format + a nice UX**.
+
+### Detailed model: what is actually isolated?
+
+On Linux, a container is mostly **normal processes** with extra kernel controls.
+
+#### Namespaces — “what do I see?”
+
+Namespaces give a process its own view of system resources:
+
+| Namespace | Isolates | Why it matters |
+|-----------|----------|----------------|
+| **pid** | Process IDs | Inside the container, your app can be PID 1 |
+| **mnt** | Mounts / filesystem tree | Container has its own `/`, not the host’s |
+| **net** | Network stack | Own interfaces, IPs, ports, routing |
+| **uts** | Hostname | Container hostname ≠ host hostname |
+| **ipc** | Shared memory / IPC | Apps don’t collide on IPC objects |
+| **user** | User IDs (optional) | Map container root to unprivileged host user |
+
+**Example idea:** two containers can each listen on port `80` *inside* their own network namespace. On the host you publish different ports (`-p 8080:80` and `-p 8081:80`).
+
+#### cgroups — “how much may I use?”
+
+**Control groups (cgroups)** limit and account for resources:
+
+- CPU time
+- Memory
+- PIDs / process count
+- Block I/O (sometimes)
+
+Without cgroups, one runaway container could starve the host. With them, you can say “this API gets at most 512MB RAM.”
+
+#### Union filesystem / layers — “how is the disk built?”
+
+Images are stacked **layers** (read-only). When a container runs, Docker adds a thin **writable layer** on top:
+
+```
+[ writable container layer ]  ← changes while running (unless volumes)
+[ image layer: your app ]
+[ image layer: npm deps ]
+[ image layer: base OS userland ]
+```
+
+That is why:
+
+- Images share layers on disk (efficient).
+- Rebuilds can be fast (cache unchanged layers).
+- Deleting a container throws away the writable layer (unless you used volumes).
+
+#### Shared kernel — the important tradeoff
+
+Containers **share the host kernel**. That means:
+
+- They are lighter than VMs.
+- A kernel bug or misconfigured privileged container is a bigger deal than in a well-isolated VM.
+- You cannot run a Windows container kernel on a Linux kernel (or vice versa) without virtualization underneath (Docker Desktop uses a small VM on Mac/Windows for this reason).
+
+### Detailed model: image vs container (lifecycle)
+
+```
+Build time                         Run time
+─────────                          ────────
+Dockerfile  ──build──►  Image  ──run──►  Container (running)
+                          │                 │
+                          │                 ├─ stop  → stopped container
+                          │                 ├─ start → running again
+                          │                 └─ rm    → gone (writable layer lost)
+                          │
+                     push/pull
+                          │
+                       Registry
+```
+
+- **Image** = immutable template (usually).
+- **Container** = instance with state (running or stopped).
+- **Registry** = remote shelf for images (Docker Hub, GHCR, …).
+
+One image → many containers (like one class → many objects).
+
+### How Docker implements containerization (simplified stack)
+
+You type `docker …`. Roughly:
+
+```
+docker CLI  →  dockerd (Docker daemon)  →  containerd  →  runc  →  Linux namespaces/cgroups
+```
+
+| Piece | Role |
+|-------|------|
+| **CLI** | Human interface (`docker run`, `build`, …) |
+| **dockerd** | Docker’s API/orchestrator on one machine |
+| **containerd** | Manages container lifecycle / images |
+| **runc** | Actually creates the container via OCI runtime + kernel features |
+
+On Docker Desktop (Mac/Windows), this stack runs inside a **lightweight Linux VM**, because the Mac/Windows kernel is not the Linux kernel containers expect.
+
+You rarely touch `runc` directly. Understanding the stack explains error messages and “where” things run.
+
+### Lab: `labs/01-isolation-basics` (beginner)
+
+**Preferred path:** complete Lab 01 (Isolation basics). It is the same ideas as the demos below, with a checklist and clear “what to notice.”
+
+You do **not** need advanced knowledge — only `docker run`, `exec`, and `rm`.
+
+### Worked examples (optional reference)
+
+Same demos as Lab 01, kept here for the handbook. They assume Docker is installed (Chapter 4). If you are reading ahead, skim now and re-run after install — or just do the lab.
+
+#### Example A — Isolation of processes (pid namespace)
+
+```bash
+# Start a quiet container
+docker run -d --name rean-ps alpine:3.20 sleep 3600
+
+# Processes *inside* the container (small list; sleep is typically PID 1)
+docker exec rean-ps ps aux
+
+# Processes on the host (huge list) — different pid namespace
+ps aux | head
+
+docker rm -f rean-ps
+```
+
+→ Inside the container you do **not** see your host’s Chrome/Slack processes. That is pid isolation.
+
+#### Example B — Isolation of filesystem (mnt namespace)
+
+```bash
+docker run --rm -it alpine:3.20 sh -c 'echo hello-from-container > /tmp/note.txt; cat /tmp/note.txt; ls /'
+```
+
+→ The container has its own `/tmp` and `/`. Creating `/tmp/note.txt` inside does not create that file on your host desktop.
+
+Compare with a **bind mount** (intentionally shared folder — you will use this later for live coding):
+
+```bash
+mkdir -p /tmp/rean-share
+echo 'from-host' > /tmp/rean-share/msg.txt
+docker run --rm -v /tmp/rean-share:/data alpine:3.20 cat /data/msg.txt
+# → from-host
+```
+
+Isolation is the default; sharing is opt-in.
+
+#### Example C — Isolation of network (net namespace)
+
+```bash
+# Two containers, each with nginx on container-port 80
+docker run -d --name rean-web-a -p 18080:80 nginx:alpine
+docker run -d --name rean-web-b -p 18081:80 nginx:alpine
+
+curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:18080/
+curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:18081/
+
+docker rm -f rean-web-a rean-web-b
+```
+
+→ Each container thinks it owns port `80`. The host maps different published ports. That is network namespacing plus port publishing.
+
+#### Example D — Resource limits (cgroups)
+
+```bash
+# Limit memory; watch Docker enforce it
+docker run --rm -m 128m --memory-swap 128m alpine:3.20 \
+  sh -c 'echo "cgroup memory limit applied"; cat /sys/fs/cgroup/memory.max 2>/dev/null || cat /sys/fs/cgroup/memory/memory.limit_in_bytes 2>/dev/null || echo "(limit visible via docker inspect)"'
+```
+
+Inspect from the outside:
+
+```bash
+docker run -d --name rean-limited -m 256m alpine:3.20 sleep 60
+docker inspect -f '{{.HostConfig.Memory}}' rean-limited
+# → 268435456 (bytes)
+docker rm -f rean-limited
+```
+
+→ Containerization is not only isolation of *identity*; it is also **controlled consumption**.
+
+#### Example E — Same image, many containers (density)
+
+```bash
+docker pull redis:7-alpine
+docker run -d --name rean-r1 redis:7-alpine
+docker run -d --name rean-r2 redis:7-alpine
+docker run -d --name rean-r3 redis:7-alpine
+docker ps --filter name=rean-r
+docker rm -f rean-r1 rean-r2 rean-r3
+```
+
+→ One image, three isolated Redis processes. That is the density win versus three VMs.
+
+#### Example F — “Works the same” packaging (portable unit)
+
+```bash
+# Official image already packages Redis + its defaults
+docker run --rm -p 6379:6379 redis:7-alpine
+# In another terminal: docker run --rm -it redis:7-alpine redis-cli -h host.docker.internal ping
+# (On Linux you may use --network host or the container IP instead)
+```
+
+Later chapters teach you to **build your own** portable unit with a Dockerfile. The idea is the same: ship the environment with the app.
+
+### What is *inside* a typical container image?
+
+Usually:
+
+- A minimal **userland** (Alpine, Debian slim, distroless, …) — *not* a second kernel
+- Language runtime (Node, Python, JVM, …) if needed
+- Your application files
+- Default command (`CMD` / `ENTRYPOINT`)
+- Metadata (ports, env defaults, labels)
+
+Usually **not**:
+
+- A hypervisor
+- Your host’s `/home` (unless you mount it)
+- Other containers’ filesystems
+- A full desktop environment
+
+### What containerization does *not* mean
+
+| Myth | Reality |
+|------|---------|
+| “Containers are VMs” | No — shared kernel, process-level isolation |
+| “Containers are automatically secure” | Defaults help, but you still harden (users, scans, least privilege) |
+| “One container = one VM-sized machine” | Prefer **one main concern per container** (API, DB, worker), composed together |
+| “Docker is the only way” | Docker popularized it; OCI-compatible tools also run containers |
+| “If it runs in Docker, production is solved” | You still need config, secrets, networking, observability, and often an orchestrator |
+
+### When to containerize (and when not to)
+
+**Good fits**
+
+- Web APIs, workers, job runners
+- Sidecars (proxy, log shipper)
+- Databases in *dev/test* (prod DB often managed separately — team choice)
+- CI tasks that need a clean, repeatable environment
+- Shipping the same artifact from laptop → staging → prod
+
+**Weaker fits / be careful**
+
+- GUI desktop apps (possible, often awkward)
+- Apps that need full host device / kernel module access
+- Ultra-low-latency kernel-specific workloads where VM or bare metal is mandated
+- “Lift and shift” a giant messy monolith *without* fixing config — containers package chaos too
+
+### Mental checklist before every container you run
+
+1. **What image** am I starting from? (trust + tag/digest)
+2. **What is isolated** vs **what am I sharing**? (ports, volumes, env)
+3. **What resources** may it use? (memory/CPU limits in prod)
+4. **What happens to data** when the container is removed? (volumes!)
+5. **Who can reach it**? (published ports, networks)
+
+### Bridge to the rest of this guide
+
+| Next topic | How it connects to containerization |
+|------------|-------------------------------------|
+| Core mental model (Ch.3) | Image / container / Dockerfile / registry vocabulary |
+| Isolation basics (Lab 01) | Feel isolation with simple `docker` commands |
+| First containers (Ch.5 / Lab 02) | Everyday workflow: run, logs, clean up |
+| Images & Dockerfiles | How you *build* the portable unit |
+| Volumes & networks | Controlled exceptions to isolation |
+| Compose | Many containers cooperating as one app |
+| Production & security | Harden the shared-kernel world |
+
+**Takeaway:** Containerization = **package + isolate + limit + ship** on a shared kernel. Docker is how you will practice that for the rest of `rean-docker`.
+
+---
+
+## 3. Core mental model
 
 Memorize these four words:
 
@@ -137,7 +484,7 @@ Images are stacks of **layers**. Each Dockerfile instruction often creates a lay
 
 ---
 
-## 3. Install & verify
+## 4. Install & verify
 
 You need Docker on **your** computer before the labs will work. Most learners install **Docker Desktop** (Windows, macOS, or Linux). On Linux servers you can install **Docker Engine** instead.
 
@@ -343,9 +690,9 @@ On Windows and macOS with Docker Desktop, the daemon runs inside Desktop’s Lin
 
 ---
 
-## 4. Your first containers
+## 5. Your first containers
 
-### Lab: `labs/01-hello`
+### Lab: `labs/02-hello`
 
 ### Run a container (foreground)
 
@@ -426,7 +773,7 @@ docker system prune -a
 
 ---
 
-## 5. Images deeply explained
+## 6. Images deeply explained
 
 ### List and inspect
 
@@ -467,9 +814,9 @@ docker images | grep nginx
 
 ---
 
-## 6. Dockerfile — build your own images
+## 7. Dockerfile — build your own images
 
-### Lab: `labs/02-dockerfile`
+### Lab: `labs/03-dockerfile`
 
 A Dockerfile is a script of instructions. Example (Node static-ish app):
 
@@ -538,10 +885,10 @@ CMD node server.js
 
 ### Build and run
 
-From `labs/02-dockerfile`:
+From `labs/03-dockerfile`:
 
 ```bash
-cd labs/02-dockerfile
+cd labs/03-dockerfile
 docker build -t rean-hello:1.0 .
 docker run --rm -p 3000:3000 rean-hello:1.0
 ```
@@ -587,9 +934,9 @@ Rule: **put rarely changing, expensive steps early; put frequently changing sour
 
 ---
 
-## 7. Volumes — keep data alive
+## 8. Volumes — keep data alive
 
-### Lab: `labs/05-volumes`
+### Lab: `labs/06-volumes`
 
 Containers are **ephemeral**. Delete a container → its writable layer is gone.
 
@@ -639,9 +986,9 @@ Bind mounts inherit host UID/GID issues. Prefer matching user in Dockerfile (`US
 
 ---
 
-## 8. Networks — how containers talk
+## 9. Networks — how containers talk
 
-### Lab: `labs/04-networks`
+### Lab: `labs/05-networks`
 
 By default, containers on the same user-defined bridge network can reach each other **by container name** (DNS).
 
@@ -677,7 +1024,7 @@ Example: app connects to `postgres:5432` internally; you only publish `5432` if 
 
 ---
 
-## 9. Environment, secrets, and config
+## 10. Environment, secrets, and config
 
 ### Pass env vars
 
@@ -711,9 +1058,9 @@ Add `.env` to `.gitignore`.
 
 ---
 
-## 10. Docker Compose — multi-container apps
+## 11. Docker Compose — multi-container apps
 
-### Lab: `labs/03-compose`
+### Lab: `labs/04-compose`
 
 Manually `docker run` for app + db + redis gets painful. **Compose** describes the whole stack in YAML.
 
@@ -808,9 +1155,9 @@ docker compose --profile tools up -d
 
 ---
 
-## 11. Multi-stage builds & image size
+## 12. Multi-stage builds & image size
 
-### Lab: `labs/06-multi-stage`
+### Lab: `labs/07-multi-stage`
 
 Problem: build tools (compilers, npm with all deps, Go toolchain) bloat production images and increase attack surface.
 
@@ -863,9 +1210,9 @@ dive rean-hello:1.0   # if you install dive — visual layer explorer
 
 ---
 
-## 12. Production-minded practices
+## 13. Production-minded practices
 
-### Lab: `labs/07-production`
+### Lab: `labs/08-production`
 
 ### Checklist before “real” deploy
 
@@ -923,7 +1270,7 @@ restart: unless-stopped
 
 ---
 
-## 13. Debugging & troubleshooting
+## 14. Debugging & troubleshooting
 
 ### Container won’t stay up
 
@@ -981,7 +1328,7 @@ depends_on:
 
 ---
 
-## 14. Security essentials
+## 15. Security essentials
 
 1. **Don’t run as root** in production containers when avoidable.
 2. **Scan images** for CVEs (`docker scout`, Trivy, Grype).
@@ -999,7 +1346,7 @@ depends_on:
 
 ---
 
-## 15. Advanced topics
+## 16. Advanced topics
 
 ### BuildKit
 
@@ -1068,9 +1415,9 @@ docker run -d --network rean-custom --network-alias cache redis:7-alpine
 
 ---
 
-## 16. Capstone project
+## 17. Capstone project
 
-Build a small stack in this repo (you can extend `labs/03-compose`):
+Build a small stack in this repo (you can extend `labs/04-compose`):
 
 **Goal:** Web API + Postgres + Redis
 
@@ -1092,7 +1439,7 @@ Stretch goals:
 
 ---
 
-## 17. Cheat sheet
+## 18. Cheat sheet
 
 ```bash
 # Images
@@ -1127,10 +1474,13 @@ docker system prune
 
 ---
 
-## 18. Learning path checklist
+## 19. Learning path checklist
 
 ### Beginner
 
+- [ ] Explain containerization vs VMs vs Docker vs Kubernetes
+- [ ] Describe namespaces and cgroups at a high level
+- [ ] Complete `labs/01-isolation-basics`
 - [ ] Explain image vs container vs Dockerfile
 - [ ] Run, stop, remove containers; publish ports
 - [ ] Read logs and `exec` into a container
@@ -1160,11 +1510,11 @@ docker system prune
 
 | Day | Focus | Lab |
 |-----|--------|-----|
-| 1 | Concepts + first containers | `labs/01-hello` |
-| 2 | Dockerfile mastery | `labs/02-dockerfile` |
-| 3 | Compose basics | `labs/03-compose` |
-| 4 | Networks & volumes | `labs/04-networks`, `labs/05-volumes` |
-| 5 | Multi-stage + prod habits | `labs/06-multi-stage`, `labs/07-production` |
+| 1 | Isolation basics + hello workflow | `labs/01-isolation-basics`, `labs/02-hello` |
+| 2 | Dockerfile mastery | `labs/03-dockerfile` |
+| 3 | Compose basics | `labs/04-compose` |
+| 4 | Networks & volumes | `labs/05-networks`, `labs/06-volumes` |
+| 5 | Multi-stage + prod habits | `labs/07-multi-stage`, `labs/08-production` |
 | 6–7 | Capstone | your own stack |
 
 ---
@@ -1173,6 +1523,8 @@ docker system prune
 
 | Term | Definition |
 |------|------------|
+| Containerization | Packaging an app with its deps into an isolated unit on a shared kernel |
+| OCI | Open Container Initiative — standards for images and runtimes |
 | Daemon | Background Docker engine (`dockerd`) |
 | Layer | Immutable filesystem diff in an image |
 | Tag | Mutable label for an image version |
@@ -1188,10 +1540,11 @@ docker system prune
 ## Next steps after this guide
 
 1. Practice labs in order under `labs/`.
-2. Containerize a real app you already know.
-3. Read official docs: [https://docs.docker.com/](https://docs.docker.com/)
-4. Learn Compose Watch / Dev Containers for daily development.
-5. When deploying multi-node: start Kubernetes fundamentals (Pods, Deployments, Services).
+2. Re-run the Chapter 2 isolation examples until they feel obvious.
+3. Containerize a real app you already know.
+4. Read official docs: [https://docs.docker.com/](https://docs.docker.com/)
+5. Learn Compose Watch / Dev Containers for daily development.
+6. When deploying multi-node: start Kubernetes fundamentals (Pods, Deployments, Services).
 
 ---
 

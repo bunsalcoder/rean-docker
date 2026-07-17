@@ -1,4 +1,4 @@
-# Lab 06 — Multi-stage builds
+# Lab 07 — Multi-stage builds
 
 ## Goal
 
@@ -7,7 +7,7 @@ Compare a fat single-stage image with a multi-stage production image.
 ## Steps
 
 ```bash
-cd labs/06-multi-stage
+cd labs/07-multi-stage
 
 docker build -t rean-multi:fat -f Dockerfile.fat .
 docker build -t rean-multi:slim .
