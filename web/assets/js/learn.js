@@ -17,9 +17,10 @@ const CHAPTERS = [
   { id: "14", title: "Debugging & troubleshooting", match: /^## 14\. /m },
   { id: "15", title: "Security essentials", match: /^## 15\. /m },
   { id: "16", title: "Advanced topics", match: /^## 16\. /m },
-  { id: "17", title: "Capstone project", match: /^## 17\. /m },
-  { id: "18", title: "Cheat sheet", match: /^## 18\. /m },
-  { id: "19", title: "Learning path checklist", match: /^## 19\. /m },
+  { id: "17", title: "Deploy with Docker & CI/CD", match: /^## 17\. /m },
+  { id: "18", title: "Capstone project", match: /^## 18\. /m },
+  { id: "19", title: "Cheat sheet", match: /^## 19\. /m },
+  { id: "20", title: "Learning path checklist", match: /^## 20\. /m },
 ];
 
 const LABS = [
@@ -31,6 +32,7 @@ const LABS = [
   { id: "06-volumes", title: "Volumes & persistence", level: "Intermediate" },
   { id: "07-multi-stage", title: "Multi-stage builds", level: "Advanced" },
   { id: "08-production", title: "Production practices", level: "Advanced" },
+  { id: "09-ci-cd", title: "Deploy & CI/CD", level: "Special" },
 ];
 
 function getParam(name) {

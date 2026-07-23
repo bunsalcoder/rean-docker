@@ -2,7 +2,7 @@
 
 > **Project:** `rean-docker`  
 > **Audience:** Absolute beginners → advanced practitioners  
-> **Style:** Step-by-step, with commands you can run, explanations of *why*, and labs in this repo
+> **Style:** Step-by-step, with commands you can run, explanations of *why*, labs in this repo, plus a special deploy/CI/CD chapter
 
 ---
 
@@ -45,9 +45,10 @@ cd path/to/rean-docker
 14. [Debugging & troubleshooting](#14-debugging--troubleshooting)
 15. [Security essentials](#15-security-essentials)
 16. [Advanced topics](#16-advanced-topics)
-17. [Capstone project](#17-capstone-project)
-18. [Cheat sheet](#18-cheat-sheet)
-19. [Learning path checklist](#19-learning-path-checklist)
+17. [Deploy with Docker & CI/CD](#17-deploy-with-docker--cicd) *(special)*
+18. [Capstone project](#18-capstone-project)
+19. [Cheat sheet](#19-cheat-sheet)
+20. [Learning path checklist](#20-learning-path-checklist)
 
 ---
 
@@ -1415,7 +1416,349 @@ docker run -d --network rean-custom --network-alias cache redis:7-alpine
 
 ---
 
-## 17. Capstone project
+## 17. Deploy with Docker & CI/CD
+
+> **Special chapter:** this is the “ship it” path — how a containerized app leaves your laptop, gets built in CI, lands in a registry, and runs on a server. Complete Chapters 11–13 (and ideally 15–16) first.
+
+### Lab: `labs/09-ci-cd`
+
+Deployment is not one command. It is a **pipeline** of decisions:
+
+```
+  Code → Build image → Test → Push to registry → Pull on server → Run (Compose) → Observe
+```
+
+If any step is manual and undocumented, deploys become fragile. CI/CD turns the repeatable parts into automation.
+
+### What “deploy with Docker” means
+
+| Piece | Job |
+|-------|-----|
+| **Image** | Immutable artifact (app + runtime) identified by tag/digest |
+| **Registry** | Store and distribute images (Docker Hub, GHCR, ECR, …) |
+| **Runtime host** | Machine(s) with Docker Engine that pull and run images |
+| **Compose (or orchestrator)** | Declares services, env, volumes, networks, restart, health |
+| **CI/CD** | Automates build/test/push (and often deploy) on every change |
+
+Docker Compose is enough for **single-host** production (a VPS, a small VM). When you need multi-node scheduling, rolling updates across a cluster, and richer autoscaling, you graduate to Kubernetes (Chapter 16 orientation) — still using the **same images**.
+
+### Environments: same image, different config
+
+Follow 12-factor habits from Chapter 10:
+
+| Environment | Typical source of config | Image |
+|-------------|--------------------------|-------|
+| Local / lab | `.env`, bind mounts, `compose.override.yaml` | Built on your machine |
+| Staging | secrets on the host / CI variables | Same image as prod (or release candidate) |
+| Production | host env / secret manager; no bind-mounted source | **Only** images from the registry |
+
+Rules that prevent most deploy disasters:
+
+1. **Build once, promote the same digest** (or the same git SHA tag) through staging → prod.
+2. **Never bake secrets into the image.**
+3. Prefer **`IMAGE:git-sha`** (or semver) over relying on `latest`.
+4. Keep a **prod Compose file** that pulls images (`image:`) instead of building on the server (`build:`) when possible.
+
+### Production Compose layout
+
+A practical split used in Lab 09:
+
+**`compose.yaml`** — local / CI smoke (may `build:`)
+
+```yaml
+services:
+  api:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+```
+
+**`compose.prod.yaml`** — server (pull-only)
+
+```yaml
+services:
+  api:
+    image: ghcr.io/YOUR_USER/rean-deploy-api:${IMAGE_TAG:-latest}
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: ${PORT:-3000}
+      APP_VERSION: ${APP_VERSION:-unknown}
+    restart: unless-stopped
+    read_only: true
+    tmpfs: ["/tmp"]
+    security_opt: ["no-new-privileges:true"]
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+    mem_limit: 256m
+```
+
+On the server:
+
+```bash
+export IMAGE_TAG=sha-abc1234   # or a semver tag from CI
+docker compose -f compose.prod.yaml pull
+docker compose -f compose.prod.yaml up -d
+docker compose -f compose.prod.yaml ps
+```
+
+Validate files anywhere (laptop or CI) with:
+
+```bash
+docker compose -f compose.yaml config
+docker compose -f compose.prod.yaml config
+```
+
+### Registry workflow (build → tag → push → pull)
+
+```bash
+# Authenticate (Docker Hub, GHCR, etc.)
+docker login ghcr.io
+
+# Build with an immutable-ish tag (git short SHA is a great default)
+GIT_SHA=$(git rev-parse --short HEAD)
+IMAGE=ghcr.io/YOUR_USER/rean-deploy-api
+
+docker build -t "$IMAGE:sha-$GIT_SHA" -t "$IMAGE:latest" .
+docker push "$IMAGE:sha-$GIT_SHA"
+docker push "$IMAGE:latest"
+```
+
+On the server you pull the **same** tag CI pushed:
+
+```bash
+docker pull ghcr.io/YOUR_USER/rean-deploy-api:sha-$GIT_SHA
+```
+
+**GHCR tip:** for GitHub Actions, `GITHUB_TOKEN` can push to `ghcr.io/<owner>/<image>` when the workflow has `packages: write` permission. Package visibility (public/private) is configured in GitHub → Packages.
+
+### Server bootstrap (single VPS checklist)
+
+Do this once per host:
+
+1. Install Docker Engine + Compose plugin (Chapter 4 Linux path).
+2. Create a non-root deploy user; add them to the `docker` group (or use rootless later).
+3. Harden SSH (keys only, no password login).
+4. Clone or copy **only** deploy files (`compose.prod.yaml`, `.env`, maybe a reverse-proxy config) — not necessarily the whole app source.
+5. Create `.env` on the server (never commit real values).
+6. Optional but recommended: **Caddy** or **Nginx** as reverse proxy for TLS (`https://your.domain` → `127.0.0.1:3000`).
+
+Minimal mental model for TLS:
+
+```
+Internet → :443 (Caddy/Nginx) → localhost:3000 (your container published port)
+```
+
+You can publish the app only on `127.0.0.1:3000` so it is not exposed raw to the internet:
+
+```yaml
+ports:
+  - "127.0.0.1:3000:3000"
+```
+
+### Reverse proxy (why it belongs next to Docker)
+
+Containers are great at running the app. A reverse proxy handles:
+
+- HTTPS certificates (Let’s Encrypt)
+- Multiple hostnames on one machine
+- Request logging / basic rate limits
+- Hiding internal ports
+
+You do **not** need Kubernetes for a single API + Postgres on one VPS. Compose + proxy is a common, honest production setup.
+
+### Releases without drama
+
+| Practice | Why |
+|----------|-----|
+| Healthchecks + `restart: unless-stopped` | Unhealthy/crashed containers recover or stay marked unhealthy |
+| `docker compose up -d` after `pull` | Recreates only changed services |
+| Keep previous tag noted | Instant rollback: set `IMAGE_TAG` to last good SHA and `up -d` again |
+| Database volumes | Named volumes survive container recreation (Chapter 8) |
+| Migrations | Run as an explicit step (one-off `compose run`) before/after switching the API — document the order |
+
+Rollback sketch:
+
+```bash
+export IMAGE_TAG=sha-OLDGOOD
+docker compose -f compose.prod.yaml pull api
+docker compose -f compose.prod.yaml up -d api
+```
+
+### CI/CD: what each stage should do
+
+Think in stages, not “one giant script”:
+
+| Stage | Typical checks | Failure means |
+|-------|----------------|---------------|
+| **Validate** | `docker compose config`, Dockerfile present | Bad YAML / broken project layout |
+| **Test** | Unit tests (host or in a build stage) | App logic broken |
+| **Build** | `docker build` (BuildKit) | Image won’t build |
+| **Smoke** | `compose up` + `curl /health` in CI | Container starts but app is dead |
+| **Push** | `docker push` tagged image | Artifact not published |
+| **Deploy** | SSH / API / platform “pull + up” | Runtime host not updated |
+
+**Continuous Integration (CI)** = validate + test + build (+ smoke) on every PR/push.  
+**Continuous Delivery/Deployment (CD)** = promote a built image to an environment automatically or with one click.
+
+Start with CI that **builds and pushes**. Add automatic deploy to staging when that is stable. Keep production deploy gated (manual approval) until you trust the pipeline.
+
+### GitHub Actions — complete pattern
+
+Lab 09 includes a ready-to-copy workflow. The shape looks like this:
+
+```yaml
+name: CI — build, smoke, push
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  IMAGE: ghcr.io/${{ github.repository_owner }}/rean-deploy-api
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate Compose files
+        working-directory: labs/09-ci-cd
+        run: |
+          docker compose -f compose.yaml config >/dev/null
+          docker compose -f compose.prod.yaml config >/dev/null
+
+      - name: Build image
+        working-directory: labs/09-ci-cd
+        run: |
+          TAG=sha-$(git rev-parse --short HEAD)
+          docker build -t "$IMAGE:$TAG" -t "$IMAGE:latest" .
+          echo "TAG=$TAG" >> "$GITHUB_ENV"
+
+      - name: Smoke test
+        working-directory: labs/09-ci-cd
+        run: |
+          docker compose up -d --build
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:3000/health; then exit 0; fi
+            sleep 1
+          done
+          docker compose logs
+          exit 1
+
+      - name: Teardown smoke stack
+        if: always()
+        working-directory: labs/09-ci-cd
+        run: docker compose down -v
+
+      - name: Login to GHCR
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push image
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          docker push "$IMAGE:$TAG"
+          docker push "$IMAGE:latest"
+```
+
+Notes:
+
+- **PRs build + smoke** but do not push (keeps the registry clean).
+- **`main` pushes** publish the image.
+- Replace the image name / working directory when you wire this to your own app.
+- For a private deploy key or SSH deploy step, store secrets in GitHub → Settings → Secrets (`SSH_HOST`, `SSH_KEY`, …) — never in the repo.
+
+### Optional CD: deploy over SSH after push
+
+After a successful push job (same workflow or a second `deploy` job):
+
+```yaml
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /opt/rean-deploy
+            export IMAGE_TAG=sha-${{ github.sha }}
+            # shorten if you tag with short SHA in build step
+            docker compose -f compose.prod.yaml pull
+            docker compose -f compose.prod.yaml up -d
+```
+
+Keep deploy scripts **idempotent**: running them twice should leave the system healthy.
+
+### Secrets & supply chain in CI
+
+1. Use GitHub/GitLab **masked secrets** for registry passwords, SSH keys, API tokens.
+2. Prefer `GITHUB_TOKEN` / OIDC cloud roles over long-lived PATs when the platform supports it.
+3. Pin Actions to full commit SHAs for higher assurance (optional hardening).
+4. Scan images in CI (`docker scout`, Trivy, Grype) and fail on critical CVEs when you are ready for that bar (Chapter 15).
+5. Treat the Docker socket in CI runners as trusted infrastructure — do not expose it to untrusted PR code from forks without isolation.
+
+### Observability after deploy
+
+Minimum viable production eyes:
+
+```bash
+docker compose -f compose.prod.yaml ps
+docker compose -f compose.prod.yaml logs -f --tail=200 api
+curl -fsS https://your.domain/health
+```
+
+Then graduate to log shipping and uptime checks. A green CI build is not a substitute for a live `/health` from the public URL.
+
+### End-to-end checklist (print this)
+
+- [ ] App has a real `/health` (or equivalent) used by Compose **and** CI smoke tests
+- [ ] `compose.prod.yaml` uses `image:` + tag variable (no surprise remote builds)
+- [ ] `.env.example` documents every required variable; real `.env` is gitignored
+- [ ] CI validates Compose, builds, smokes, then pushes on the main branch
+- [ ] Server has Docker Engine, deploy files, and secrets only on the host
+- [ ] You know the rollback tag from the last good deploy
+- [ ] TLS terminates at a reverse proxy (or platform edge), not as an afterthought
+- [ ] You can explain build → registry → pull → up without looking it up
+
+### How this chapter connects
+
+| Earlier chapter | What you reuse here |
+|-----------------|---------------------|
+| 7 / 12 | Dockerfile + multi-stage for CI builds |
+| 10 | Env/secrets — CI secrets + server `.env` |
+| 11 | Compose as the deploy unit |
+| 13 / 15 | Healthchecks, non-root, limits, scanning |
+| 16 | BuildKit, registries, multi-arch if you need ARM + AMD |
+
+Next: **Lab 09** makes you run the CI steps locally, then optionally push. After that, the **Capstone (Chapter 18)** can include a real CI workflow as a stretch goal — you will already know the shape.
+
+
+---
+
+## 18. Capstone project
 
 Build a small stack in this repo (you can extend `labs/04-compose`):
 
@@ -1433,13 +1776,13 @@ Requirements:
 
 Stretch goals:
 
-- Separate `compose.prod.yaml` with restart policies and resource limits
-- Nginx reverse proxy service
-- CI job that builds and runs `docker compose config` + a smoke test
+- Separate `compose.prod.yaml` with restart policies and resource limits (see Chapter 17)
+- Nginx or Caddy reverse proxy in front of the API
+- CI job from Lab 09 / Chapter 17: `docker compose config` + build + smoke + push
 
 ---
 
-## 18. Cheat sheet
+## 19. Cheat sheet
 
 ```bash
 # Images
@@ -1474,7 +1817,7 @@ docker system prune
 
 ---
 
-## 19. Learning path checklist
+## 20. Learning path checklist
 
 ### Beginner
 
@@ -1502,6 +1845,8 @@ docker system prune
 - [ ] BuildKit secrets; pin tags/digests
 - [ ] Push/pull from a registry
 - [ ] Debug with `inspect`, `logs`, `stats`, ephemeral shells
+- [ ] Complete Chapter 17 deploy checklist; finish `labs/09-ci-cd`
+- [ ] Explain CI vs CD and a build → registry → pull → up path
 - [ ] Complete the capstone stack
 
 ---
@@ -1515,7 +1860,8 @@ docker system prune
 | 3 | Compose basics | `labs/04-compose` |
 | 4 | Networks & volumes | `labs/05-networks`, `labs/06-volumes` |
 | 5 | Multi-stage + prod habits | `labs/07-multi-stage`, `labs/08-production` |
-| 6–7 | Capstone | your own stack |
+| 6 | Deploy + CI/CD (special) | `labs/09-ci-cd` |
+| 7–8 | Capstone | your own stack |
 
 ---
 
@@ -1539,12 +1885,12 @@ docker system prune
 
 ## Next steps after this guide
 
-1. Practice labs in order under `labs/`.
+1. Practice labs in order under `labs/` (include Lab 09 for deploy/CI).
 2. Re-run the Chapter 2 isolation examples until they feel obvious.
-3. Containerize a real app you already know.
+3. Containerize a real app you already know — then wire Chapter 17’s pipeline to it.
 4. Read official docs: [https://docs.docker.com/](https://docs.docker.com/)
 5. Learn Compose Watch / Dev Containers for daily development.
-6. When deploying multi-node: start Kubernetes fundamentals (Pods, Deployments, Services).
+6. Harden CD: image scanning in CI, manual prod approvals, then multi-node Kubernetes (Pods, Deployments, Services).
 
 ---
 
