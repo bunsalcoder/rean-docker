@@ -26,7 +26,7 @@ Then open [http://localhost:4173](http://localhost:4173).
 
 **[docs/DOCKER_FROM_ZERO_TO_HERO.md](docs/DOCKER_FROM_ZERO_TO_HERO.md)**
 
-It covers containerization foundations (beginner), commands, Compose, volumes, networks, multi-stage builds, production habits, security, and a capstone project.
+It covers containerization foundations (beginner), commands, Compose, volumes, networks, multi-stage builds, production habits, security, a special deploy/CI/CD chapter, and a capstone project.
 
 ## Labs (hands-on)
 
@@ -42,6 +42,7 @@ Work in order:
 | 06 | Volumes | [labs/06-volumes](labs/06-volumes) |
 | 07 | Multi-stage builds | [labs/07-multi-stage](labs/07-multi-stage) |
 | 08 | Production practices | [labs/08-production](labs/08-production) |
+| 09 | Deploy & CI/CD (special) | [labs/09-ci-cd](labs/09-ci-cd) |
 
 ## Prerequisites
 

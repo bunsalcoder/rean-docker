@@ -1,0 +1,77 @@
+# Copy this file to your repo root as:
+#   .github/workflows/rean-deploy-ci.yml
+# Adjust paths if your app is not under labs/09-ci-cd.
+
+name: CI — build, smoke, push
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "labs/09-ci-cd/**"
+      - ".github/workflows/rean-deploy-ci.yml"
+  pull_request:
+    paths:
+      - "labs/09-ci-cd/**"
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  IMAGE: ghcr.io/${{ github.repository_owner }}/rean-deploy-api
+  WORKDIR: labs/09-ci-cd
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate Compose files
+        working-directory: ${{ env.WORKDIR }}
+        run: |
+          docker compose -f compose.yaml config >/dev/null
+          REGISTRY_OWNER=example IMAGE_TAG=sha-deadbee \
+            docker compose -f compose.prod.yaml config >/dev/null
+
+      - name: Build image
+        working-directory: ${{ env.WORKDIR }}
+        run: |
+          TAG=sha-$(git rev-parse --short HEAD)
+          docker build -t "$IMAGE:$TAG" -t "$IMAGE:latest" .
+          echo "TAG=$TAG" >> "$GITHUB_ENV"
+
+      - name: Smoke test
+        working-directory: ${{ env.WORKDIR }}
+        run: |
+          docker compose up -d --build
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:3000/health; then
+              echo
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Smoke test failed" >&2
+          docker compose logs
+          exit 1
+
+      - name: Teardown smoke stack
+        if: always()
+        working-directory: ${{ env.WORKDIR }}
+        run: docker compose down -v
+
+      - name: Login to GHCR
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push image
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          docker push "$IMAGE:$TAG"
+          docker push "$IMAGE:latest"
