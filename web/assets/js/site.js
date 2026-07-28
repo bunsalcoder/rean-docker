@@ -87,7 +87,16 @@
 
   // Mark current nav item (query-aware for cheat sheet)
   const path = location.pathname.replace(/index\.html$/, "");
-  document.querySelectorAll(".nav a").forEach((a) => {
+  const pageC = new URLSearchParams(location.search).get("c");
+  const navLinks = Array.from(document.querySelectorAll(".nav a"));
+  const hasSpecificChapterLink = (chapterId) =>
+    navLinks.some((other) => {
+      const href = other.getAttribute("href");
+      if (!href) return false;
+      return new URL(href, location.href).searchParams.get("c") === chapterId;
+    });
+
+  navLinks.forEach((a) => {
     a.removeAttribute("aria-current");
     const href = a.getAttribute("href");
     if (!href) return;
@@ -97,9 +106,9 @@
       (path.endsWith("/web/") && href.includes("index.html"));
     if (!samePath) return;
     const linkC = target.searchParams.get("c");
-    const pageC = new URLSearchParams(location.search).get("c");
     if (linkC && pageC !== linkC) return;
-    if (!linkC && pageC === "17") return;
+    // Generic Learn should not win over a dedicated chapter deep-link (e.g. Cheat sheet)
+    if (!linkC && pageC != null && hasSpecificChapterLink(pageC)) return;
     a.setAttribute("aria-current", "page");
   });
 
