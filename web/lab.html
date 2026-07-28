@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="color-scheme" content="light" />
+    <meta name="color-scheme" content="light dark" />
     <meta name="theme-color" content="#f2f6fa" />
     <link rel="manifest" href="./site.webmanifest" />
     <title>Lab — rean-docker</title>
@@ -18,20 +18,49 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./assets/css/site.css" />
+    <script>
+      (() => {
+        try {
+          const stored = localStorage.getItem("rean-theme");
+          const theme =
+            stored === "light" || stored === "dark"
+              ? stored
+              : window.matchMedia("(prefers-color-scheme: dark)").matches
+                ? "dark"
+                : "light";
+          document.documentElement.dataset.theme = theme;
+          const metaScheme = document.querySelector('meta[name="color-scheme"]');
+          const metaColor = document.querySelector('meta[name="theme-color"]');
+          if (metaScheme) metaScheme.content = theme;
+          if (metaColor) metaColor.content = theme === "dark" ? "#0b1622" : "#f2f6fa";
+        } catch (_) {
+          document.documentElement.dataset.theme = "light";
+        }
+      })();
+    </script>
   </head>
   <body class="bg-mesh" data-page="lab">
     <header class="site-header">
       <div class="wrap">
         <a class="logo" href="./index.html">rean<span>-docker</span></a>
-        <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Menu">
-          <span></span><span></span><span></span>
-        </button>
         <nav class="nav" data-nav>
           <a href="./index.html">Home</a>
           <a href="./learn.html">Learn</a>
           <a href="./labs.html" aria-current="page">Labs</a>
           <a href="./learn.html?c=19">Cheat sheet</a>
         </nav>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to dark theme" aria-pressed="false">
+          <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+          </svg>
+        </button>
+        <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
       </div>
     </header>
 
