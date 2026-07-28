@@ -2,8 +2,65 @@
   const header = document.querySelector(".site-header");
   const nav = document.querySelector("[data-nav]");
   const toggle = document.querySelector("[data-nav-toggle]");
+  const themeToggle = document.querySelector("[data-theme-toggle]");
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const NAV_INDICATOR_KEY = "rean-nav-indicator";
+  const THEME_KEY = "rean-theme";
+  const THEME_COLOR = { light: "#f2f6fa", dark: "#0b1622" };
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
+
+  const resolveTheme = () => {
+    try {
+      const stored = localStorage.getItem(THEME_KEY);
+      if (stored === "light" || stored === "dark") return stored;
+    } catch {
+      /* private mode */
+    }
+    return prefersDark.matches ? "dark" : "light";
+  };
+
+  const applyTheme = (theme) => {
+    document.documentElement.dataset.theme = theme;
+    const metaScheme = document.querySelector('meta[name="color-scheme"]');
+    const metaColor = document.querySelector('meta[name="theme-color"]');
+    if (metaScheme) metaScheme.content = theme;
+    if (metaColor) metaColor.content = THEME_COLOR[theme] || THEME_COLOR.light;
+    if (themeToggle) {
+      const next = theme === "dark" ? "light" : "dark";
+      themeToggle.setAttribute("aria-label", `Switch to ${next} theme`);
+      themeToggle.setAttribute("aria-pressed", String(theme === "dark"));
+    }
+  };
+
+  applyTheme(resolveTheme());
+
+  if (themeToggle) {
+    themeToggle.addEventListener("click", () => {
+      const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+      try {
+        localStorage.setItem(THEME_KEY, next);
+      } catch {
+        /* private mode */
+      }
+      applyTheme(next);
+    });
+  }
+
+  const onPrefersChange = () => {
+    try {
+      const stored = localStorage.getItem(THEME_KEY);
+      if (stored === "light" || stored === "dark") return;
+    } catch {
+      /* private mode */
+    }
+    applyTheme(prefersDark.matches ? "dark" : "light");
+  };
+
+  if (typeof prefersDark.addEventListener === "function") {
+    prefersDark.addEventListener("change", onPrefersChange);
+  } else if (typeof prefersDark.addListener === "function") {
+    prefersDark.addListener(onPrefersChange);
+  }
 
   const onScroll = () => {
     if (!header) return;
