@@ -1,4 +1,197 @@
 /* rean-docker — design system */
+
+/* Register theme colors so light ↔ dark interpolates instead of snapping */
+@property --ink {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0b1a28;
+}
+@property --ink-soft {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #1f3345;
+}
+@property --muted {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #456074;
+}
+@property --paper {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #e8eef4;
+}
+@property --surface {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #f7fafc;
+}
+@property --chrome {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #f2f6fa;
+}
+@property --line {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #b7c6d4;
+}
+@property --line-soft {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(11, 26, 40, 0.08);
+}
+@property --ocean {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0e7c86;
+}
+@property --ocean-deep {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0a5f67;
+}
+@property --ocean-glow {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(14, 124, 134, 0.14);
+}
+@property --ocean-soft {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(14, 124, 134, 0.1);
+}
+@property --ocean-hover {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(14, 124, 134, 0.07);
+}
+@property --ocean-active {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(14, 124, 134, 0.18);
+}
+@property --amber {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #d4a017;
+}
+@property --code-bg {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0b1622;
+}
+@property --code-fg {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #d7e4ef;
+}
+@property --code-accent {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #5ec8d0;
+}
+@property --header-bg {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(242, 246, 250, 0.75);
+}
+@property --header-bg-scrolled {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(247, 250, 252, 0.92);
+}
+@property --sidebar-bg {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(247, 250, 252, 0.85);
+}
+@property --ghost-hover {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(255, 255, 255, 0.5);
+}
+@property --mesh-a {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(14, 124, 134, 0.16);
+}
+@property --mesh-b {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(11, 26, 40, 0.06);
+}
+@property --mesh-top {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #f2f6fa;
+}
+@property --mesh-bottom {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #dde7f0;
+}
+@property --hero-fallback {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #9eb6c8;
+}
+@property --hero-wash {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(236, 242, 247, 0.94);
+}
+@property --hero-wash-mid {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(236, 242, 247, 0.72);
+}
+@property --hero-wash-soft {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(236, 242, 247, 0.18);
+}
+@property --hero-wash-fade {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(236, 242, 247, 0.35);
+}
+@property --hero-wash-end {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(236, 242, 247, 0.88);
+}
+@property --table-head {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #e0e9f1;
+}
+@property --error-fg {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #9f1239;
+}
+@property --error-bg {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ffe4e6;
+}
+@property --backdrop {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(11, 26, 40, 0.4);
+}
+@property --sidebar-shadow {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(11, 26, 40, 0.12);
+}
+@property --btn-on-ink {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #fff;
+}
+
 :root {
   --ink: #0b1a28;
   --ink-soft: #1f3345;
@@ -54,6 +247,7 @@
   --dur-enter: 1.05s;
   --dur-page: 0.7s;
   --dur-chapter: 0.95s;
+  --dur-theme: 0.5s;
   --ease-chapter: cubic-bezier(0.22, 1, 0.36, 1);
   --dur-drift: 32s;
 }
@@ -113,6 +307,46 @@ html {
   /* Match browser chrome / overscroll on iOS Safari & Android Chrome */
   background-color: var(--chrome);
   color-scheme: light;
+  transition:
+    --ink var(--dur-theme) var(--ease),
+    --ink-soft var(--dur-theme) var(--ease),
+    --muted var(--dur-theme) var(--ease),
+    --paper var(--dur-theme) var(--ease),
+    --surface var(--dur-theme) var(--ease),
+    --chrome var(--dur-theme) var(--ease),
+    --line var(--dur-theme) var(--ease),
+    --line-soft var(--dur-theme) var(--ease),
+    --ocean var(--dur-theme) var(--ease),
+    --ocean-deep var(--dur-theme) var(--ease),
+    --ocean-glow var(--dur-theme) var(--ease),
+    --ocean-soft var(--dur-theme) var(--ease),
+    --ocean-hover var(--dur-theme) var(--ease),
+    --ocean-active var(--dur-theme) var(--ease),
+    --amber var(--dur-theme) var(--ease),
+    --code-bg var(--dur-theme) var(--ease),
+    --code-fg var(--dur-theme) var(--ease),
+    --code-accent var(--dur-theme) var(--ease),
+    --header-bg var(--dur-theme) var(--ease),
+    --header-bg-scrolled var(--dur-theme) var(--ease),
+    --sidebar-bg var(--dur-theme) var(--ease),
+    --ghost-hover var(--dur-theme) var(--ease),
+    --mesh-a var(--dur-theme) var(--ease),
+    --mesh-b var(--dur-theme) var(--ease),
+    --mesh-top var(--dur-theme) var(--ease),
+    --mesh-bottom var(--dur-theme) var(--ease),
+    --hero-fallback var(--dur-theme) var(--ease),
+    --hero-wash var(--dur-theme) var(--ease),
+    --hero-wash-mid var(--dur-theme) var(--ease),
+    --hero-wash-soft var(--dur-theme) var(--ease),
+    --hero-wash-fade var(--dur-theme) var(--ease),
+    --hero-wash-end var(--dur-theme) var(--ease),
+    --table-head var(--dur-theme) var(--ease),
+    --error-fg var(--dur-theme) var(--ease),
+    --error-bg var(--dur-theme) var(--ease),
+    --backdrop var(--dur-theme) var(--ease),
+    --sidebar-shadow var(--dur-theme) var(--ease),
+    --btn-on-ink var(--dur-theme) var(--ease),
+    background-color var(--dur-theme) var(--ease);
 }
 
 html[data-theme="dark"] {
