@@ -238,6 +238,7 @@
   --font-body: "Literata", Georgia, serif;
   --font-ui: "Space Grotesk", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-khmer: "Noto Sans Khmer", "Space Grotesk", sans-serif;
   --max: 70rem;
   --ease: cubic-bezier(0.25, 0.85, 0.25, 1);
   --dur-fast: 0.24s;
@@ -558,6 +559,76 @@ p {
   margin-left: 0.75rem;
   padding-left: 0.75rem;
   border-left: 1px solid var(--line-soft);
+}
+
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.1rem;
+  margin-right: 0.15rem;
+  padding: 0.15rem;
+  border-radius: 999px;
+  background: var(--ocean-soft);
+}
+
+.lang-switch button {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  padding: 0.45rem 0.55rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    background var(--dur-fast),
+    color var(--dur-fast),
+    transform var(--dur-fast) var(--ease);
+}
+
+.lang-switch button:hover {
+  color: var(--ocean-deep);
+}
+
+.lang-switch button.is-active {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow);
+}
+
+.lang-switch button[data-set-lang="km"] {
+  font-family: var(--font-khmer);
+  font-size: 0.78rem;
+  letter-spacing: 0;
+  font-weight: 600;
+}
+
+html[data-locale="km"] body {
+  font-family: var(--font-khmer);
+}
+
+html[data-locale="km"] .logo,
+html[data-locale="km"] .brand,
+html[data-locale="km"] .nav,
+html[data-locale="km"] .btn,
+html[data-locale="km"] .eyebrow,
+html[data-locale="km"] .progress-pill,
+html[data-locale="km"] .side-nav,
+html[data-locale="km"] .pager,
+html[data-locale="km"] .lab-grid,
+html[data-locale="km"] .path-list .meta,
+html[data-locale="km"] .path-list .num {
+  font-family: var(--font-khmer);
+}
+
+html[data-locale="km"] code,
+html[data-locale="km"] pre,
+html[data-locale="km"] .terminal,
+html[data-locale="km"] .font-mono {
+  font-family: var(--font-mono);
 }
 
 .theme-toggle {
