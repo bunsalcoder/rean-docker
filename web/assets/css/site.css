@@ -238,7 +238,7 @@
   --font-body: "Literata", Georgia, serif;
   --font-ui: "Space Grotesk", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
-  --font-khmer: "Noto Sans Khmer", "Space Grotesk", sans-serif;
+  --font-khmer: "Kantumruy Pro", "Space Grotesk", sans-serif;
   --max: 70rem;
   --ease: cubic-bezier(0.25, 0.85, 0.25, 1);
   --dur-fast: 0.24s;
