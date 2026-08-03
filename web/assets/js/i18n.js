@@ -205,12 +205,18 @@
     if (desc && descKey) desc.setAttribute("content", t(descKey));
   };
 
-  const syncLangSwitch = () => {
-    document.querySelectorAll("[data-set-lang]").forEach((btn) => {
-      const lang = btn.getAttribute("data-set-lang");
-      const active = lang === currentLocale;
-      btn.setAttribute("aria-pressed", String(active));
-      btn.classList.toggle("is-active", active);
+  const reduceMotion = () =>
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const syncLangSwitch = (locale = currentLocale) => {
+    document.querySelectorAll(".lang-switch").forEach((group) => {
+      group.querySelectorAll("[data-set-lang]").forEach((btn) => {
+        const lang = btn.getAttribute("data-set-lang");
+        const active = lang === locale;
+        btn.setAttribute("aria-pressed", String(active));
+        btn.classList.toggle("is-active", active);
+      });
     });
   };
 
@@ -230,11 +236,27 @@
     } catch {
       /* private mode */
     }
-    applyDocumentMeta();
     if (reload) {
-      location.reload();
+      const switches = document.querySelectorAll(".lang-switch");
+      switches.forEach((group) => {
+        group.setAttribute("data-pending", locale);
+      });
+      syncLangSwitch(locale);
+
+      if (reduceMotion() || !switches.length) {
+        applyDocumentMeta();
+        location.reload();
+        return;
+      }
+
+      // Let the thumb spring across before the page swaps language content
+      window.setTimeout(() => {
+        applyDocumentMeta();
+        location.reload();
+      }, 380);
       return;
     }
+    applyDocumentMeta();
     apply();
     window.dispatchEvent(new CustomEvent("rean:localechange", { detail: { locale } }));
   };
