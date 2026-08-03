@@ -14,17 +14,17 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Literata:opsz,wght@7..72,400;7..72,600&family=Space+Grotesk:wght@500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Literata:opsz,wght@7..72,400;7..72,600&family=Noto+Sans+Khmer:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./assets/css/site.css" />
     <script>
       (() => {
         try {
-          const stored = localStorage.getItem("rean-theme");
+          const storedTheme = localStorage.getItem("rean-theme");
           const theme =
-            stored === "light" || stored === "dark"
-              ? stored
+            storedTheme === "light" || storedTheme === "dark"
+              ? storedTheme
               : window.matchMedia("(prefers-color-scheme: dark)").matches
                 ? "dark"
                 : "light";
@@ -36,20 +36,37 @@
         } catch (_) {
           document.documentElement.dataset.theme = "light";
         }
+        try {
+          const storedLocale = localStorage.getItem("rean-locale");
+          let locale = storedLocale === "km" || storedLocale === "en" ? storedLocale : null;
+          if (!locale) {
+            const langs = Array.isArray(navigator.languages) ? navigator.languages : [navigator.language];
+            locale = langs.some((l) => String(l || "").toLowerCase().startsWith("km")) ? "km" : "en";
+          }
+          document.documentElement.lang = locale === "km" ? "km" : "en";
+          document.documentElement.dataset.locale = locale;
+        } catch (_) {
+          document.documentElement.lang = "en";
+          document.documentElement.dataset.locale = "en";
+        }
       })();
     </script>
   </head>
-  <body class="bg-mesh" data-page="learn">
+  <body class="bg-mesh" data-page="learn" data-i18n-title="learn.title" data-i18n-description="learn.description">
     <header class="site-header">
       <div class="wrap">
         <a class="logo" href="./index.html">rean<span>-docker</span></a>
         <nav class="nav" data-nav>
-          <a href="./index.html">Home</a>
-          <a href="./learn.html" aria-current="page">Learn</a>
-          <a href="./labs.html">Labs</a>
-          <a href="./learn.html?c=19">Cheat sheet</a>
+          <a href="./index.html" data-i18n="nav.home">Home</a>
+          <a href="./learn.html" aria-current="page" data-i18n="nav.learn">Learn</a>
+          <a href="./labs.html" data-i18n="nav.labs">Labs</a>
+          <a href="./learn.html?c=19" data-i18n="nav.cheatsheet">Cheat sheet</a>
         </nav>
         <div class="header-actions">
+          <div class="lang-switch" role="group" data-i18n-attr="aria-label:lang.group">
+            <button type="button" data-set-lang="en" aria-pressed="false">EN</button>
+            <button type="button" data-set-lang="km" aria-pressed="false">ខ្មែរ</button>
+          </div>
           <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to dark theme" aria-pressed="false">
             <svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true">
               <mask id="theme-icon-mask" class="theme-icon-mask">
@@ -69,7 +86,7 @@
               </g>
             </svg>
           </button>
-          <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Menu">
+          <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" data-i18n-attr="aria-label:nav.menu" aria-label="Menu">
             <span></span><span></span><span></span>
           </button>
         </div>
@@ -80,29 +97,31 @@
 
     <div class="app-shell">
       <aside class="sidebar" data-sidebar>
-        <h2>Chapters</h2>
+        <h2 data-i18n="learn.chapters">Chapters</h2>
         <ul class="side-nav" data-chapter-nav>
-          <li class="status">Loading…</li>
+          <li class="status" data-i18n="learn.loading">Loading…</li>
         </ul>
       </aside>
 
       <article class="content-pane">
         <div class="toolbar">
-          <button class="btn btn-ghost side-toggle" type="button" data-side-toggle aria-expanded="false">
+          <button class="btn btn-ghost side-toggle" type="button" data-side-toggle aria-expanded="false" data-i18n="learn.chapters">
             Chapters
           </button>
-          <p class="progress-pill" data-progress>Loading</p>
+          <p class="progress-pill" data-progress data-i18n="learn.loadingShort">Loading</p>
         </div>
-        <p class="eyebrow">Curriculum</p>
-        <h1 data-chapter-title>Loading…</h1>
+        <p class="eyebrow" data-i18n="learn.curriculum">Curriculum</p>
+        <h1 data-chapter-title data-i18n="learn.loading">Loading…</h1>
         <div class="md-body" data-chapter-body>
-          <p class="status">Fetching handbook…</p>
+          <p class="status" data-i18n="learn.fetching">Fetching handbook…</p>
         </div>
         <nav class="pager" data-pager></nav>
       </article>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="./assets/js/i18n-km.js"></script>
+    <script src="./assets/js/i18n.js"></script>
     <script src="./assets/js/site.js"></script>
     <script src="./assets/js/learn.js"></script>
   </body>

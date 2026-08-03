@@ -27,7 +27,10 @@
     if (metaColor) metaColor.content = THEME_COLOR[theme] || THEME_COLOR.light;
     if (themeToggle) {
       const next = theme === "dark" ? "light" : "dark";
-      themeToggle.setAttribute("aria-label", `Switch to ${next} theme`);
+      const label =
+        window.ReanI18n?.t(next === "dark" ? "theme.toDark" : "theme.toLight") ||
+        `Switch to ${next} theme`;
+      themeToggle.setAttribute("aria-label", label);
       themeToggle.setAttribute("aria-pressed", String(theme === "dark"));
     }
   };

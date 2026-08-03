@@ -1,39 +1,54 @@
 /* Chapter & lab markdown reader */
+const t = (key, vars) => (window.ReanI18n ? window.ReanI18n.t(key, vars) : key);
+const contentPath = (path) =>
+  window.ReanI18n ? window.ReanI18n.contentPath(path) : `./content/en/${path}`;
+
 const CHAPTERS = [
-  { id: "how-to-use", title: "How to use this guide", match: /^## How to use this guide$/m },
-  { id: "1", title: "What problem does Docker solve?", match: /^## 1\. /m },
-  { id: "2", title: "Containerization foundations", match: /^## 2\. /m },
-  { id: "3", title: "Core mental model", match: /^## 3\. /m },
-  { id: "4", title: "Install & verify", match: /^## 4\. /m },
-  { id: "5", title: "Your first containers", match: /^## 5\. /m },
-  { id: "6", title: "Images deeply explained", match: /^## 6\. /m },
-  { id: "7", title: "Dockerfile — build your own images", match: /^## 7\. /m },
-  { id: "8", title: "Volumes — keep data alive", match: /^## 8\. /m },
-  { id: "9", title: "Networks — how containers talk", match: /^## 9\. /m },
-  { id: "10", title: "Environment, secrets, and config", match: /^## 10\. /m },
-  { id: "11", title: "Docker Compose — multi-container apps", match: /^## 11\. /m },
-  { id: "12", title: "Multi-stage builds & image size", match: /^## 12\. /m },
-  { id: "13", title: "Production-minded practices", match: /^## 13\. /m },
-  { id: "14", title: "Debugging & troubleshooting", match: /^## 14\. /m },
-  { id: "15", title: "Security essentials", match: /^## 15\. /m },
-  { id: "16", title: "Advanced topics", match: /^## 16\. /m },
-  { id: "17", title: "Deploy with Docker & CI/CD", match: /^## 17\. /m },
-  { id: "18", title: "Capstone project", match: /^## 18\. /m },
-  { id: "19", title: "Cheat sheet", match: /^## 19\. /m },
-  { id: "20", title: "Learning path checklist", match: /^## 20\. /m },
+  {
+    id: "how-to-use",
+    match: /^## (How to use this guide|របៀបប្រើមគ្គុទ្ទេសក៍នេះ)$/m,
+  },
+  { id: "1", match: /^## 1\. /m },
+  { id: "2", match: /^## 2\. /m },
+  { id: "3", match: /^## 3\. /m },
+  { id: "4", match: /^## 4\. /m },
+  { id: "5", match: /^## 5\. /m },
+  { id: "6", match: /^## 6\. /m },
+  { id: "7", match: /^## 7\. /m },
+  { id: "8", match: /^## 8\. /m },
+  { id: "9", match: /^## 9\. /m },
+  { id: "10", match: /^## 10\. /m },
+  { id: "11", match: /^## 11\. /m },
+  { id: "12", match: /^## 12\. /m },
+  { id: "13", match: /^## 13\. /m },
+  { id: "14", match: /^## 14\. /m },
+  { id: "15", match: /^## 15\. /m },
+  { id: "16", match: /^## 16\. /m },
+  { id: "17", match: /^## 17\. /m },
+  { id: "18", match: /^## 18\. /m },
+  { id: "19", match: /^## 19\. /m },
+  { id: "20", match: /^## 20\. /m },
 ];
 
-const LABS = [
-  { id: "01-isolation-basics", title: "Isolation basics", level: "Beginner" },
-  { id: "02-hello", title: "Hello containers", level: "Beginner" },
-  { id: "03-dockerfile", title: "Your first Dockerfile", level: "Beginner" },
-  { id: "04-compose", title: "Compose stack", level: "Intermediate" },
-  { id: "05-networks", title: "Networks & DNS", level: "Intermediate" },
-  { id: "06-volumes", title: "Volumes & persistence", level: "Intermediate" },
-  { id: "07-multi-stage", title: "Multi-stage builds", level: "Advanced" },
-  { id: "08-production", title: "Production practices", level: "Advanced" },
-  { id: "09-ci-cd", title: "Deploy & CI/CD", level: "Special" },
+const LAB_DEFS = [
+  { id: "01-isolation-basics", levelKey: "lab.level.beginner" },
+  { id: "02-hello", levelKey: "lab.level.beginner" },
+  { id: "03-dockerfile", levelKey: "lab.level.beginner" },
+  { id: "04-compose", levelKey: "lab.level.intermediate" },
+  { id: "05-networks", levelKey: "lab.level.intermediate" },
+  { id: "06-volumes", levelKey: "lab.level.intermediate" },
+  { id: "07-multi-stage", levelKey: "lab.level.advanced" },
+  { id: "08-production", levelKey: "lab.level.advanced" },
+  { id: "09-ci-cd", levelKey: "lab.level.special" },
 ];
+
+const chapterTitle = (id) => t(`chapter.${id}`);
+const labsLocalized = () =>
+  LAB_DEFS.map((lab) => ({
+    id: lab.id,
+    title: t(`labMeta.${lab.id}`),
+    level: t(lab.levelKey),
+  }));
 
 function getParam(name) {
   return new URLSearchParams(location.search).get(name);
@@ -72,14 +87,17 @@ function splitGuide(markdown) {
     // Keep intro short: stop before the markdown TOC block
     if (CHAPTERS[s.ci].id === "how-to-use") {
       const tocAt = lines.findIndex(
-        (line, idx) => idx > s.index && /^## Table of contents$/m.test(line)
+        (line, idx) =>
+          idx > s.index &&
+          (/^## Table of contents$/m.test(line) || line.trim() === "## តារាងខ្លឹមសារ")
       );
       if (tocAt !== -1) end = tocAt;
     }
     let body = lines.slice(s.index, end).join("\n").trim();
     // Avoid duplicate title (page already shows H1)
     body = body.replace(/^##\s.+\n+/, "");
-    return { ...CHAPTERS[s.ci], body };
+    const id = CHAPTERS[s.ci].id;
+    return { id, title: chapterTitle(id), body };
   });
 }
 
@@ -95,27 +113,37 @@ function enhanceCodeBlocks(root) {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "copy-btn";
-    btn.textContent = "Copy";
+    btn.textContent = t("copy");
     btn.addEventListener("click", async () => {
       const text = pre.querySelector("code")?.textContent || pre.textContent;
       try {
         await navigator.clipboard.writeText(text);
-        btn.textContent = "Copied";
+        btn.textContent = t("copied");
         setTimeout(() => {
-          btn.textContent = "Copy";
+          btn.textContent = t("copy");
         }, 1400);
       } catch {
-        btn.textContent = "Failed";
+        btn.textContent = t("copyFailed");
       }
     });
     wrap.appendChild(btn);
   });
 }
 
-async function loadText(url) {
+async function loadText(url, { fallbackUrl } = {}) {
   const res = await fetch(url);
-  if (!res.ok) throw new Error(`Could not load ${url}`);
-  return res.text();
+  if (res.ok) return res.text();
+  if (fallbackUrl && fallbackUrl !== url) {
+    const fallback = await fetch(fallbackUrl);
+    if (fallback.ok) return fallback.text();
+  }
+  throw new Error(`Could not load ${url}`);
+}
+
+function localizedContentUrl(relativePath) {
+  const primary = contentPath(relativePath);
+  const english = `./content/en/${String(relativePath || "").replace(/^\.\//, "")}`;
+  return { primary, fallback: primary === english ? null : english };
 }
 
 function checklistStorageKey(scope) {
@@ -232,7 +260,8 @@ async function initLearnPage() {
   setupSidebarToggle();
 
   try {
-    const raw = await loadText("./content/guide.md");
+    const guideUrl = localizedContentUrl("guide.md");
+    const raw = await loadText(guideUrl.primary, { fallbackUrl: guideUrl.fallback });
     // Strip TOC-only section noise at top but keep intro via how-to-use
     const chapters = splitGuide(raw);
     if (!chapters.length) throw new Error("No chapters found");
@@ -261,8 +290,8 @@ async function initLearnPage() {
       const prev = chapters[index - 1];
       const next = chapters[index + 1];
       pagerEl.innerHTML = `
-        ${prev ? `<a class="pager-prev" href="${chapterHref(prev.id)}" data-chapter-id="${prev.id}"><span>Previous</span>${prev.title}</a>` : ""}
-        ${next ? `<a class="pager-next" href="${chapterHref(next.id)}" data-chapter-id="${next.id}"><span>Next</span>${next.title}</a>` : ""}
+        ${prev ? `<a class="pager-prev" href="${chapterHref(prev.id)}" data-chapter-id="${prev.id}"><span>${t("learn.prev")}</span>${prev.title}</a>` : ""}
+        ${next ? `<a class="pager-next" href="${chapterHref(next.id)}" data-chapter-id="${next.id}"><span>${t("learn.next")}</span>${next.title}</a>` : ""}
       `;
     };
 
@@ -280,8 +309,14 @@ async function initLearnPage() {
 
     const applyChapter = (chapter, index) => {
       setActiveNav(chapter.id);
-      if (titleEl) titleEl.textContent = chapter.title;
-      if (progressEl) progressEl.textContent = `Chapter ${index + 1} of ${chapters.length}`;
+      if (titleEl) {
+        titleEl.removeAttribute("data-i18n");
+        titleEl.textContent = chapter.title;
+      }
+      if (progressEl) {
+        progressEl.removeAttribute("data-i18n");
+        progressEl.textContent = t("learn.chapterOf", { n: index + 1, total: chapters.length });
+      }
       document.title = `${chapter.title} — rean-docker`;
       renderMarkdown(bodyEl, chapter.body, { checklistScope: `learn:${chapter.id}` });
       renderPager(index);
@@ -359,7 +394,7 @@ async function initLearnPage() {
     const initialId = getRouteId("c") || chapters[0].id;
     showChapter(initialId, { push: false, animate: true });
   } catch (err) {
-    bodyEl.innerHTML = `<div class="error"><strong>Could not load lessons.</strong><br>${err.message}<br><br>Serve the <code>web/</code> folder over HTTP (for example <code>npx serve web</code>), then open the site from that URL.</div>`;
+    bodyEl.innerHTML = `<div class="error"><strong>${t("learn.loadError")}</strong><br>${err.message}<br><br>${t("learn.serveHint")}</div>`;
   }
 }
 
@@ -381,6 +416,8 @@ async function initLabPage() {
   const prefersReducedMotion = () =>
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  const LABS = labsLocalized();
+
   const resolveIndex = (id) => {
     let index = LABS.findIndex((l) => l.id === id);
     if (index < 0) index = 0;
@@ -398,8 +435,8 @@ async function initLabPage() {
     const prev = LABS[index - 1];
     const next = LABS[index + 1];
     pagerEl.innerHTML = `
-      ${prev ? `<a class="pager-prev" href="${labHref(prev.id)}" data-lab-id="${prev.id}"><span>Previous lab</span>${prev.title}</a>` : ""}
-      ${next ? `<a class="pager-next" href="${labHref(next.id)}" data-lab-id="${next.id}"><span>Next lab</span>${next.title}</a>` : ""}
+      ${prev ? `<a class="pager-prev" href="${labHref(prev.id)}" data-lab-id="${prev.id}"><span>${t("lab.prev")}</span>${prev.title}</a>` : ""}
+      ${next ? `<a class="pager-next" href="${labHref(next.id)}" data-lab-id="${next.id}"><span>${t("lab.next")}</span>${next.title}</a>` : ""}
     `;
   };
 
@@ -418,15 +455,22 @@ async function initLabPage() {
 
   const loadLabMarkdown = async (id) => {
     if (cache.has(id)) return cache.get(id);
-    const md = await loadText(`./content/labs/${id}.md`);
+    const labUrl = localizedContentUrl(`labs/${id}.md`);
+    const md = await loadText(labUrl.primary, { fallbackUrl: labUrl.fallback });
     cache.set(id, md);
     return md;
   };
 
   const applyLab = async (lab, index) => {
     setActiveNav(lab.id);
-    if (titleEl) titleEl.textContent = lab.title;
-    if (progressEl) progressEl.textContent = `Lab ${index + 1} of ${LABS.length} · ${lab.level}`;
+    if (titleEl) {
+      titleEl.removeAttribute("data-i18n");
+      titleEl.textContent = lab.title;
+    }
+    if (progressEl) {
+      progressEl.removeAttribute("data-i18n");
+      progressEl.textContent = t("lab.of", { n: index + 1, total: LABS.length, level: lab.level });
+    }
     document.title = `${lab.title} — rean-docker`;
     renderPager(index);
 
@@ -435,7 +479,7 @@ async function initLabPage() {
       renderMarkdown(bodyEl, md, { checklistScope: `lab:${lab.id}` });
       bodyEl.querySelector("h1")?.remove();
     } catch (err) {
-      bodyEl.innerHTML = `<div class="error"><strong>Could not load lab.</strong><br>${err.message}<br><br>Serve the <code>web/</code> folder over HTTP.</div>`;
+      bodyEl.innerHTML = `<div class="error"><strong>${t("lab.loadError")}</strong><br>${err.message}<br><br>${t("lab.serveHint")}</div>`;
     }
   };
 

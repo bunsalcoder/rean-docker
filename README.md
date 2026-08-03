@@ -20,6 +20,15 @@ Then open [http://localhost:4173](http://localhost:4173).
 | `web/labs.html` | Labs index |
 | `web/lab.html` | Individual lab instructions |
 
+Use the **EN / ខ្មែរ** control in the header to switch language. Choice is saved in `localStorage` (`rean-locale`).
+
+Localized lesson Markdown lives under:
+
+- `web/content/en/` — English handbook + labs
+- `web/content/km/` — Khmer handbook + labs
+
+If a Khmer file is missing, the site falls back to English for that page.
+
 > The Learn and Lab pages load Markdown over HTTP, so open them via a local server (not as `file://`).
 
 ## Handbook (Markdown)
