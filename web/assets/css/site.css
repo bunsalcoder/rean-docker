@@ -711,29 +711,12 @@ html[data-theme="dark"] .lang-switch button.is-active {
   }
 }
 
-html[data-locale="km"] body {
-  font-family: var(--font-khmer);
-}
-
-html[data-locale="km"] .logo,
-html[data-locale="km"] .brand,
-html[data-locale="km"] .nav,
-html[data-locale="km"] .btn,
-html[data-locale="km"] .eyebrow,
-html[data-locale="km"] .progress-pill,
-html[data-locale="km"] .side-nav,
-html[data-locale="km"] .pager,
-html[data-locale="km"] .lab-grid,
-html[data-locale="km"] .path-list .meta,
-html[data-locale="km"] .path-list .num {
-  font-family: var(--font-khmer);
-}
-
-html[data-locale="km"] code,
-html[data-locale="km"] pre,
-html[data-locale="km"] .terminal,
-html[data-locale="km"] .font-mono {
-  font-family: var(--font-mono);
+/* Remap stacks so every UI/body surface uses Kantumruy for Khmer glyphs.
+   Per-selector overrides missed children with their own font-family (nav, sidebar, tables, etc.). */
+html[data-locale="km"] {
+  --font-brand: var(--font-khmer);
+  --font-body: var(--font-khmer);
+  --font-ui: var(--font-khmer);
 }
 
 .theme-toggle {
