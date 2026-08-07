@@ -8,10 +8,12 @@ Open the static site in `web/`:
 
 ```bash
 cd path/to/rean-docker/web
-python3 -m http.server 4173
+python3 -m http.server 5501
 ```
 
-Then open [http://localhost:4173](http://localhost:4173).
+Then open [http://localhost:5501](http://localhost:5501).
+
+If you use the VS Code / Cursor **Live Server** extension, it uses the same port (`5501` in `.vscode/settings.json`).
 
 | Page | Purpose |
 |------|---------|
