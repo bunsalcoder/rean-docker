@@ -113,6 +113,8 @@ window.REAN_I18N_KM = {
   "learn.curriculum": "កម្មវិធីសិក្សា",
   "learn.fetching": "កំពុងទាញសៀវភាំណែនាំ…",
   "learn.loadError": "មិនអាចផ្ទុកមេរៀនបានទេ។",
+  "learn.serveHint":
+    "Serve ថត web/ តាម HTTP (ឧទាហរណ៍ npx serve web) រួចបើកគេហទំព័រពី URL នោះ។",
   "learn.loading": "កំពុងផ្ទុក…",
   "learn.loadingShort": "កំពុងផ្ទុក",
   "learn.next": "បន្ទាប់",
