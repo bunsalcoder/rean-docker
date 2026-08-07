@@ -5,7 +5,7 @@ const port = process.env.PORT || 3000;
 
 app.get("/", (_req, res) => {
   res.json({
-    message: "Hello from rean-docker lab 02!",
+    message: "Hello from rean-docker lab 03!",
     tip: "You built this image with a Dockerfile.",
   });
 });
