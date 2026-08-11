@@ -39,6 +39,13 @@ If a Khmer file is missing, the site falls back to English for that page.
 
 It covers containerization foundations (beginner), commands, Compose, volumes, networks, multi-stage builds, production habits, security, a special deploy/CI/CD chapter, and a capstone project.
 
+English site copies must match the handbook and lab READMEs. After editing either source, sync (or verify) with:
+
+```bash
+./scripts/sync_en_content.sh    # copy sources → web/content/en/
+./scripts/check_content_sync.sh # fail if anything drifted
+```
+
 ## Labs (hands-on)
 
 Work in order:

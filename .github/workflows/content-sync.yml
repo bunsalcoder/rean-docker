@@ -1,0 +1,15 @@
+name: Content sync
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify English content copies match sources
+        run: ./scripts/check_content_sync.sh
