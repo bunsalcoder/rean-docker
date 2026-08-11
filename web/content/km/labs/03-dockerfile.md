@@ -40,4 +40,4 @@ docker history rean-hello:1.0
 - [ ] Image build ដោយគ្មាន error
 - [ ] `/` ត្រឡប់ JSON
 - [ ] `/health` ត្រឡប់ `{"status":"ok"}`
-- [ ] អ្នកអាចពន្យល់ហេតុអ្វី `package.json` ត្រូវ copy មុន source
+- [ ] អ្នកអាចពន្យល់ហេតុអ្វី `package.json` / `package-lock.json` ត្រូវ copy មុន source
