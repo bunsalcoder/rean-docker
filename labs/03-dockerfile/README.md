@@ -40,4 +40,4 @@ docker history rean-hello:1.0
 - [ ] Image builds without errors
 - [ ] `/` returns JSON
 - [ ] `/health` returns `{"status":"ok"}`
-- [ ] You can explain why `package.json` is copied before source
+- [ ] You can explain why `package.json` / `package-lock.json` are copied before source

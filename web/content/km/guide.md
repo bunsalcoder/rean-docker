@@ -832,10 +832,10 @@ LABEL maintainer="you@example.com"
 WORKDIR /app
 
 # Copy dependency manifests first (better cache)
-COPY package.json ./
+COPY package.json package-lock.json ./
 
-# Install dependencies
-RUN npm install --omit=dev
+# Install exact dependency versions from the lockfile
+RUN npm ci --omit=dev
 
 # Copy application source
 COPY . .
