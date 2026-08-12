@@ -205,6 +205,16 @@ function enhanceChecklists(root, scope) {
   });
 }
 
+function sanitizeHtml(html) {
+  if (window.DOMPurify) {
+    // Keep GFM task-list checkboxes so enhanceChecklists can wire them up.
+    return DOMPurify.sanitize(html, {
+      ADD_ATTR: ["checked", "disabled"],
+    });
+  }
+  return html;
+}
+
 function renderMarkdown(target, md, { checklistScope } = {}) {
   // Prefer marked if present; fallback to basic preformatted text
   if (window.marked) {
@@ -212,7 +222,7 @@ function renderMarkdown(target, md, { checklistScope } = {}) {
       gfm: true,
       breaks: false,
     });
-    target.innerHTML = marked.parse(md);
+    target.innerHTML = sanitizeHtml(marked.parse(md));
   } else {
     target.innerHTML = `<pre>${md.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]))}</pre>`;
   }
