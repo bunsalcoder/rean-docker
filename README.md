@@ -4,16 +4,19 @@ Learn Docker from absolute beginner to advanced — guided path with a full hand
 
 ## Learning website (UI)
 
-Open the static site in `web/`:
+Serve the static site from the repo root:
 
 ```bash
-cd path/to/rean-docker/web
-python3 -m http.server 5501
+make serve
 ```
 
-Then open [http://localhost:5501](http://localhost:5501).
+Then open [http://localhost:5501](http://localhost:5501). Same port as the VS Code / Cursor **Live Server** extension (`.vscode/settings.json`). Override with `make serve PORT=8080` if needed.
 
-If you use the VS Code / Cursor **Live Server** extension, it uses the same port (`5501` in `.vscode/settings.json`).
+Equivalent without Make:
+
+```bash
+cd web && python3 -m http.server 5501
+```
 
 | Page | Purpose |
 |------|---------|
@@ -42,9 +45,11 @@ It covers containerization foundations (beginner), commands, Compose, volumes, n
 English site copies must match the handbook and lab READMEs. After editing either source, sync (or verify) with:
 
 ```bash
-./scripts/sync_en_content.sh    # copy sources → web/content/en/
-./scripts/check_content_sync.sh # fail if anything drifted
+make sync    # copy sources → web/content/en/
+make check   # fail if anything drifted
 ```
+
+Or run the scripts directly: `./scripts/sync_en_content.sh` / `./scripts/check_content_sync.sh`.
 
 ## Labs (hands-on)
 
