@@ -51,6 +51,23 @@ make check   # fail if anything drifted
 
 Or run the scripts directly: `./scripts/sync_en_content.sh` / `./scripts/check_content_sync.sh`.
 
+### Khmer content
+
+Khmer files under `web/content/km/` are **hand-translated**, so they are not byte-copied from English. Instead they must keep the same structure the reader relies on to split chapters and labs. Verify with:
+
+```bash
+make check-km    # fail if Khmer drifted from the English structure
+make check-all   # run both English + Khmer checks
+```
+
+`make check-km` (`./scripts/check_km_content.sh`) confirms that:
+
+- every English content file has a non-empty Khmer counterpart (and flags orphan Khmer files),
+- the Khmer handbook keeps the same numbered chapters (`## 1.` … `## N.`) as English,
+- the intro (**How to use**) and **Table of contents** headings exist so the reader can split the guide.
+
+When you add a chapter or lab, translate the matching Khmer file (keeping the `## N.` numbered headings) and re-run `make check-all`. Both checks run in CI on every push and PR.
+
 ## Labs (hands-on)
 
 Work in order:

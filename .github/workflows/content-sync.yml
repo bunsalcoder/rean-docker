@@ -13,3 +13,5 @@ jobs:
       - uses: actions/checkout@v4
       - name: Verify English content copies match sources
         run: ./scripts/check_content_sync.sh
+      - name: Verify Khmer content matches English structure
+        run: ./scripts/check_km_content.sh
