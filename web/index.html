@@ -99,15 +99,18 @@
     <main>
       <section class="hero">
         <div class="hero-visual" aria-hidden="true">
-          <img
-            class="hero-photo drift"
-            src="./assets/img/hero-harbor.jpg"
-            alt=""
-            width="1920"
-            height="1080"
-            decoding="async"
-            fetchpriority="high"
-          />
+          <picture>
+            <source srcset="./assets/img/hero-harbor.webp" type="image/webp" />
+            <img
+              class="hero-photo drift"
+              src="./assets/img/hero-harbor.jpg"
+              alt=""
+              width="1536"
+              height="1024"
+              decoding="async"
+              fetchpriority="high"
+            />
+          </picture>
         </div>
 
         <div class="hero-copy">
