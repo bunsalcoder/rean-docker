@@ -1,34 +1,34 @@
 # Lab 01 — មូលដ្ឋាន isolation
 
-## កម្រិទ
+## កម្រិត
 
-**ថ្នាក់ចាប់ផ្តើម។** អ្នកត្រូវការតែ `docker run`, `docker exec`, និង `docker rm`។  
-អ្នក **មិន** ត្រូវការយល់ដឹងជ្រៅអំពី kernel internals, OCI, ឬ Kubernetes។
+**ថ្នាក់ដើម។** អ្នកត្រូវការតែ `docker run`, `docker exec` និង `docker rm`។  
+អ្នក **មិន** ត្រូវស្ទាត់ kernel internals, OCI ឬ Kubernetes ទេ។
 
 ## គោលដៅ
 
-មើលដោយភ្នែកផ្ទាល់ថា container មួយ **ដាច់ដោយឡែក** ពី host និងពី container ផ្សេងទៀត៖
+មើលដោយភ្នែកផ្ទាល់ថា container មួយ **ដាច់ដោយឡែក** ពី host និងពី container ផ្សេង៖
 
 - processes
 - files
 - network ports
 - memory limits
 
-អាន **Chapter 2** សម្រាប់ "ហេតុអ្វី"។ Lab នេះគ្រាន់តែជាការអនុវត្ត **មានអារម្មណ៍**។
+អាន **ជំពូក 2** សម្រាប់ «ហេតុអ្វី»។ Lab នេះគឺការអនុវត្តឱ្យ **មានអារម្មណ៍** តែប៉ុណ្ណោះ។
 
-## រោបៀបមិន្នេះ lab នេះស្របម្បប់ជាម្យូវ៉ផ្លូវ
+## របៀបដែល lab នេះសមនឹងផ្លូវរៀន
 
 | Lab | អ្វីដែលអ្នករៀន |
 |-----|----------------|
-| **01 (lab នេះ)** | រូបរាង isolation |
-| **02 Hello containers** | Workflow ប្រចាំថ្ងៃ៖ run, ports, logs, clean up |
+| **01 (lab នេះ)** | isolation មើលទៅដូចម្ដេច |
+| **02 Hello containers** | workflow ប្រចាំថ្ងៃ៖ run, ports, logs, clean up |
 | **03+** | Build images, Compose, volumes, production |
 
-ធ្វើ **01 → 02** តាមលំដាប់។ ការស្ទួនគ្នាគឺចេតនា៖ ពាក្យបញ្ជាងាយៗដូចគ្នា ប៉ុន្តែផ្តោតផ្សេងគ្នា។
+ធ្វើ **01 → 02** តាមលំដាប់។ ការស្ទួនគ្នាគឺចេតនា៖ ពាក្យបញ្ជាងាយដូចគ្នា ប៉ុន្តែផ្ដោតផ្សេងគ្នា។
 
-## ស្រំរាប់ការមុន
+## តម្រូវការមុន
 
-Docker បានដំឡើង និងដំណើរការបាន (Chapter 4)៖
+Docker បានដំឡើង និងដំណើរការ (ជំពូក 4)៖
 
 ```bash
 docker --version
@@ -39,7 +39,7 @@ docker run --rm hello-world
 
 ### 1. Process isolation
 
-នៅក្នុង container អ្នកឃើញតែ processes *របស់វា* — មិនមែន apps របស់ host។
+ក្នុង container អ្នកឃើញតែ processes *របស់វា* — មិនមែន apps លើ host។
 
 ```bash
 docker run -d --name lab01-ps alpine:3.20 sleep 3600
@@ -55,7 +55,7 @@ docker rm -f lab01-ps
 
 ### 2. Filesystem isolation
 
-Files ដែលបង្កើតក្នុង container នៅក្នុង container នោះ លុះត្រាតែអ្នកចែករំលែក folder ដោយប្រព័ន្ធនោះ។
+ឯកសារដែលបង្កើតក្នុង container នៅក្នុង container នោះ លុះត្រាតែអ្នកចែករំលែក folder ដោយចេតនា។
 
 ```bash
 # This file lives only inside the container (gone when the container exits)
@@ -70,7 +70,7 @@ docker run --rm -v /tmp/lab01-share:/data alpine:3.20 cat /data/msg.txt
 
 ### 3. Network isolation
 
-Container នីមួយៗអាចប្រើ "port 80" នៅខាងក្នុង។ នៅ host អ្នក publish ports ផ្សេងគ្នា។
+Container នីមួយៗអាចប្រើ «port 80» នៅខាងក្នុង។ លើ host អ្នក publish ports ផ្សេងគ្នា។
 
 ```bash
 docker run -d --name lab01-web-a -p 18080:80 nginx:alpine
@@ -84,7 +84,7 @@ docker rm -f lab01-web-a lab01-web-b
 
 ### 4. Memory limits
 
-Docker អាចកំណត់ចំនួន RAM ដែល container មួយអាចប្រើបាន។
+Docker អាចកំណត់ RAM ដែល container មួយអាចប្រើ។
 
 ```bash
 docker run -d --name lab01-limited -m 256m alpine:3.20 sleep 60
@@ -94,9 +94,9 @@ docker inspect -f '{{.HostConfig.Memory}}' lab01-limited
 docker rm -f lab01-limited
 ```
 
-### 5. Image មួយរោះ, containers ច្រេន់
+### 5. Image មួយ containers ច្រើន
 
-Image ដូចគ្នា → containers ដាច់ដោយឡែកច្រើន (នេះហេតុអ្វី containers មានប្រសិទ្ធភាព)។
+Image ដូចគ្នា → containers ដាច់ដោយឡែកច្រើន (នេះហើយជាហេតុអ្វី containers មានប្រសិទ្ធភាព)។
 
 ```bash
 docker pull redis:7-alpine
@@ -108,25 +108,25 @@ docker ps --filter name=lab01-r
 docker rm -f lab01-r1 lab01-r2 lab01-r3
 ```
 
-## អ្វីដំលែរានែរយកំរាយ
+## អ្វីដែលគួរចងចាំ
 
 | Demo | គំនិតសាមញ្ញ |
 |------|-------------|
 | `ps` ក្នុង vs host | Container មិនឃើញ processes របស់ host |
 | `/tmp/note.txt` | Container មាន filesystem ផ្ទាល់ខ្លួន |
-| nginx អ្នៃនៅ port 80 | នីមួយៗមាន network ផ្ទាល់; host map ports |
-| `-m 256m` | អ្នកអាចកំណត់ដែនកំណត់ resources |
-| Redis បូន | Image មួយ, instances ដាច់ដោយឡែកច្រើន |
+| nginx ពីរនៅ port 80 | នីមួយៗមាន network ផ្ទាល់; host map ports |
+| `-m 256m` | អ្នកអាចកំណត់ resources |
+| Redis បី | Image មួយ instances ដាច់ដោយឡែកច្រើន |
 
-*(ឈ្មោះជម្រើសសម្រាប់ពេលក្រោយ៖ namespaces, cgroups, layers — Chapter 2។ រំលងពួកវាឥឡូវនេះបើវាធ្វើអោយធ្ងន់។)*
+*(ឈ្មោះសម្រាប់ពេលក្រោយ៖ namespaces, cgroups, layers — ជំពូក 2។ រំលងបើនៅធ្ងន់។)*
 
 ## លក្ខខណ្ឌជោគជ័យ
 
-- [ ] Process list ខ្លីនៅក្នុង container; list វែងនៅ host
-- [ ] Bind mount បង្ហាញការចែករំលែក; ដោយគ្មាន mount files នៅតែដាច់ដោយឡែក
+- [ ] Process list ខ្លីក្នុង container; list វែងលើ host
+- [ ] Bind mount បង្ហាញការចែករំលែក; គ្មាន mount ឯកសារនៅតែដាច់ដោយឡែក
 - [ ] URL nginx ទាំងពីរបាន HTTP 200
 - [ ] Inspect បង្ហាញ memory limit 256 MiB
-- [ ] Redis containers បីដំណើរការ រួចអ្នកសម្អាតវាចោល
+- [ ] Redis containers បីដំណើរការ រួចអ្នកសម្អាតចោល
 
 ## បន្ទាប់
 

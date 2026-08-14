@@ -1071,14 +1071,17 @@ Manually `docker run` app + db + redis painful។ **Compose** describes whole st
 
 ### Minimal `compose.yaml`
 
+Lab 04 រក្សា **password ក្នុង `.env`** មិនមែនក្នុង YAML (Lab 10)។ Compose interpolate `${POSTGRES_PASSWORD}` ពេល stack ចាប់ផ្តើម៖
+
 ```yaml
 services:
   web:
     build: .
     ports:
       - "3000:3000"
+    env_file: .env
     environment:
-      DATABASE_URL: postgres://rean:secret@db:5432/rean
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
     depends_on:
       - db
     networks:
@@ -1087,9 +1090,9 @@ services:
   db:
     image: postgres:16-alpine
     environment:
-      POSTGRES_USER: rean
-      POSTGRES_PASSWORD: secret
-      POSTGRES_DB: rean
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
@@ -1101,6 +1104,8 @@ volumes:
 networks:
   rean:
 ```
+
+Copy `.env.example` → `.env` មុន `docker compose up`។ តម្លៃក្នុង Compose file មើលឃើញតាម `docker compose config` លើម៉ាស៊ីនអ្នក — នេះធម្មតា។ ច្បាប់គឺ៖ **កុំ commit `.env` ហើយកុំដុត secrets ចូល image**។
 
 ### Compose commands សំខាន់
 
@@ -1127,6 +1132,7 @@ docker compose up --build   # rebuild then start
 | `depends_on` | Start order (not full readiness unless healthchecks) |
 | `volumes` | Named volumes declared at bottom |
 | `networks` | Isolated networks for the project |
+| `env_file` / `.env` | Runtime config និង secrets (មិនដុតក្នុង image) |
 
 ### Service DNS
 

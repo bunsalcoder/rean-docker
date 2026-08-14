@@ -2,7 +2,7 @@
 
 ## គោលដៅ
 
-មើល Docker DNS៖ containers ទាក់ទងគ្នាដោយ **name** នៅ user-defined network។
+មើល Docker DNS៖ containers ទៅដល់គ្នាតាម **ឈ្មោះ** លើ user-defined network។
 
 ## ជំហាន
 
@@ -36,5 +36,5 @@ docker rm -f lab05-redis && docker network rm lab05-net
 
 ## លក្ខខណ្ឌជោគជ័យ
 
-- [ ] `PONG` នៅពេលនៅ network ដូចគ្នា
-- [ ] អ្នកអាចពន្យល់ហេតុអ្វី host `localhost` ខុសសម្រាប់ sibling containers
+- [ ] `PONG` ពេលនៅលើ network ដូចគ្នា
+- [ ] អ្នកអាចពន្យល់ហេតុអ្វី `localhost` លើ host ខុសសម្រាប់ containers បងប្អូន

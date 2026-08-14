@@ -1,14 +1,14 @@
 # Lab 02 — Hello containers
 
-## កម្រិទ
+## កម្រិត
 
-**ថ្នាក់ចាប់ផ្តើម។** Workflow Docker ប្រចាំថ្ងៃ។
+**ថ្នាក់ដើម។** Workflow Docker ប្រចាំថ្ងៃ។
 
 ## គោលដៅ
 
-អនុវត្តពាក្យបញ្ជាដែលអ្នកនឹងប្រើញឹកញាប់៖ run container, publish port, អាន logs, `exec` ចូលក្នុង, និង clean up។
+អនុវត្តពាក្យបញ្ជាដែលអ្នកនឹងប្រើញឹកញាប់៖ run container, publish port, អាន logs, `exec` ចូលក្នុង និង clean up។
 
-**ធ្លាប់ធ្វើ Lab 01 រួច?** ល្អ — lab នោះបង្ហាញ *isolation*។ Lab នេះគឺ *workflow ប្រចាំថ្ងៃ* (មិនមែនទ្រឹស្តីបន្ថែម)។
+**ធ្វើ Lab 01 រួច?** ល្អ — lab នោះបង្ហាញ *isolation*។ Lab នេះគឺ *workflow ប្រចាំថ្ងៃ* (មិនមែនទ្រឹស្តីបន្ថែម)។
 
 ## ជំហាន
 
@@ -18,7 +18,7 @@
 docker run --rm hello-world
 ```
 
-### 2. Ubuntu រោបៀប interactive
+### 2. Ubuntu បែប interactive
 
 ```bash
 docker run -it --rm ubuntu:24.04 bash
@@ -43,5 +43,5 @@ docker rm lab02-nginx
 
 - [ ] អ្នកឃើញសារជោគជ័យ hello-world
 - [ ] Nginx បាន HTTP 200 នៅ port 8080
-- [ ] អ្នកបាន list files ក្នុង container ដោយ `docker exec`
+- [ ] អ្នក list files ក្នុង container ដោយ `docker exec`
 - [ ] Container ត្រូវបានលុប (`docker ps -a` មិនបង្ហាញ `lab02-nginx`)

@@ -61,7 +61,7 @@
     "labs.10.title": "Env, secrets, and config",
     "labs.10.desc": "Pass config at runtime; see why secrets must not live in image layers.",
     "labs.04.title": "Compose stack",
-    "labs.04.desc": "API + Postgres + Redis with healthchecks.",
+    "labs.04.desc": "API + Postgres + Redis with healthchecks and .env config.",
     "labs.05.title": "Networks & DNS",
     "labs.05.desc": "Reach services by container name.",
     "labs.06.title": "Volumes & persistence",

@@ -4,7 +4,7 @@
 
 ផ្ទេរ config នៅ **ពេល run** ហើយមើលថាហេតុអ្វី password មិនត្រូវដាក់ `ENV` ក្នុង Dockerfile។
 
-គូជាមួយ handbook **ជំពូក 10**។ ធ្វើបន្ទាប់ពី Lab 03 (អ្នកសរសេរ Dockerfile រួច) និងមុន Lab 04 (Compose នឹងប្រើ env files បន្ត)។
+ផ្គូផ្គងជាមួយ handbook **ជំពូក 10**។ ធ្វើបន្ទាប់ពី Lab 03 (អ្នកសរសេរ Dockerfile រួច) និងមុន Lab 04 (Compose នឹងប្រើ env files បន្ត)។
 
 ## ជំហាន
 
@@ -14,7 +14,7 @@
 cd labs/10-env-secrets
 
 cp .env.example .env
-# កែ .env បើចង់ — ឯកសារនេះត្រូវ gitignore
+# edit .env if you want — this file is gitignored
 
 docker run --rm --env-file .env alpine:3.20 \
   sh -c 'printenv GREETING; printenv DB_PASSWORD'
@@ -29,7 +29,7 @@ docker compose run --rm demo
 docker compose down
 ```
 
-តម្លៃដូចគ្នា ត្រូវចាក់ចូលពេល container ចាប់ផ្តើម។
+តម្លៃដូចគ្នា ត្រូវចាក់ចូលពេល container ចាប់ផ្ដើម។
 
 ### 3. Secret ដុតក្នុង image (ផ្លូវខុស)
 

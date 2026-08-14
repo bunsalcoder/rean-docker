@@ -86,7 +86,7 @@ window.REAN_I18N_KM = {
   "labs.02.title": "សួស្តី containers",
   "labs.03.desc": "Build និង run image Node API តូច។",
   "labs.03.title": "Dockerfile ដំបូងរបស់អ្នក",
-  "labs.04.desc": "API + Postgres + Redis ជាមួយ healthcheck។",
+  "labs.04.desc": "API + Postgres + Redis ជាមួយ healthcheck និង config ពី .env។",
   "labs.04.title": "Compose stack",
   "labs.05.desc": "ចូលប្រើ services តាមឈ្មោះ container។",
   "labs.05.title": "Networks & DNS",
