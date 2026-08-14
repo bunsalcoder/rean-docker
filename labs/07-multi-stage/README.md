@@ -2,7 +2,9 @@
 
 ## Goal
 
-Compare a fat single-stage image with a multi-stage production image.
+Compare a fat single-stage image (compiler + source + app) with a multi-stage image that ships only compiled JavaScript and production dependencies.
+
+This lab compiles TypeScript on purpose so the size gap is obvious. `typescript` is a **devDependency** — the slim image must not contain `tsc`.
 
 ## Steps
 
@@ -20,13 +22,16 @@ docker run --rm -p 3001:3000 rean-multi:slim
 # curl http://localhost:3001/
 ```
 
+`:fat` should be clearly larger (tens of MB). That extra weight is the TypeScript compiler and type packages left in the final image.
+
 ## What to observe
 
-- `COPY --from=build` brings only `dist/`, not build leftovers you do not need.
+- `COPY --from=build` brings only `dist/`, not `server.ts` or `tsc`.
 - Runtime stage installs **production** deps only (`--omit=dev`).
 - Image size and layer history differ between `:fat` and `:slim`.
 
 ## Success criteria
 
 - [ ] Both images build and the slim image serves `/`
+- [ ] `docker images` shows `:fat` substantially larger than `:slim`
 - [ ] You can explain why multi-stage improves security and size

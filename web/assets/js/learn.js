@@ -34,6 +34,7 @@ const LAB_DEFS = [
   { id: "01-isolation-basics", levelKey: "lab.level.beginner" },
   { id: "02-hello", levelKey: "lab.level.beginner" },
   { id: "03-dockerfile", levelKey: "lab.level.beginner" },
+  { id: "10-env-secrets", levelKey: "lab.level.intermediate" },
   { id: "04-compose", levelKey: "lab.level.intermediate" },
   { id: "05-networks", levelKey: "lab.level.intermediate" },
   { id: "06-volumes", levelKey: "lab.level.intermediate" },

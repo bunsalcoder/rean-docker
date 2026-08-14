@@ -77,6 +77,7 @@ Work in order:
 | 01 | Isolation basics (beginner) | [labs/01-isolation-basics](labs/01-isolation-basics) |
 | 02 | First containers | [labs/02-hello](labs/02-hello) |
 | 03 | Dockerfile | [labs/03-dockerfile](labs/03-dockerfile) |
+| 10 | Env, secrets, and config | [labs/10-env-secrets](labs/10-env-secrets) |
 | 04 | Compose (API + Postgres + Redis) | [labs/04-compose](labs/04-compose) |
 | 05 | Networks | [labs/05-networks](labs/05-networks) |
 | 06 | Volumes | [labs/06-volumes](labs/06-volumes) |
@@ -114,4 +115,4 @@ pandoc docs/DOCKER_FROM_ZERO_TO_HERO.md -o docs/DOCKER_FROM_ZERO_TO_HERO.pdf
 
 ## License
 
-Learning material for personal use in the rean-docker project.
+Handbook, lab instructions, and website copy: [CC BY 4.0](LICENSE). Example code under `labs/`: MIT (see [LICENSE](LICENSE)).

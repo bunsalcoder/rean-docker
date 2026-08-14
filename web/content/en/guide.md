@@ -1027,6 +1027,10 @@ Example: app connects to `postgres:5432` internally; you only publish `5432` if 
 
 ## 10. Environment, secrets, and config
 
+### Lab: `labs/10-env-secrets`
+
+Do this after Lab 03 (you already write Dockerfiles) and before Lab 04. You will pass config at **runtime**, then watch a password baked into an image show up in `docker history`.
+
 ### Pass env vars
 
 ```bash
@@ -1160,9 +1164,11 @@ docker compose --profile tools up -d
 
 ### Lab: `labs/07-multi-stage`
 
-Problem: build tools (compilers, npm with all deps, Go toolchain) bloat production images and increase attack surface.
+Problem: build tools (compilers, TypeScript/`tsc`, npm with all deps, Go toolchain) bloat production images and increase attack surface.
 
 **Multi-stage builds** use multiple `FROM` lines and copy only artifacts forward.
+
+Lab 07 compiles TypeScript in the build stage so `:fat` (compiler left in the image) is clearly larger than `:slim` (compiled JS + production deps only).
 
 ```dockerfile
 # ---- build stage ----
@@ -1220,33 +1226,37 @@ dive rean-hello:1.0   # if you install dive — visual layer explorer
 1. **Pin versions** — `postgres:16.4-alpine`, not `postgres:latest`
 2. **Non-root user** — `USER node` or custom UID
 3. **Read-only root filesystem** where possible (`--read-only` + writable tmp mounts)
-4. **Healthchecks**
+4. **Healthchecks** — Alpine Node images often have no `wget`/`curl`. Probe with the same Node runtime as the app:
 
 ```dockerfile
-HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
-  CMD wget -qO- http://127.0.0.1:3000/health || exit 1
+HEALTHCHECK --interval=15s --timeout=3s --start-period=5s --retries=3 \
+  CMD node -e "fetch('http://127.0.0.1:3000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
 ```
 
 ```yaml
 healthcheck:
-  test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
-  interval: 30s
-  timeout: 5s
+  test:
+    [
+      "CMD",
+      "node",
+      "-e",
+      "fetch('http://127.0.0.1:3000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+    ]
+  interval: 15s
+  timeout: 3s
   retries: 3
-  start_period: 20s
+  start_period: 5s
 ```
 
-5. **Resource limits**
+5. **Resource limits** — Compose V2 (`docker compose`) applies `deploy.resources` on a single node. You do not need Swarm or the old `mem_limit` / `cpus` keys.
 
 ```yaml
 deploy:
   resources:
     limits:
       cpus: "0.50"
-      memory: 512M
+      memory: 256M
 ```
-
-(For Compose on a single node, also see `mem_limit` / modern `deploy` support depending on Compose version.)
 
 6. **Restart policy**
 
@@ -1254,11 +1264,25 @@ deploy:
 restart: unless-stopped
 ```
 
-7. **Logging** — don’t log secrets; ship logs to a collector; avoid huge docker logs without rotation.
+7. **Init process** — `init: true` (or `docker run --init`) so PID 1 reaps zombies and forwards `SIGTERM` from `docker stop`. Pair with exec-form `CMD` and a graceful shutdown in the app.
 
-8. **One process per container** (guideline) — app in one, db in another; use Compose/K8s to compose them.
+```yaml
+init: true
+```
 
-9. **Immutable images** — rebuild and redeploy; don’t “hotfix” running containers.
+8. **Logging** — don’t log secrets; ship logs to a collector; cap Docker json-file logs so a noisy app cannot fill the disk.
+
+```yaml
+logging:
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+```
+
+9. **One process per container** (guideline) — app in one, db in another; use Compose/K8s to compose them.
+
+10. **Immutable images** — rebuild and redeploy; don’t “hotfix” running containers.
 
 ### Restart policies
 
@@ -1494,15 +1518,25 @@ services:
       PORT: ${PORT:-3000}
       APP_VERSION: ${APP_VERSION:-unknown}
     restart: unless-stopped
+    init: true
     read_only: true
     tmpfs: ["/tmp"]
     security_opt: ["no-new-privileges:true"]
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
       interval: 15s
       timeout: 3s
       retries: 3
-    mem_limit: 256m
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 256M
 ```
 
 On the server:
@@ -1834,7 +1868,7 @@ docker system prune
 
 - [ ] Named volumes + bind mounts
 - [ ] User-defined networks + DNS by name
-- [ ] Env files and 12-factor config
+- [ ] Env files and 12-factor config (`labs/10-env-secrets`)
 - [ ] Compose multi-service app
 - [ ] Fix “db not ready” with healthchecks
 
@@ -1856,7 +1890,7 @@ docker system prune
 | Day | Focus | Lab |
 |-----|--------|-----|
 | 1 | Isolation basics + hello workflow | `labs/01-isolation-basics`, `labs/02-hello` |
-| 2 | Dockerfile mastery | `labs/03-dockerfile` |
+| 2 | Dockerfile + env/secrets | `labs/03-dockerfile`, `labs/10-env-secrets` |
 | 3 | Compose basics | `labs/04-compose` |
 | 4 | Networks & volumes | `labs/05-networks`, `labs/06-volumes` |
 | 5 | Multi-stage + prod habits | `labs/07-multi-stage`, `labs/08-production` |
@@ -1885,7 +1919,7 @@ docker system prune
 
 ## Next steps after this guide
 
-1. Practice labs in order under `labs/` (include Lab 09 for deploy/CI).
+1. Practice labs in order under `labs/` (Lab 10 with Chapter 10; Lab 09 for deploy/CI).
 2. Re-run the Chapter 2 isolation examples until they feel obvious.
 3. Containerize a real app you already know — then wire Chapter 17’s pipeline to it.
 4. Read official docs: [https://docs.docker.com/](https://docs.docker.com/)

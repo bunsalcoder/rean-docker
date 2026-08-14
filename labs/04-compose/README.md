@@ -35,7 +35,7 @@ docker compose down -v     # DELETE database volume
 ## Key ideas to notice
 
 1. Hostname `db` and `redis` work **inside** the Compose network.
-2. `depends_on` + `service_healthy` waits until Postgres accepts connections.
+2. `depends_on` + `service_healthy` waits until Postgres **and** Redis accept connections.
 3. Named volume `pgdata` survives `docker compose down` (unless `-v`).
 
 ## Success criteria

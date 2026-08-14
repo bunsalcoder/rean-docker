@@ -1,8 +1,8 @@
 # Lab 08 — Container ស្រាប់ប៉ប្រូវ production
 
-## គោះល៊ែម
+## គោលដៅ
 
-Run API ជាមួយ healthchecks, restart policy, read-only rootfs, និង resource limits។
+Run API ជាមួយ healthchecks, `init`, restart policy, read-only rootfs, log rotation និង resource limits។
 
 ## ជំហាន
 
@@ -19,13 +19,15 @@ docker inspect --format='{{json .State.Health}}' "$(docker compose ps -q api)" |
 docker compose down
 ```
 
-## ពិះភាស្រា
+## ពិភាក្សា
 
 - ហេតុអ្វី `read_only: true` + `tmpfs: /tmp`?
 - ហេតុអ្វី `no-new-privileges`?
-- ហេតុអ្វី pin `image: rean-prod-api:1.0` បន្ទាប់ពី build?
+- ហេតុអ្វី `init: true` (PID 1 / `docker stop` / SIGTERM)?
+- ហេតុអ្វី pin `image: rean-prod-api:1.0` បន្ទាប់ពី build ហើយ `FROM node:22-alpine` មិនមែន `node:latest`?
+- ហេតុអ្វី healthcheck ប្រើ `node` + `fetch` មិនមែន `wget` ឬ `curl`?
 
-## លក្ខខ្ណ្ឌជោគជៀយ
+## លក្ខខណ្ឌជោគជ័យ
 
 - [ ] Container រាយ healthy
 - [ ] អ្នកអាច list practices production យ៉ាងហោចណាស់ 5 ពី main guide chapter 13
