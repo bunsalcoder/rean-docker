@@ -1071,14 +1071,17 @@ Manually `docker run` for app + db + redis gets painful. **Compose** describes t
 
 ### Minimal `compose.yaml`
 
+Lab 04 keeps the **password in `.env`**, not in YAML (Lab 10). Compose interpolates `${POSTGRES_PASSWORD}` when the stack starts:
+
 ```yaml
 services:
   web:
     build: .
     ports:
       - "3000:3000"
+    env_file: .env
     environment:
-      DATABASE_URL: postgres://rean:secret@db:5432/rean
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
     depends_on:
       - db
     networks:
@@ -1087,9 +1090,9 @@ services:
   db:
     image: postgres:16-alpine
     environment:
-      POSTGRES_USER: rean
-      POSTGRES_PASSWORD: secret
-      POSTGRES_DB: rean
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
@@ -1101,6 +1104,8 @@ volumes:
 networks:
   rean:
 ```
+
+Copy `.env.example` → `.env` before `docker compose up`. A value in the Compose file is visible in `docker compose config` on your machine — that is expected. The rule is: **do not commit `.env` or bake secrets into the image**.
 
 ### Essential Compose commands
 
@@ -1127,6 +1132,7 @@ docker compose up --build   # rebuild then start
 | `depends_on` | Start order (not full readiness unless you add healthchecks) |
 | `volumes` | Named volumes declared at bottom |
 | `networks` | Isolated networks for the project |
+| `env_file` / `.env` | Runtime config and secrets (not baked into the image) |
 
 ### Service DNS
 

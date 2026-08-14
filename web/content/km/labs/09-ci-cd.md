@@ -2,9 +2,9 @@
 
 ## គោលដៅ
 
-អនុវត្តជំហានដូច CI pipeline៖ validate Compose, build image, smoke-test `/health`, tag សម្រាប់ registry, និងយល់ថា `compose.prod.yaml` pull image នោះនៅ server យ៉ាងដូចម្តេច។
+អនុវត្តជំហានដូច CI pipeline៖ validate Compose, build image, smoke-test `/health`, tag សម្រាប់ registry និងយល់ថា `compose.prod.yaml` pull image នោះនៅលើ server យ៉ាងដូចម្ដេច។
 
-ផ្គូផ្គងជាមួយ handbook **Chapter 17 — Deploy with Docker & CI/CD**។
+ផ្គូផ្គងជាមួយ handbook **ជំពូក 17 — Deploy with Docker & CI/CD**។
 
 ## ជំហាន
 
@@ -31,7 +31,7 @@ curl -fsS http://127.0.0.1:3000/ | jq .
 docker compose down -v
 ```
 
-### 3. Tag ជាន CI ប្រេះយ
+### 3. Tag ដូច CI
 
 ```bash
 GIT_SHA=$(git rev-parse --short HEAD)
@@ -39,15 +39,15 @@ docker build -t "rean-deploy-api:sha-$GIT_SHA" .
 docker images "rean-deploy-api"
 ```
 
-### 4. អាត workflow template
+### 4. អាន workflow template
 
-បើក `workflows/ci.yml`។ នេះគឺ GitHub Actions pattern ពី Chapter 17។
+បើក `workflows/ci.yml`។ នេះគឺ GitHub Actions pattern ពីជំពូក 17។
 
 ជម្រើស (តែបើអ្នកមាន GitHub repo ហើយចង់ push ពិត)៖
 
 1. Copy `workflows/ci.yml` → `.github/workflows/rean-deploy-ci.yml` នៅ **repo root**។
 2. Push ទៅ `main` (path filter រួម lab នេះ)។
-3. នៅ GitHub → Packages បញ្ជាក់ `rean-deploy-api` បង្ហាញ។
+3. នៅ GitHub → Packages បញ្ជាក់ថា `rean-deploy-api` បង្ហាញ។
 4. នៅ server ដែលមាន Docker៖
 
 ```bash
@@ -63,16 +63,16 @@ curl -fsS http://127.0.0.1:3000/health
 
 អ្នក **មិន** ត្រូវការ server ពិតដើម្បីបញ្ចប់ lab នេះ — ជំហាន 1–4 (រហូតអាន workflow) គ្រប់គ្រាន់ហើយ។
 
-## ពិះភាស្រា
+## ពិភាក្សា
 
 - ហេតុអ្វី `compose.prod.yaml` ប្រើ `image:` ហើយមិនមែន `build:`?
 - ហេតុអ្វី publish `127.0.0.1:3000` ក្នុង prod Compose ហើយមិនមែន `0.0.0.0:3000`?
 - តើអ្វីជាភាពខុសគ្នារវាង CI (build/smoke/push) និង CD (deploy ទៅ host)?
-- តើ rollback ទៅ SHA tag កាលពីម្សិលដោយធ្វើដូចម្តេច?
+- តើ rollback ទៅ SHA tag កាលពីម្សិលមិញធ្វើដូចម្ដេច?
 
 ## លក្ខខណ្ឌជោគជ័យ
 
 - [ ] `docker compose … config` ជោគជ័យសម្រាប់ files ទាំងពីរ
-- [ ] Smoke test ក្នុងម៉ាស៊ីនផ្ទាល់ ត្រឡប់ `{"status":"ok",…}` ពី `/health`
+- [ ] Smoke test លើម៉ាស៊ីនផ្ទាល់ ត្រឡប់ `{"status":"ok",…}` ពី `/health`
 - [ ] អ្នកអាចពន្យល់ build → tag → (push) → pull → `compose up` ដោយគ្មាន notes
 - [ ] អ្នកដឹងថាដាក់ secrets សម្រាប់ SSH deploy នៅណា (host / GitHub Secrets — មិនមែនក្នុង image)

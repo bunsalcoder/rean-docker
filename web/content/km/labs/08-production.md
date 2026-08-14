@@ -1,4 +1,4 @@
-# Lab 08 — Container ស្រាប់ប៉ប្រូវ production
+# Lab 08 — Container តាមទម្លាប់ production
 
 ## គោលដៅ
 
@@ -29,5 +29,5 @@ docker compose down
 
 ## លក្ខខណ្ឌជោគជ័យ
 
-- [ ] Container រាយ healthy
-- [ ] អ្នកអាច list practices production យ៉ាងហោចណាស់ 5 ពី main guide chapter 13
+- [ ] Container រាយការណ៍ healthy
+- [ ] អ្នកអាចរាយ practices production យ៉ាងហោចណាស់ 5 ពីជំពូក 13 ក្នុងមគ្គុទ្ទេសក៍

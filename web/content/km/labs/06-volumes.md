@@ -14,7 +14,7 @@ docker run -d --name lab06-pg \
   -v lab06-pgdata:/var/lib/postgresql/data \
   postgres:16-alpine
 
-# រង់ចាំរហូត Postgres រួច (កុំទាយដោយ sleep)
+# Wait until Postgres is ready (do not guess with sleep)
 until docker exec lab06-pg pg_isready -U postgres; do sleep 1; done
 
 docker exec lab06-pg \
@@ -40,7 +40,7 @@ docker rm -f lab06-pg
 docker volume rm lab06-pgdata
 ```
 
-## ប្រៀបក្រាប bind mount
+## ប្រៀបធៀប bind mount
 
 ```bash
 mkdir -p /tmp/lab06-bind
@@ -50,5 +50,5 @@ docker run --rm -v /tmp/lab06-bind:/data alpine cat /data/note.txt
 
 ## លក្ខខណ្ឌជោគជ័យ
 
-- [ ] Data រស់នៅបន្ទាប់ពីបង្កើត container ឡើងវិញ
+- [ ] ទិន្នន័យនៅរស់បន្ទាប់ពីបង្កើត container ឡើងវិញ
 - [ ] អ្នកដឹងពេលណាប្រើ volume vs bind mount

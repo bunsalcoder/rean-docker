@@ -4,16 +4,16 @@ const { createClient } = require("redis");
 
 const app = express();
 const port = process.env.PORT || 3000;
+const databaseUrl = process.env.DATABASE_URL;
+const redisUrl = process.env.REDIS_URL;
 
-const pool = new Pool({
-  connectionString:
-    process.env.DATABASE_URL ||
-    "postgres://rean:secret@db:5432/rean",
-});
+if (!databaseUrl || !redisUrl) {
+  console.error("DATABASE_URL and REDIS_URL are required (copy .env.example → .env)");
+  process.exit(1);
+}
 
-const redis = createClient({
-  url: process.env.REDIS_URL || "redis://redis:6379",
-});
+const pool = new Pool({ connectionString: databaseUrl });
+const redis = createClient({ url: redisUrl });
 
 redis.on("error", (err) => console.error("redis error", err));
 
