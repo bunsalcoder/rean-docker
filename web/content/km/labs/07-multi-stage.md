@@ -1,8 +1,10 @@
 # Lab 07 — Multi-stage builds
 
-## គោះល៊ែម
+## គោលដៅ
 
-ប្រៀបធៀប image single-stage ធំ ជាមួយ multi-stage production image។
+ប្រៀបធៀប image single-stage ធំ (compiler + source + app) ជាមួយ multi-stage image ដែលដឹកតែ JavaScript ដែល compile រួច និង production dependencies។
+
+Lab នេះ compile TypeScript ដោយចេតនា ដើម្បីឱ្យគម្លាតទំហំច្បាស់។ `typescript` គឺ **devDependency** — slim image មិនត្រូវមាន `tsc`។
 
 ## ជំហាន
 
@@ -20,13 +22,16 @@ docker run --rm -p 3001:3000 rean-multi:slim
 # curl http://localhost:3001/
 ```
 
-## អ្វីដំលែរសំអ្រកេត
+`:fat` គួរធំជាងច្បាស់ (រាប់សិប MB)។ ទម្ងន់បន្ថែមនោះគឺ TypeScript compiler និង type packages នៅក្នុង image ចុងក្រោយ។
 
-- `COPY --from=build` យកតែ `dist/` មិនមែន build leftovers ដែលអ្នកមិនត្រូវការ។
+## អ្វីដែលត្រូវសង្កេត
+
+- `COPY --from=build` យកតែ `dist/` មិនមែន `server.ts` ឬ `tsc`។
 - Runtime stage install **production** deps តែប៉ុណ្ណោះ (`--omit=dev`)។
 - Image size និង layer history ខុសគ្នារវាង `:fat` និង `:slim`។
 
-## លក្ខខ្ណ្ឌជោគជៀយ
+## លក្ខខណ្ឌជោគជ័យ
 
 - [ ] Images ទាំងពីរ build ហើយ slim image serve `/`
+- [ ] `docker images` បង្ហាញ `:fat` ធំជាង `:slim` គួរឱ្យកត់សម្គាល់
 - [ ] អ្នកអាចពន្យល់ហេតុអ្វី multi-stage បង្កើន security និងបន្ថយ size

@@ -5,7 +5,7 @@
 **ថ្នាក់ចាប់ផ្តើម។** អ្នកត្រូវការតែ `docker run`, `docker exec`, និង `docker rm`។  
 អ្នក **មិន** ត្រូវការយល់ដឹងជ្រៅអំពី kernel internals, OCI, ឬ Kubernetes។
 
-## គោះល៊ែម
+## គោលដៅ
 
 មើលដោយភ្នែកផ្ទាល់ថា container មួយ **ដាច់ដោយឡែក** ពី host និងពី container ផ្សេងទៀត៖
 
@@ -120,7 +120,7 @@ docker rm -f lab01-r1 lab01-r2 lab01-r3
 
 *(ឈ្មោះជម្រើសសម្រាប់ពេលក្រោយ៖ namespaces, cgroups, layers — Chapter 2។ រំលងពួកវាឥឡូវនេះបើវាធ្វើអោយធ្ងន់។)*
 
-## លក្ខខ្ណ្ឌជោគជៀយ
+## លក្ខខណ្ឌជោគជ័យ
 
 - [ ] Process list ខ្លីនៅក្នុង container; list វែងនៅ host
 - [ ] Bind mount បង្ហាញការចែករំលែក; ដោយគ្មាន mount files នៅតែដាច់ដោយឡែក

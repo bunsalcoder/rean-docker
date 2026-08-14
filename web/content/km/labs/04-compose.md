@@ -1,6 +1,6 @@
 # Lab 04 — Docker Compose (API + Postgres + Redis)
 
-## គោះល៊ែម
+## គោលដៅ
 
 Run app ច្រើន container ជាមួយ service DNS, volumes, និង healthchecks។
 
@@ -35,10 +35,10 @@ docker compose down -v     # DELETE database volume
 ## គំនិតសំខាន់ដំលែរក្រេញ្ញ
 
 1. Hostname `db` និង `redis` ដំណើរការ **នៅក្នុង** Compose network។
-2. `depends_on` + `service_healthy` រង់ចាំរហូត Postgres ទទួល connections។
+2. `depends_on` + `service_healthy` រង់ចាំរហូត Postgres **និង** Redis ទទួល connections។
 3. Named volume `pgdata` រស់នៅបន្ទាប់ពី `docker compose down` (លុះត្រាតែ `-v`)។
 
-## លក្ខខ្ណ្ឌជោគជៀយ
+## លក្ខខណ្ឌជោគជ័យ
 
 - [ ] Services ទាំងបី up
 - [ ] `/` បង្ហាញ `hits` និង `dbTime`

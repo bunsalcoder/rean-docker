@@ -1,6 +1,6 @@
 # Lab 09 — Deploy path & CI/CD (special)
 
-## គោះល៊ែម
+## គោលដៅ
 
 អនុវត្តជំហានដូច CI pipeline៖ validate Compose, build image, smoke-test `/health`, tag សម្រាប់ registry, និងយល់ថា `compose.prod.yaml` pull image នោះនៅ server យ៉ាងដូចម្តេច។
 
@@ -70,7 +70,7 @@ curl -fsS http://127.0.0.1:3000/health
 - តើអ្វីជាភាពខុសគ្នារវាង CI (build/smoke/push) និង CD (deploy ទៅ host)?
 - តើ rollback ទៅ SHA tag កាលពីម្សិលដោយធ្វើដូចម្តេច?
 
-## លក្ខខ្ណ្ឌជោគជៀយ
+## លក្ខខណ្ឌជោគជ័យ
 
 - [ ] `docker compose … config` ជោគជ័យសម្រាប់ files ទាំងពីរ
 - [ ] Smoke test ក្នុងម៉ាស៊ីនផ្ទាល់ ត្រឡប់ `{"status":"ok",…}` ពី `/health`

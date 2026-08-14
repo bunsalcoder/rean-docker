@@ -4,7 +4,7 @@
 
 **ថ្នាក់ចាប់ផ្តើម។** Workflow Docker ប្រចាំថ្ងៃ។
 
-## គោះល៊ែម
+## គោលដៅ
 
 អនុវត្តពាក្យបញ្ជាដែលអ្នកនឹងប្រើញឹកញាប់៖ run container, publish port, អាន logs, `exec` ចូលក្នុង, និង clean up។
 
@@ -39,7 +39,7 @@ docker stop lab02-nginx
 docker rm lab02-nginx
 ```
 
-## លក្ខខ្ណ្ឌជោគជៀយ
+## លក្ខខណ្ឌជោគជ័យ
 
 - [ ] អ្នកឃើញសារជោគជ័យ hello-world
 - [ ] Nginx បាន HTTP 200 នៅ port 8080

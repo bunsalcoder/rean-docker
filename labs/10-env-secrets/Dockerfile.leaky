@@ -1,0 +1,5 @@
+# Demonstration only — do not copy this pattern.
+# A secret baked into an ENV instruction is visible in image history.
+FROM alpine:3.20
+ENV DB_PASSWORD=super-secret-do-not-copy
+CMD ["printenv", "DB_PASSWORD"]

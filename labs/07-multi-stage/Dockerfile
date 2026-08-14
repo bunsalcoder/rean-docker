@@ -1,14 +1,14 @@
 # syntax=docker/dockerfile:1
 
-# ---- build stage: has full toolchain / creates dist ----
+# ---- build stage: TypeScript compiler + full node_modules ----
 FROM node:22-alpine AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
-COPY build.js ./
+COPY tsconfig.json server.ts ./
 RUN npm run build
 
-# ---- runtime stage: only what we need to run ----
+# ---- runtime: production deps + compiled JS only (no tsc) ----
 FROM node:22-alpine AS runtime
 WORKDIR /app
 ENV NODE_ENV=production

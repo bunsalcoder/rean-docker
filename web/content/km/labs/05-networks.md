@@ -1,6 +1,6 @@
 # Lab 05 — Networks
 
-## គោះល៊ែម
+## គោលដៅ
 
 មើល Docker DNS៖ containers ទាក់ទងគ្នាដោយ **name** នៅ user-defined network។
 
@@ -34,7 +34,7 @@ docker run --rm --network lab05-net redis:7-alpine redis-cli -h cache ping
 docker rm -f lab05-redis && docker network rm lab05-net
 ```
 
-## លក្ខខ្ណ្ឌជោគជៀយ
+## លក្ខខណ្ឌជោគជ័យ
 
 - [ ] `PONG` នៅពេលនៅ network ដូចគ្នា
 - [ ] អ្នកអាចពន្យល់ហេតុអ្វី host `localhost` ខុសសម្រាប់ sibling containers

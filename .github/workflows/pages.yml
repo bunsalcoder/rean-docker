@@ -15,7 +15,17 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify English content copies match sources
+        run: ./scripts/check_content_sync.sh
+      - name: Verify Khmer content matches English structure
+        run: ./scripts/check_km_content.sh
+
   deploy:
+    needs: check
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

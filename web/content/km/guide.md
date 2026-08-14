@@ -1027,6 +1027,10 @@ Example: app connects `postgres:5432` internally; publish `5432` only if host to
 
 ## 10. Environment, secrets និង config
 
+### Lab: `labs/10-env-secrets`
+
+ធ្វើបន្ទាប់ពី Lab 03 (អ្នកសរសេរ Dockerfile រួច) និងមុន Lab 04។ អ្នកនឹងផ្ទេរ config នៅ **ពេល run** រួចមើល password ដែលដុតក្នុង image លេចក្នុង `docker history`។
+
 ### Pass env vars
 
 ```bash
@@ -1160,9 +1164,11 @@ docker compose --profile tools up -d
 
 ### Lab: `labs/07-multi-stage`
 
-Problem: build tools (compilers, npm all deps, Go toolchain) bloat production images increase attack surface។
+Problem: build tools (compilers, TypeScript/`tsc`, npm all deps, Go toolchain) bloat production images increase attack surface។
 
 **Multi-stage builds** use multiple `FROM` copy only artifacts forward។
+
+Lab 07 compile TypeScript ក្នុង build stage ដូច្នេះ `:fat` (compiler នៅក្នុង image) ធំជាង `:slim` (JS ដែល compile រួច + production deps តែប៉ុណ្ណោះ) ច្បាស់។
 
 ```dockerfile
 # ---- build stage ----
@@ -1220,33 +1226,37 @@ dive rean-hello:1.0   # if you install dive — visual layer explorer
 1. **Pin versions** — `postgres:16.4-alpine`, not `postgres:latest`
 2. **Non-root user** — `USER node` or custom UID
 3. **Read-only root filesystem** where possible (`--read-only` + writable tmp mounts)
-4. **Healthchecks**
+4. **Healthchecks** — Alpine Node images ភាគច្រើនគ្មាន `wget`/`curl`។ Probe ដោយ Node runtime ដូច app:
 
 ```dockerfile
-HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
-  CMD wget -qO- http://127.0.0.1:3000/health || exit 1
+HEALTHCHECK --interval=15s --timeout=3s --start-period=5s --retries=3 \
+  CMD node -e "fetch('http://127.0.0.1:3000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
 ```
 
 ```yaml
 healthcheck:
-  test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
-  interval: 30s
-  timeout: 5s
+  test:
+    [
+      "CMD",
+      "node",
+      "-e",
+      "fetch('http://127.0.0.1:3000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+    ]
+  interval: 15s
+  timeout: 3s
   retries: 3
-  start_period: 20s
+  start_period: 5s
 ```
 
-5. **Resource limits**
+5. **Resource limits** — Compose V2 (`docker compose`) apply `deploy.resources` លើ single node។ មិនត្រូវការ Swarm ឬ key ចាស់ `mem_limit` / `cpus`។
 
 ```yaml
 deploy:
   resources:
     limits:
       cpus: "0.50"
-      memory: 512M
+      memory: 256M
 ```
-
-(Compose single node, see `mem_limit` / modern `deploy` support depending Compose version.)
 
 6. **Restart policy**
 
@@ -1254,11 +1264,25 @@ deploy:
 restart: unless-stopped
 ```
 
-7. **Logging** — don't log secrets; ship logs collector; avoid huge docker logs without rotation.
+7. **Init process** — `init: true` (ឬ `docker run --init`) ដើម្បីឱ្យ PID 1 reap zombies និង forward `SIGTERM` ពី `docker stop`។ គូជាមួយ exec-form `CMD` និង graceful shutdown ក្នុង app។
 
-8. **One process per container** (guideline) — app one, db another; use Compose/K8s compose them.
+```yaml
+init: true
+```
 
-9. **Immutable images** — rebuild redeploy; don't «hotfix» running containers.
+8. **Logging** — don't log secrets; ship logs collector; cap Docker json-file logs ដើម្បីកុំឱ្យ app សរសេរពេញថាស។
+
+```yaml
+logging:
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+```
+
+9. **One process per container** (guideline) — app one, db another; use Compose/K8s compose them.
+
+10. **Immutable images** — rebuild redeploy; don't «hotfix» running containers.
 
 ### Restart policies
 
@@ -1494,15 +1518,25 @@ services:
       PORT: ${PORT:-3000}
       APP_VERSION: ${APP_VERSION:-unknown}
     restart: unless-stopped
+    init: true
     read_only: true
     tmpfs: ["/tmp"]
     security_opt: ["no-new-privileges:true"]
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
       interval: 15s
       timeout: 3s
       retries: 3
-    mem_limit: 256m
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 256M
 ```
 
 On the server:
@@ -1834,7 +1868,7 @@ docker system prune
 
 - [ ] Named volumes + bind mounts
 - [ ] User-defined networks + DNS by name
-- [ ] Env files 12-factor config
+- [ ] Env files 12-factor config (`labs/10-env-secrets`)
 - [ ] Compose multi-service app
 - [ ] Fix «db not ready» healthchecks
 
@@ -1856,7 +1890,7 @@ docker system prune
 | Day | Focus | Lab |
 |-----|--------|-----|
 | 1 | Isolation basics + hello workflow | `labs/01-isolation-basics`, `labs/02-hello` |
-| 2 | Dockerfile mastery | `labs/03-dockerfile` |
+| 2 | Dockerfile + env/secrets | `labs/03-dockerfile`, `labs/10-env-secrets` |
 | 3 | Compose basics | `labs/04-compose` |
 | 4 | Networks & volumes | `labs/05-networks`, `labs/06-volumes` |
 | 5 | Multi-stage + prod habits | `labs/07-multi-stage`, `labs/08-production` |
@@ -1885,7 +1919,7 @@ docker system prune
 
 ## ជំហានបន្ទាប់បន្ទាប់ពីមគ្គុទ្ទេសក៍នេះ
 
-1. Practice labs order under `labs/` (include Lab 09 deploy/CI).
+1. Practice labs order under `labs/` (Lab 10 ជាមួយ Chapter 10; Lab 09 deploy/CI).
 2. Re-run Chapter 2 isolation examples until obvious.
 3. Containerize real app you know — wire Chapter 17 pipeline.
 4. Read official docs: [https://docs.docker.com/](https://docs.docker.com/)

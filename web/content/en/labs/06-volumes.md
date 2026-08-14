@@ -14,11 +14,13 @@ docker run -d --name lab06-pg \
   -v lab06-pgdata:/var/lib/postgresql/data \
   postgres:16-alpine
 
-# Wait a few seconds for Postgres to boot, then create a table
-docker exec -it lab06-pg \
+# Wait until Postgres is ready (do not guess with sleep)
+until docker exec lab06-pg pg_isready -U postgres; do sleep 1; done
+
+docker exec lab06-pg \
   psql -U postgres -c "CREATE TABLE demo(id int); INSERT INTO demo VALUES (1);"
 
-docker exec -it lab06-pg psql -U postgres -c "SELECT * FROM demo;"
+docker exec lab06-pg psql -U postgres -c "SELECT * FROM demo;"
 
 # Destroy the container (NOT the volume)
 docker rm -f lab06-pg
@@ -29,8 +31,8 @@ docker run -d --name lab06-pg \
   -v lab06-pgdata:/var/lib/postgresql/data \
   postgres:16-alpine
 
-sleep 3
-docker exec -it lab06-pg psql -U postgres -c "SELECT * FROM demo;"
+until docker exec lab06-pg pg_isready -U postgres; do sleep 1; done
+docker exec lab06-pg psql -U postgres -c "SELECT * FROM demo;"
 # → row with id=1 still there
 
 # Cleanup
