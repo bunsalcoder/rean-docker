@@ -1524,7 +1524,7 @@ services:
 ```yaml
 services:
   api:
-    image: ghcr.io/YOUR_USER/rean-deploy-api:${IMAGE_TAG:-latest}
+    image: ghcr.io/YOUR_USER/rean-deploy-api:${IMAGE_TAG:?set IMAGE_TAG to a sha tag}
     ports:
       - "127.0.0.1:3000:3000"
     environment:
@@ -1566,8 +1566,10 @@ Validate files anywhere (laptop or CI) with:
 
 ```bash
 docker compose -f compose.yaml config
-docker compose -f compose.prod.yaml config
+IMAGE_TAG=sha-deadbee docker compose -f compose.prod.yaml config
 ```
+
+`compose.prod.yaml` refuses to interpolate if `IMAGE_TAG` is missing — that is intentional. Prod must pin a SHA (or semver), not `:latest`.
 
 ### Registry workflow (build → tag → push → pull)
 
@@ -1579,9 +1581,9 @@ docker login ghcr.io
 GIT_SHA=$(git rev-parse --short HEAD)
 IMAGE=ghcr.io/YOUR_USER/rean-deploy-api
 
-docker build -t "$IMAGE:sha-$GIT_SHA" -t "$IMAGE:latest" .
+docker build -t "$IMAGE:sha-$GIT_SHA" .
 docker push "$IMAGE:sha-$GIT_SHA"
-docker push "$IMAGE:latest"
+# Do not also tag :latest for deploys — that name moves. Browse GHCR by SHA tag.
 ```
 
 On the server you pull the **same** tag CI pushed:
@@ -1692,13 +1694,14 @@ jobs:
         working-directory: labs/12-ci-cd
         run: |
           docker compose -f compose.yaml config >/dev/null
-          docker compose -f compose.prod.yaml config >/dev/null
+          REGISTRY_OWNER=example IMAGE_TAG=sha-deadbee \
+            docker compose -f compose.prod.yaml config >/dev/null
 
       - name: Build image
         working-directory: labs/12-ci-cd
         run: |
           TAG=sha-$(git rev-parse --short HEAD)
-          docker build -t "$IMAGE:$TAG" -t "$IMAGE:latest" .
+          docker build -t "$IMAGE:$TAG" .
           echo "TAG=$TAG" >> "$GITHUB_ENV"
 
       - name: Smoke test
@@ -1727,15 +1730,13 @@ jobs:
 
       - name: Push image
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: |
-          docker push "$IMAGE:$TAG"
-          docker push "$IMAGE:latest"
+        run: docker push "$IMAGE:$TAG"
 ```
 
 Notes:
 
 - **PRs build + smoke** but do not push (keeps the registry clean).
-- **`main` pushes** publish the image.
+- **`main` pushes** publish the **SHA tag** (`sha-abc1234`), not `:latest`. That name moves; you cannot roll it back.
 - Replace the image name / working directory when you wire this to your own app.
 - For a private deploy key or SSH deploy step, store secrets in GitHub → Settings → Secrets (`SSH_HOST`, `SSH_KEY`, …) — never in the repo.
 
@@ -1752,8 +1753,7 @@ After a successful push job (same workflow or a second `deploy` job):
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd /opt/rean-deploy
-            export IMAGE_TAG=sha-${{ github.sha }}
-            # shorten if you tag with short SHA in build step
+            export IMAGE_TAG=sha-$(echo ${{ github.sha }} | cut -c1-7)
             docker compose -f compose.prod.yaml pull
             docker compose -f compose.prod.yaml up -d
 ```

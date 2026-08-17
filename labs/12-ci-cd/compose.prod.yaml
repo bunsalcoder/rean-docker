@@ -1,6 +1,6 @@
 services:
   api:
-    image: ghcr.io/${REGISTRY_OWNER:-YOUR_USER}/rean-deploy-api:${IMAGE_TAG:-latest}
+    image: ghcr.io/${REGISTRY_OWNER:-YOUR_USER}/rean-deploy-api:${IMAGE_TAG:?set IMAGE_TAG to a sha tag}
     ports:
       - "127.0.0.1:3000:3000"
     environment:

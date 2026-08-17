@@ -69,12 +69,14 @@ You do **not** need a real server to finish this lab — steps 1–4 (through re
 - Why publish `127.0.0.1:3000` in prod Compose instead of `0.0.0.0:3000`?
 - What is the difference between CI (build/smoke/push) and CD (deploy to a host)?
 - How would you roll back to yesterday’s SHA tag?
+- Why does `compose.prod.yaml` error if `IMAGE_TAG` is unset, instead of defaulting to `latest`?
 
 ## Success criteria
 
 - [ ] `docker compose … config` succeeds for both files
 - [ ] Local smoke test returns `{"status":"ok",…}` from `/health`
 - [ ] You can explain build → tag → (push) → pull → `compose up` without notes
+- [ ] You know why prod Compose requires `IMAGE_TAG` and does not fall back to `latest`
 - [ ] You know where you would put secrets for SSH deploy (host / GitHub Secrets — not the image)
 
 ## Next

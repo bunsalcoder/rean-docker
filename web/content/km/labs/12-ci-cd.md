@@ -69,12 +69,14 @@ curl -fsS http://127.0.0.1:3000/health
 - ហេតុអ្វី publish `127.0.0.1:3000` ក្នុង prod Compose ហើយមិនមែន `0.0.0.0:3000`?
 - តើអ្វីជាភាពខុសគ្នារវាង CI (build/smoke/push) និង CD (deploy ទៅ host)?
 - តើ rollback ទៅ SHA tag កាលពីម្សិលមិញធ្វើដូចម្ដេច?
+- ហេតុអ្វី `compose.prod.yaml` error បើ `IMAGE_TAG` មិនកំណត់ ជំនួសឱ្យ default `latest`?
 
 ## លក្ខខណ្ឌជោគជ័យ
 
 - [ ] `docker compose … config` ជោគជ័យសម្រាប់ files ទាំងពីរ
 - [ ] Smoke test លើម៉ាស៊ីនផ្ទាល់ ត្រឡប់ `{"status":"ok",…}` ពី `/health`
 - [ ] អ្នកអាចពន្យល់ build → tag → (push) → pull → `compose up` ដោយគ្មាន notes
+- [ ] អ្នកដឹងហេតុអ្វី prod Compose ត្រូវការ `IMAGE_TAG` ហើយមិន fallback ទៅ `latest`
 - [ ] អ្នកដឹងថាដាក់ secrets សម្រាប់ SSH deploy នៅណា (host / GitHub Secrets — មិនមែនក្នុង image)
 
 ## បន្ទាប់
