@@ -98,7 +98,7 @@
         <div class="section-head reveal">
           <p class="eyebrow" data-i18n="labs.eyebrow">Practice</p>
           <h1 class="lab-page-title" data-i18n="labs.heading">Labs</h1>
-<p data-i18n="labs.intro">Work through these in order. Lab 01 is beginner isolation practice (not advanced theory). Lab 02 is the everyday Docker workflow. Lab 10 (env/secrets) sits with Chapter 10 — do it after Lab 03, before Compose. Each lab lives under labs/ — open a terminal next to this page.</p>
+<p data-i18n="labs.intro">Work through these in order. Lab numbers match the path: 01 isolation, 02 workflow, 03 Dockerfile, 04 env/secrets, then Compose and the rest. Each lab lives under labs/ — open a terminal next to this page.</p>
         </div>
 
         <div class="lab-grid reveal">
@@ -123,53 +123,74 @@
               <p data-i18n="labs.03.desc">Build and run a small Node API image.</p>
             </div>
           </a>
-          <a href="./lab.html?id=10-env-secrets">
-            <span class="num">10</span>
-            <div>
-              <h3 data-i18n="labs.10.title">Env, secrets, and config</h3>
-              <p data-i18n="labs.10.desc">Pass config at runtime; see why secrets must not live in image layers.</p>
-            </div>
-          </a>
-          <a href="./lab.html?id=04-compose">
+          <a href="./lab.html?id=04-env-secrets">
             <span class="num">04</span>
             <div>
-              <h3 data-i18n="labs.04.title">Compose stack</h3>
-              <p data-i18n="labs.04.desc">API + Postgres + Redis with healthchecks and .env config.</p>
+              <h3 data-i18n="labs.04.title">Env, secrets, and config</h3>
+              <p data-i18n="labs.04.desc">Pass config at runtime; see why secrets must not live in image layers.</p>
             </div>
           </a>
-          <a href="./lab.html?id=05-networks">
+          <a href="./lab.html?id=05-compose">
             <span class="num">05</span>
             <div>
-              <h3 data-i18n="labs.05.title">Networks &amp; DNS</h3>
-              <p data-i18n="labs.05.desc">Reach services by container name.</p>
+              <h3 data-i18n="labs.05.title">Compose stack</h3>
+              <p data-i18n="labs.05.desc">API + Postgres + Redis with healthchecks and .env config.</p>
             </div>
           </a>
-          <a href="./lab.html?id=06-volumes">
+          <a href="./lab.html?id=06-networks">
             <span class="num">06</span>
             <div>
-              <h3 data-i18n="labs.06.title">Volumes &amp; persistence</h3>
-              <p data-i18n="labs.06.desc">Keep database data after containers die.</p>
+              <h3 data-i18n="labs.06.title">Networks &amp; DNS</h3>
+              <p data-i18n="labs.06.desc">Reach services by container name.</p>
             </div>
           </a>
-          <a href="./lab.html?id=07-multi-stage">
+          <a href="./lab.html?id=07-volumes">
             <span class="num">07</span>
             <div>
-              <h3 data-i18n="labs.07.title">Multi-stage builds</h3>
-              <p data-i18n="labs.07.desc">Compare fat vs slim production images.</p>
+              <h3 data-i18n="labs.07.title">Volumes &amp; persistence</h3>
+              <p data-i18n="labs.07.desc">Keep database data after containers die.</p>
             </div>
           </a>
-          <a href="./lab.html?id=08-production">
+          <a href="./lab.html?id=08-multi-stage">
             <span class="num">08</span>
             <div>
-              <h3 data-i18n="labs.08.title">Production practices</h3>
-              <p data-i18n="labs.08.desc">Healthchecks, limits, read-only rootfs.</p>
+              <h3 data-i18n="labs.08.title">Multi-stage builds</h3>
+              <p data-i18n="labs.08.desc">Compare fat vs slim production images.</p>
             </div>
           </a>
-          <a href="./lab.html?id=09-ci-cd">
+          <a href="./lab.html?id=09-production">
             <span class="num">09</span>
             <div>
-              <h3 data-i18n="labs.09.title">Deploy &amp; CI/CD</h3>
-              <p data-i18n="labs.09.desc">Special: validate, smoke-test, tag, and ship with Compose + Actions.</p>
+              <h3 data-i18n="labs.09.title">Production practices</h3>
+              <p data-i18n="labs.09.desc">Healthchecks, limits, read-only rootfs.</p>
+            </div>
+          </a>
+          <a href="./lab.html?id=10-debugging">
+            <span class="num">10</span>
+            <div>
+              <h3 data-i18n="labs.10.title">Debugging</h3>
+              <p data-i18n="labs.10.desc">logs, inspect, and a Compose hostname bug you fix.</p>
+            </div>
+          </a>
+          <a href="./lab.html?id=11-security">
+            <span class="num">11</span>
+            <div>
+              <h3 data-i18n="labs.11.title">Security essentials</h3>
+              <p data-i18n="labs.11.desc">Non-root, BuildKit secrets, and image scanning.</p>
+            </div>
+          </a>
+          <a href="./lab.html?id=12-ci-cd">
+            <span class="num">12</span>
+            <div>
+              <h3 data-i18n="labs.12.title">Deploy &amp; CI/CD</h3>
+              <p data-i18n="labs.12.desc">Special: validate, smoke-test, tag, and ship with Compose + Actions.</p>
+            </div>
+          </a>
+          <a href="./lab.html?id=13-capstone">
+            <span class="num">13</span>
+            <div>
+              <h3 data-i18n="labs.13.title">Capstone</h3>
+              <p data-i18n="labs.13.desc">Build your own API + Postgres + Redis stack.</p>
             </div>
           </a>
         </div>

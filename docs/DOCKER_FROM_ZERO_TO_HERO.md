@@ -289,7 +289,7 @@ Same demos as Lab 01, kept here for the handbook. They assume Docker is installe
 
 ```bash
 # Start a quiet container
-docker run -d --name rean-ps alpine:3.20 sleep 3600
+docker run -d --name rean-ps alpine:3.22 sleep 3600
 
 # Processes *inside* the container (small list; sleep is typically PID 1)
 docker exec rean-ps ps aux
@@ -305,7 +305,7 @@ docker rm -f rean-ps
 #### Example B — Isolation of filesystem (mnt namespace)
 
 ```bash
-docker run --rm -it alpine:3.20 sh -c 'echo hello-from-container > /tmp/note.txt; cat /tmp/note.txt; ls /'
+docker run --rm -it alpine:3.22 sh -c 'echo hello-from-container > /tmp/note.txt; cat /tmp/note.txt; ls /'
 ```
 
 → The container has its own `/tmp` and `/`. Creating `/tmp/note.txt` inside does not create that file on your host desktop.
@@ -315,7 +315,7 @@ Compare with a **bind mount** (intentionally shared folder — you will use this
 ```bash
 mkdir -p /tmp/rean-share
 echo 'from-host' > /tmp/rean-share/msg.txt
-docker run --rm -v /tmp/rean-share:/data alpine:3.20 cat /data/msg.txt
+docker run --rm -v /tmp/rean-share:/data alpine:3.22 cat /data/msg.txt
 # → from-host
 ```
 
@@ -340,14 +340,14 @@ docker rm -f rean-web-a rean-web-b
 
 ```bash
 # Limit memory; watch Docker enforce it
-docker run --rm -m 128m --memory-swap 128m alpine:3.20 \
+docker run --rm -m 128m --memory-swap 128m alpine:3.22 \
   sh -c 'echo "cgroup memory limit applied"; cat /sys/fs/cgroup/memory.max 2>/dev/null || cat /sys/fs/cgroup/memory/memory.limit_in_bytes 2>/dev/null || echo "(limit visible via docker inspect)"'
 ```
 
 Inspect from the outside:
 
 ```bash
-docker run -d --name rean-limited -m 256m alpine:3.20 sleep 60
+docker run -d --name rean-limited -m 256m alpine:3.22 sleep 60
 docker inspect -f '{{.HostConfig.Memory}}' rean-limited
 # → 268435456 (bytes)
 docker rm -f rean-limited
@@ -937,7 +937,7 @@ Rule: **put rarely changing, expensive steps early; put frequently changing sour
 
 ## 8. Volumes — keep data alive
 
-### Lab: `labs/06-volumes`
+### Lab: `labs/07-volumes`
 
 Containers are **ephemeral**. Delete a container → its writable layer is gone.
 
@@ -989,7 +989,7 @@ Bind mounts inherit host UID/GID issues. Prefer matching user in Dockerfile (`US
 
 ## 9. Networks — how containers talk
 
-### Lab: `labs/05-networks`
+### Lab: `labs/06-networks`
 
 By default, containers on the same user-defined bridge network can reach each other **by container name** (DNS).
 
@@ -1027,9 +1027,9 @@ Example: app connects to `postgres:5432` internally; you only publish `5432` if 
 
 ## 10. Environment, secrets, and config
 
-### Lab: `labs/10-env-secrets`
+### Lab: `labs/04-env-secrets`
 
-Do this after Lab 03 (you already write Dockerfiles) and before Lab 04. You will pass config at **runtime**, then watch a password baked into an image show up in `docker history`.
+Do this after Lab 03 (you already write Dockerfiles) and before Lab 05. You will pass config at **runtime**, then watch a password baked into an image show up in `docker history`.
 
 ### Pass env vars
 
@@ -1065,13 +1065,13 @@ Add `.env` to `.gitignore`.
 
 ## 11. Docker Compose — multi-container apps
 
-### Lab: `labs/04-compose`
+### Lab: `labs/05-compose`
 
 Manually `docker run` for app + db + redis gets painful. **Compose** describes the whole stack in YAML.
 
 ### Minimal `compose.yaml`
 
-Lab 04 keeps the **password in `.env`**, not in YAML (Lab 10). Compose interpolates `${POSTGRES_PASSWORD}` when the stack starts:
+Lab 05 keeps the **password in `.env`**, not in YAML (Lab 04). Compose interpolates `${POSTGRES_PASSWORD}` when the stack starts:
 
 ```yaml
 services:
@@ -1168,13 +1168,13 @@ docker compose --profile tools up -d
 
 ## 12. Multi-stage builds & image size
 
-### Lab: `labs/07-multi-stage`
+### Lab: `labs/08-multi-stage`
 
 Problem: build tools (compilers, TypeScript/`tsc`, npm with all deps, Go toolchain) bloat production images and increase attack surface.
 
 **Multi-stage builds** use multiple `FROM` lines and copy only artifacts forward.
 
-Lab 07 compiles TypeScript in the build stage so `:fat` (compiler left in the image) is clearly larger than `:slim` (compiled JS + production deps only).
+Lab 08 compiles TypeScript in the build stage so `:fat` (compiler left in the image) is clearly larger than `:slim` (compiled JS + production deps only).
 
 ```dockerfile
 # ---- build stage ----
@@ -1225,7 +1225,7 @@ dive rean-hello:1.0   # if you install dive — visual layer explorer
 
 ## 13. Production-minded practices
 
-### Lab: `labs/08-production`
+### Lab: `labs/09-production`
 
 ### Checklist before “real” deploy
 
@@ -1303,6 +1303,10 @@ logging:
 
 ## 14. Debugging & troubleshooting
 
+### Lab: `labs/10-debugging`
+
+Practice `logs`, `inspect`, and a Compose client that talks to `localhost` by mistake. Fix the hostname, then come back here for the rest of the patterns.
+
 ### Container won’t stay up
 
 ```bash
@@ -1360,6 +1364,10 @@ depends_on:
 ---
 
 ## 15. Security essentials
+
+### Lab: `labs/11-security`
+
+Compare `whoami` on a non-root image vs Alpine, build with BuildKit `--secret` (nothing in `docker history`), and optionally scan with Trivy. Lab 04 already showed the leaky `ENV` anti-pattern.
 
 1. **Don’t run as root** in production containers when avoidable.
 2. **Scan images** for CVEs (`docker scout`, Trivy, Grype).
@@ -1450,7 +1458,7 @@ docker run -d --network rean-custom --network-alias cache redis:7-alpine
 
 > **Special chapter:** this is the “ship it” path — how a containerized app leaves your laptop, gets built in CI, lands in a registry, and runs on a server. Complete Chapters 11–13 (and ideally 15–16) first.
 
-### Lab: `labs/09-ci-cd`
+### Lab: `labs/12-ci-cd`
 
 Deployment is not one command. It is a **pipeline** of decisions:
 
@@ -1491,7 +1499,7 @@ Rules that prevent most deploy disasters:
 
 ### Production Compose layout
 
-A practical split used in Lab 09:
+A practical split used in Lab 12:
 
 **`compose.yaml`** — local / CI smoke (may `build:`)
 
@@ -1657,7 +1665,7 @@ Start with CI that **builds and pushes**. Add automatic deploy to staging when t
 
 ### GitHub Actions — complete pattern
 
-Lab 09 includes a ready-to-copy workflow. The shape looks like this:
+Lab 12 includes a ready-to-copy workflow. The shape looks like this:
 
 ```yaml
 name: CI — build, smoke, push
@@ -1681,20 +1689,20 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Validate Compose files
-        working-directory: labs/09-ci-cd
+        working-directory: labs/12-ci-cd
         run: |
           docker compose -f compose.yaml config >/dev/null
           docker compose -f compose.prod.yaml config >/dev/null
 
       - name: Build image
-        working-directory: labs/09-ci-cd
+        working-directory: labs/12-ci-cd
         run: |
           TAG=sha-$(git rev-parse --short HEAD)
           docker build -t "$IMAGE:$TAG" -t "$IMAGE:latest" .
           echo "TAG=$TAG" >> "$GITHUB_ENV"
 
       - name: Smoke test
-        working-directory: labs/09-ci-cd
+        working-directory: labs/12-ci-cd
         run: |
           docker compose up -d --build
           for i in $(seq 1 30); do
@@ -1706,7 +1714,7 @@ jobs:
 
       - name: Teardown smoke stack
         if: always()
-        working-directory: labs/09-ci-cd
+        working-directory: labs/12-ci-cd
         run: docker compose down -v
 
       - name: Login to GHCR
@@ -1793,14 +1801,16 @@ Then graduate to log shipping and uptime checks. A green CI build is not a subst
 | 13 / 15 | Healthchecks, non-root, limits, scanning |
 | 16 | BuildKit, registries, multi-arch if you need ARM + AMD |
 
-Next: **Lab 09** makes you run the CI steps locally, then optionally push. After that, the **Capstone (Chapter 18)** can include a real CI workflow as a stretch goal — you will already know the shape.
+Next: **Lab 12** makes you run the CI steps locally, then optionally push. After that, the **Capstone (Chapter 18)** can include a real CI workflow as a stretch goal — you will already know the shape.
 
 
 ---
 
 ## 18. Capstone project
 
-Build a small stack in this repo (you can extend `labs/04-compose`):
+### Lab: `labs/13-capstone`
+
+Build a small stack in this repo (you can copy `labs/05-compose` into the capstone folder):
 
 **Goal:** Web API + Postgres + Redis
 
@@ -1818,7 +1828,7 @@ Stretch goals:
 
 - Separate `compose.prod.yaml` with restart policies and resource limits (see Chapter 17)
 - Nginx or Caddy reverse proxy in front of the API
-- CI job from Lab 09 / Chapter 17: `docker compose config` + build + smoke + push
+- CI job from Lab 12 / Chapter 17: `docker compose config` + build + smoke + push
 
 ---
 
@@ -1874,7 +1884,7 @@ docker system prune
 
 - [ ] Named volumes + bind mounts
 - [ ] User-defined networks + DNS by name
-- [ ] Env files and 12-factor config (`labs/10-env-secrets`)
+- [ ] Env files and 12-factor config (`labs/04-env-secrets`)
 - [ ] Compose multi-service app
 - [ ] Fix “db not ready” with healthchecks
 
@@ -1882,12 +1892,12 @@ docker system prune
 
 - [ ] Multi-stage builds; shrink images
 - [ ] Non-root user, healthchecks, restart policies
-- [ ] BuildKit secrets; pin tags/digests
+- [ ] Debug with `inspect`, `logs`, `stats`, ephemeral shells (`labs/10-debugging`)
+- [ ] Scan images; BuildKit secrets; pin tags/digests (`labs/11-security`)
 - [ ] Push/pull from a registry
-- [ ] Debug with `inspect`, `logs`, `stats`, ephemeral shells
-- [ ] Complete Chapter 17 deploy checklist; finish `labs/09-ci-cd`
+- [ ] Complete Chapter 17 deploy checklist; finish `labs/12-ci-cd`
 - [ ] Explain CI vs CD and a build → registry → pull → up path
-- [ ] Complete the capstone stack
+- [ ] Complete the capstone stack (`labs/13-capstone`)
 
 ---
 
@@ -1896,12 +1906,13 @@ docker system prune
 | Day | Focus | Lab |
 |-----|--------|-----|
 | 1 | Isolation basics + hello workflow | `labs/01-isolation-basics`, `labs/02-hello` |
-| 2 | Dockerfile + env/secrets | `labs/03-dockerfile`, `labs/10-env-secrets` |
-| 3 | Compose basics | `labs/04-compose` |
-| 4 | Networks & volumes | `labs/05-networks`, `labs/06-volumes` |
-| 5 | Multi-stage + prod habits | `labs/07-multi-stage`, `labs/08-production` |
-| 6 | Deploy + CI/CD (special) | `labs/09-ci-cd` |
-| 7–8 | Capstone | your own stack |
+| 2 | Dockerfile + env/secrets | `labs/03-dockerfile`, `labs/04-env-secrets` |
+| 3 | Compose basics | `labs/05-compose` |
+| 4 | Networks & volumes | `labs/06-networks`, `labs/07-volumes` |
+| 5 | Multi-stage + prod habits | `labs/08-multi-stage`, `labs/09-production` |
+| 6 | Debug + security | `labs/10-debugging`, `labs/11-security` |
+| 7 | Deploy + CI/CD (special) | `labs/12-ci-cd` |
+| 8–9 | Capstone | `labs/13-capstone` |
 
 ---
 
@@ -1925,7 +1936,7 @@ docker system prune
 
 ## Next steps after this guide
 
-1. Practice labs in order under `labs/` (Lab 10 with Chapter 10; Lab 09 for deploy/CI).
+1. Practice labs in order under `labs/` (Lab 04 with Chapter 10; Lab 12 for deploy/CI; Lab 13 for the capstone).
 2. Re-run the Chapter 2 isolation examples until they feel obvious.
 3. Containerize a real app you already know — then wire Chapter 17’s pipeline to it.
 4. Read official docs: [https://docs.docker.com/](https://docs.docker.com/)

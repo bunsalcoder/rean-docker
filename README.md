@@ -66,7 +66,7 @@ make check-all   # run both English + Khmer checks
 - the Khmer handbook keeps the same numbered chapters (`## 1.` … `## N.`) as English,
 - the intro (**How to use**) and **Table of contents** headings exist so the reader can split the guide.
 
-When you add a chapter or lab, translate the matching Khmer file (keeping the `## N.` numbered headings) and re-run `make check-all`. Both checks run in CI on every push and PR.
+When you add a chapter or lab, translate the matching Khmer file (keeping the `## N.` numbered headings) and re-run `make check-all`. Both checks run in CI on every push and PR. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Labs (hands-on)
 
@@ -77,18 +77,25 @@ Work in order:
 | 01 | Isolation basics (beginner) | [labs/01-isolation-basics](labs/01-isolation-basics) |
 | 02 | First containers | [labs/02-hello](labs/02-hello) |
 | 03 | Dockerfile | [labs/03-dockerfile](labs/03-dockerfile) |
-| 10 | Env, secrets, and config | [labs/10-env-secrets](labs/10-env-secrets) |
-| 04 | Compose (API + Postgres + Redis) | [labs/04-compose](labs/04-compose) |
-| 05 | Networks | [labs/05-networks](labs/05-networks) |
-| 06 | Volumes | [labs/06-volumes](labs/06-volumes) |
-| 07 | Multi-stage builds | [labs/07-multi-stage](labs/07-multi-stage) |
-| 08 | Production practices | [labs/08-production](labs/08-production) |
-| 09 | Deploy & CI/CD (special) | [labs/09-ci-cd](labs/09-ci-cd) |
+| 04 | Env, secrets, and config | [labs/04-env-secrets](labs/04-env-secrets) |
+| 05 | Compose (API + Postgres + Redis) | [labs/05-compose](labs/05-compose) |
+| 06 | Networks | [labs/06-networks](labs/06-networks) |
+| 07 | Volumes | [labs/07-volumes](labs/07-volumes) |
+| 08 | Multi-stage builds | [labs/08-multi-stage](labs/08-multi-stage) |
+| 09 | Production practices | [labs/09-production](labs/09-production) |
+| 10 | Debugging & troubleshooting | [labs/10-debugging](labs/10-debugging) |
+| 11 | Security essentials | [labs/11-security](labs/11-security) |
+| 12 | Deploy & CI/CD (special) | [labs/12-ci-cd](labs/12-ci-cd) |
+| 13 | Capstone | [labs/13-capstone](labs/13-capstone) |
 
 ## Prerequisites
 
 - Docker Engine + Compose plugin (`docker compose version`)
+- `curl` (labs that hit `/health`)
 - A terminal and curiosity
+- Optional: Python 3 (`make serve` and pretty-printing JSON in a few labs)
+
+On Windows, prefer **WSL2**. Some bind-mount examples use `/tmp`; use a folder in this repo if that path is awkward.
 
 Verify:
 

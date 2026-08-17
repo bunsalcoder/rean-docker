@@ -19,8 +19,8 @@ docker run --rm -p 3000:3000 --name lab03-api rean-hello:1.0
 In another terminal:
 
 ```bash
-curl http://localhost:3000/
-curl http://localhost:3000/health
+curl http://127.0.0.1:3000/
+curl http://127.0.0.1:3000/health
 ```
 
 Inspect layers:
@@ -32,7 +32,7 @@ docker history rean-hello:1.0
 ## Experiments
 
 1. Change the message in `server.js`, rebuild, rerun — notice which layers rebuild.
-2. Reorder Dockerfile to `COPY . .` *before* `npm install` and rebuild twice after tiny code edits — feel the cache pain.
+2. Reorder the Dockerfile to `COPY . .` *before* `npm ci` and rebuild twice after tiny code edits — feel the cache pain. (The real file uses `npm ci`, which needs `package-lock.json` and is what you should prefer over `npm install` in Dockerfiles.)
 3. Add an `ENV PORT=3000` instruction and confirm with `docker inspect`.
 
 ## Success criteria
@@ -41,3 +41,7 @@ docker history rean-hello:1.0
 - [ ] `/` returns JSON
 - [ ] `/health` returns `{"status":"ok"}`
 - [ ] You can explain why `package.json` / `package-lock.json` are copied before source
+
+## Next
+
+Go to **Lab 04 — Environment, secrets, and config** before Compose. You will pass config at runtime and see why secrets must not live in image layers.

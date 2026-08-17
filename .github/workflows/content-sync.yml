@@ -15,3 +15,31 @@ jobs:
         run: ./scripts/check_content_sync.sh
       - name: Verify Khmer content matches English structure
         run: ./scripts/check_km_content.sh
+
+  labs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build lab images
+        run: |
+          docker build -t rean-ci:03 labs/03-dockerfile
+          docker build -t rean-ci:08 labs/08-multi-stage
+          docker build -t rean-ci:08-fat -f labs/08-multi-stage/Dockerfile.fat labs/08-multi-stage
+          docker build -t rean-ci:09 labs/09-production
+          docker build -t rean-ci:12 labs/12-ci-cd
+          docker build -t rean-ci:leaky -f labs/04-env-secrets/Dockerfile.leaky labs/04-env-secrets
+          echo 'token' > /tmp/rean-ci.secret
+          docker build --secret id=demo,src=/tmp/rean-ci.secret \
+            -t rean-ci:secret -f labs/11-security/Dockerfile.secret labs/11-security
+      - name: Validate Compose files
+        run: |
+          set -euo pipefail
+          cp labs/04-env-secrets/.env.example labs/04-env-secrets/.env
+          docker compose -f labs/04-env-secrets/compose.yaml config >/dev/null
+          cp labs/05-compose/.env.example labs/05-compose/.env
+          docker compose -f labs/05-compose/compose.yaml config >/dev/null
+          docker compose -f labs/09-production/compose.yaml config >/dev/null
+          docker compose -f labs/10-debugging/compose.yaml config >/dev/null
+          docker compose -f labs/12-ci-cd/compose.yaml config >/dev/null
+          REGISTRY_OWNER=example IMAGE_TAG=sha-deadbee \
+            docker compose -f labs/12-ci-cd/compose.prod.yaml config >/dev/null

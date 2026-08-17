@@ -1,0 +1,6 @@
+services:
+  demo:
+    image: alpine:3.22
+    env_file:
+      - .env
+    command: ["sh", "-c", "printenv GREETING; printenv DB_PASSWORD"]

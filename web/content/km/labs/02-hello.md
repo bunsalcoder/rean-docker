@@ -1,4 +1,4 @@
-# Lab 02 — Hello containers
+# Lab 02 — សួស្តី containers
 
 ## កម្រិត
 
@@ -31,7 +31,7 @@ exit
 
 ```bash
 docker run -d --name lab02-nginx -p 8080:80 nginx:alpine
-curl -I http://localhost:8080
+curl -I http://127.0.0.1:8080
 docker logs lab02-nginx
 docker exec -it lab02-nginx sh
 # inside: ls /usr/share/nginx/html && exit
@@ -45,3 +45,7 @@ docker rm lab02-nginx
 - [ ] Nginx បាន HTTP 200 នៅ port 8080
 - [ ] អ្នក list files ក្នុង container ដោយ `docker exec`
 - [ ] Container ត្រូវបានលុប (`docker ps -a` មិនបង្ហាញ `lab02-nginx`)
+
+## បន្ទាប់
+
+ទៅ **Lab 03 — Dockerfile ដំបូងរបស់អ្នក** ហើយ build image ផ្ទាល់ខ្លួន។

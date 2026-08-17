@@ -22,7 +22,7 @@ Read **Chapter 2** for the “why.” This lab is only the **feel it** practice.
 |-----|----------------|
 | **01 (this one)** | What isolation *looks like* |
 | **02 Hello containers** | Everyday workflow: run, ports, logs, clean up |
-| **03+** | Build images, Compose, volumes, production |
+| **03+** | Build images, env, Compose, volumes, production |
 
 Do **01 → 02** in order. Overlap is intentional: same simple commands, different focus.
 
@@ -35,6 +35,8 @@ docker --version
 docker run --rm hello-world
 ```
 
+On Windows, prefer **WSL2** or Git Bash. Bind-mount examples use `/tmp/...`; if that path is awkward on your OS, create a folder inside this repo and use that instead.
+
 ## Steps
 
 ### 1. Process isolation
@@ -42,7 +44,7 @@ docker run --rm hello-world
 Inside a container you see only *its* processes — not your host’s apps.
 
 ```bash
-docker run -d --name lab01-ps alpine:3.20 sleep 3600
+docker run -d --name lab01-ps alpine:3.22 sleep 3600
 
 # Small list inside (sleep is usually PID 1)
 docker exec lab01-ps ps aux
@@ -59,12 +61,12 @@ Files created in a container stay in that container unless you deliberately shar
 
 ```bash
 # This file lives only inside the container (gone when the container exits)
-docker run --rm alpine:3.20 sh -c 'echo hello-from-container > /tmp/note.txt; cat /tmp/note.txt; ls /'
+docker run --rm alpine:3.22 sh -c 'echo hello-from-container > /tmp/note.txt; cat /tmp/note.txt; ls /'
 
 # Sharing is opt-in (bind mount) — isolation is the default
 mkdir -p /tmp/lab01-share
 echo 'from-host' > /tmp/lab01-share/msg.txt
-docker run --rm -v /tmp/lab01-share:/data alpine:3.20 cat /data/msg.txt
+docker run --rm -v /tmp/lab01-share:/data alpine:3.22 cat /data/msg.txt
 # → from-host
 ```
 
@@ -87,7 +89,7 @@ docker rm -f lab01-web-a lab01-web-b
 Docker can cap how much RAM a container may use.
 
 ```bash
-docker run -d --name lab01-limited -m 256m alpine:3.20 sleep 60
+docker run -d --name lab01-limited -m 256m alpine:3.22 sleep 60
 docker inspect -f '{{.HostConfig.Memory}}' lab01-limited
 # → 268435456 (bytes = 256 MiB)
 

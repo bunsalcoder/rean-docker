@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <title>Not found — rean-docker</title>
+    <meta name="description" content="This page is not in the rean-docker learning site." />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script>
+      (() => {
+        try {
+          const storedTheme = localStorage.getItem("rean-theme");
+          const theme =
+            storedTheme === "light" || storedTheme === "dark"
+              ? storedTheme
+              : window.matchMedia("(prefers-color-scheme: dark)").matches
+                ? "dark"
+                : "light";
+          document.documentElement.dataset.theme = theme;
+        } catch (_) {
+          document.documentElement.dataset.theme = "light";
+        }
+      })();
+    </script>
+  </head>
+  <body class="bg-mesh">
+    <main class="section">
+      <div class="wrap">
+        <p class="eyebrow">404</p>
+        <h1>Page not found</h1>
+        <p>That URL is not part of the rean-docker site.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="./index.html">Home</a>
+          <a class="btn btn-ghost" href="./labs.html">Labs</a>
+          <a class="btn btn-ghost" href="./learn.html">Learn</a>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
