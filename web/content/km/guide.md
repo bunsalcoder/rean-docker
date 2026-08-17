@@ -1524,7 +1524,7 @@ services:
 ```yaml
 services:
   api:
-    image: ghcr.io/YOUR_USER/rean-deploy-api:${IMAGE_TAG:-latest}
+    image: ghcr.io/YOUR_USER/rean-deploy-api:${IMAGE_TAG:?set IMAGE_TAG to a sha tag}
     ports:
       - "127.0.0.1:3000:3000"
     environment:
@@ -1566,8 +1566,10 @@ Validate files នៅណាក៏បាន (laptop ឬ CI)៖
 
 ```bash
 docker compose -f compose.yaml config
-docker compose -f compose.prod.yaml config
+IMAGE_TAG=sha-deadbee docker compose -f compose.prod.yaml config
 ```
+
+`compose.prod.yaml` បដិសេធ interpolate បើ `IMAGE_TAG` ខ្វះ — នេះចេតនា។ Prod ត្រូវ pin SHA (ឬ semver) មិនមែន `:latest`។
 
 ### Registry workflow (build → tag → push → pull)
 
@@ -1579,9 +1581,9 @@ docker login ghcr.io
 GIT_SHA=$(git rev-parse --short HEAD)
 IMAGE=ghcr.io/YOUR_USER/rean-deploy-api
 
-docker build -t "$IMAGE:sha-$GIT_SHA" -t "$IMAGE:latest" .
+docker build -t "$IMAGE:sha-$GIT_SHA" .
 docker push "$IMAGE:sha-$GIT_SHA"
-docker push "$IMAGE:latest"
+# កុំ tag :latest សម្រាប់ deploy — ឈ្មោះនោះផ្លាស់ទី។ មើល GHCR តាម SHA tag។
 ```
 
 នៅលើ server អ្នក pull **tag ដូចគ្នា** ដែល CI បាន push៖
@@ -1692,13 +1694,14 @@ jobs:
         working-directory: labs/12-ci-cd
         run: |
           docker compose -f compose.yaml config >/dev/null
-          docker compose -f compose.prod.yaml config >/dev/null
+          REGISTRY_OWNER=example IMAGE_TAG=sha-deadbee \
+            docker compose -f compose.prod.yaml config >/dev/null
 
       - name: Build image
         working-directory: labs/12-ci-cd
         run: |
           TAG=sha-$(git rev-parse --short HEAD)
-          docker build -t "$IMAGE:$TAG" -t "$IMAGE:latest" .
+          docker build -t "$IMAGE:$TAG" .
           echo "TAG=$TAG" >> "$GITHUB_ENV"
 
       - name: Smoke test
@@ -1727,15 +1730,13 @@ jobs:
 
       - name: Push image
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: |
-          docker push "$IMAGE:$TAG"
-          docker push "$IMAGE:latest"
+        run: docker push "$IMAGE:$TAG"
 ```
 
 កំណត់ចំណាំ៖
 
 - **PRs build + smoke** តែមិន push (ឱ្យ registry ស្អាត)។
-- **`main` pushes** ផ្សាយ image។
+- **`main` pushes** ផ្សាយ **SHA tag** (`sha-abc1234`) មិនមែន `:latest`។ ឈ្មោះនោះផ្លាស់ទី; rollback មិនបាន។
 - ប្តូរឈ្មោះ image / working directory ពេលភ្ជាប់ទៅ app ផ្ទាល់ខ្លួន។
 - សម្រាប់ deploy key ឯកជន ឬជំហាន SSH deploy ទុក secrets ក្នុង GitHub → Settings → Secrets (`SSH_HOST`, `SSH_KEY`, …) — កុំដាក់ក្នុង repo។
 
@@ -1752,8 +1753,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd /opt/rean-deploy
-            export IMAGE_TAG=sha-${{ github.sha }}
-            # shorten if you tag with short SHA in build step
+            export IMAGE_TAG=sha-$(echo ${{ github.sha }} | cut -c1-7)
             docker compose -f compose.prod.yaml pull
             docker compose -f compose.prod.yaml up -d
 ```
