@@ -1,0 +1,10 @@
+# Intentionally broken until you change localhost → cache.
+# localhost inside the client container is the client, not Redis.
+services:
+  cache:
+    image: redis:7-alpine
+  client:
+    image: redis:7-alpine
+    depends_on:
+      - cache
+    command: ["redis-cli", "-h", "localhost", "ping"]

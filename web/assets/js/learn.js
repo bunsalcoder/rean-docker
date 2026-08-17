@@ -34,13 +34,16 @@ const LAB_DEFS = [
   { id: "01-isolation-basics", levelKey: "lab.level.beginner" },
   { id: "02-hello", levelKey: "lab.level.beginner" },
   { id: "03-dockerfile", levelKey: "lab.level.beginner" },
-  { id: "10-env-secrets", levelKey: "lab.level.intermediate" },
-  { id: "04-compose", levelKey: "lab.level.intermediate" },
-  { id: "05-networks", levelKey: "lab.level.intermediate" },
-  { id: "06-volumes", levelKey: "lab.level.intermediate" },
-  { id: "07-multi-stage", levelKey: "lab.level.advanced" },
-  { id: "08-production", levelKey: "lab.level.advanced" },
-  { id: "09-ci-cd", levelKey: "lab.level.special" },
+  { id: "04-env-secrets", levelKey: "lab.level.intermediate" },
+  { id: "05-compose", levelKey: "lab.level.intermediate" },
+  { id: "06-networks", levelKey: "lab.level.intermediate" },
+  { id: "07-volumes", levelKey: "lab.level.intermediate" },
+  { id: "08-multi-stage", levelKey: "lab.level.advanced" },
+  { id: "09-production", levelKey: "lab.level.advanced" },
+  { id: "10-debugging", levelKey: "lab.level.advanced" },
+  { id: "11-security", levelKey: "lab.level.advanced" },
+  { id: "12-ci-cd", levelKey: "lab.level.special" },
+  { id: "13-capstone", levelKey: "lab.level.special" },
 ];
 
 const chapterTitle = (id) => t(`chapter.${id}`);

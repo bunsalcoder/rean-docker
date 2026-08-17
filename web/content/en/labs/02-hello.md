@@ -31,7 +31,7 @@ exit
 
 ```bash
 docker run -d --name lab02-nginx -p 8080:80 nginx:alpine
-curl -I http://localhost:8080
+curl -I http://127.0.0.1:8080
 docker logs lab02-nginx
 docker exec -it lab02-nginx sh
 # inside: ls /usr/share/nginx/html && exit
@@ -45,3 +45,7 @@ docker rm lab02-nginx
 - [ ] Nginx returned HTTP 200 on port 8080
 - [ ] You listed files inside the container with `docker exec`
 - [ ] The container is removed (`docker ps -a` shows no `lab02-nginx`)
+
+## Next
+
+Go to **Lab 03 — Your first Dockerfile** and build an image of your own.

@@ -289,7 +289,7 @@ Demos ដូច Lab 01 ទុកនៅ handbook។ សន្មត Docker instal
 
 ```bash
 # Start a quiet container
-docker run -d --name rean-ps alpine:3.20 sleep 3600
+docker run -d --name rean-ps alpine:3.22 sleep 3600
 
 # Processes *inside* the container (small list; sleep is typically PID 1)
 docker exec rean-ps ps aux
@@ -305,7 +305,7 @@ docker rm -f rean-ps
 #### Example B — Isolation filesystem (mnt namespace)
 
 ```bash
-docker run --rm -it alpine:3.20 sh -c 'echo hello-from-container > /tmp/note.txt; cat /tmp/note.txt; ls /'
+docker run --rm -it alpine:3.22 sh -c 'echo hello-from-container > /tmp/note.txt; cat /tmp/note.txt; ls /'
 ```
 
 → Container មាន `/tmp` និង `/` ផ្ទាល់។ Create `/tmp/note.txt` ក្នុងមិន create file នៅ desktop host។
@@ -315,7 +315,7 @@ Compare **bind mount** (folder share intentionally — live coding ពេលក�
 ```bash
 mkdir -p /tmp/rean-share
 echo 'from-host' > /tmp/rean-share/msg.txt
-docker run --rm -v /tmp/rean-share:/data alpine:3.20 cat /data/msg.txt
+docker run --rm -v /tmp/rean-share:/data alpine:3.22 cat /data/msg.txt
 # → from-host
 ```
 
@@ -340,14 +340,14 @@ docker rm -f rean-web-a rean-web-b
 
 ```bash
 # Limit memory; watch Docker enforce it
-docker run --rm -m 128m --memory-swap 128m alpine:3.20 \
+docker run --rm -m 128m --memory-swap 128m alpine:3.22 \
   sh -c 'echo "cgroup memory limit applied"; cat /sys/fs/cgroup/memory.max 2>/dev/null || cat /sys/fs/cgroup/memory/memory.limit_in_bytes 2>/dev/null || echo "(limit visible via docker inspect)"'
 ```
 
 Inspect ពីខាងក្រៅ៖
 
 ```bash
-docker run -d --name rean-limited -m 256m alpine:3.20 sleep 60
+docker run -d --name rean-limited -m 256m alpine:3.22 sleep 60
 docker inspect -f '{{.HostConfig.Memory}}' rean-limited
 # → 268435456 (bytes)
 docker rm -f rean-limited
@@ -937,7 +937,7 @@ Rule: **ដាក់ជំហានដែលផ្លាស់ប្តូយក
 
 ## 8. Volumes — រក្សាទិន្នន័យឱ្យនៅរស់
 
-### Lab: `labs/06-volumes`
+### Lab: `labs/07-volumes`
 
 Containers **ephemeral** (មិនអចិន្ត)។ Delete container → writable layer បាត់។
 
@@ -989,7 +989,7 @@ Bind mounts inherit host UID/GID issues។ Prefer matching user Dockerfile (`USE
 
 ## 9. Networks — របៀបដែល containers និយាយគ្នា
 
-### Lab: `labs/05-networks`
+### Lab: `labs/06-networks`
 
 Default containers same user-defined bridge network reach each other **by container name** (DNS)។
 
@@ -1027,9 +1027,9 @@ Example: app connects `postgres:5432` internally; publish `5432` only if host to
 
 ## 10. Environment, secrets និង config
 
-### Lab: `labs/10-env-secrets`
+### Lab: `labs/04-env-secrets`
 
-ធ្វើបន្ទាប់ពី Lab 03 (អ្នកសរសេរ Dockerfile រួច) និងមុន Lab 04។ អ្នកនឹងផ្ទេរ config នៅ **ពេល run** រួចមើល password ដែលដុតក្នុង image លេចក្នុង `docker history`។
+ធ្វើបន្ទាប់ពី Lab 03 (អ្នកសរសេរ Dockerfile រួច) និងមុន Lab 05។ អ្នកនឹងផ្ទេរ config នៅ **ពេល run** រួចមើល password ដែលដុតក្នុង image លេចក្នុង `docker history`។
 
 ### Pass env vars
 
@@ -1065,13 +1065,13 @@ Add `.env` to `.gitignore`។
 
 ## 11. Docker Compose — កម្មវិធីពហុ container
 
-### Lab: `labs/04-compose`
+### Lab: `labs/05-compose`
 
 Manually `docker run` app + db + redis painful។ **Compose** describes whole stack YAML។
 
 ### Minimal `compose.yaml`
 
-Lab 04 រក្សា **password ក្នុង `.env`** មិនមែនក្នុង YAML (Lab 10)។ Compose interpolate `${POSTGRES_PASSWORD}` ពេល stack ចាប់ផ្តើម៖
+Lab 05 រក្សា **password ក្នុង `.env`** មិនមែនក្នុង YAML (Lab 04)។ Compose interpolate `${POSTGRES_PASSWORD}` ពេល stack ចាប់ផ្តើម៖
 
 ```yaml
 services:
@@ -1168,13 +1168,13 @@ docker compose --profile tools up -d
 
 ## 12. Multi-stage builds និងទំហំ image
 
-### Lab: `labs/07-multi-stage`
+### Lab: `labs/08-multi-stage`
 
 Problem: build tools (compilers, TypeScript/`tsc`, npm all deps, Go toolchain) bloat production images increase attack surface។
 
 **Multi-stage builds** use multiple `FROM` copy only artifacts forward។
 
-Lab 07 compile TypeScript ក្នុង build stage ដូច្នេះ `:fat` (compiler នៅក្នុង image) ធំជាង `:slim` (JS ដែល compile រួច + production deps តែប៉ុណ្ណោះ) ច្បាស់។
+Lab 08 compile TypeScript ក្នុង build stage ដូច្នេះ `:fat` (compiler នៅក្នុង image) ធំជាង `:slim` (JS ដែល compile រួច + production deps តែប៉ុណ្ណោះ) ច្បាស់។
 
 ```dockerfile
 # ---- build stage ----
@@ -1225,7 +1225,7 @@ dive rean-hello:1.0   # if you install dive — visual layer explorer
 
 ## 13. ទម្លាប់គិតបែប production
 
-### Lab: `labs/08-production`
+### Lab: `labs/09-production`
 
 ### Checklist មុន deploy «real»
 
@@ -1303,7 +1303,11 @@ logging:
 
 ## 14. Debug និងដោះស្រាយបញ្ហា
 
-### Container won't stay up
+### Lab: `labs/10-debugging`
+
+អនុវត្ត `logs`, `inspect` និង Compose client ដែលនិយាយទៅ `localhost` ខុស។ កែ hostname រួចត្រឡប់មកទីនេះសម្រាប់ pattern ផ្សេងទៀត។
+
+### Container មិននៅ up
 
 ```bash
 docker ps -a
@@ -1311,21 +1315,21 @@ docker logs <name>
 docker inspect <name>   # look at State.ExitCode, Error, Mounts, NetworkSettings
 ```
 
-### Interactive debug
+### Debug បែប interactive
 
 ```bash
 docker run --rm -it --entrypoint sh myimage:tag
 docker compose run --rm web sh
 ```
 
-### Copy files in/out
+### Copy files ចូល/ចេញ
 
 ```bash
 docker cp my-nginx:/etc/nginx/nginx.conf ./nginx.conf
 docker cp ./file.txt my-nginx:/tmp/
 ```
 
-### See processes / resource use
+### មើល processes / ការប្រើ resource
 
 ```bash
 docker top my-nginx
@@ -1334,21 +1338,21 @@ docker stats
 
 ### Failure patterns ធម្មតា
 
-| Symptom | Likely cause |
+| រោគសញ្ញា | មូលហេតុទំនង |
 |---------|----------------|
-| Port already allocated | Process/container uses host port |
-| Connection refused to `db` | Wrong network, hostname, db not ready |
-| Permission denied on volume | UID mismatch bind mount |
-| Huge image | Fat base, leftover build tools, no multi-stage |
-| Changes not appearing | Old image cached; rebuild; wrong mount |
-| `localhost` browser works, app can't reach db | App uses `localhost` not service name |
+| Port already allocated | Process/container ផ្សេងកំពុងប្រើ host port |
+| Connection refused to `db` | Network ខុស, hostname ខុស, db មិនទាន់ ready |
+| Permission denied on volume | UID mismatch លើ bind mount |
+| Huge image | Base ធំ, ឧបករណ៍ build នៅសល់, គ្មាន multi-stage |
+| Changes not appearing | Image ចាស់នៅ cache; rebuild; ឬ mount ខុស |
+| `localhost` ក្នុង browser ដំណើរការ តែ app មិនទៅដល់ db | App ប្រើ `localhost` មិនមែនឈ្មោះ service |
 
-### «Database not ready» race
+### ការប្រណាំង «Database not ready»
 
-`depends_on` only waits **start**, not **ready**។ Fix with:
+`depends_on` រង់ចាំតែ **start** មិនមែន **ready**។ ដោះស្រាយដោយ៖
 
 - Healthcheck + `depends_on: condition: service_healthy` (Compose)
-- App-level retry/backoff
+- Retry/backoff ក្នុង app
 - Init containers / wait scripts
 
 ```yaml
@@ -1361,19 +1365,23 @@ depends_on:
 
 ## 15. សុវត្ថិភាពសំខាន់ៗ
 
-1. **Don't run as root** production containers when avoidable.
-2. **Scan images** CVEs (`docker scout`, Trivy, Grype).
-3. **Minimal base images** + multi-stage.
-4. **Never commit secrets**; never `ENV PASSWORD=...` real secrets Dockerfile.
-5. **Pin digests** supply-chain control:
+### Lab: `labs/11-security`
+
+ប្រៀបធៀប `whoami` លើ image ដែលមិនមែន root vs Alpine, build ជាមួយ BuildKit `--secret` (គ្មានអ្វីក្នុង `docker history`) ហើយស្កេនដោយ Trivy បើចង់។ Lab 04 បានបង្ហាញ anti-pattern `ENV` ដែលលេច secret រួចហើយ។
+
+1. **កុំ run ជា root** ក្នុង production containers នៅពេលអាចជៀសបាន។
+2. **ស្កេន images** រក CVEs (`docker scout`, Trivy, Grype)។
+3. **Base images តូច** + multi-stage។
+4. **កុំ commit secrets**; កុំ `ENV PASSWORD=...` ជាមួយ secret ពិតក្នុង Dockerfile។
+5. **Pin digests** សម្រាប់គ្រប់គ្រង supply-chain៖
 
    ```bash
    docker pull nginx@sha256:...
    ```
 
-6. **Drop capabilities** / security options (`--cap-drop ALL`).
-7. **Keep Engine updated**.
-8. **Treat Docker socket as root** — mount `/var/run/docker.sock` into container nearly equivalent root host.
+6. **Drop capabilities** / ប្រើ security options ពេលត្រូវ (`--cap-drop ALL`)។
+7. **Update Engine** ឱ្យទាន់។
+8. **ចាត់ Docker socket ដូច root** — mount `/var/run/docker.sock` ចូល container ស្ទើរតែដូចឱ្យ container នោះ root លើ host។
 
 ---
 
@@ -1381,13 +1389,13 @@ depends_on:
 
 ### BuildKit
 
-Modern builder (usually default):
+Builder ទំនើប (ធម្មតាជា default ឥឡូវ)៖
 
 ```bash
 DOCKER_BUILDKIT=1 docker build -t myapp .
 ```
 
-Features: better cache, parallel builds, secrets mounts build (without leaving secrets layers).
+លក្ខណៈ៖ cache ល្អជាង, build ទន្ទឹមគ្នា, mount secrets ពេល build (មិនទុក secrets ក្នុង layers)។
 
 ```dockerfile
 # syntax=docker/dockerfile:1
@@ -1406,7 +1414,7 @@ docker buildx create --use
 docker buildx build --platform linux/amd64,linux/arm64 -t you/app:1.0 --push .
 ```
 
-Useful Apple Silicon + Linux servers.
+មានប្រយោជន៍សម្រាប់ Apple Silicon + Linux servers។
 
 ### Registries
 
@@ -1417,27 +1425,27 @@ docker push youruser/rean-hello:1.0
 docker pull youruser/rean-hello:1.0
 ```
 
-GHCR example tag: `ghcr.io/you/rean-hello:1.0`
+ឧទាហរណ៍ GHCR tag: `ghcr.io/you/rean-hello:1.0`
 
-### Docker Swarm vs Kubernetes (orientation)
+### Docker Swarm vs Kubernetes (ទិដ្ឋភាព)
 
-| Tool | Role |
+| ឧបករណ៍ | តួនាទី |
 |------|------|
-| Docker Compose | Local / simple single-host stacks |
-| Docker Swarm | Built-in clustering (less common today) |
-| Kubernetes | Industry standard orchestration at scale |
+| Docker Compose | Stack មូលដ្ឋាន / host តែមួយ |
+| Docker Swarm | Clustering ក្នុង Docker (ប្រើតិចជាងសព្វថ្ងៃ) |
+| Kubernetes | Orchestration ស្តង់ដារឧស្សាហកម្មនៅទំហំធំ |
 
-Learn Compose thoroughly first. Move K8s when need multi-node scheduling, rolling updates, service meshes, etc.
+រៀន Compose ឱ្យជ្រៅមុន។ ទៅ K8s ពេលត្រូវការ scheduling ច្រើន node, rolling updates, service meshes ជាដើម។
 
-### Init process & zombies
+### Init process និង zombies
 
-Use `tini` or Docker `--init` so PID 1 reaps zombie processes forwards signals:
+ប្រើ `tini` ឬ Docker `--init` ដើម្បីឱ្យ PID 1 ប្រមូល zombie processes និងបញ្ជូន signals៖
 
 ```bash
 docker run --init ...
 ```
 
-### Custom bridge & aliases
+### Custom bridge និង aliases
 
 ```bash
 docker network create --subnet=172.28.0.0/16 rean-custom
@@ -1448,52 +1456,52 @@ docker run -d --network rean-custom --network-alias cache redis:7-alpine
 
 ## 17. Deploy ជាមួយ Docker & CI/CD
 
-> **Chapter ពិសេស:** path «ship it» — app containerized ចាកចេញ laptop, build CI, land registry, run server។ Complete Chapters 11–13 (ideally 15–16) មុន។
+> **ជំពូកពិសេស:** នេះគឺផ្លូវ «ship it» — app ដែល containerize ចាកចេញពី laptop, ត្រូវ build ក្នុង CI, ចូល registry, រួច run លើ server។ បញ្ចប់ជំពូក 11–13 (និង 15–16 បើអាច) មុន។
 
-### Lab: `labs/09-ci-cd`
+### Lab: `labs/12-ci-cd`
 
-Deploy មិនមែន command មួយ។ **Pipeline** decisions៖
+Deploy មិនមែនពាក្យបញ្ជាតែមួយ។ វាជា **pipeline** នៃការសម្រេចចិត្ត៖
 
 ```
   Code → Build image → Test → Push to registry → Pull on server → Run (Compose) → Observe
 ```
 
-Step manual undocumented → deploys fragile។ CI/CD turns repeatable parts automation។
+បើជំហានណាមួយធ្វើដោយដៃ ហើយគ្មានឯកសារ deploys នឹងផុយ។ CI/CD ប្រែផ្នែកដែលធ្វើម្តងហើយម្តងទៀតទៅជាស្វ័យប្រវត្តិ។
 
-### «Deploy with Docker» មានន័យ
+### «Deploy with Docker» មានន័យថាអ្វី
 
-| Piece | Job |
+| ផ្នែក | ការងារ |
 |-------|-----|
-| **Image** | Immutable artifact (app + runtime) identified tag/digest |
-| **Registry** | Store distribute images (Docker Hub, GHCR, ECR, …) |
-| **Runtime host** | Machine(s) Docker Engine pull run images |
-| **Compose (or orchestrator)** | Declares services, env, volumes, networks, restart, health |
-| **CI/CD** | Automates build/test/push (often deploy) every change |
+| **Image** | Artifact ដែលមិនប្តូរ (app + runtime) សម្គាល់ដោយ tag/digest |
+| **Registry** | ផ្ទុក និងចែកចាយ images (Docker Hub, GHCR, ECR, …) |
+| **Runtime host** | ម៉ាស៊ីនដែលមាន Docker Engine pull ហើយ run images |
+| **Compose (ឬ orchestrator)** | ប្រកាស services, env, volumes, networks, restart, health |
+| **CI/CD** | ស្វ័យប្រវត្តិ build/test/push (និងជាញឹកញាប់ deploy) រាល់ការផ្លាស់ប្តូរ |
 
-Docker Compose enough **single-host** production (VPS, small VM)។ Multi-node scheduling, rolling updates cluster, richer autoscaling → Kubernetes (Chapter 16 orientation) — **same images**។
+Docker Compose គ្រប់គ្រាន់សម្រាប់ production **host តែមួយ** (VPS, VM តូច)។ ពេលត្រូវការ scheduling ច្រើន node, rolling updates លើ cluster និង autoscaling កាន់តែសម្បូរ អ្នកទៅ Kubernetes (ជំពូក 16) — នៅតែប្រើ **images ដូចគ្នា**។
 
-### Environments: same image, different config
+### Environments: image ដូចគ្នា config ផ្សេង
 
-Follow 12-factor habits Chapter 10:
+តាមទម្លាប់ 12-factor ពីជំពូក 10៖
 
-| Environment | Typical source of config | Image |
+| Environment | ប្រភព config ធម្មតា | Image |
 |-------------|--------------------------|-------|
-| Local / lab | `.env`, bind mounts, `compose.override.yaml` | Built your machine |
-| Staging | secrets host / CI variables | Same image prod (or release candidate) |
-| Production | host env / secret manager; no bind-mounted source | **Only** images registry |
+| Local / lab | `.env`, bind mounts, `compose.override.yaml` | Build លើម៉ាស៊ីនអ្នក |
+| Staging | secrets លើ host / CI variables | Image ដូច prod (ឬ release candidate) |
+| Production | host env / secret manager; មិន bind-mount source | **តែ** images ពី registry |
 
-Rules prevent most deploy disasters:
+ច្បាប់ដែលការពារ deploy ភាគច្រើនកុំឱ្យខូច៖
 
-1. **Build once, promote same digest** (or same git SHA tag) staging → prod.
-2. **Never bake secrets image.**
-3. Prefer **`IMAGE:git-sha`** (or semver) over `latest`.
-4. Keep **prod Compose file** pulls images (`image:`) not build server (`build:`) when possible.
+1. **Build ម្ដង រួច promote digest ដូចគ្នា** (ឬ git SHA tag ដូចគ្នា) staging → prod។
+2. **កុំដុត secrets ចូល image។**
+3. ចូលចិត្ត **`IMAGE:git-sha`** (ឬ semver) ជាងពឹង `latest`។
+4. ទុក **prod Compose** ដែល pull images (`image:`) មិនមែន build លើ server (`build:`) នៅពេលអាច។
 
 ### Production Compose layout
 
-Practical split Lab 09:
+ការបែងចែកជាក់ស្តែងក្នុង Lab 12៖
 
-**`compose.yaml`** — local / CI smoke (may `build:`)
+**`compose.yaml`** — local / CI smoke (អាចមាន `build:`)
 
 ```yaml
 services:
@@ -1511,7 +1519,7 @@ services:
       retries: 3
 ```
 
-**`compose.prod.yaml`** — server (pull-only)
+**`compose.prod.yaml`** — server (pull តែប៉ុណ្ណោះ)
 
 ```yaml
 services:
@@ -1545,7 +1553,7 @@ services:
           memory: 256M
 ```
 
-On the server:
+នៅលើ server៖
 
 ```bash
 export IMAGE_TAG=sha-abc1234   # or a semver tag from CI
@@ -1554,7 +1562,7 @@ docker compose -f compose.prod.yaml up -d
 docker compose -f compose.prod.yaml ps
 ```
 
-Validate files anywhere (laptop or CI):
+Validate files នៅណាក៏បាន (laptop ឬ CI)៖
 
 ```bash
 docker compose -f compose.yaml config
@@ -1576,60 +1584,60 @@ docker push "$IMAGE:sha-$GIT_SHA"
 docker push "$IMAGE:latest"
 ```
 
-On the server pull **same** tag CI pushed:
+នៅលើ server អ្នក pull **tag ដូចគ្នា** ដែល CI បាន push៖
 
 ```bash
 docker pull ghcr.io/YOUR_USER/rean-deploy-api:sha-$GIT_SHA
 ```
 
-**GHCR tip:** GitHub Actions `GITHUB_TOKEN` push `ghcr.io/<owner>/<image>` when workflow `packages: write`។ Package visibility GitHub → Packages.
+**គន្លឹះ GHCR:** ក្នុង GitHub Actions `GITHUB_TOKEN` អាច push ទៅ `ghcr.io/<owner>/<image>` ពេល workflow មានសិទ្ធិ `packages: write`។ ភាពមើលឃើញនៃ package កំណត់នៅ GitHub → Packages។
 
-### Server bootstrap (single VPS checklist)
+### Server bootstrap (checklist VPS តែមួយ)
 
-Once per host:
+ធ្វើម្ដងក្នុងមួយ host៖
 
-1. Install Docker Engine + Compose plugin (Chapter 4 Linux path).
-2. Create non-root deploy user; add `docker` group (or rootless later).
-3. Harden SSH (keys only, no password login).
-4. Clone or copy **only** deploy files (`compose.prod.yaml`, `.env`, maybe reverse-proxy config) — not necessarily whole app source.
-5. Create `.env` server (never commit real values).
-6. Optional recommended: **Caddy** or **Nginx** reverse proxy TLS (`https://your.domain` → `127.0.0.1:3000`).
+1. ដំឡើង Docker Engine + Compose plugin (ផ្លូវ Linux ក្នុងជំពូក 4)។
+2. បង្កើត user deploy ដែលមិនមែន root; បន្ថែមទៅក្រុម `docker` (ឬ rootless ក្រោយ)។
+3. រឹត SSH (keys តែប៉ុណ្ណោះ, មិន login ដោយ password)។
+4. Clone ឬ copy **តែ** ឯកសារ deploy (`compose.prod.yaml`, `.env`, ប្រហែល config reverse-proxy) — មិនចាំបាច់ source app ទាំងមូល។
+5. បង្កើត `.env` លើ server (កុំ commit តម្លៃពិត)។
+6. ណែនាំ៖ **Caddy** ឬ **Nginx** ជា reverse proxy សម្រាប់ TLS (`https://your.domain` → `127.0.0.1:3000`)។
 
-Minimal mental model TLS:
+គំរូ TLS ខ្លី៖
 
 ```
 Internet → :443 (Caddy/Nginx) → localhost:3000 (your container published port)
 ```
 
-Publish app only `127.0.0.1:3000` not exposed raw internet:
+អ្នកអាច publish app តែនៅ `127.0.0.1:3000` ដើម្បីមិនបើកចំហទៅអ៊ីនធឺណិត៖
 
 ```yaml
 ports:
   - "127.0.0.1:3000:3000"
 ```
 
-### Reverse proxy (why next to Docker)
+### Reverse proxy (ហេតុអ្វីនៅក្បែរ Docker)
 
-Containers great running app. Reverse proxy handles:
+Containers ល្អក្នុងការរត់ app។ Reverse proxy ទទួលខុសត្រូវ៖
 
-- HTTPS certificates (Let's Encrypt)
-- Multiple hostnames one machine
-- Request logging / basic rate limits
-- Hiding internal ports
+- វិញ្ញាបនបត្រ HTTPS (Let’s Encrypt)
+- Hostnames ច្រើនលើម៉ាស៊ីនតែមួយ
+- Request logging / rate limits មូលដ្ឋាន
+- លាក់ internal ports
 
-**Not** need Kubernetes single API + Postgres one VPS. Compose + proxy common honest production setup.
+អ្នក **មិន** ត្រូវការ Kubernetes សម្រាប់ API + Postgres តែមួយលើ VPS មួយ។ Compose + proxy គឺ setup production ធម្មតា និងស្មោះត្រង់។
 
-### Releases without drama
+### Releases ដោយគ្មានរឿងរ៉ាវ
 
-| Practice | Why |
+| ទម្លាប់ | ហេតុអ្វី |
 |----------|-----|
-| Healthchecks + `restart: unless-stopped` | Unhealthy/crashed containers recover or stay marked unhealthy |
-| `docker compose up -d` after `pull` | Recreates only changed services |
-| Keep previous tag noted | Instant rollback: set `IMAGE_TAG` last good SHA `up -d` again |
-| Database volumes | Named volumes survive container recreation (Chapter 8) |
-| Migrations | Explicit step (one-off `compose run`) before/after switching API — document order |
+| Healthchecks + `restart: unless-stopped` | Container ខូច/unhealthy ងើបឡើងវិញ ឬនៅសម្គាល់ unhealthy |
+| `docker compose up -d` បន្ទាប់ពី `pull` | បង្កើតសេវាដែលផ្លាស់ប្តូរឡើងវិញតែប៉ុណ្ណោះ |
+| ទុក tag មុន | Rollback ភ្លាម៖ កំណត់ `IMAGE_TAG` ទៅ SHA ល្អចុងក្រោយ រួច `up -d` ម្ដងទៀត |
+| Database volumes | Named volumes នៅរស់បន្ទាប់ពីបង្កើត container ឡើងវិញ (ជំពូក 8) |
+| Migrations | ធ្វើជាជំហានច្បាស់ (one-off `compose run`) មុន/ក្រោយប្តូរ API — សរសេរលំដាប់ |
 
-Rollback sketch:
+គំនូស rollback៖
 
 ```bash
 export IMAGE_TAG=sha-OLDGOOD
@@ -1637,27 +1645,27 @@ docker compose -f compose.prod.yaml pull api
 docker compose -f compose.prod.yaml up -d api
 ```
 
-### CI/CD: each stage should do
+### CI/CD: ជំហាននីមួយៗគួរធ្វើអ្វី
 
-Think stages, not «one giant script»:
+គិតជា stages មិនមែន «script យក្សមួយ»៖
 
-| Stage | Typical checks | Failure means |
+| Stage | ការពិនិត្យធម្មតា | Failure មានន័យ |
 |-------|----------------|---------------|
-| **Validate** | `docker compose config`, Dockerfile present | Bad YAML / broken project layout |
-| **Test** | Unit tests (host or build stage) | App logic broken |
-| **Build** | `docker build` (BuildKit) | Image won't build |
-| **Smoke** | `compose up` + `curl /health` CI | Container starts app dead |
-| **Push** | `docker push` tagged image | Artifact not published |
-| **Deploy** | SSH / API / platform «pull + up» | Runtime host not updated |
+| **Validate** | `docker compose config`, មាន Dockerfile | YAML ខុស / layout គម្រោងខូច |
+| **Test** | Unit tests (host ឬក្នុង build stage) | Logic app ខូច |
+| **Build** | `docker build` (BuildKit) | Image មិន build |
+| **Smoke** | `compose up` + `curl /health` ក្នុង CI | Container ចាប់ផ្ដើម តែ app ស្លាប់ |
+| **Push** | `docker push` image ដែល tag | Artifact មិនបានផ្សាយ |
+| **Deploy** | SSH / API / platform «pull + up» | Host runtime មិនបាន update |
 
-**Continuous Integration (CI)** = validate + test + build (+ smoke) every PR/push.  
-**Continuous Delivery/Deployment (CD)** = promote built image environment automatically or one click.
+**Continuous Integration (CI)** = validate + test + build (+ smoke) រាល់ PR/push។  
+**Continuous Delivery/Deployment (CD)** = promote image ដែល build រួចទៅ environment ស្វ័យប្រវត្តិ ឬដោយចុចម្ដង។
 
-Start CI **builds pushes**. Add automatic deploy staging stable. Keep production deploy gated (manual approval) until trust pipeline.
+ចាប់ផ្ដើមដោយ CI ដែល **build និង push**។ បន្ថែម deploy ស្វ័យប្រវត្តិទៅ staging ពេលនោះនឹងស្ថិរភាព។ ទុក production deploy ឱ្យមានច្រក (ការយល់ព្រមដោយដៃ) រហូតទុកចិត្ត pipeline។
 
-### GitHub Actions — complete pattern
+### GitHub Actions — pattern ពេញ
 
-Lab 09 ready-to-copy workflow. Shape:
+Lab 12 មាន workflow ត្រៀម copy។ រូបរាងដូចនេះ៖
 
 ```yaml
 name: CI — build, smoke, push
@@ -1681,20 +1689,20 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Validate Compose files
-        working-directory: labs/09-ci-cd
+        working-directory: labs/12-ci-cd
         run: |
           docker compose -f compose.yaml config >/dev/null
           docker compose -f compose.prod.yaml config >/dev/null
 
       - name: Build image
-        working-directory: labs/09-ci-cd
+        working-directory: labs/12-ci-cd
         run: |
           TAG=sha-$(git rev-parse --short HEAD)
           docker build -t "$IMAGE:$TAG" -t "$IMAGE:latest" .
           echo "TAG=$TAG" >> "$GITHUB_ENV"
 
       - name: Smoke test
-        working-directory: labs/09-ci-cd
+        working-directory: labs/12-ci-cd
         run: |
           docker compose up -d --build
           for i in $(seq 1 30); do
@@ -1706,7 +1714,7 @@ jobs:
 
       - name: Teardown smoke stack
         if: always()
-        working-directory: labs/09-ci-cd
+        working-directory: labs/12-ci-cd
         run: docker compose down -v
 
       - name: Login to GHCR
@@ -1724,16 +1732,16 @@ jobs:
           docker push "$IMAGE:latest"
 ```
 
-Notes:
+កំណត់ចំណាំ៖
 
-- **PRs build + smoke** not push (keeps registry clean).
-- **`main` pushes** publish image.
-- Replace image name / working directory wire own app.
-- Private deploy key SSH deploy step, store secrets GitHub → Settings → Secrets (`SSH_HOST`, `SSH_KEY`, …) — never repo.
+- **PRs build + smoke** តែមិន push (ឱ្យ registry ស្អាត)។
+- **`main` pushes** ផ្សាយ image។
+- ប្តូរឈ្មោះ image / working directory ពេលភ្ជាប់ទៅ app ផ្ទាល់ខ្លួន។
+- សម្រាប់ deploy key ឯកជន ឬជំហាន SSH deploy ទុក secrets ក្នុង GitHub → Settings → Secrets (`SSH_HOST`, `SSH_KEY`, …) — កុំដាក់ក្នុង repo។
 
-### Optional CD: deploy over SSH after push
+### CD ស្រេចចិត្ត: deploy តាម SSH បន្ទាប់ពី push
 
-After successful push job (same workflow or second `deploy` job):
+បន្ទាប់ពី job push ជោគជ័យ (workflow ដូចគ្នា ឬ job `deploy` ទីពីរ)៖
 
 ```yaml
       - name: Deploy over SSH
@@ -1750,19 +1758,19 @@ After successful push job (same workflow or second `deploy` job):
             docker compose -f compose.prod.yaml up -d
 ```
 
-Keep deploy scripts **idempotent**: run twice leave system healthy.
+ឱ្យ script deploy **idempotent**: រត់ពីរដងនៅតែទុកប្រព័ន្ធឱ្យសុខភាពល្អ។
 
-### Secrets & supply chain CI
+### Secrets និង supply chain ក្នុង CI
 
-1. Use GitHub/GitLab **masked secrets** registry passwords, SSH keys, API tokens.
-2. Prefer `GITHUB_TOKEN` / OIDC cloud roles over long-lived PATs when platform supports.
-3. Pin Actions full commit SHAs higher assurance (optional hardening).
-4. Scan images CI (`docker scout`, Trivy, Grype) fail critical CVEs when ready (Chapter 15).
-5. Treat Docker socket CI runners trusted infrastructure — don't expose untrusted PR code forks without isolation.
+1. ប្រើ **masked secrets** GitHub/GitLab សម្រាប់ពាក្យសម្ងាត់ registry, SSH keys, API tokens។
+2. ចូលចិត្ត `GITHUB_TOKEN` / OIDC cloud roles ជាង PAT រយៈពេលវែង នៅពេល platform គាំទ្រ។
+3. Pin Actions ទៅ commit SHA ពេញ សម្រាប់ការធានាខ្ពស់ជាង (hardening ស្រេចចិត្ត)។
+4. ស្កេន images ក្នុង CI (`docker scout`, Trivy, Grype) ហើយ fail លើ critical CVEs ពេលអ្នកត្រៀម bar នោះ (ជំពូក 15)។
+5. ចាត់ Docker socket ក្នុង CI runners ជា infrastructure ដែលទុកចិត្ត — កុំបើកឱ្យ PR code ពី forks ដែលមិនទុកចិត្តដោយគ្មាន isolation។
 
-### Observability after deploy
+### ការសង្កេតបន្ទាប់ពី deploy
 
-Minimum viable production eyes:
+ភ្នែក production អប្បបរមា៖
 
 ```bash
 docker compose -f compose.prod.yaml ps
@@ -1770,55 +1778,57 @@ docker compose -f compose.prod.yaml logs -f --tail=200 api
 curl -fsS https://your.domain/health
 ```
 
-Then graduate log shipping uptime checks. Green CI build not substitute live `/health` public URL.
+បន្ទាប់ទៅ log shipping និង uptime checks។ CI build ពណ៌បៃតងមិនជំនួស `/health` ពិតពី URL សាធារណៈ។
 
-### End-to-end checklist (print this)
+### Checklist ពីចុងដល់ចុង (បោះពុម្ពទុក)
 
-- [ ] App has real `/health` (or equivalent) Compose **and** CI smoke tests
-- [ ] `compose.prod.yaml` uses `image:` + tag variable (no surprise remote builds)
-- [ ] `.env.example` documents every required variable; real `.env` gitignored
-- [ ] CI validates Compose, builds, smokes, pushes main branch
-- [ ] Server has Docker Engine, deploy files, secrets only host
-- [ ] You know rollback tag last good deploy
-- [ ] TLS terminates reverse proxy (or platform edge), not afterthought
-- [ ] You can explain build → registry → pull → up without looking up
+- [ ] App មាន `/health` ពិត (ឬសមភាគី) ប្រើដោយ Compose **និង** CI smoke tests
+- [ ] `compose.prod.yaml` ប្រើ `image:` + tag variable (គ្មាន build ពីចម្ងាយដោយចៃដន្យ)
+- [ ] `.env.example` រាយ variable គ្រប់គ្រាន់; `.env` ពិតត្រូវ gitignore
+- [ ] CI validate Compose, build, smoke, រួច push លើ main
+- [ ] Server មាន Docker Engine, ឯកសារ deploy និង secrets តែលើ host
+- [ ] អ្នកដឹង rollback tag ពី deploy ល្អចុងក្រោយ
+- [ ] TLS ចប់នៅ reverse proxy (ឬ platform edge) មិនមែនជាការគិតក្រោយ
+- [ ] អ្នកអាចពន្យល់ build → registry → pull → up ដោយមិនមើលកំណត់ចំណាំ
 
-### How chapter connects
+### របៀបដែលជំពូកនេះភ្ជាប់
 
-| Earlier chapter | What you reuse here |
+| ជំពូកមុន | អ្វីដែលអ្នកប្រើឡើងវិញ |
 |-----------------|---------------------|
-| 7 / 12 | Dockerfile + multi-stage CI builds |
-| 10 | Env/secrets — CI secrets + server `.env` |
-| 11 | Compose deploy unit |
+| 7 / 12 | Dockerfile + multi-stage សម្រាប់ CI builds |
+| 10 | Env/secrets — CI secrets + `.env` លើ server |
+| 11 | Compose ជា unit deploy |
 | 13 / 15 | Healthchecks, non-root, limits, scanning |
-| 16 | BuildKit, registries, multi-arch ARM + AMD |
+| 16 | BuildKit, registries, multi-arch បើត្រូវ ARM + AMD |
 
-Next: **Lab 09** run CI steps locally optionally push. After **Capstone (Chapter 18)** real CI workflow stretch goal — already know shape.
+បន្ទាប់៖ **Lab 12** ធ្វើឱ្យអ្នករត់ជំហាន CI លើម៉ាស៊ីនផ្ទាល់ រួច push បើចង់។ ក្រោយនោះ **Capstone (ជំពូក 18)** អាចមាន CI workflow ពិតជា stretch goal — អ្នកស្គាល់រូបរាងហើយ។
 
 
 ---
 
 ## 18. គម្រោង capstone
 
-Build small stack repo (extend `labs/04-compose`):
+### Lab: `labs/13-capstone`
 
-**Goal:** Web API + Postgres + Redis
+បង្កើត stack តូចក្នុង repo នេះ (អ្នកអាច copy `labs/05-compose` ចូលថត capstone)៖
 
-Requirements:
+**គោលដៅ:** Web API + Postgres + Redis
 
-1. `Dockerfile` API (multi-stage if compile/build).
-2. `compose.yaml` `api`, `db`, `redis`.
-3. Named volumes Postgres.
-4. `.env.example` documenting required variables (no real secrets).
-5. Healthchecks API Postgres.
-6. API connects service hostnames `db` `redis`.
-7. `README` section: how `up`, migrate (if any), `down`.
+តម្រូវការ៖
 
-Stretch goals:
+1. `Dockerfile` សម្រាប់ API (multi-stage បើអ្នក compile/build)។
+2. `compose.yaml` មាន `api`, `db`, `redis`។
+3. Named volumes សម្រាប់ Postgres។
+4. `.env.example` រាយ variables ដែលត្រូវការ (គ្មាន secrets ពិត)។
+5. Healthchecks លើ API និង Postgres។
+6. API ភ្ជាប់តាម hostname `db` និង `redis`។
+7. ផ្នែក `README`: របៀប `up`, migrate (បើមាន) និង `down`។
 
-- Separate `compose.prod.yaml` restart policies resource limits (Chapter 17)
-- Nginx or Caddy reverse proxy front API
-- CI job Lab 09 / Chapter 17: `docker compose config` + build + smoke + push
+Stretch goals៖
+
+- `compose.prod.yaml` ដាច់ដោយឡែក ជាមួយ restart policies និង resource limits (មើលជំពូក 17)
+- Nginx ឬ Caddy reverse proxy មុខ API
+- CI job ពី Lab 12 / ជំពូក 17: `docker compose config` + build + smoke + push
 
 ---
 
@@ -1859,79 +1869,80 @@ docker system prune
 
 ## 20. តារាងតាមដានផ្លូវរៀន
 
-### Beginner
+### ថ្នាក់ដើម
 
-- [ ] Explain containerization vs VMs vs Docker vs Kubernetes
-- [ ] Describe namespaces cgroups high level
-- [ ] Complete `labs/01-isolation-basics`
-- [ ] Explain image vs container vs Dockerfile
+- [ ] ពន្យល់ containerization vs VMs vs Docker vs Kubernetes
+- [ ] ពិពណ៌នា namespaces និង cgroups កម្រិតខ្ពស់
+- [ ] បញ្ចប់ `labs/01-isolation-basics`
+- [ ] ពន្យល់ image vs container vs Dockerfile
 - [ ] Run, stop, remove containers; publish ports
-- [ ] Read logs `exec` into container
-- [ ] Write simple Dockerfile `docker build`
-- [ ] Use `.dockerignore`
+- [ ] អាន logs និង `exec` ចូល container
+- [ ] សរសេរ Dockerfile សាមញ្ញ និង `docker build`
+- [ ] ប្រើ `.dockerignore`
 
-### Intermediate
+### ថ្នាក់កណ្តាល
 
 - [ ] Named volumes + bind mounts
-- [ ] User-defined networks + DNS by name
-- [ ] Env files 12-factor config (`labs/10-env-secrets`)
-- [ ] Compose multi-service app
-- [ ] Fix «db not ready» healthchecks
+- [ ] User-defined networks + DNS តាមឈ្មោះ
+- [ ] Env files និង config បែប 12-factor (`labs/04-env-secrets`)
+- [ ] កម្មវិធី Compose ពហុសេវា
+- [ ] ដោះស្រាយ «db not ready» ដោយ healthchecks
 
-### Advanced
+### ថ្នាក់ខ្ពស់
 
-- [ ] Multi-stage builds; shrink images
-- [ ] Non-root user, healthchecks, restart policies
-- [ ] BuildKit secrets; pin tags/digests
-- [ ] Push/pull registry
-- [ ] Debug `inspect`, `logs`, `stats`, ephemeral shells
-- [ ] Complete Chapter 17 deploy checklist; finish `labs/09-ci-cd`
-- [ ] Explain CI vs CD build → registry → pull → up path
-- [ ] Complete capstone stack
+- [ ] Multi-stage builds; បង្រួម images
+- [ ] User មិនមែន root, healthchecks, restart policies
+- [ ] Debug ដោយ `inspect`, `logs`, `stats`, shell បណ្ដោះអាសន្ន (`labs/10-debugging`)
+- [ ] ស្កេន images; BuildKit secrets; pin tags/digests (`labs/11-security`)
+- [ ] Push/pull ពី registry
+- [ ] បញ្ចប់ checklist deploy ជំពូក 17; បញ្ចប់ `labs/12-ci-cd`
+- [ ] ពន្យល់ CI vs CD និងផ្លូវ build → registry → pull → up
+- [ ] បញ្ចប់ capstone stack (`labs/13-capstone`)
 
 ---
 
 ## ផែនការប្រចាំសប្តាហ៍ (ណែនាំ)
 
-| Day | Focus | Lab |
+| ថ្ងៃ | ផ្តោត | Lab |
 |-----|--------|-----|
 | 1 | Isolation basics + hello workflow | `labs/01-isolation-basics`, `labs/02-hello` |
-| 2 | Dockerfile + env/secrets | `labs/03-dockerfile`, `labs/10-env-secrets` |
-| 3 | Compose basics | `labs/04-compose` |
-| 4 | Networks & volumes | `labs/05-networks`, `labs/06-volumes` |
-| 5 | Multi-stage + prod habits | `labs/07-multi-stage`, `labs/08-production` |
-| 6 | Deploy + CI/CD (special) | `labs/09-ci-cd` |
-| 7–8 | Capstone | your own stack |
+| 2 | Dockerfile + env/secrets | `labs/03-dockerfile`, `labs/04-env-secrets` |
+| 3 | Compose មូលដ្ឋាន | `labs/05-compose` |
+| 4 | Networks និង volumes | `labs/06-networks`, `labs/07-volumes` |
+| 5 | Multi-stage + ទម្លាប់ prod | `labs/08-multi-stage`, `labs/09-production` |
+| 6 | Debug + សុវត្ថិភាព | `labs/10-debugging`, `labs/11-security` |
+| 7 | Deploy + CI/CD (ពិសេស) | `labs/12-ci-cd` |
+| 8–9 | Capstone | `labs/13-capstone` |
 
 ---
 
 ## វចនានុក្រម
 
-| Term | Definition |
+| ពាក្យ | និយមន័យ |
 |------|------------|
-| Containerization | Packaging app deps isolated unit shared kernel |
-| OCI | Open Container Initiative — standards images runtimes |
-| Daemon | Background Docker engine (`dockerd`) |
-| Layer | Immutable filesystem diff image |
-| Tag | Mutable label image version |
-| Digest | Immutable content hash image |
-| Context | Files sent daemon during `build` |
-| Registry | Remote store images |
-| Orchestrator | System schedules containers across machines |
-| Namespace | Linux isolation (pid, net, mnt, …) |
-| cgroups | Linux resource limits (CPU, memory) |
+| Containerization | ការវេចខ្ចប់ app ជាមួយ deps ទៅជា unit ដាច់ដោយឡែកលើ kernel រួម |
+| OCI | Open Container Initiative — ស្តង់ដារ images និង runtimes |
+| Daemon | Docker engine ផ្ទៃខាងក្រោយ (`dockerd`) |
+| Layer | ភាពខុសគ្នានៃ filesystem ដែលមិនប្តូរក្នុង image |
+| Tag | ស្លាកដែលប្តូរបានសម្រាប់កំណែ image |
+| Digest | Hash មាតិកាដែលមិនប្តូរនៃ image |
+| Context | ឯកសារផ្ញើទៅ daemon ពេល `build` |
+| Registry | ឃ្លាំងពីចម្ងាយសម្រាប់ images |
+| Orchestrator | ប្រព័ន្ធកំណត់ពេល containers លើម៉ាស៊ីនច្រើន |
+| Namespace | Isolation ក្នុង Linux (pid, net, mnt, …) |
+| cgroups | ដែនកំណត់ resource ក្នុង Linux (CPU, memory) |
 
 ---
 
 ## ជំហានបន្ទាប់បន្ទាប់ពីមគ្គុទ្ទេសក៍នេះ
 
-1. Practice labs order under `labs/` (Lab 10 ជាមួយ Chapter 10; Lab 09 deploy/CI).
-2. Re-run Chapter 2 isolation examples until obvious.
-3. Containerize real app you know — wire Chapter 17 pipeline.
-4. Read official docs: [https://docs.docker.com/](https://docs.docker.com/)
-5. Learn Compose Watch / Dev Containers daily development.
-6. Harden CD: image scanning CI, manual prod approvals, multi-node Kubernetes (Pods, Deployments, Services).
+1. អនុវត្ត labs តាមលំដាប់ក្រោម `labs/` (Lab 04 ជាមួយជំពូក 10; Lab 12 សម្រាប់ deploy/CI; Lab 13 សម្រាប់ capstone)។
+2. រត់ឧទាហរណ៍ isolation ជំពូក 2 ឡើងវិញរហូតមានអារម្មណ៍ច្បាស់។
+3. Containerize app ពិតដែលអ្នកស្គាល់ — រួចភ្ជាប់ pipeline ជំពូក 17។
+4. អានឯកសារផ្លូវការ: [https://docs.docker.com/](https://docs.docker.com/)
+5. រៀន Compose Watch / Dev Containers សម្រាប់ការអភិវឌ្ឍប្រចាំថ្ងៃ។
+6. រឹត CD: ស្កេន image ក្នុង CI, ការយល់ព្រម prod ដោយដៃ, រួច Kubernetes ច្រើន node (Pods, Deployments, Services)។
 
 ---
 
-*Created for `rean-docker` learning project. Work chapter by chapter; prefer understanding over rushing commands.*
+*បង្កើតសម្រាប់គម្រោងរៀន `rean-docker`។ ធ្វើតាមជំពូក; ចូលចិត្តការយល់ដឹងជាងការប្រញាប់ពាក្យបញ្ជា។*
