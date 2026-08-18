@@ -553,6 +553,10 @@ p {
   margin-inline: auto;
 }
 
+rean-header {
+  display: flex;
+}
+
 .site-header {
   position: sticky;
   top: 0;

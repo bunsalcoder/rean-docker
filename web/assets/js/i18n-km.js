@@ -133,6 +133,10 @@ window.REAN_I18N_KM = {
   "nav.labs": "លំហាត់",
   "nav.learn": "រៀន",
   "nav.menu": "ម៉ឹនុយ",
+  "notFound.body": "URL នោះមិនមែនជាផ្នែកនៃគេហទំព័រ rean-docker ទេ។",
+  "notFound.description": "ទំព័រនេះមិនមានក្នុងគេហទំព័ររៀន rean-docker ទេ។",
+  "notFound.heading": "រកមិនឃើញទំព័រ",
+  "notFound.title": "រកមិនឃើញ — rean-docker",
   "theme.toDark": "ប្តូរទៅផ្ទៃងងិត",
   "theme.toLight": "ប្តូរទៅផ្ទៃភ្លឺ"
 };
