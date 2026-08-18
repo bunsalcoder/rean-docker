@@ -5,40 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light dark" />
     <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
     <title>Not found — rean-docker</title>
     <meta name="description" content="This page is not in the rean-docker learning site." />
     <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
     <link rel="stylesheet" href="./assets/css/site.css" />
-    <script>
-      (() => {
-        try {
-          const storedTheme = localStorage.getItem("rean-theme");
-          const theme =
-            storedTheme === "light" || storedTheme === "dark"
-              ? storedTheme
-              : window.matchMedia("(prefers-color-scheme: dark)").matches
-                ? "dark"
-                : "light";
-          document.documentElement.dataset.theme = theme;
-        } catch (_) {
-          document.documentElement.dataset.theme = "light";
-        }
-      })();
-    </script>
+    <script src="./assets/js/boot.js"></script>
   </head>
-  <body class="bg-mesh">
+  <body class="bg-mesh" data-i18n-title="notFound.title" data-i18n-description="notFound.description">
+    <rean-header class="site-header" role="banner"></rean-header>
     <main class="section">
       <div class="wrap">
         <p class="eyebrow">404</p>
-        <h1>Page not found</h1>
-        <p>That URL is not part of the rean-docker site.</p>
+        <h1 data-i18n="notFound.heading">Page not found</h1>
+        <p data-i18n="notFound.body">That URL is not part of the rean-docker site.</p>
         <div class="cta-row">
-          <a class="btn btn-primary" href="./index.html">Home</a>
-          <a class="btn btn-ghost" href="./labs.html">Labs</a>
-          <a class="btn btn-ghost" href="./learn.html">Learn</a>
+          <a class="btn btn-primary" href="./index.html" data-i18n="nav.home">Home</a>
+          <a class="btn btn-ghost" href="./labs.html" data-i18n="nav.labs">Labs</a>
+          <a class="btn btn-ghost" href="./learn.html" data-i18n="nav.learn">Learn</a>
         </div>
       </div>
     </main>
+    <script src="./assets/js/i18n-km.js"></script>
+    <script src="./assets/js/i18n.js"></script>
+    <script src="./assets/js/site.js"></script>
   </body>
 </html>
