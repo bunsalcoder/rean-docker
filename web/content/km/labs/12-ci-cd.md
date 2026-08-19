@@ -43,6 +43,8 @@ docker images "rean-deploy-api"
 
 បើក `workflows/ci.yml`។ នេះគឺ GitHub Actions pattern ពីជំពូក 17។
 
+សង្កេត `uses:` pin commit SHA ៤០ តួ (មាន comment `# v…`) មិនមែន `@v4`។ គំនិតដូចមិន deploy `:latest`។
+
 ជម្រើស (តែបើអ្នកមាន GitHub repo ហើយចង់ push ពិត)៖
 
 1. Copy `workflows/ci.yml` → `.github/workflows/rean-deploy-ci.yml` នៅ **repo root**។
@@ -70,6 +72,7 @@ curl -fsS http://127.0.0.1:3000/health
 - តើអ្វីជាភាពខុសគ្នារវាង CI (build/smoke/push) និង CD (deploy ទៅ host)?
 - តើ rollback ទៅ SHA tag កាលពីម្សិលមិញធ្វើដូចម្ដេច?
 - ហេតុអ្វី `compose.prod.yaml` error បើ `IMAGE_TAG` មិនកំណត់ ជំនួសឱ្យ default `latest`?
+- ហេតុអ្វី pin GitHub Actions ទៅ commit SHA ហើយមិនមែន `@v4`?
 
 ## លក្ខខណ្ឌជោគជ័យ
 
@@ -77,6 +80,7 @@ curl -fsS http://127.0.0.1:3000/health
 - [ ] Smoke test លើម៉ាស៊ីនផ្ទាល់ ត្រឡប់ `{"status":"ok",…}` ពី `/health`
 - [ ] អ្នកអាចពន្យល់ build → tag → (push) → pull → `compose up` ដោយគ្មាន notes
 - [ ] អ្នកដឹងហេតុអ្វី prod Compose ត្រូវការ `IMAGE_TAG` ហើយមិន fallback ទៅ `latest`
+- [ ] អ្នកដឹងហេតុអ្វី workflow pin Actions តាម SHA មិនមែន `@v4`
 - [ ] អ្នកដឹងថាដាក់ secrets សម្រាប់ SSH deploy នៅណា (host / GitHub Secrets — មិនមែនក្នុង image)
 
 ## បន្ទាប់

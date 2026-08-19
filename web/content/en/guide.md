@@ -1229,7 +1229,7 @@ dive rean-hello:1.0   # if you install dive — visual layer explorer
 
 ### Checklist before “real” deploy
 
-1. **Pin versions** — `postgres:16.4-alpine`, not `postgres:latest`
+1. **Pin versions** — `postgres:16-alpine`, not `postgres:latest`. Labs in this repo use that kind of series tag (`redis:7-alpine`, `node:22-alpine`). A patch tag or a digest (`postgres@sha256:…`, Chapter 15) is stricter for production-critical images.
 2. **Non-root user** — `USER node` or custom UID
 3. **Read-only root filesystem** where possible (`--read-only` + writable tmp mounts)
 4. **Healthchecks** — Alpine Node images often have no `wget`/`curl`. Probe with the same Node runtime as the app:
@@ -1688,7 +1688,7 @@ jobs:
   ci:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Validate Compose files
         working-directory: labs/12-ci-cd
@@ -1722,7 +1722,7 @@ jobs:
 
       - name: Login to GHCR
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: docker/login-action@v3
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -1746,7 +1746,7 @@ After a successful push job (same workflow or a second `deploy` job):
 
 ```yaml
       - name: Deploy over SSH
-        uses: appleboy/ssh-action@v1.2.0
+        uses: appleboy/ssh-action@823bd89e131d8d508129f9443cad5855e9ba96f0 # v1.2.4
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
@@ -1764,7 +1764,7 @@ Keep deploy scripts **idempotent**: running them twice should leave the system h
 
 1. Use GitHub/GitLab **masked secrets** for registry passwords, SSH keys, API tokens.
 2. Prefer `GITHUB_TOKEN` / OIDC cloud roles over long-lived PATs when the platform supports it.
-3. Pin Actions to full commit SHAs for higher assurance (optional hardening).
+3. Pin third-party Actions to **full commit SHAs** (`owner/action@<40-hex>`), not moving tags like `@v4`. A tag can be force-pushed; a SHA cannot. This repo’s workflows and Lab 12’s template do that — the `# v4.4.0` comment is only a human label (Dependabot can still bump it).
 4. Scan images in CI (`docker scout`, Trivy, Grype) and fail on critical CVEs when you are ready for that bar (Chapter 15).
 5. Treat the Docker socket in CI runners as trusted infrastructure — do not expose it to untrusted PR code from forks without isolation.
 

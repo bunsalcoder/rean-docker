@@ -1229,7 +1229,7 @@ dive rean-hello:1.0   # if you install dive — visual layer explorer
 
 ### Checklist មុន deploy «real»
 
-1. **Pin versions** — `postgres:16.4-alpine`, not `postgres:latest`
+1. **Pin versions** — `postgres:16-alpine` មិនមែន `postgres:latest`។ Labs ក្នុង repo នេះប្រើ series tag បែបនោះ (`redis:7-alpine`, `node:22-alpine`)។ Patch tag ឬ digest (`postgres@sha256:…`, ជំពូក 15) តឹងជាងសម្រាប់ image សំខាន់ក្នុង production។
 2. **Non-root user** — `USER node` or custom UID
 3. **Read-only root filesystem** where possible (`--read-only` + writable tmp mounts)
 4. **Healthchecks** — Alpine Node images ភាគច្រើនគ្មាន `wget`/`curl`។ Probe ដោយ Node runtime ដូច app:
@@ -1688,7 +1688,7 @@ jobs:
   ci:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Validate Compose files
         working-directory: labs/12-ci-cd
@@ -1722,7 +1722,7 @@ jobs:
 
       - name: Login to GHCR
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: docker/login-action@v3
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -1746,7 +1746,7 @@ jobs:
 
 ```yaml
       - name: Deploy over SSH
-        uses: appleboy/ssh-action@v1.2.0
+        uses: appleboy/ssh-action@823bd89e131d8d508129f9443cad5855e9ba96f0 # v1.2.4
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
@@ -1764,7 +1764,7 @@ jobs:
 
 1. ប្រើ **masked secrets** GitHub/GitLab សម្រាប់ពាក្យសម្ងាត់ registry, SSH keys, API tokens។
 2. ចូលចិត្ត `GITHUB_TOKEN` / OIDC cloud roles ជាង PAT រយៈពេលវែង នៅពេល platform គាំទ្រ។
-3. Pin Actions ទៅ commit SHA ពេញ សម្រាប់ការធានាខ្ពស់ជាង (hardening ស្រេចចិត្ត)។
+3. Pin Actions ភាគីទីបីទៅ **commit SHA ពេញ** (`owner/action@<40-hex>`) មិនមែន tag ផ្លាស់ទីដូច `@v4`។ Tag អាច force-push បាន; SHA មិនបាន។ Workflows ក្នុង repo នេះ និង template Lab 12 ធ្វើបែបនោះ — comment `# v4.4.0` គឺស្លាកសម្រាប់មនុស្ស (Dependabot នៅតែ bump បាន)។
 4. ស្កេន images ក្នុង CI (`docker scout`, Trivy, Grype) ហើយ fail លើ critical CVEs ពេលអ្នកត្រៀម bar នោះ (ជំពូក 15)។
 5. ចាត់ Docker socket ក្នុង CI runners ជា infrastructure ដែលទុកចិត្ត — កុំបើកឱ្យ PR code ពី forks ដែលមិនទុកចិត្តដោយគ្មាន isolation។
 
