@@ -1,7 +1,7 @@
 # Common local tasks for rean-docker
 PORT ?= 5501
 
-.PHONY: help serve sync check check-km check-all
+.PHONY: help serve sync check check-km check-all sitemap
 
 help:
 	@echo "rean-docker make targets:"
@@ -10,6 +10,7 @@ help:
 	@echo "  make check      # fail if English site content drifted from sources"
 	@echo "  make check-km   # fail if Khmer site content drifted from English structure"
 	@echo "  make check-all  # run both content checks (English + Khmer)"
+	@echo "  make sitemap    # regenerate web/robots.txt and web/sitemap.xml"
 	@echo ""
 	@echo "Override port:  make serve PORT=8080"
 
@@ -28,3 +29,6 @@ check-km:
 	./scripts/check_km_content.sh
 
 check-all: check check-km
+
+sitemap:
+	python3 ./scripts/generate_sitemap.py
