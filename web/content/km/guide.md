@@ -25,6 +25,14 @@ cd path/to/rean-docker
 | `#` | Comment / ការពន្យល់ |
 | `→` | គំនិត / លទ្ធផលដែលរំពឹង |
 
+### តម្រូវការមុន (មុន Lab 01)
+
+- **Docker Engine + Compose plugin** — `docker compose version` ត្រូវដំណើរការ។ ជំពូក 4 ណែនាំដំឡើង និងផ្ទៀងផ្ទាត់។
+- **`curl`** — lab ជាច្រើន hit `/health` ឬ API endpoints ពី host របស់អ្នក។
+- **Terminal** — វាយ commands ដោយខ្លួនឯង; អានតែប៉ុណ្ណោះមិនជាប់ទេ។
+- **ជម្រើស: Python 3** — `make serve` សម្រាប់គេហទំព័ររៀន និង `python3 -m json.tool` ដើម្បី pretty-print JSON ក្នុង lab មួយចំនួន (មិនត្រូវការ `jq`)។
+- **Windows:** ចូលចិត្ត **WSL 2** ជាមួយ Docker Desktop។ ឧទាហរណ៍ bind mount ខ្លះប្រើ `/tmp`; បើ path នោះពិបាក ប្រើ folder ក្នុង repo នេះជំនួស។
+
 ---
 
 ## តារាងខ្លឹមសារ
