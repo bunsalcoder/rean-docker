@@ -25,6 +25,14 @@ cd path/to/rean-docker
 | `#` | Comment / explanation |
 | `→` | Expected idea / outcome |
 
+### Prerequisites (before Lab 01)
+
+- **Docker Engine + Compose plugin** — `docker compose version` should work. Chapter 4 walks through install and verify.
+- **`curl`** — several labs hit `/health` or API endpoints from your host.
+- **A terminal** — type the commands; reading alone will not stick.
+- **Optional: Python 3** — `make serve` for the learning site, and `python3 -m json.tool` to pretty-print JSON in a few labs (no `jq` required).
+- **Windows:** prefer **WSL 2** with Docker Desktop. Some bind-mount examples use `/tmp`; if that path is awkward, use a folder inside this repo instead.
+
 ---
 
 ## Table of contents
