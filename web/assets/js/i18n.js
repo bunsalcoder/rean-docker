@@ -9,6 +9,7 @@
     "nav.labs": "Labs",
     "nav.cheatsheet": "Cheat sheet",
     "nav.menu": "Menu",
+    "a11y.skip": "Skip to content",
     "notFound.title": "Not found — rean-docker",
     "notFound.description": "This page is not in the rean-docker learning site.",
     "notFound.heading": "Page not found",
@@ -221,6 +222,8 @@
     const desc = document.querySelector('meta[name="description"]');
     const descKey = document.body?.dataset?.i18nDescription;
     if (desc && descKey) desc.setAttribute("content", t(descKey));
+
+    window.ReanSeo?.sync();
   };
 
   const reduceMotion = () =>

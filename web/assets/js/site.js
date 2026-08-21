@@ -1,4 +1,74 @@
 (() => {
+  const siteBase = () => {
+    const dir = location.pathname.replace(/\/[^/]*$/, "/");
+    return `${location.origin}${dir}`.replace(/\/$/, "");
+  };
+
+  const absoluteUrl = (path) => {
+    const base = siteBase();
+    const raw = String(path || "").replace(/^\.\//, "");
+    if (!raw || raw === "index.html") return `${base}/index.html`;
+    return `${base}/${raw}`;
+  };
+
+  const currentPath = () => {
+    const file = location.pathname.split("/").pop() || "index.html";
+    return `${file}${location.search || ""}`;
+  };
+
+  const upsertMeta = (attr, key, value) => {
+    if (!value) return;
+    const selector = `meta[${attr}="${key}"]`;
+    let el = document.head.querySelector(selector);
+    if (!el) {
+      el = document.createElement("meta");
+      el.setAttribute(attr, key);
+      document.head.appendChild(el);
+    }
+    el.setAttribute("content", value);
+  };
+
+  const syncSeo = ({ title, description, path, type } = {}) => {
+    if (document.body?.dataset?.seo === "none") return;
+    const pageTitle = title || document.title;
+    const descEl = document.querySelector('meta[name="description"]');
+    const desc = description || descEl?.getAttribute("content") || "";
+    if (description && descEl) descEl.setAttribute("content", description);
+    const url = absoluteUrl(path || currentPath());
+    const image = `${siteBase()}/assets/img/hero-harbor.jpg`;
+    const locale = document.documentElement.lang === "km" ? "km_KH" : "en_US";
+
+    let canonical = document.head.querySelector('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement("link");
+      canonical.rel = "canonical";
+      document.head.appendChild(canonical);
+    }
+    canonical.href = url;
+
+    upsertMeta("property", "og:site_name", "rean-docker");
+    upsertMeta("property", "og:type", type || "website");
+    upsertMeta("property", "og:title", pageTitle);
+    upsertMeta("property", "og:description", desc);
+    upsertMeta("property", "og:url", url);
+    upsertMeta("property", "og:image", image);
+    upsertMeta("property", "og:locale", locale);
+    upsertMeta("name", "twitter:card", "summary_large_image");
+    upsertMeta("name", "twitter:title", pageTitle);
+    upsertMeta("name", "twitter:description", desc);
+    upsertMeta("name", "twitter:image", image);
+  };
+
+  window.ReanSeo = { sync: syncSeo };
+
+  document.querySelector(".skip-link")?.addEventListener("click", (event) => {
+    const main = document.getElementById("main");
+    if (!main) return;
+    event.preventDefault();
+    main.focus({ preventScroll: false });
+    main.scrollIntoView({ block: "start" });
+  });
+
   const header = document.querySelector(".site-header");
   const nav = document.querySelector("[data-nav]");
   const toggle = document.querySelector("[data-nav-toggle]");
