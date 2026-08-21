@@ -133,6 +133,7 @@ window.REAN_I18N_KM = {
   "nav.labs": "លំហាត់",
   "nav.learn": "រៀន",
   "nav.menu": "ម៉ឹនុយ",
+  "a11y.skip": "រំលងទៅមាតិកា",
   "notFound.body": "URL នោះមិនមែនជាផ្នែកនៃគេហទំព័រ rean-docker ទេ។",
   "notFound.description": "ទំព័រនេះមិនមានក្នុងគេហទំព័ររៀន rean-docker ទេ។",
   "notFound.heading": "រកមិនឃើញទំព័រ",

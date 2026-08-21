@@ -40,6 +40,7 @@ def parse_routes(text: str) -> tuple[list[str], list[str]]:
 
 
 def url_entry(base: str, path: str, changefreq: str, priority: str, lastmod: str) -> str:
+    # These locs are the canonical reader URLs (query strings on learn.html / lab.html).
     loc = f"{base}/{path}" if path else f"{base}/"
     return (
         "  <url>\n"

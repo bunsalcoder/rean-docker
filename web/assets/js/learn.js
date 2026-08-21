@@ -332,6 +332,12 @@ async function initLearnPage() {
         progressEl.textContent = t("learn.chapterOf", { n: index + 1, total: chapters.length });
       }
       document.title = `${chapter.title} — rean-docker`;
+      window.ReanSeo?.sync({
+        title: document.title,
+        description: t("learn.description"),
+        path: `learn.html?c=${encodeURIComponent(chapter.id)}`,
+        type: "article",
+      });
       renderMarkdown(bodyEl, chapter.body, { checklistScope: `learn:${chapter.id}` });
       renderPager(index);
     };
@@ -486,6 +492,13 @@ async function initLabPage() {
       progressEl.textContent = t("lab.of", { n: index + 1, total: LABS.length, level: lab.level });
     }
     document.title = `${lab.title} — rean-docker`;
+    const num = lab.id.slice(0, 2);
+    window.ReanSeo?.sync({
+      title: document.title,
+      description: t(`labs.${num}.desc`),
+      path: `lab.html?id=${encodeURIComponent(lab.id)}`,
+      type: "article",
+    });
     renderPager(index);
 
     try {
