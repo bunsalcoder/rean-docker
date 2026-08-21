@@ -333,8 +333,8 @@ Isolation default; sharing opt-in។
 
 ```bash
 # Two containers, each with nginx on container-port 80
-docker run -d --name rean-web-a -p 18080:80 nginx:alpine
-docker run -d --name rean-web-b -p 18081:80 nginx:alpine
+docker run -d --name rean-web-a -p 18080:80 nginx:1.28-alpine
+docker run -d --name rean-web-b -p 18081:80 nginx:1.28-alpine
 
 curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:18080/
 curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:18081/
@@ -463,7 +463,7 @@ Memorize ពាក្យបួន៖
 
 **Read-only template** — ដូច class ឬ snapshot filesystem + metadata (default command, env, exposed ports)។
 
-Examples: `nginx:alpine`, `postgres:16`, `node:22-alpine`។
+Examples: `nginx:1.28-alpine`, `postgres:16`, `node:22-alpine`។
 
 ### Container
 
@@ -730,7 +730,7 @@ When `exit` container **stops**។ Still exists until remove។
 ### Run background (detached)
 
 ```bash
-docker run -d --name my-nginx -p 8080:80 nginx:alpine
+docker run -d --name my-nginx -p 8080:80 nginx:1.28-alpine
 ```
 
 | Flag | Meaning |
@@ -796,28 +796,28 @@ docker image inspect redis:7-alpine
 docker history redis:7-alpine
 ```
 
-`history` shows layers approximate sizes — gold bloat។
+`history` បង្ហាញ layers និងទំហំប្រហែល — មានប្រយោជន៍ខ្លាំងសម្រាប់មើលថាតើ image ធំហួសហេតុនៅណា។
 
 ### Tags
 
-`nginx:alpine` means:
+`nginx:alpine` មានន័យថា:
 
 - Repository/name: `nginx`
-- Tag: `alpine` (variant Alpine Linux)
+- Tag: `alpine` (variant ផ្អែកលើ Alpine Linux)
 
-Special tag: `latest` — **do not rely production**។ Prefer explicit versions: `nginx:1.27-alpine`។
+Tag ពិសេស: `latest` — **កុំពឹងផ្អែកលើវាក្នុង production**។ គួរប្រើ version ច្បាស់៖ `nginx:1.28-alpine`។ Labs ក្នុង repo នេះ pin tag បែបនោះសម្រាប់ commands ដែលអ្នក run។ `nginx:alpine` នៅតែជា tag ពិត; វាផ្លាស់ទីពេល publisher ផ្សាយឡើងវិញ។
 
 ### Official vs custom images
 
-- **Official images** Docker Hub curated (postgres, redis, python…)។
-- **Your images** built Dockerfiles pushed registry។
+- **Official images** នៅ Docker Hub ត្រូវបាន curate (postgres, redis, python…)។
+- **Images របស់អ្នក** ត្រូវបាន build ពី Dockerfile ហើយ push ទៅ registry។
 
 ### Image IDs vs names
 
-Images content digest / ID។ Names human labels IDs។ Retagging not copy layers; another name។
+Images មាន content digest / ID។ ឈ្មោះគឺស្លាកសម្រាប់មនុស្សដែលចង្អុលទៅ ID។ Retag មិន copy layers ទេ — វាបន្ថែមឈ្មោះមួយទៀត។
 
 ```bash
-docker tag nginx:alpine my-nginx:dev
+docker tag nginx:1.28-alpine my-nginx:dev
 docker images | grep nginx
 ```
 
@@ -1185,11 +1185,13 @@ Problem: build tools (compilers, TypeScript/`tsc`, npm all deps, Go toolchain) b
 Lab 08 compile TypeScript ក្នុង build stage ដូច្នេះ `:fat` (compiler នៅក្នុង image) ធំជាង `:slim` (JS ដែល compile រួច + production deps តែប៉ុណ្ណោះ) ច្បាស់។
 
 ```dockerfile
+# syntax=docker/dockerfile:1
 # ---- build stage ----
 FROM node:22-alpine AS build
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci
 COPY . .
 RUN npm run build
 
@@ -1198,7 +1200,8 @@ FROM node:22-alpine AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
 COPY package*.json ./
-RUN npm ci --omit=dev
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --omit=dev
 COPY --from=build /app/dist ./dist
 USER node
 EXPOSE 3000
@@ -1210,6 +1213,8 @@ Benefits:
 - Final image no compilers / unused build deps
 - Smaller attack surface
 - Often much smaller downloads
+
+បន្ទាត់ `# syntax=docker/dockerfile:1` (Lab 08) បើកលក្ខណៈ BuildKit ដូច cache mounts។ `RUN --mount=type=cache,target=/root/.npm` រក្សា cache download npm រវាង builds **ដោយមិន** copy វាចូល image layer។
 
 ### Alpine vs distroless vs slim
 
@@ -1237,7 +1242,7 @@ dive rean-hello:1.0   # if you install dive — visual layer explorer
 
 ### Checklist មុន deploy «real»
 
-1. **Pin versions** — `postgres:16-alpine` មិនមែន `postgres:latest`។ Labs ក្នុង repo នេះប្រើ series tag បែបនោះ (`redis:7-alpine`, `node:22-alpine`)។ Patch tag ឬ digest (`postgres@sha256:…`, ជំពូក 15) តឹងជាងសម្រាប់ image សំខាន់ក្នុង production។
+1. **Pin versions** — `postgres:16-alpine` មិនមែន `postgres:latest`។ Labs ក្នុង repo នេះប្រើ series tag បែបនោះ (`redis:7-alpine`, `node:22-alpine`, `nginx:1.28-alpine`)។ Patch tag ឬ digest (`postgres@sha256:…`, ជំពូក 15) តឹងជាងសម្រាប់ image សំខាន់ក្នុង production។
 2. **Non-root user** — `USER node` or custom UID
 3. **Read-only root filesystem** where possible (`--read-only` + writable tmp mounts)
 4. **Healthchecks** — Alpine Node images ភាគច្រើនគ្មាន `wget`/`curl`។ Probe ដោយ Node runtime ដូច app:
@@ -1297,6 +1302,10 @@ logging:
 9. **One process per container** (guideline) — app one, db another; use Compose/K8s compose them.
 
 10. **Immutable images** — rebuild redeploy; don't «hotfix» running containers.
+
+11. **Publish នៅ localhost** ពេល reverse proxy នឹង terminate TLS — `127.0.0.1:3000:3000` ដើម្បីកុំឱ្យ API លេចនៅគ្រប់ interface របស់ host។ Lab 09 និង Compose prod របស់ Lab 12 ធ្វើបែបនេះ។
+
+12. **Drop Linux capabilities** — `cap_drop: [ALL]` (ឬ `docker run --cap-drop ALL`) ដើម្បីកុំឱ្យ process ទទួលសិទ្ធិ kernel ដែលវាមិនត្រូវការ។ គូជាមួយ `no-new-privileges`។
 
 ### Restart policies
 
@@ -1403,12 +1412,15 @@ Builder ទំនើប (ធម្មតាជា default ឥឡូវ)៖
 DOCKER_BUILDKIT=1 docker build -t myapp .
 ```
 
-លក្ខណៈ៖ cache ល្អជាង, build ទន្ទឹមគ្នា, mount secrets ពេល build (មិនទុក secrets ក្នុង layers)។
+លក្ខណៈ៖ cache ល្អជាង, build ទន្ទឹមគ្នា, mount secrets ពេល build (មិនទុក secrets ក្នុង layers) និង cache mounts សម្រាប់ package managers។
 
 ```dockerfile
 # syntax=docker/dockerfile:1
 RUN --mount=type=secret,id=npmrc \
     npm ci
+
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --omit=dev
 ```
 
 ```bash
@@ -1543,6 +1555,7 @@ services:
     init: true
     read_only: true
     tmpfs: ["/tmp"]
+    cap_drop: ["ALL"]
     security_opt: ["no-new-privileges:true"]
     logging:
       driver: json-file

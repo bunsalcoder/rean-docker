@@ -16,6 +16,8 @@ on:
 
 permissions:
   contents: read
+  # packages: write is only used by the GHCR push steps (gated to main).
+  # Pull requests validate and smoke-test; they do not push.
   packages: write
 
 env:
@@ -45,17 +47,9 @@ jobs:
       - name: Smoke test
         working-directory: ${{ env.WORKDIR }}
         run: |
-          docker compose up -d --build
-          for i in $(seq 1 30); do
-            if curl -fsS http://127.0.0.1:3000/health; then
-              echo
-              exit 0
-            fi
-            sleep 1
-          done
-          echo "Smoke test failed" >&2
-          docker compose logs
-          exit 1
+          docker compose up -d --build --wait --wait-timeout 60
+          curl -fsS http://127.0.0.1:3000/health
+          echo
 
       - name: Teardown smoke stack
         if: always()

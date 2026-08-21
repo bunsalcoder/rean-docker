@@ -60,6 +60,8 @@ docker run --rm aquasec/trivy:0.63.0 image alpine:3.22
 
 អានរបាយការណ៍; កុំភ័យនឹង «LOW» គ្រប់មួយ។ ចំណុចគឺ៖ **ដឹងរបៀបស្កេន** មុន promote image។ `docker scout` ជាជម្រើសមួយទៀត បើ Docker Desktop មាន។
 
+CI របស់ repo នេះ run Trivy image ដូចគ្នាលើ teaching builds (HIGH/CRITICAL តែប៉ុណ្ណោះ, របាយការណ៍ — មិន fail job ព្រោះ CVE ក្នុង base image)។ នោះគឺទម្លាប់ពី lab នេះ អនុវត្តលើ labs ខ្លួនឯង។
+
 ### 4. Digest vs tag
 
 ```bash

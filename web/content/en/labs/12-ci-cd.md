@@ -69,6 +69,7 @@ You do **not** need a real server to finish this lab — steps 1–4 (through re
 
 - Why does `compose.prod.yaml` use `image:` instead of `build:`?
 - Why publish `127.0.0.1:3000` in prod Compose instead of `0.0.0.0:3000`?
+- Why `cap_drop: ALL` in prod Compose?
 - What is the difference between CI (build/smoke/push) and CD (deploy to a host)?
 - How would you roll back to yesterday’s SHA tag?
 - Why does `compose.prod.yaml` error if `IMAGE_TAG` is unset, instead of defaulting to `latest`?

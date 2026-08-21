@@ -30,7 +30,7 @@ exit
 ### 3. Nginx in the background
 
 ```bash
-docker run -d --name lab02-nginx -p 8080:80 nginx:alpine
+docker run -d --name lab02-nginx -p 8080:80 nginx:1.28-alpine
 curl -I http://127.0.0.1:8080
 docker logs lab02-nginx
 docker exec -it lab02-nginx sh

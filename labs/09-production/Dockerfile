@@ -3,6 +3,9 @@ FROM node:22-alpine
 
 WORKDIR /app
 
+# Config, not a secret (Lab 04 / Lab 11). Set here so `docker run` matches Compose.
+ENV NODE_ENV=production
+
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 

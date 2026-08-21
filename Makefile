@@ -1,7 +1,7 @@
 # Common local tasks for rean-docker
 PORT ?= 5501
 
-.PHONY: help serve sync check check-km check-all sitemap
+.PHONY: help serve sync check check-km check-all sitemap smoke
 
 help:
 	@echo "rean-docker make targets:"
@@ -11,6 +11,7 @@ help:
 	@echo "  make check-km   # fail if Khmer site content drifted from English structure"
 	@echo "  make check-all  # run both content checks (English + Khmer)"
 	@echo "  make sitemap    # regenerate web/robots.txt and web/sitemap.xml"
+	@echo "  make smoke      # build, wait healthy, curl /health for labs 09, 12, 05"
 	@echo ""
 	@echo "Override port:  make serve PORT=8080"
 
@@ -32,3 +33,6 @@ check-all: check check-km
 
 sitemap:
 	python3 ./scripts/generate_sitemap.py
+
+smoke:
+	./scripts/smoke_labs.sh
