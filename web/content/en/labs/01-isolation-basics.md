@@ -75,8 +75,8 @@ docker run --rm -v /tmp/lab01-share:/data alpine:3.22 cat /data/msg.txt
 Each container can use “port 80” inside. On the host you publish different ports.
 
 ```bash
-docker run -d --name lab01-web-a -p 18080:80 nginx:alpine
-docker run -d --name lab01-web-b -p 18081:80 nginx:alpine
+docker run -d --name lab01-web-a -p 18080:80 nginx:1.28-alpine
+docker run -d --name lab01-web-b -p 18081:80 nginx:1.28-alpine
 
 curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:18080/
 curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:18081/

@@ -99,7 +99,7 @@ window.REAN_I18N_KM = {
   "labs.07.title": "Volumes & persistence",
   "labs.08.desc": "image production មានទំហំធំ និង slim។",
   "labs.08.title": "Multi-stage builds",
-  "labs.09.desc": "Healthcheck, limits និង read-only rootfs។",
+  "labs.09.desc": "Healthcheck, limits, read-only rootfs និង cap_drop។",
   "labs.09.title": "ទម្លាប់ production",
   "labs.10.desc": "logs, inspect និង bug hostname Compose ដែលអ្នកកែ។",
   "labs.10.title": "Debug",

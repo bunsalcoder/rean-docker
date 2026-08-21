@@ -69,6 +69,7 @@ curl -fsS http://127.0.0.1:3000/health
 
 - ហេតុអ្វី `compose.prod.yaml` ប្រើ `image:` ហើយមិនមែន `build:`?
 - ហេតុអ្វី publish `127.0.0.1:3000` ក្នុង prod Compose ហើយមិនមែន `0.0.0.0:3000`?
+- ហេតុអ្វី `cap_drop: ALL` ក្នុង prod Compose?
 - តើអ្វីជាភាពខុសគ្នារវាង CI (build/smoke/push) និង CD (deploy ទៅ host)?
 - តើ rollback ទៅ SHA tag កាលពីម្សិលមិញធ្វើដូចម្ដេច?
 - ហេតុអ្វី `compose.prod.yaml` error បើ `IMAGE_TAG` មិនកំណត់ ជំនួសឱ្យ default `latest`?

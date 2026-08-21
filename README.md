@@ -47,6 +47,7 @@ English site copies must match the handbook and lab READMEs. After editing eithe
 ```bash
 make sync    # copy sources → web/content/en/
 make check   # fail if anything drifted
+make smoke   # optional: compose up + /health for labs 09, 12, 05
 ```
 
 Or run the scripts directly: `./scripts/sync_en_content.sh` / `./scripts/check_content_sync.sh`.

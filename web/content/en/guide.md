@@ -333,8 +333,8 @@ Isolation is the default; sharing is opt-in.
 
 ```bash
 # Two containers, each with nginx on container-port 80
-docker run -d --name rean-web-a -p 18080:80 nginx:alpine
-docker run -d --name rean-web-b -p 18081:80 nginx:alpine
+docker run -d --name rean-web-a -p 18080:80 nginx:1.28-alpine
+docker run -d --name rean-web-b -p 18081:80 nginx:1.28-alpine
 
 curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:18080/
 curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:18081/
@@ -463,7 +463,7 @@ Memorize these four words:
 
 A **read-only template** — like a class or a snapshot of a filesystem + metadata (default command, env, exposed ports).
 
-Examples: `nginx:alpine`, `postgres:16`, `node:22-alpine`.
+Examples: `nginx:1.28-alpine`, `postgres:16`, `node:22-alpine`.
 
 ### Container
 
@@ -730,7 +730,7 @@ When you `exit`, the container **stops**. It still exists until you remove it.
 ### Run in the background (detached)
 
 ```bash
-docker run -d --name my-nginx -p 8080:80 nginx:alpine
+docker run -d --name my-nginx -p 8080:80 nginx:1.28-alpine
 ```
 
 | Flag | Meaning |
@@ -805,7 +805,7 @@ docker history redis:7-alpine
 - Repository/name: `nginx`
 - Tag: `alpine` (variant based on Alpine Linux)
 
-Special tag: `latest` — **do not rely on it in production**. Prefer explicit versions: `nginx:1.27-alpine`.
+Special tag: `latest` — **do not rely on it in production**. Prefer explicit versions: `nginx:1.28-alpine`. Labs in this repo pin that kind of tag for commands you run. `nginx:alpine` is still a real tag; it just moves when the publisher republishes it.
 
 ### Official vs custom images
 
@@ -817,7 +817,7 @@ Special tag: `latest` — **do not rely on it in production**. Prefer explicit v
 Images have a content digest / ID. Names are human labels pointing at IDs. Retagging does not copy layers; it adds another name.
 
 ```bash
-docker tag nginx:alpine my-nginx:dev
+docker tag nginx:1.28-alpine my-nginx:dev
 docker images | grep nginx
 ```
 
@@ -1185,11 +1185,13 @@ Problem: build tools (compilers, TypeScript/`tsc`, npm with all deps, Go toolcha
 Lab 08 compiles TypeScript in the build stage so `:fat` (compiler left in the image) is clearly larger than `:slim` (compiled JS + production deps only).
 
 ```dockerfile
+# syntax=docker/dockerfile:1
 # ---- build stage ----
 FROM node:22-alpine AS build
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci
 COPY . .
 RUN npm run build
 
@@ -1198,7 +1200,8 @@ FROM node:22-alpine AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
 COPY package*.json ./
-RUN npm ci --omit=dev
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --omit=dev
 COPY --from=build /app/dist ./dist
 USER node
 EXPOSE 3000
@@ -1210,6 +1213,8 @@ Benefits:
 - Final image has no compilers / unused build deps
 - Smaller attack surface
 - Often much smaller downloads
+
+The `# syntax=docker/dockerfile:1` line (Lab 08) enables BuildKit features such as cache mounts. `RUN --mount=type=cache,target=/root/.npm` keeps the npm download cache between builds **without** copying it into an image layer.
 
 ### Alpine vs distroless vs slim
 
@@ -1237,7 +1242,7 @@ dive rean-hello:1.0   # if you install dive — visual layer explorer
 
 ### Checklist before “real” deploy
 
-1. **Pin versions** — `postgres:16-alpine`, not `postgres:latest`. Labs in this repo use that kind of series tag (`redis:7-alpine`, `node:22-alpine`). A patch tag or a digest (`postgres@sha256:…`, Chapter 15) is stricter for production-critical images.
+1. **Pin versions** — `postgres:16-alpine`, not `postgres:latest`. Labs in this repo use that kind of series tag (`redis:7-alpine`, `node:22-alpine`, `nginx:1.28-alpine`). A patch tag or a digest (`postgres@sha256:…`, Chapter 15) is stricter for production-critical images.
 2. **Non-root user** — `USER node` or custom UID
 3. **Read-only root filesystem** where possible (`--read-only` + writable tmp mounts)
 4. **Healthchecks** — Alpine Node images often have no `wget`/`curl`. Probe with the same Node runtime as the app:
@@ -1297,6 +1302,10 @@ logging:
 9. **One process per container** (guideline) — app in one, db in another; use Compose/K8s to compose them.
 
 10. **Immutable images** — rebuild and redeploy; don’t “hotfix” running containers.
+
+11. **Publish on localhost** when a reverse proxy will terminate TLS — `127.0.0.1:3000:3000` so the API is not advertised on every host interface. Lab 09 and Lab 12’s prod Compose do this.
+
+12. **Drop Linux capabilities** — `cap_drop: [ALL]` (or `docker run --cap-drop ALL`) so the process cannot gain kernel privileges it does not need. Pair with `no-new-privileges`.
 
 ### Restart policies
 
@@ -1403,12 +1412,15 @@ Modern builder (usually default now):
 DOCKER_BUILDKIT=1 docker build -t myapp .
 ```
 
-Features: better cache, parallel builds, secrets mounts during build (without leaving secrets in layers).
+Features: better cache, parallel builds, secrets mounts during build (without leaving secrets in layers), and cache mounts for package managers.
 
 ```dockerfile
 # syntax=docker/dockerfile:1
 RUN --mount=type=secret,id=npmrc \
     npm ci
+
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --omit=dev
 ```
 
 ```bash
@@ -1543,6 +1555,7 @@ services:
     init: true
     read_only: true
     tmpfs: ["/tmp"]
+    cap_drop: ["ALL"]
     security_opt: ["no-new-privileges:true"]
     logging:
       driver: json-file

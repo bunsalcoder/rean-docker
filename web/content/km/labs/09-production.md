@@ -2,7 +2,7 @@
 
 ## គោលដៅ
 
-Run API ជាមួយ healthchecks, `init`, restart policy, read-only rootfs, log rotation និង resource limits។
+Run API ជាមួយ healthchecks, `init`, restart policy, read-only rootfs, dropped capabilities, log rotation និង resource limits។ Port ដែល publish ត្រូវ bind តែ localhost។
 
 ## ជំហាន
 
@@ -23,8 +23,11 @@ docker compose down
 
 - ហេតុអ្វី `read_only: true` + `tmpfs: /tmp`?
 - ហេតុអ្វី `no-new-privileges`?
+- ហេតុអ្វី `cap_drop: ALL`?
+- ហេតុអ្វី publish `127.0.0.1:3000` មិនមែន `0.0.0.0:3000`?
 - ហេតុអ្វី `init: true` (PID 1 / `docker stop` / SIGTERM)?
 - ហេតុអ្វី pin `image: rean-prod-api:1.0` បន្ទាប់ពី build ហើយ `FROM node:22-alpine` មិនមែន `node:latest`?
+- ហេតុអ្វី `ENV NODE_ENV=production` នៅក្នុង Dockerfile ផង និងក្នុង Compose ផង?
 - ហេតុអ្វី healthcheck ប្រើ `node` + `fetch` មិនមែន `wget` ឬ `curl`?
 
 ## លក្ខខណ្ឌជោគជ័យ

@@ -30,4 +30,4 @@ Optional: `python3 scripts/sync_km_i18n.py` refreshes Khmer chapter titles in `i
 
 ## Pull requests
 
-CI runs `make check-all` and builds the lab Dockerfiles. Keep secrets out of git (`.env` is ignored; commit `.env.example` only).
+CI runs `make check-all`, builds the lab Dockerfiles, and smoke-tests labs 05, 09, and 12 (`make smoke`). Keep secrets out of git (`.env` is ignored; commit `.env.example` only).

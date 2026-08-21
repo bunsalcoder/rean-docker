@@ -73,7 +73,7 @@
     "labs.08.title": "Multi-stage builds",
     "labs.08.desc": "Compare fat vs slim production images.",
     "labs.09.title": "Production practices",
-    "labs.09.desc": "Healthchecks, limits, read-only rootfs.",
+    "labs.09.desc": "Healthchecks, limits, read-only rootfs, dropped capabilities.",
     "labs.10.title": "Debugging",
     "labs.10.desc": "logs, inspect, and a Compose hostname bug you fix.",
     "labs.11.title": "Security essentials",

@@ -2,7 +2,7 @@
 
 ## Goal
 
-Run an API with healthchecks, `init`, restart policy, read-only rootfs, log rotation, and resource limits.
+Run an API with healthchecks, `init`, restart policy, read-only rootfs, dropped capabilities, log rotation, and resource limits. The published port is bound to localhost only.
 
 ## Steps
 
@@ -23,8 +23,11 @@ docker compose down
 
 - Why `read_only: true` + `tmpfs: /tmp`?
 - Why `no-new-privileges`?
+- Why `cap_drop: ALL`?
+- Why publish `127.0.0.1:3000` instead of `0.0.0.0:3000`?
 - Why `init: true` (PID 1 / `docker stop` / SIGTERM)?
 - Why pin `image: rean-prod-api:1.0` after build, and `FROM node:22-alpine` instead of `node:latest`?
+- Why `ENV NODE_ENV=production` in the Dockerfile as well as in Compose?
 - Why does the healthcheck use `node` + `fetch` instead of `wget` or `curl`?
 
 ## Success criteria

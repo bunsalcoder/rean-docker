@@ -28,6 +28,7 @@ docker run --rm -p 3001:3000 rean-multi:slim
 
 - `COPY --from=build` brings only `dist/`, not `server.ts` or `tsc`.
 - Runtime stage installs **production** deps only (`--omit=dev`).
+- `RUN --mount=type=cache,target=/root/.npm` keeps the npm download cache between builds without copying it into a layer (BuildKit; Chapter 16).
 - Image size and layer history differ between `:fat` and `:slim`.
 - `:slim` runs as `USER node`. `:fat` still runs as root — smaller is not the only win.
 

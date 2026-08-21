@@ -2,7 +2,7 @@ name: Content sync
 
 on:
   push:
-    branches: [develop]
+    branches: [main, develop]
   pull_request:
     branches: [main, develop]
 
@@ -23,6 +23,7 @@ jobs:
       - name: Build lab images
         run: |
           docker build -t rean-ci:03 labs/03-dockerfile
+          docker build -t rean-ci:05 labs/05-compose
           docker build -t rean-ci:08 labs/08-multi-stage
           docker build -t rean-ci:08-fat -f labs/08-multi-stage/Dockerfile.fat labs/08-multi-stage
           docker build -t rean-ci:09 labs/09-production
@@ -43,3 +44,24 @@ jobs:
           docker compose -f labs/12-ci-cd/compose.yaml config >/dev/null
           REGISTRY_OWNER=example IMAGE_TAG=sha-deadbee \
             docker compose -f labs/12-ci-cd/compose.prod.yaml config >/dev/null
+      - name: Smoke-test Compose stacks
+        run: ./scripts/smoke_labs.sh
+      - name: Scan lab images (report only)
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/rean-trivy
+          scan() {
+            local tag="$1"
+            local tar="/tmp/rean-trivy/${tag//:/_}.tar"
+            docker save "$tag" -o "$tar"
+            # Load from a tar so the scanner does not need the Docker socket
+            # (Lab 11: mounting docker.sock is nearly root on the host).
+            docker run --rm -v /tmp/rean-trivy:/in aquasec/trivy:0.63.0 image \
+              --input "/in/$(basename "$tar")" \
+              --severity HIGH,CRITICAL \
+              --exit-code 0
+          }
+          scan rean-ci:05
+          scan rean-ci:08
+          scan rean-ci:09
+          scan rean-ci:12
