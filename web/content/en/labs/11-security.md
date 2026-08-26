@@ -60,7 +60,7 @@ docker run --rm aquasec/trivy:0.63.0 image alpine:3.22
 
 Read the report; don’t panic at every “LOW”. The point is: **know how to scan** before you promote an image. `docker scout` is another option if your Docker Desktop includes it.
 
-This repo’s CI scans teaching builds with Trivy: **HIGH** is reported, and **unfixed CRITICAL** fails the job. That matches the habit from this lab — know how to scan, and decide what blocks a promote.
+This repo’s CI scans teaching builds with Trivy: **HIGH** is reported, and **unfixed CRITICAL** fails the job. Runtime Dockerfiles drop the base image’s `npm`/`corepack` after `npm ci` so the gate focuses on what the app ships — not every CVE in the Node distribution’s package manager (Lab 09 discuss).
 
 ### 4. Digest vs tag
 

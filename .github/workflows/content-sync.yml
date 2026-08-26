@@ -70,7 +70,8 @@ jobs:
             if [[ ! -f "$tar" ]]; then
               docker save "$tag" -o "$tar"
             fi
-            # Fail the job on unfixed CRITICAL findings (base-image noise with a fix available still fails).
+            # Fail on unfixed CRITICAL in what the image still ships.
+            # Labs strip the base image's npm/corepack after npm ci (CVE-2026-59873 lived there).
             docker run --rm -v /tmp/rean-trivy:/in aquasec/trivy:0.63.0 image \
               --input "/in/$(basename "$tar")" \
               --severity CRITICAL \

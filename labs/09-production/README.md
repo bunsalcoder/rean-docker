@@ -27,6 +27,7 @@ docker compose down
 - Why publish `127.0.0.1:3000` instead of `0.0.0.0:3000`?
 - Why `init: true` (PID 1 / `docker stop` / SIGTERM)?
 - Why pin `image: rean-prod-api:1.0` after build, and `FROM node:22-alpine@sha256:…` instead of `node:latest`?
+- Why delete `npm` / `corepack` from the image after `npm ci`?
 - Why `ENV NODE_ENV=production` in the Dockerfile as well as in Compose?
 - Why does the healthcheck use `node` + `fetch` instead of `wget` or `curl`?
 
