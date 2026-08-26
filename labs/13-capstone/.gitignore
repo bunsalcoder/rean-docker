@@ -1,4 +1,4 @@
-# Capstone workspace. Copy Lab 05 here, then make it yours.
+# Capstone workspace. Starter scaffold ships with the lab.
 # Keep real secrets out of git — copy .env.example → .env
 .env
 node_modules/

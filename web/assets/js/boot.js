@@ -54,6 +54,12 @@
             <button type="button" data-set-lang="en" aria-pressed="false">EN</button>
             <button type="button" data-set-lang="km" aria-pressed="false">ខ្មែរ</button>
           </div>
+          <button class="search-toggle" type="button" data-search-open aria-label="Search" title="Search">
+            <svg viewBox="0 0 24 24" aria-hidden="true" width="20" height="20">
+              <circle cx="10.5" cy="10.5" r="6.25" fill="none" stroke="currentColor" stroke-width="1.85" />
+              <path d="M15.2 15.2 20 20" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" />
+            </svg>
+          </button>
           <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to dark theme" aria-pressed="false">
             <svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true">
               <mask id="theme-icon-mask" class="theme-icon-mask">

@@ -42,6 +42,8 @@ jobs:
           docker compose -f labs/09-production/compose.yaml config >/dev/null
           docker compose -f labs/10-debugging/compose.yaml config >/dev/null
           docker compose -f labs/12-ci-cd/compose.yaml config >/dev/null
+          cp labs/13-capstone/.env.example labs/13-capstone/.env
+          docker compose -f labs/13-capstone/compose.yaml config >/dev/null
           REGISTRY_OWNER=example IMAGE_TAG=sha-deadbee \
             docker compose -f labs/12-ci-cd/compose.prod.yaml config >/dev/null
       - name: Smoke-test Compose stacks

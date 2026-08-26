@@ -1831,7 +1831,7 @@ Next: **Lab 12** makes you run the CI steps locally, then optionally push. After
 
 ### Lab: `labs/13-capstone`
 
-Build a small stack in this repo (you can copy `labs/05-compose` into the capstone folder):
+Build a small stack in this repo. A **starter scaffold** (Compose + Node API) already lives in the capstone folder — run it, then reshape it (or restart from `labs/05-compose` if you prefer a clean room):
 
 **Goal:** Web API + Postgres + Redis
 

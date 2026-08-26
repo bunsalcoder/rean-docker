@@ -4,7 +4,7 @@
 
 Build a small **API + Postgres + Redis** stack that you could show a teammate. Pair with handbook **Chapter 18**.
 
-You may copy Lab 05 (`labs/05-compose`) as a starting point, then apply Labs 08–12: multi-stage (if you compile), production Compose, and a CI-shaped workflow.
+This folder already has a **starter scaffold** (Compose + Node API) so you can run something on day one, then reshape it with Labs 08–12: multi-stage builds, production Compose, and a CI-shaped workflow.
 
 Work in this folder (`labs/13-capstone`) so your capstone stays separate from the teaching labs.
 
@@ -29,11 +29,29 @@ Work in this folder (`labs/13-capstone`) so your capstone stays separate from th
 
 ```bash
 cd labs/13-capstone
-cp -R ../05-compose/. .
-# remove what you don’t need, then make it yours
 cp .env.example .env
 docker compose up --build
+curl -s http://localhost:3000/health
+curl -s http://localhost:3000/ | python3 -m json.tool
+docker compose down
 ```
+
+Make it yours: rename services, change the API responses, add a route, tighten the Dockerfile, or add a prod Compose file. Prefer editing this scaffold over copying Lab 05 again — unless you want a clean room restart:
+
+```bash
+# optional clean restart from Lab 05
+cp -R ../05-compose/. .
+# then restore this README and re-apply your ideas
+```
+
+## Run / tear down
+
+| Command | What it does |
+|---------|----------------|
+| `docker compose up --build` | Build the API image and start `api`, `db`, `redis` |
+| `curl http://localhost:3000/health` | Confirm dependencies are reachable |
+| `docker compose down` | Stop containers; **keep** the named volume |
+| `docker compose down -v` | Stop containers and **delete** `pgdata` |
 
 ## Success criteria
 
