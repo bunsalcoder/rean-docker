@@ -159,6 +159,15 @@ function checklistItemKey(li, index) {
   return text || `item-${index}`;
 }
 
+function syncChecklistProgress(scope, boxes) {
+  const total = boxes.length;
+  let done = 0;
+  boxes.forEach((input) => {
+    if (input.checked) done += 1;
+  });
+  window.ReanProgress?.record(scope, done, total);
+}
+
 function enhanceChecklists(root, scope) {
   const boxes = root.querySelectorAll('li > input[type="checkbox"]');
   if (!boxes.length) return;
@@ -205,8 +214,11 @@ function enhanceChecklists(root, scope) {
       } catch {
         /* ignore quota / private mode */
       }
+      syncChecklistProgress(scope, boxes);
     });
   });
+
+  syncChecklistProgress(scope, boxes);
 }
 
 function sanitizeHtml(html) {

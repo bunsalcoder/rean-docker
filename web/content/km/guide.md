@@ -1831,7 +1831,7 @@ curl -fsS https://your.domain/health
 
 ### Lab: `labs/13-capstone`
 
-បង្កើត stack តូចក្នុង repo នេះ (អ្នកអាច copy `labs/05-compose` ចូលថត capstone)៖
+បង្កើត stack តូចក្នុង repo នេះ។ **Starter scaffold** (Compose + Node API) មានរួចក្នុងថត capstone — run រួចកែតម្រូវ (ឬចាប់ផ្ដើមស្អាតពី `labs/05-compose` បើចង់)៖
 
 **គោលដៅ:** Web API + Postgres + Redis
 

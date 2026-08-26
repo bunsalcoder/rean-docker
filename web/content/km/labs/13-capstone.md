@@ -4,7 +4,7 @@
 
 បង្កើត stack **API + Postgres + Redis** តូចមួយដែលអ្នកអាចបង្ហាញមិត្តរួមការ។ ផ្គូផ្គង handbook **ជំពូក 18**។
 
-អ្នកអាច copy Lab 05 (`labs/05-compose`) ជាចំណុចចាប់ផ្ដើម រួចអនុវត្ត Labs 08–12៖ multi-stage (បើ compile), production Compose និង workflow រាង CI។
+ថតនេះមាន **starter scaffold** (Compose + Node API) រួចហើយ ដើម្បី run បានពីថ្ងៃដំបូង រួចកែតម្រូវតាម Labs 08–12៖ multi-stage, production Compose និង workflow រាង CI។
 
 ធ្វើការក្នុងថតនេះ (`labs/13-capstone`) ដើម្បីឱ្យ capstone ដាច់ពី labs បង្រៀន។
 
@@ -29,11 +29,29 @@
 
 ```bash
 cd labs/13-capstone
-cp -R ../05-compose/. .
-# remove what you don’t need, then make it yours
 cp .env.example .env
 docker compose up --build
+curl -s http://localhost:3000/health
+curl -s http://localhost:3000/ | python3 -m json.tool
+docker compose down
 ```
+
+ធ្វើឱ្យជារបស់អ្នក៖ ប្តូរឈ្មោះ services, កែ API responses, បន្ថែម route, រឹត Dockerfile ឬបន្ថែម Compose ផលិតកម្ម។ ចូលចិត្តកែ scaffold នេះជាង copy Lab 05 ម្ដងទៀត — លុះត្រាត្រូវចាប់ផ្ដើមស្អាត៖
+
+```bash
+# optional clean restart from Lab 05
+cp -R ../05-compose/. .
+# then restore this README and re-apply your ideas
+```
+
+## Run / tear down
+
+| ពាក្យបញ្ជា | អ្វីដែលវាធ្វើ |
+|---------|----------------|
+| `docker compose up --build` | Build image API ហើយចាប់ផ្ដើម `api`, `db`, `redis` |
+| `curl http://localhost:3000/health` | ផ្ទៀងផ្ទាត់ dependencies |
+| `docker compose down` | ឈប់ containers; **រក្សា** named volume |
+| `docker compose down -v` | ឈប់ containers ហើយ **លុប** `pgdata` |
 
 ## លក្ខខណ្ឌជោគជ័យ
 

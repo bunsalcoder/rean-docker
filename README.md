@@ -87,7 +87,7 @@ Work in order:
 | 10 | Debugging & troubleshooting | [labs/10-debugging](labs/10-debugging) |
 | 11 | Security essentials | [labs/11-security](labs/11-security) |
 | 12 | Deploy & CI/CD (special) | [labs/12-ci-cd](labs/12-ci-cd) |
-| 13 | Capstone | [labs/13-capstone](labs/13-capstone) |
+| 13 | Capstone (starter scaffold) | [labs/13-capstone](labs/13-capstone) |
 
 ## Prerequisites
 
