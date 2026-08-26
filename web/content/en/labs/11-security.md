@@ -60,15 +60,22 @@ docker run --rm aquasec/trivy:0.63.0 image alpine:3.22
 
 Read the report; don’t panic at every “LOW”. The point is: **know how to scan** before you promote an image. `docker scout` is another option if your Docker Desktop includes it.
 
-This repo’s CI runs the same Trivy image against the teaching builds (HIGH/CRITICAL only, report — it does not fail the job on base-image CVEs). That is the habit from this lab, applied to the labs themselves.
+This repo’s CI scans teaching builds with Trivy: **HIGH** is reported, and **unfixed CRITICAL** fails the job. Runtime Dockerfiles drop the base image’s `npm`/`corepack` after `npm ci` so the gate focuses on what the app ships — not every CVE in the Node distribution’s package manager (Lab 09 discuss).
 
 ### 4. Digest vs tag
 
 ```bash
 docker image inspect alpine:3.22 --format '{{index .RepoDigests 0}}'
+# Example shape: alpine@sha256:14358309a308569c32bdc37e2e0e9694be33a9d99e68afb0f5ff33cc1f695dce
 ```
 
-Tags move. A digest (`alpine@sha256:…`) is the bits you actually pulled. Pin digests when supply-chain control matters (CI, production).
+Tags move. A digest (`alpine@sha256:…`) is the bits you actually pulled. Pin digests when supply-chain control matters (CI, production). Labs 09 and 12 pin `FROM node:22-alpine@sha256:…`; Lab 13 pins Postgres/Redis the same way. Digests go stale on purpose — refresh them when you upgrade (Dependabot opens PRs for those Dockerfiles).
+
+Try pulling by digest (same bits as the tag *today*):
+
+```bash
+docker pull alpine@sha256:14358309a308569c32bdc37e2e0e9694be33a9d99e68afb0f5ff33cc1f695dce
+```
 
 ## Discuss
 

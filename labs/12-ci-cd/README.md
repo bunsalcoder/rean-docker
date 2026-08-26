@@ -14,9 +14,17 @@ Pair with handbook **Chapter 17 — Deploy with Docker & CI/CD**.
 cd labs/12-ci-cd
 
 docker compose -f compose.yaml config >/dev/null
-REGISTRY_OWNER=example IMAGE_TAG=sha-deadbee \
+REGISTRY_OWNER=example IMAGE_REF=:sha-deadbee \
   docker compose -f compose.prod.yaml config >/dev/null
 echo "compose files OK"
+```
+
+Prefer a digest on a real server (same variable, different shape):
+
+```bash
+export REGISTRY_OWNER=YOUR_GITHUB_USER
+export IMAGE_REF=@sha256:REPLACE_WITH_IMAGE_DIGEST
+docker compose -f compose.prod.yaml config >/dev/null
 ```
 
 ### 2. Build + smoke (CI “build/test” stage)
@@ -57,7 +65,8 @@ cp .env.example .env
 # edit APP_VERSION etc. (Compose reads .env for ${VAR} interpolation)
 
 export REGISTRY_OWNER=YOUR_GITHUB_USER
-export IMAGE_TAG=sha-YOURSHA
+export IMAGE_REF=:sha-YOURSHA
+# or: export IMAGE_REF=@sha256:YOUR_IMAGE_DIGEST
 docker compose -f compose.prod.yaml pull
 docker compose -f compose.prod.yaml up -d
 curl -fsS http://127.0.0.1:3000/health
@@ -72,7 +81,8 @@ You do **not** need a real server to finish this lab — steps 1–4 (through re
 - Why `cap_drop: ALL` in prod Compose?
 - What is the difference between CI (build/smoke/push) and CD (deploy to a host)?
 - How would you roll back to yesterday’s SHA tag?
-- Why does `compose.prod.yaml` error if `IMAGE_TAG` is unset, instead of defaulting to `latest`?
+- Why does `compose.prod.yaml` error if `IMAGE_REF` is unset, instead of defaulting to `latest`?
+- Why can `IMAGE_REF` be either `:sha-…` or `@sha256:…`?
 - Why pin GitHub Actions to a commit SHA instead of `@v4`?
 
 ## Success criteria
@@ -80,7 +90,7 @@ You do **not** need a real server to finish this lab — steps 1–4 (through re
 - [ ] `docker compose … config` succeeds for both files
 - [ ] Local smoke test returns `{"status":"ok",…}` from `/health`
 - [ ] You can explain build → tag → (push) → pull → `compose up` without notes
-- [ ] You know why prod Compose requires `IMAGE_TAG` and does not fall back to `latest`
+- [ ] You know why prod Compose requires `IMAGE_REF` (`:sha-…` or `@sha256:…`) and does not fall back to `latest`
 - [ ] You know why the workflow pins Actions by SHA, not `@v4`
 - [ ] You know where you would put secrets for SSH deploy (host / GitHub Secrets — not the image)
 

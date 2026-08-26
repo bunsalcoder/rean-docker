@@ -11,7 +11,7 @@
 ## តម្រូវការ
 
 1. `Dockerfile` សម្រាប់ API (multi-stage បើអ្នក compile/build)។
-2. `compose.yaml` មាន `api`, `db`, `redis`។
+2. `compose.yaml` មាន `api`, `db`, `redis` (starter pin Postgres/Redis តាម digest — ជំពូក 15)។
 3. Named volume សម្រាប់ Postgres។
 4. `.env.example` រាយ variables ដែលត្រូវការ (គ្មាន secrets ពិត)។
 5. Healthchecks លើ API និង Postgres។

@@ -1242,7 +1242,7 @@ dive rean-hello:1.0   # if you install dive — visual layer explorer
 
 ### Checklist មុន deploy «real»
 
-1. **Pin versions** — `postgres:16-alpine` មិនមែន `postgres:latest`។ Labs ក្នុង repo នេះប្រើ series tag បែបនោះ (`redis:7-alpine`, `node:22-alpine`, `nginx:1.28-alpine`)។ Patch tag ឬ digest (`postgres@sha256:…`, ជំពូក 15) តឹងជាងសម្រាប់ image សំខាន់ក្នុង production។
+1. **Pin versions** — `postgres:16-alpine` មិនមែន `postgres:latest`។ Labs ដើមប្រើ series tag (`redis:7-alpine`, `node:22-alpine`, `nginx:1.28-alpine`)។ Labs គិតបែប production pin digest (`FROM node:22-alpine@sha256:…`, Lab 09/12; Postgres/Redis ក្នុង Lab 13)។ ជំពូក 15 ពន្យល់ tag vs digest។
 2. **Non-root user** — `USER node` or custom UID
 3. **Read-only root filesystem** where possible (`--read-only` + writable tmp mounts)
 4. **Healthchecks** — Alpine Node images ភាគច្រើនគ្មាន `wget`/`curl`។ Probe ដោយ Node runtime ដូច app:
@@ -1393,7 +1393,8 @@ depends_on:
 5. **Pin digests** សម្រាប់គ្រប់គ្រង supply-chain៖
 
    ```bash
-   docker pull nginx@sha256:...
+   docker image inspect alpine:3.22 --format '{{index .RepoDigests 0}}'
+   # Labs 09/12 pin FROM node:22-alpine@sha256:…; Lab 13 pins Postgres/Redis the same way.
    ```
 
 6. **Drop capabilities** / ប្រើ security options ពេលត្រូវ (`--cap-drop ALL`)។
@@ -1544,7 +1545,8 @@ services:
 ```yaml
 services:
   api:
-    image: ghcr.io/YOUR_USER/rean-deploy-api:${IMAGE_TAG:?set IMAGE_TAG to a sha tag}
+    # IMAGE_REF is ":sha-…" (tag) or "@sha256:…" (digest)
+    image: ghcr.io/YOUR_USER/rean-deploy-api${IMAGE_REF:?set IMAGE_REF to :sha-… or @sha256:…}
     ports:
       - "127.0.0.1:3000:3000"
     environment:
@@ -1577,7 +1579,7 @@ services:
 នៅលើ server៖
 
 ```bash
-export IMAGE_TAG=sha-abc1234   # or a semver tag from CI
+export IMAGE_REF=:sha-abc1234   # or :1.2.3 — or @sha256:… for a digest pin
 docker compose -f compose.prod.yaml pull
 docker compose -f compose.prod.yaml up -d
 docker compose -f compose.prod.yaml ps
@@ -1587,10 +1589,10 @@ Validate files នៅណាក៏បាន (laptop ឬ CI)៖
 
 ```bash
 docker compose -f compose.yaml config
-IMAGE_TAG=sha-deadbee docker compose -f compose.prod.yaml config
+IMAGE_REF=:sha-deadbee docker compose -f compose.prod.yaml config
 ```
 
-`compose.prod.yaml` បដិសេធ interpolate បើ `IMAGE_TAG` ខ្វះ — នេះចេតនា។ Prod ត្រូវ pin SHA (ឬ semver) មិនមែន `:latest`។
+`compose.prod.yaml` បដិសេធ interpolate បើ `IMAGE_REF` ខ្វះ — នេះចេតនា។ Prod ត្រូវ pin SHA tag ឬ digest (`:sha-…` / `@sha256:…`) មិនមែន `:latest`។
 
 ### Registry workflow (build → tag → push → pull)
 
@@ -1656,14 +1658,14 @@ Containers ល្អក្នុងការរត់ app។ Reverse proxy ទ�
 |----------|-----|
 | Healthchecks + `restart: unless-stopped` | Container ខូច/unhealthy ងើបឡើងវិញ ឬនៅសម្គាល់ unhealthy |
 | `docker compose up -d` បន្ទាប់ពី `pull` | បង្កើតសេវាដែលផ្លាស់ប្តូរឡើងវិញតែប៉ុណ្ណោះ |
-| ទុក tag មុន | Rollback ភ្លាម៖ កំណត់ `IMAGE_TAG` ទៅ SHA ល្អចុងក្រោយ រួច `up -d` ម្ដងទៀត |
+| ទុក tag/digest មុន | Rollback ភ្លាម៖ កំណត់ `IMAGE_REF` ទៅ `:sha-…` ឬ `@sha256:…` ល្អចុងក្រោយ រួច `up -d` ម្ដងទៀត |
 | Database volumes | Named volumes នៅរស់បន្ទាប់ពីបង្កើត container ឡើងវិញ (ជំពូក 8) |
 | Migrations | ធ្វើជាជំហានច្បាស់ (one-off `compose run`) មុន/ក្រោយប្តូរ API — សរសេរលំដាប់ |
 
 គំនូស rollback៖
 
 ```bash
-export IMAGE_TAG=sha-OLDGOOD
+export IMAGE_REF=:sha-OLDGOOD
 docker compose -f compose.prod.yaml pull api
 docker compose -f compose.prod.yaml up -d api
 ```
@@ -1715,7 +1717,7 @@ jobs:
         working-directory: labs/12-ci-cd
         run: |
           docker compose -f compose.yaml config >/dev/null
-          REGISTRY_OWNER=example IMAGE_TAG=sha-deadbee \
+          REGISTRY_OWNER=example IMAGE_REF=:sha-deadbee \
             docker compose -f compose.prod.yaml config >/dev/null
 
       - name: Build image
@@ -1774,7 +1776,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd /opt/rean-deploy
-            export IMAGE_TAG=sha-$(echo ${{ github.sha }} | cut -c1-7)
+            export IMAGE_REF=:sha-$(echo ${{ github.sha }} | cut -c1-7)
             docker compose -f compose.prod.yaml pull
             docker compose -f compose.prod.yaml up -d
 ```

@@ -60,15 +60,22 @@ docker run --rm aquasec/trivy:0.63.0 image alpine:3.22
 
 អានរបាយការណ៍; កុំភ័យនឹង «LOW» គ្រប់មួយ។ ចំណុចគឺ៖ **ដឹងរបៀបស្កេន** មុន promote image។ `docker scout` ជាជម្រើសមួយទៀត បើ Docker Desktop មាន។
 
-CI របស់ repo នេះ run Trivy image ដូចគ្នាលើ teaching builds (HIGH/CRITICAL តែប៉ុណ្ណោះ, របាយការណ៍ — មិន fail job ព្រោះ CVE ក្នុង base image)។ នោះគឺទម្លាប់ពី lab នេះ អនុវត្តលើ labs ខ្លួនឯង។
+CI របស់ repo នេះស្កេន teaching builds ជាមួយ Trivy៖ **HIGH** ជារបាយការណ៍ ហើយ **unfixed CRITICAL** fail job។ Runtime Dockerfiles លុប `npm`/`corepack` ពី base image បន្ទាប់ពី `npm ci` ដើម្បីឱ្យ gate ផ្តោតលើអ្វីដែល app ផ្ញើ — មិនមែន CVE គ្រប់មួយក្នុង package manager របស់ Node (ពិភាក្សា Lab 09)។
 
 ### 4. Digest vs tag
 
 ```bash
 docker image inspect alpine:3.22 --format '{{index .RepoDigests 0}}'
+# Example shape: alpine@sha256:14358309a308569c32bdc37e2e0e9694be33a9d99e68afb0f5ff33cc1f695dce
 ```
 
-Tags ផ្លាស់ទី។ Digest (`alpine@sha256:…`) គឺ bits ដែលអ្នកពិតជា pull។ Pin digests ពេលគ្រប់គ្រង supply-chain សំខាន់ (CI, production)។
+Tags ផ្លាស់ទី។ Digest (`alpine@sha256:…`) គឺ bits ដែលអ្នកពិតជា pull។ Pin digests ពេលគ្រប់គ្រង supply-chain សំខាន់ (CI, production)។ Labs 09 និង 12 pin `FROM node:22-alpine@sha256:…`; Lab 13 pin Postgres/Redis ដូចគ្នា។ Digest ហួសសម័យដោយចេតនា — refresh ពេល upgrade (Dependabot បើក PR សម្រាប់ Dockerfile ទាំងនោះ)។
+
+សាក pull តាម digest (bits ដូច tag *ថ្ងៃនេះ*):
+
+```bash
+docker pull alpine@sha256:14358309a308569c32bdc37e2e0e9694be33a9d99e68afb0f5ff33cc1f695dce
+```
 
 ## ពិភាក្សា
 

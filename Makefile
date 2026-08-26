@@ -11,7 +11,7 @@ help:
 	@echo "  make check-km   # fail if Khmer site content drifted from English structure"
 	@echo "  make check-all  # run both content checks (English + Khmer)"
 	@echo "  make sitemap    # regenerate web/robots.txt and web/sitemap.xml"
-	@echo "  make smoke      # build, wait healthy, curl /health for labs 09, 12, 05"
+	@echo "  make smoke      # compose smoke for labs 04, 05, 09, 12, 13"
 	@echo ""
 	@echo "Override port:  make serve PORT=8080"
 
