@@ -1,0 +1,20 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+
+  # Production-minded Dockerfiles pin base digests — keep them refreshable.
+  - package-ecosystem: docker
+    directory: /labs/09-production
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 2
+
+  - package-ecosystem: docker
+    directory: /labs/12-ci-cd
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 2

@@ -1,5 +1,6 @@
-# Pin Node 22 + Alpine — not :latest. Image digests are Chapter 15.
-FROM node:22-alpine
+# Pin Node 22 + Alpine by digest (Chapter 15). Tags move; this digest is the bits we mean.
+# Refresh with: docker buildx imagetools inspect node:22-alpine --format '{{json .Manifest}}'
+FROM node:22-alpine@sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32
 
 WORKDIR /app
 

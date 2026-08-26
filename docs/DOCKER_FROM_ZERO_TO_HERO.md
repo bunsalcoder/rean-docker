@@ -1242,7 +1242,7 @@ dive rean-hello:1.0   # if you install dive — visual layer explorer
 
 ### Checklist before “real” deploy
 
-1. **Pin versions** — `postgres:16-alpine`, not `postgres:latest`. Labs in this repo use that kind of series tag (`redis:7-alpine`, `node:22-alpine`, `nginx:1.28-alpine`). A patch tag or a digest (`postgres@sha256:…`, Chapter 15) is stricter for production-critical images.
+1. **Pin versions** — `postgres:16-alpine`, not `postgres:latest`. Early labs use series tags (`redis:7-alpine`, `node:22-alpine`, `nginx:1.28-alpine`). Production-minded labs pin digests (`FROM node:22-alpine@sha256:…`, Lab 09/12; Postgres/Redis in Lab 13). Chapter 15 explains tag vs digest.
 2. **Non-root user** — `USER node` or custom UID
 3. **Read-only root filesystem** where possible (`--read-only` + writable tmp mounts)
 4. **Healthchecks** — Alpine Node images often have no `wget`/`curl`. Probe with the same Node runtime as the app:
@@ -1391,6 +1391,11 @@ Compare `whoami` on a non-root image vs Alpine, build with BuildKit `--secret` (
 3. **Minimal base images** + multi-stage.
 4. **Never commit secrets**; never `ENV PASSWORD=...` with real secrets in Dockerfile.
 5. **Pin digests** for critical supply-chain control:
+
+```bash
+docker image inspect alpine:3.22 --format '{{index .RepoDigests 0}}'
+# Labs 09/12 pin FROM node:22-alpine@sha256:…; Lab 13 pins Postgres/Redis the same way.
+```
 
    ```bash
    docker pull nginx@sha256:...
@@ -1544,7 +1549,8 @@ services:
 ```yaml
 services:
   api:
-    image: ghcr.io/YOUR_USER/rean-deploy-api:${IMAGE_TAG:?set IMAGE_TAG to a sha tag}
+    # IMAGE_REF is ":sha-…" (tag) or "@sha256:…" (digest)
+    image: ghcr.io/YOUR_USER/rean-deploy-api${IMAGE_REF:?set IMAGE_REF to :sha-… or @sha256:…}
     ports:
       - "127.0.0.1:3000:3000"
     environment:
@@ -1577,7 +1583,7 @@ services:
 On the server:
 
 ```bash
-export IMAGE_TAG=sha-abc1234   # or a semver tag from CI
+export IMAGE_REF=:sha-abc1234   # or :1.2.3 — or @sha256:… for a digest pin
 docker compose -f compose.prod.yaml pull
 docker compose -f compose.prod.yaml up -d
 docker compose -f compose.prod.yaml ps
@@ -1587,10 +1593,10 @@ Validate files anywhere (laptop or CI) with:
 
 ```bash
 docker compose -f compose.yaml config
-IMAGE_TAG=sha-deadbee docker compose -f compose.prod.yaml config
+IMAGE_REF=:sha-deadbee docker compose -f compose.prod.yaml config
 ```
 
-`compose.prod.yaml` refuses to interpolate if `IMAGE_TAG` is missing — that is intentional. Prod must pin a SHA (or semver), not `:latest`.
+`compose.prod.yaml` refuses to interpolate if `IMAGE_REF` is missing — that is intentional. Prod must pin a SHA tag or digest (`:sha-…` / `@sha256:…`), not `:latest`.
 
 ### Registry workflow (build → tag → push → pull)
 
@@ -1656,14 +1662,14 @@ You do **not** need Kubernetes for a single API + Postgres on one VPS. Compose +
 |----------|-----|
 | Healthchecks + `restart: unless-stopped` | Unhealthy/crashed containers recover or stay marked unhealthy |
 | `docker compose up -d` after `pull` | Recreates only changed services |
-| Keep previous tag noted | Instant rollback: set `IMAGE_TAG` to last good SHA and `up -d` again |
+| Keep previous tag/digest noted | Instant rollback: set `IMAGE_REF` to last good `:sha-…` or `@sha256:…` and `up -d` again |
 | Database volumes | Named volumes survive container recreation (Chapter 8) |
 | Migrations | Run as an explicit step (one-off `compose run`) before/after switching the API — document the order |
 
 Rollback sketch:
 
 ```bash
-export IMAGE_TAG=sha-OLDGOOD
+export IMAGE_REF=:sha-OLDGOOD
 docker compose -f compose.prod.yaml pull api
 docker compose -f compose.prod.yaml up -d api
 ```
@@ -1715,7 +1721,7 @@ jobs:
         working-directory: labs/12-ci-cd
         run: |
           docker compose -f compose.yaml config >/dev/null
-          REGISTRY_OWNER=example IMAGE_TAG=sha-deadbee \
+          REGISTRY_OWNER=example IMAGE_REF=:sha-deadbee \
             docker compose -f compose.prod.yaml config >/dev/null
 
       - name: Build image
@@ -1774,7 +1780,7 @@ After a successful push job (same workflow or a second `deploy` job):
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd /opt/rean-deploy
-            export IMAGE_TAG=sha-$(echo ${{ github.sha }} | cut -c1-7)
+            export IMAGE_REF=:sha-$(echo ${{ github.sha }} | cut -c1-7)
             docker compose -f compose.prod.yaml pull
             docker compose -f compose.prod.yaml up -d
 ```
@@ -1804,7 +1810,7 @@ Then graduate to log shipping and uptime checks. A green CI build is not a subst
 ### End-to-end checklist (print this)
 
 - [ ] App has a real `/health` (or equivalent) used by Compose **and** CI smoke tests
-- [ ] `compose.prod.yaml` uses `image:` + tag variable (no surprise remote builds)
+- [ ] `compose.prod.yaml` uses `image:` + `IMAGE_REF` (`:sha-…` or `@sha256:…`; no surprise remote builds)
 - [ ] `.env.example` documents every required variable; real `.env` is gitignored
 - [ ] CI validates Compose, builds, smokes, then pushes on the main branch
 - [ ] Server has Docker Engine, deploy files, and secrets only on the host

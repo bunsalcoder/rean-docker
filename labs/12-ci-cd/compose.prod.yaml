@@ -1,6 +1,7 @@
 services:
   api:
-    image: ghcr.io/${REGISTRY_OWNER:-YOUR_USER}/rean-deploy-api:${IMAGE_TAG:?set IMAGE_TAG to a sha tag}
+    # IMAGE_REF is ":sha-…" (tag) or "@sha256:…" (digest). Required — no :latest default.
+    image: ghcr.io/${REGISTRY_OWNER:-YOUR_USER}/rean-deploy-api${IMAGE_REF:?set IMAGE_REF to :sha-… or @sha256:…}
     ports:
       - "127.0.0.1:3000:3000"
     environment:

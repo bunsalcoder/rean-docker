@@ -14,9 +14,17 @@
 cd labs/12-ci-cd
 
 docker compose -f compose.yaml config >/dev/null
-REGISTRY_OWNER=example IMAGE_TAG=sha-deadbee \
+REGISTRY_OWNER=example IMAGE_REF=:sha-deadbee \
   docker compose -f compose.prod.yaml config >/dev/null
 echo "compose files OK"
+```
+
+ចូលចិត្ត digest លើ server ពិត (variable ដូចគ្នា រាងផ្សេង)៖
+
+```bash
+export REGISTRY_OWNER=YOUR_GITHUB_USER
+export IMAGE_REF=@sha256:REPLACE_WITH_IMAGE_DIGEST
+docker compose -f compose.prod.yaml config >/dev/null
 ```
 
 ### 2. Build + smoke (ដំណាក់កាល CI “build/test”)
@@ -57,7 +65,8 @@ cp .env.example .env
 # edit APP_VERSION etc. (Compose reads .env for ${VAR} interpolation)
 
 export REGISTRY_OWNER=YOUR_GITHUB_USER
-export IMAGE_TAG=sha-YOURSHA
+export IMAGE_REF=:sha-YOURSHA
+# or: export IMAGE_REF=@sha256:YOUR_IMAGE_DIGEST
 docker compose -f compose.prod.yaml pull
 docker compose -f compose.prod.yaml up -d
 curl -fsS http://127.0.0.1:3000/health
@@ -72,7 +81,8 @@ curl -fsS http://127.0.0.1:3000/health
 - ហេតុអ្វី `cap_drop: ALL` ក្នុង prod Compose?
 - តើអ្វីជាភាពខុសគ្នារវាង CI (build/smoke/push) និង CD (deploy ទៅ host)?
 - តើ rollback ទៅ SHA tag កាលពីម្សិលមិញធ្វើដូចម្ដេច?
-- ហេតុអ្វី `compose.prod.yaml` error បើ `IMAGE_TAG` មិនកំណត់ ជំនួសឱ្យ default `latest`?
+- ហេតុអ្វី `compose.prod.yaml` error បើ `IMAGE_REF` មិនកំណត់ ជំនួសឱ្យ default `latest`?
+- ហេតុអ្វី `IMAGE_REF` អាចជា `:sha-…` ឬ `@sha256:…`?
 - ហេតុអ្វី pin GitHub Actions ទៅ commit SHA ហើយមិនមែន `@v4`?
 
 ## លក្ខខណ្ឌជោគជ័យ
@@ -80,7 +90,7 @@ curl -fsS http://127.0.0.1:3000/health
 - [ ] `docker compose … config` ជោគជ័យសម្រាប់ files ទាំងពីរ
 - [ ] Smoke test លើម៉ាស៊ីនផ្ទាល់ ត្រឡប់ `{"status":"ok",…}` ពី `/health`
 - [ ] អ្នកអាចពន្យល់ build → tag → (push) → pull → `compose up` ដោយគ្មាន notes
-- [ ] អ្នកដឹងហេតុអ្វី prod Compose ត្រូវការ `IMAGE_TAG` ហើយមិន fallback ទៅ `latest`
+- [ ] អ្នកដឹងហេតុអ្វី prod Compose ត្រូវការ `IMAGE_REF` (`:sha-…` ឬ `@sha256:…`) ហើយមិន fallback ទៅ `latest`
 - [ ] អ្នកដឹងហេតុអ្វី workflow pin Actions តាម SHA មិនមែន `@v4`
 - [ ] អ្នកដឹងថាដាក់ secrets សម្រាប់ SSH deploy នៅណា (host / GitHub Secrets — មិនមែនក្នុង image)
 

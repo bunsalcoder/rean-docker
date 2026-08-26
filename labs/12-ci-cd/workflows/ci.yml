@@ -34,7 +34,7 @@ jobs:
         working-directory: ${{ env.WORKDIR }}
         run: |
           docker compose -f compose.yaml config >/dev/null
-          REGISTRY_OWNER=example IMAGE_TAG=sha-deadbee \
+          REGISTRY_OWNER=example IMAGE_REF=:sha-deadbee \
             docker compose -f compose.prod.yaml config >/dev/null
 
       - name: Build image

@@ -44,15 +44,15 @@ jobs:
           docker compose -f labs/12-ci-cd/compose.yaml config >/dev/null
           cp labs/13-capstone/.env.example labs/13-capstone/.env
           docker compose -f labs/13-capstone/compose.yaml config >/dev/null
-          REGISTRY_OWNER=example IMAGE_TAG=sha-deadbee \
+          REGISTRY_OWNER=example IMAGE_REF=:sha-deadbee \
             docker compose -f labs/12-ci-cd/compose.prod.yaml config >/dev/null
       - name: Smoke-test Compose stacks
         run: ./scripts/smoke_labs.sh
-      - name: Scan lab images (report only)
+      - name: Scan lab images
         run: |
           set -euo pipefail
           mkdir -p /tmp/rean-trivy
-          scan() {
+          scan_report_high() {
             local tag="$1"
             local tar="/tmp/rean-trivy/${tag//:/_}.tar"
             docker save "$tag" -o "$tar"
@@ -60,10 +60,24 @@ jobs:
             # (Lab 11: mounting docker.sock is nearly root on the host).
             docker run --rm -v /tmp/rean-trivy:/in aquasec/trivy:0.63.0 image \
               --input "/in/$(basename "$tar")" \
-              --severity HIGH,CRITICAL \
+              --severity HIGH \
               --exit-code 0
           }
-          scan rean-ci:05
-          scan rean-ci:08
-          scan rean-ci:09
-          scan rean-ci:12
+          scan_fail_critical() {
+            local tag="$1"
+            local tar="/tmp/rean-trivy/${tag//:/_}.tar"
+            # Reuse the tar from the HIGH pass when present.
+            if [[ ! -f "$tar" ]]; then
+              docker save "$tag" -o "$tar"
+            fi
+            # Fail the job on unfixed CRITICAL findings (base-image noise with a fix available still fails).
+            docker run --rm -v /tmp/rean-trivy:/in aquasec/trivy:0.63.0 image \
+              --input "/in/$(basename "$tar")" \
+              --severity CRITICAL \
+              --ignore-unfixed \
+              --exit-code 1
+          }
+          for tag in rean-ci:05 rean-ci:08 rean-ci:09 rean-ci:12; do
+            scan_report_high "$tag"
+            scan_fail_critical "$tag"
+          done
