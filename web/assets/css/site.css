@@ -1588,6 +1588,16 @@ body > main.section > .wrap {
   font-family: var(--font-ui);
 }
 
+.toolbar-end {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.65rem 0.85rem;
+  min-width: 0;
+  margin-left: auto;
+}
+
 .content-pane .toolbar .btn {
   flex: 0 1 auto;
   max-width: 100%;
@@ -1596,6 +1606,11 @@ body > main.section > .wrap {
 .content-pane .toolbar .progress-pill {
   flex: 0 1 auto;
   min-width: 0;
+}
+
+.content-pane .toolbar .print-btn {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.82rem;
 }
 
 .content-pane > h1 {
@@ -2423,5 +2438,128 @@ body > main.section > .wrap {
 @media (max-width: 720px) {
   .progress-summary {
     grid-template-columns: 1fr;
+  }
+}
+
+/* —— Print / Save as PDF (Learn + Lab) —— */
+@media print {
+  :root,
+  html[data-theme="dark"] {
+    --ink: #0b1a28;
+    --ink-soft: #1f3345;
+    --muted: #456074;
+    --paper: #fff;
+    --surface: #fff;
+    --chrome: #fff;
+    --line: #c8d4df;
+    --ocean: #1a6b8a;
+    --ocean-deep: #0f4d66;
+    --ocean-glow: transparent;
+    --ocean-hover: transparent;
+    --code-bg: #f4f7fa;
+    --code-fg: #0b1a28;
+    --code-accent: #0f4d66;
+    --sidebar-bg: #fff;
+    color-scheme: light;
+  }
+
+  @page {
+    margin: 1.4cm 1.2cm;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    color: var(--ink);
+  }
+
+  body.bg-mesh::before,
+  body.bg-mesh::after,
+  .skip-link,
+  .site-header,
+  .backdrop,
+  .sidebar,
+  .toolbar,
+  .pager,
+  .search-dialog,
+  .copy-btn,
+  .side-toggle,
+  .print-btn {
+    display: none !important;
+  }
+
+  .app-shell {
+    display: block;
+    width: 100%;
+    min-height: 0;
+    margin: 0;
+  }
+
+  .content-pane {
+    max-width: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .content-pane > .eyebrow {
+    margin-top: 0;
+  }
+
+  .content-pane > h1 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  .md-body {
+    overflow: visible;
+  }
+
+  .md-body h2,
+  .md-body h3 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  .md-body pre,
+  .md-body .code-block,
+  .md-body table,
+  .md-body .task-item {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .md-body .code-block {
+    position: static;
+  }
+
+  .md-body pre,
+  .md-body .code-block pre {
+    white-space: pre-wrap;
+    overflow: visible;
+    border: 1px solid var(--line);
+    background: var(--code-bg) !important;
+    box-shadow: none;
+  }
+
+  .md-body a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.78em;
+    color: var(--muted);
+    word-break: break-all;
+  }
+
+  .md-body a[href^="#"]::after,
+  .md-body a[href^="./"]::after,
+  .md-body a[href^="../"]::after,
+  .md-body a[href^="learn.html"]::after,
+  .md-body a[href^="lab.html"]::after,
+  .md-body a[href^="labs.html"]::after,
+  .md-body a[href^="index.html"]::after {
+    content: none;
+  }
+
+  .task-item input {
+    appearance: auto;
+    -webkit-appearance: checkbox;
   }
 }

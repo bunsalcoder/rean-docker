@@ -288,6 +288,10 @@
 
   initNavIndicator();
 
+  document.querySelectorAll("[data-print]").forEach((btn) => {
+    btn.addEventListener("click", () => window.print());
+  });
+
   // Below-fold reveals: armed after leaving the hero, then one soft staggered pass per section
   const revealBlocks = document.querySelectorAll(".reveal-block");
   if (!revealBlocks.length) return;
