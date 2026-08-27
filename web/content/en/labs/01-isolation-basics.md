@@ -39,6 +39,8 @@ On Windows, prefer **WSL2** or Git Bash. Bind-mount examples use `/tmp/...`; if 
 
 ## Steps
 
+**Optional helper:** after you understand the idea, `./run.sh` in this folder replays the non-interactive demos (uses `labs/01-isolation-basics/.share` for the bind mount instead of `/tmp`). Prefer typing the commands yourself the first time.
+
 ### 1. Process isolation
 
 Inside a container you see only *its* processes — not your host’s apps.
@@ -68,6 +70,7 @@ mkdir -p /tmp/lab01-share
 echo 'from-host' > /tmp/lab01-share/msg.txt
 docker run --rm -v /tmp/lab01-share:/data alpine:3.22 cat /data/msg.txt
 # → from-host
+# On Windows without WSL, use a folder inside this lab (e.g. .share/) instead of /tmp.
 ```
 
 ### 3. Network isolation

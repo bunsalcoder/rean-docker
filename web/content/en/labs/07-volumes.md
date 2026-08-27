@@ -6,6 +6,9 @@ Prove that named volumes keep data after a container is deleted.
 
 ## Steps
 
+**Optional helper:** `./run.sh` proves the named volume survives recreate (uses `.bind/` for the bind-mount contrast).  
+**Optional Compose form:** `docker compose up -d --wait`, then `docker compose exec db psql …`, `docker compose down` (keep volume) vs `docker compose down -v`.
+
 ```bash
 docker volume create lab07-pgdata
 
@@ -42,7 +45,7 @@ docker volume rm lab07-pgdata
 
 ## Bind mount contrast
 
-On Windows without WSL, use a folder inside this repo instead of `/tmp`.
+On Windows without WSL, use a folder inside this repo (e.g. `labs/07-volumes/.bind`) instead of `/tmp`.
 
 ```bash
 mkdir -p /tmp/lab07-bind

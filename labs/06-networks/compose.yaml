@@ -1,0 +1,14 @@
+# Optional Compose form of Lab 06 (same idea as the README CLI steps).
+# Service name "redis" is the DNS name on this network.
+services:
+  redis:
+    image: redis:7-alpine
+    networks: [lab06]
+  client:
+    image: redis:7-alpine
+    depends_on: [redis]
+    networks: [lab06]
+    command: ["redis-cli", "-h", "redis", "ping"]
+
+networks:
+  lab06:

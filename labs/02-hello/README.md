@@ -12,6 +12,8 @@ Practice the commands you will use constantly: run a container, publish a port, 
 
 ## Steps
 
+**Optional helper:** `./run.sh` covers hello-world + nginx (cleanup included). Still do the interactive Ubuntu and `docker exec -it` steps below by hand.
+
 ### 1. Hello World
 
 ```bash

@@ -6,6 +6,8 @@
 
 ## ជំហាន
 
+**Optional helper:** `./run.sh`។ **Optional Compose:** `docker compose up -d --wait` រួច `exec` / `down` vs `down -v`។
+
 ```bash
 docker volume create lab07-pgdata
 

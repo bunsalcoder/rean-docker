@@ -12,6 +12,8 @@
 
 ## ជំហាន
 
+**Optional helper:** `./run.sh` គ្រប hello-world + nginx។ នៅតែធ្វើ Ubuntu interactive និង `docker exec -it` ដោយដៃ។
+
 ### 1. Hello World
 
 ```bash

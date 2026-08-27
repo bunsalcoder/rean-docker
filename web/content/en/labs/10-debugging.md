@@ -8,6 +8,8 @@ You do not need a new app — only `docker logs`, `docker inspect`, and a Compos
 
 ## Steps
 
+**Optional helper:** `./run.sh` covers the crash/logs and inspect demos. Step 3 stays manual — fix `compose.yaml` yourself (or compare `compose.fixed.yaml`).
+
 ### 1. A container that will not stay up
 
 ```bash
@@ -47,6 +49,8 @@ docker compose run --rm client
 # → PONG
 docker compose down
 ```
+
+Stuck? Peek at `compose.fixed.yaml` (same services, hostname already correct), then still edit `compose.yaml` so *you* make the fix.
 
 `localhost` from your browser can still reach a published port. Sibling containers must use the **service name**.
 

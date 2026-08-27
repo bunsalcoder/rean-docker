@@ -40,7 +40,10 @@ jobs:
           cp labs/05-compose/.env.example labs/05-compose/.env
           docker compose -f labs/05-compose/compose.yaml config >/dev/null
           docker compose -f labs/09-production/compose.yaml config >/dev/null
+          docker compose -f labs/06-networks/compose.yaml config >/dev/null
+          docker compose -f labs/07-volumes/compose.yaml config >/dev/null
           docker compose -f labs/10-debugging/compose.yaml config >/dev/null
+          docker compose -f labs/10-debugging/compose.fixed.yaml config >/dev/null
           docker compose -f labs/12-ci-cd/compose.yaml config >/dev/null
           cp labs/13-capstone/.env.example labs/13-capstone/.env
           docker compose -f labs/13-capstone/compose.yaml config >/dev/null
@@ -48,6 +51,8 @@ jobs:
             docker compose -f labs/12-ci-cd/compose.prod.yaml config >/dev/null
       - name: Smoke-test Compose stacks
         run: ./scripts/smoke_labs.sh
+      - name: Smoke-test concept lab helpers
+        run: ./scripts/smoke_concept_labs.sh
       - name: Scan lab images
         run: |
           set -euo pipefail
