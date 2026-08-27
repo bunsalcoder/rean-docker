@@ -1,17 +1,18 @@
 # Common local tasks for rean-docker
 PORT ?= 5501
 
-.PHONY: help serve sync check check-km check-all sitemap smoke
+.PHONY: help serve sync check check-km check-all sitemap smoke smoke-concept
 
 help:
 	@echo "rean-docker make targets:"
-	@echo "  make serve      # serve web/ on http://localhost:$(PORT)"
-	@echo "  make sync       # copy handbook + lab READMEs → web/content/en/"
-	@echo "  make check      # fail if English site content drifted from sources"
-	@echo "  make check-km   # fail if Khmer site content drifted from English structure"
-	@echo "  make check-all  # run both content checks (English + Khmer)"
-	@echo "  make sitemap    # regenerate web/robots.txt and web/sitemap.xml"
-	@echo "  make smoke      # compose smoke for labs 04, 05, 09, 12, 13"
+	@echo "  make serve         # serve web/ on http://localhost:$(PORT)"
+	@echo "  make sync          # copy handbook + lab READMEs → web/content/en/"
+	@echo "  make check         # fail if English site content drifted from sources"
+	@echo "  make check-km      # fail if Khmer site content drifted from English structure"
+	@echo "  make check-all     # run both content checks (English + Khmer)"
+	@echo "  make sitemap       # regenerate web/robots.txt and web/sitemap.xml"
+	@echo "  make smoke         # compose smoke for labs 04, 05, 09, 12, 13"
+	@echo "  make smoke-concept # run.sh helpers for labs 01, 02, 06, 07, 10"
 	@echo ""
 	@echo "Override port:  make serve PORT=8080"
 
@@ -36,3 +37,6 @@ sitemap:
 
 smoke:
 	./scripts/smoke_labs.sh
+
+smoke-concept:
+	./scripts/smoke_concept_labs.sh

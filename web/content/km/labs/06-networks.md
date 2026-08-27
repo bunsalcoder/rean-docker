@@ -6,6 +6,8 @@
 
 ## ជំហាន
 
+**Optional helper:** `./run.sh`។ **Optional Compose:** `docker compose run --rm client` → `PONG`។
+
 ```bash
 docker network create lab06-net
 

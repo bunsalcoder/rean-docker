@@ -1,0 +1,10 @@
+# Reference answer for Lab 10 step 3 — client uses the service name, not localhost.
+# Keep compose.yaml broken until you fix it yourself; this file is the check key.
+services:
+  cache:
+    image: redis:7-alpine
+  client:
+    image: redis:7-alpine
+    depends_on:
+      - cache
+    command: ["redis-cli", "-h", "cache", "ping"]

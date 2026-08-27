@@ -6,6 +6,9 @@ See Docker DNS: containers reach each other by **name** on a user-defined networ
 
 ## Steps
 
+**Optional helper:** `./run.sh` runs the CLI demos with cleanup.  
+**Optional Compose form** (same DNS idea): `docker compose run --rm client` → `PONG`, then `docker compose down`.
+
 ```bash
 docker network create lab06-net
 

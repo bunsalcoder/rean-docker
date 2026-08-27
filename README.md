@@ -47,7 +47,8 @@ English site copies must match the handbook and lab READMEs. After editing eithe
 ```bash
 make sync    # copy sources → web/content/en/
 make check   # fail if anything drifted
-make smoke   # optional: compose smoke for labs 04, 05, 09, 12, 13
+make smoke          # optional: compose smoke for labs 04, 05, 09, 12, 13
+make smoke-concept  # optional: run.sh helpers for labs 01, 02, 06, 07, 10
 ```
 
 Or run the scripts directly: `./scripts/sync_en_content.sh` / `./scripts/check_content_sync.sh`.
@@ -75,16 +76,16 @@ Work in order:
 
 | Lab | Topic | Path |
 |-----|--------|------|
-| 01 | Isolation basics (beginner) | [labs/01-isolation-basics](labs/01-isolation-basics) |
-| 02 | First containers | [labs/02-hello](labs/02-hello) |
+| 01 | Isolation basics (beginner) | [labs/01-isolation-basics](labs/01-isolation-basics) (`run.sh`) |
+| 02 | First containers | [labs/02-hello](labs/02-hello) (`run.sh`) |
 | 03 | Dockerfile | [labs/03-dockerfile](labs/03-dockerfile) |
 | 04 | Env, secrets, and config | [labs/04-env-secrets](labs/04-env-secrets) |
 | 05 | Compose (API + Postgres + Redis) | [labs/05-compose](labs/05-compose) |
-| 06 | Networks | [labs/06-networks](labs/06-networks) |
-| 07 | Volumes | [labs/07-volumes](labs/07-volumes) |
+| 06 | Networks | [labs/06-networks](labs/06-networks) (`run.sh` / Compose) |
+| 07 | Volumes | [labs/07-volumes](labs/07-volumes) (`run.sh` / Compose) |
 | 08 | Multi-stage builds | [labs/08-multi-stage](labs/08-multi-stage) |
 | 09 | Production practices | [labs/09-production](labs/09-production) |
-| 10 | Debugging & troubleshooting | [labs/10-debugging](labs/10-debugging) |
+| 10 | Debugging & troubleshooting | [labs/10-debugging](labs/10-debugging) (`run.sh`) |
 | 11 | Security essentials | [labs/11-security](labs/11-security) |
 | 12 | Deploy & CI/CD (special) | [labs/12-ci-cd](labs/12-ci-cd) |
 | 13 | Capstone (starter scaffold) | [labs/13-capstone](labs/13-capstone) |

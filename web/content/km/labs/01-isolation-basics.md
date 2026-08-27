@@ -39,6 +39,8 @@ docker run --rm hello-world
 
 ## ជំហាន
 
+**Optional helper:** បន្ទាប់ពីយល់គំនិត រត់ `./run.sh` ក្នុងថតនេះ (bind mount ប្រើ `.share/` ជំនួស `/tmp`)។ ចូលចិត្តវាយពាក្យបញ្ជាពី README ដោយខ្លួនឯងលើកដំបូង។
+
 ### 1. Process isolation
 
 ក្នុង container អ្នកឃើញតែ processes *របស់វា* — មិនមែន apps លើ host។

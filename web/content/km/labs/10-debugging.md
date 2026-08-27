@@ -8,6 +8,8 @@
 
 ## ជំហាន
 
+**Optional helper:** `./run.sh` សម្រាប់ crash/logs និង inspect។ Step 3 នៅដៃ — កែ `compose.yaml` (ឬមើល `compose.fixed.yaml`)។
+
 ### 1. Container ដែលមិននៅ up
 
 ```bash
