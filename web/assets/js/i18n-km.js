@@ -68,6 +68,8 @@ window.REAN_I18N_KM = {
   "lab.of": "លំហាត់ {n} នេហ {total} · {level}",
   "lab.prev": "លំហាត់មុន",
   "lab.serveHint": "Serve ថត web/ តាម HTTP។",
+  "print.button": "បោះពុម្ព",
+  "print.hint": "បោះពុម្ព ឬរក្សាទុកទំព័រនេះជា PDF",
   "lab.sidebar": "លំហាត់",
   "lab.title": "លំហាត់ — rean-docker",
   "labMeta.01-isolation-basics": "មូលដ្ឋាន isolation",

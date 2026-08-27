@@ -108,6 +108,8 @@
     "lab.next": "Next lab",
     "lab.loadError": "Could not load lab.",
     "lab.serveHint": "Serve the web/ folder over HTTP.",
+    "print.button": "Print",
+    "print.hint": "Print or save this page as PDF",
     "lab.level.beginner": "Beginner",
     "lab.level.intermediate": "Intermediate",
     "lab.level.advanced": "Advanced",

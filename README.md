@@ -112,7 +112,9 @@ Follow the **Suggested weekly plan** section at the end of the handbook. Do not 
 
 ## PDF export (optional)
 
-If you want a PDF of the handbook:
+**From the site:** open a chapter in [Learn](./web/learn.html) or a lab page, then use **Print** (or your browser’s Print → Save as PDF). Chrome chrome and the sidebar are hidden for a clean page.
+
+**From the handbook Markdown:**
 
 ```bash
 # Option A: pandoc (if installed)
