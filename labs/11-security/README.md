@@ -69,7 +69,7 @@ docker image inspect alpine:3.22 --format '{{index .RepoDigests 0}}'
 # Example shape: alpine@sha256:14358309a308569c32bdc37e2e0e9694be33a9d99e68afb0f5ff33cc1f695dce
 ```
 
-Tags move. A digest (`alpine@sha256:…`) is the bits you actually pulled. Pin digests when supply-chain control matters (CI, production). Labs 09 and 12 pin `FROM node:22-alpine@sha256:…`; Lab 13 pins Postgres/Redis the same way. Digests go stale on purpose — refresh them when you upgrade (Dependabot opens PRs for those Dockerfiles).
+Tags move. A digest (`alpine@sha256:…`) is the bits you actually pulled. Pin digests when supply-chain control matters (CI, production). Labs 09, 12, and 13 pin `FROM node:22-alpine@sha256:…`; Lab 13 also pins Postgres/Redis in Compose. Digests go stale on purpose — refresh them when you upgrade (Dependabot opens PRs for those Dockerfiles).
 
 Try pulling by digest (same bits as the tag *today*):
 

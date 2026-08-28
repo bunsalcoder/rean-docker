@@ -1242,7 +1242,7 @@ dive rean-hello:1.0   # if you install dive — visual layer explorer
 
 ### Checklist មុន deploy «real»
 
-1. **Pin versions** — `postgres:16-alpine` មិនមែន `postgres:latest`។ Labs ដើមប្រើ series tag (`redis:7-alpine`, `node:22-alpine`, `nginx:1.28-alpine`)។ Labs គិតបែប production pin digest (`FROM node:22-alpine@sha256:…`, Lab 09/12; Postgres/Redis ក្នុង Lab 13)។ ជំពូក 15 ពន្យល់ tag vs digest។
+1. **Pin versions** — `postgres:16-alpine` មិនមែន `postgres:latest`។ Labs ដើមប្រើ series tag (`redis:7-alpine`, `node:22-alpine`, `nginx:1.28-alpine`)។ Labs គិតបែប production pin digest (`FROM node:22-alpine@sha256:…` ក្នុង Labs 09, 12, និង 13; Postgres/Redis ក្នុង Lab 13 Compose)។ ជំពូក 15 ពន្យល់ tag vs digest។
 2. **Non-root user** — `USER node` or custom UID
 3. **Read-only root filesystem** where possible (`--read-only` + writable tmp mounts)
 4. **Healthchecks** — Alpine Node images ភាគច្រើនគ្មាន `wget`/`curl`។ Probe ដោយ Node runtime ដូច app:
@@ -1394,7 +1394,7 @@ depends_on:
 
    ```bash
    docker image inspect alpine:3.22 --format '{{index .RepoDigests 0}}'
-   # Labs 09/12 pin FROM node:22-alpine@sha256:…; Lab 13 pins Postgres/Redis the same way.
+   # Labs 09/12/13 pin FROM node:22-alpine@sha256:…; Lab 13 Compose pin Postgres/Redis ដែរ។
    ```
 
 6. **Drop capabilities** / ប្រើ security options ពេលត្រូវ (`--cap-drop ALL`)។

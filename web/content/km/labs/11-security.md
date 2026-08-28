@@ -69,7 +69,7 @@ docker image inspect alpine:3.22 --format '{{index .RepoDigests 0}}'
 # Example shape: alpine@sha256:14358309a308569c32bdc37e2e0e9694be33a9d99e68afb0f5ff33cc1f695dce
 ```
 
-Tags ផ្លាស់ទី។ Digest (`alpine@sha256:…`) គឺ bits ដែលអ្នកពិតជា pull។ Pin digests ពេលគ្រប់គ្រង supply-chain សំខាន់ (CI, production)។ Labs 09 និង 12 pin `FROM node:22-alpine@sha256:…`; Lab 13 pin Postgres/Redis ដូចគ្នា។ Digest ហួសសម័យដោយចេតនា — refresh ពេល upgrade (Dependabot បើក PR សម្រាប់ Dockerfile ទាំងនោះ)។
+Tags ផ្លាស់ទី។ Digest (`alpine@sha256:…`) គឺ bits ដែលអ្នកពិតជា pull។ Pin digests ពេលគ្រប់គ្រង supply-chain សំខាន់ (CI, production)។ Labs 09, 12, និង 13 pin `FROM node:22-alpine@sha256:…`; Lab 13 pin Postgres/Redis ក្នុង Compose ដែរ។ Digest ហួសសម័យដោយចេតនា — refresh ពេល upgrade (Dependabot បើក PR សម្រាប់ Dockerfile ទាំងនោះ)។
 
 សាក pull តាម digest (bits ដូច tag *ថ្ងៃនេះ*):
 

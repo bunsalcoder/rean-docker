@@ -10,7 +10,7 @@ Work in this folder (`labs/13-capstone`) so your capstone stays separate from th
 
 ## Requirements
 
-1. `Dockerfile` for the API (multi-stage if you compile/build).
+1. `Dockerfile` for the API (starter pins Node by digest — Chapter 15; multi-stage if you compile/build).
 2. `compose.yaml` with `api`, `db`, `redis` (starter pins Postgres/Redis by digest — Chapter 15).
 3. Named volume for Postgres.
 4. `.env.example` documenting required variables (no real secrets).
