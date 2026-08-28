@@ -9,7 +9,8 @@ help:
 	@echo "  make sync          # copy handbook + lab READMEs → web/content/en/"
 	@echo "  make check         # fail if English site content drifted from sources"
 	@echo "  make check-km      # fail if Khmer site content drifted from English structure"
-	@echo "  make check-all     # run both content checks (English + Khmer)"
+	@echo "  make check-km-parity  # fail if Khmer labs drift in checklists/code/invariants"
+	@echo "  make check-all     # run English + Khmer structure + parity checks"
 	@echo "  make sitemap       # regenerate web/robots.txt and web/sitemap.xml"
 	@echo "  make smoke         # compose smoke for labs 04, 05, 09, 12, 13"
 	@echo "  make smoke-concept # run.sh helpers for labs 01, 02, 06, 07, 10"
@@ -30,7 +31,10 @@ check:
 check-km:
 	./scripts/check_km_content.sh
 
-check-all: check check-km
+check-all: check check-km check-km-parity
+
+check-km-parity:
+	./scripts/check_km_parity.sh
 
 sitemap:
 	python3 ./scripts/generate_sitemap.py

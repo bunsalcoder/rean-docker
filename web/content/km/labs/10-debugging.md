@@ -50,6 +50,8 @@ docker compose run --rm client
 docker compose down
 ```
 
+ជាប់? មើល `compose.fixed.yaml` (services ដូចគ្នា hostname ត្រឹមត្រូវរួច) — រួចកែ `compose.yaml` ដោយខ្លួនឯង។
+
 `localhost` ពី browser អ្នកនៅតែអាចទៅដល់ port ដែល publish។ Containers បងប្អូនត្រូវប្រើ **ឈ្មោះ service**។
 
 ### 4. Inspect មួយវាល មិនមែនលិចក្នុង JSON

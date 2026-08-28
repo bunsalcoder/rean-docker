@@ -23,7 +23,8 @@ When you add a chapter or lab:
 
 ```bash
 make check-km    # structure only (not a byte-for-byte translation check)
-make check-all   # English copies + Khmer structure
+make check-km-parity  # checklist/code-fence counts + teaching invariants (IMAGE_REF, run.sh hints, etc.)
+make check-all   # English copies + Khmer structure + parity
 ```
 
 Optional: `python3 scripts/sync_km_i18n.py` refreshes Khmer chapter titles in `i18n-km.js` from the Khmer handbook.

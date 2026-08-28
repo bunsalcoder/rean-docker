@@ -23,6 +23,8 @@ jobs:
         run: ./scripts/check_content_sync.sh
       - name: Verify Khmer content matches English structure
         run: ./scripts/check_km_content.sh
+      - name: Verify Khmer teaching parity
+        run: ./scripts/check_km_parity.sh
 
   deploy:
     needs: check
