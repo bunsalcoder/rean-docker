@@ -30,6 +30,7 @@ jobs:
           docker build -t rean-ci:08-fat -f labs/08-multi-stage/Dockerfile.fat labs/08-multi-stage
           docker build -t rean-ci:09 labs/09-production
           docker build -t rean-ci:12 labs/12-ci-cd
+          docker build -t rean-ci:13 labs/13-capstone
           docker build -t rean-ci:leaky -f labs/04-env-secrets/Dockerfile.leaky labs/04-env-secrets
           echo 'token' > /tmp/rean-ci.secret
           docker build --secret id=demo,src=/tmp/rean-ci.secret \
@@ -85,7 +86,7 @@ jobs:
               --ignore-unfixed \
               --exit-code 1
           }
-          for tag in rean-ci:05 rean-ci:08 rean-ci:09 rean-ci:12; do
+          for tag in rean-ci:05 rean-ci:08 rean-ci:09 rean-ci:12 rean-ci:13; do
             scan_report_high "$tag"
             scan_fail_critical "$tag"
           done

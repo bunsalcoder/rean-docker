@@ -1242,7 +1242,7 @@ dive rean-hello:1.0   # if you install dive — visual layer explorer
 
 ### Checklist before “real” deploy
 
-1. **Pin versions** — `postgres:16-alpine`, not `postgres:latest`. Early labs use series tags (`redis:7-alpine`, `node:22-alpine`, `nginx:1.28-alpine`). Production-minded labs pin digests (`FROM node:22-alpine@sha256:…`, Lab 09/12; Postgres/Redis in Lab 13). Chapter 15 explains tag vs digest.
+1. **Pin versions** — `postgres:16-alpine`, not `postgres:latest`. Early labs use series tags (`redis:7-alpine`, `node:22-alpine`, `nginx:1.28-alpine`). Production-minded labs pin digests (`FROM node:22-alpine@sha256:…` in Labs 09, 12, and 13; Postgres/Redis in Lab 13 Compose). Chapter 15 explains tag vs digest.
 2. **Non-root user** — `USER node` or custom UID
 3. **Read-only root filesystem** where possible (`--read-only` + writable tmp mounts)
 4. **Healthchecks** — Alpine Node images often have no `wget`/`curl`. Probe with the same Node runtime as the app:
@@ -1394,7 +1394,7 @@ Compare `whoami` on a non-root image vs Alpine, build with BuildKit `--secret` (
 
 ```bash
 docker image inspect alpine:3.22 --format '{{index .RepoDigests 0}}'
-# Labs 09/12 pin FROM node:22-alpine@sha256:…; Lab 13 pins Postgres/Redis the same way.
+# Labs 09/12/13 pin FROM node:22-alpine@sha256:…; Lab 13 Compose pins Postgres/Redis too.
 ```
 
    ```bash

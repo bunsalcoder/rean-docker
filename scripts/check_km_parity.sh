@@ -76,7 +76,7 @@ require_in_both "Lab 13 scaffold" 'starter scaffold' \
 
 require_in_both "Guide IMAGE_REF" 'IMAGE_REF' \
   "$EN_DIR/guide.md" "$KM_DIR/guide.md"
-require_in_both "Guide digest labs note" 'Lab 09/12|Labs 09/12' \
+require_in_both "Guide digest labs note" 'Labs 09|Lab 09' \
   "$EN_DIR/guide.md" "$KM_DIR/guide.md"
 
 echo
