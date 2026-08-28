@@ -44,7 +44,7 @@ docker volume rm lab07-pgdata
 
 ## ប្រៀបធៀប bind mount
 
-នៅ Windows គ្មាន WSL សូមប្រើថតក្នុង repo នេះជំនួស `/tmp`។
+នៅ Windows គ្មាន WSL សូមប្រើថតក្នុង repo (ឧ. `labs/07-volumes/.bind`) ជំនួស `/tmp`។
 
 ```bash
 mkdir -p /tmp/lab07-bind

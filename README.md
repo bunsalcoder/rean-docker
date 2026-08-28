@@ -59,7 +59,8 @@ Khmer files under `web/content/km/` are **hand-translated**, so they are not byt
 
 ```bash
 make check-km    # fail if Khmer drifted from the English structure
-make check-all   # run both English + Khmer checks
+make check-km-parity  # fail if Khmer labs drift in checklists, code blocks, or teaching invariants
+make check-all   # run English + Khmer structure + parity checks
 ```
 
 `make check-km` (`./scripts/check_km_content.sh`) confirms that:
@@ -68,7 +69,9 @@ make check-all   # run both English + Khmer checks
 - the Khmer handbook keeps the same numbered chapters (`## 1.` … `## N.`) as English,
 - the intro (**How to use**) and **Table of contents** headings exist so the reader can split the guide.
 
-When you add a chapter or lab, translate the matching Khmer file (keeping the `## N.` numbered headings) and re-run `make check-all`. Both checks run in CI on every push and PR. See [CONTRIBUTING.md](CONTRIBUTING.md).
+`make check-km-parity` (`./scripts/check_km_parity.sh`) additionally flags drift in lab checklist counts, code-fence counts, and key teaching strings (e.g. `IMAGE_REF`, optional helper hints) that must stay aligned across languages.
+
+When you add a chapter or lab, translate the matching Khmer file (keeping the `## N.` numbered headings) and re-run `make check-all`. All three checks run in CI on every push and PR. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Labs (hands-on)
 
