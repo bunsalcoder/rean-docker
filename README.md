@@ -12,6 +12,8 @@ make serve
 
 Then open [http://localhost:5501](http://localhost:5501). Same port as the VS Code / Cursor **Live Server** extension (`.vscode/settings.json`). Override with `make serve PORT=8080` if needed.
 
+The live site deploys from **`main`** via GitHub Pages ([bunsalcoder.github.io/rean-docker](https://bunsalcoder.github.io/rean-docker/)). Pushes and PRs on `develop` still **dry-run** the Pages build (content sync + sitemap) so site regressions fail CI before merge — they do not publish.
+
 Equivalent without Make:
 
 ```bash
