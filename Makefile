@@ -13,7 +13,7 @@ help:
 	@echo "  make check-all     # run English + Khmer structure + parity checks"
 	@echo "  make sitemap       # regenerate web/robots.txt and web/sitemap.xml"
 	@echo "  make smoke         # compose smoke for labs 04, 05, 09, 12, 13"
-	@echo "  make smoke-concept # run.sh helpers for labs 01, 02, 06, 07, 10"
+	@echo "  make smoke-concept # run.sh helpers for labs 01, 02, 06, 07, 08, 10, 11"
 	@echo ""
 	@echo "Override port:  make serve PORT=8080"
 

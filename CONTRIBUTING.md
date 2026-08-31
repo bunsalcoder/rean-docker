@@ -29,6 +29,10 @@ make check-all   # English copies + Khmer structure + parity
 
 Optional: `python3 scripts/sync_km_i18n.py` refreshes Khmer chapter titles in `i18n-km.js` from the Khmer handbook.
 
+## Shared Node lab apps
+
+Labs `03`, `05`, `08`, `09`, `12`, and `13` each have their own `package.json` / lockfile on purpose (isolated teaching folders). When bumping Express or other shared deps, update **all six** locks (or merge the Dependabot PRs for each directory). Do not assume a change in one lab propagates.
+
 ## Pull requests
 
 CI runs `make check-all`, builds the lab Dockerfiles, smoke-tests labs 04, 05, 09, 12, and 13 (`make smoke`), runs concept-lab helpers (`make smoke-concept`), and fails on unfixed CRITICAL findings from Trivy. Keep secrets out of git (`.env` is ignored; commit `.env.example` only).

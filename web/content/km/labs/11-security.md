@@ -6,6 +6,8 @@
 
 ផ្គូផ្គង Lab 04 (`ENV` លេច) និង Lab 08/09 (non-root + images ស្ដើង)។
 
+**Optional helper:** `./run.sh` គ្រប whoami, BuildKit secret check និង digest inspect (Trivy នៅដៃ)។ ចូលចិត្តវាយពាក្យបញ្ជាពី README ដោយខ្លួនឯងលើកដំបូង។
+
 ## ជំហាន
 
 ### 1. នរណាជា PID 1?
@@ -55,6 +57,7 @@ docker rmi rean-secret:lab11
 បើមានបណ្ដាញ រត់ Trivy ក្នុង container (មិនត្រូវដំឡើងបន្ថែម)៖
 
 ```bash
+# Prefer a digest pin in CI (this repo pins aquasec/trivy:0.63.0@sha256:…).
 docker run --rm aquasec/trivy:0.63.0 image alpine:3.22
 ```
 
@@ -65,17 +68,15 @@ CI របស់ repo នេះស្កេន teaching builds ជាមួយ Tr
 ### 4. Digest vs tag
 
 ```bash
-docker image inspect alpine:3.22 --format '{{index .RepoDigests 0}}'
+docker pull alpine:3.22
+# Refresh today's digest (tags move — do not copy an old sha from a blog forever):
+DIGEST=$(docker image inspect alpine:3.22 --format '{{index .RepoDigests 0}}')
+echo "$DIGEST"
 # Example shape: alpine@sha256:14358309a308569c32bdc37e2e0e9694be33a9d99e68afb0f5ff33cc1f695dce
+docker pull "$DIGEST"
 ```
 
 Tags ផ្លាស់ទី។ Digest (`alpine@sha256:…`) គឺ bits ដែលអ្នកពិតជា pull។ Pin digests ពេលគ្រប់គ្រង supply-chain សំខាន់ (CI, production)។ Labs 09, 12, និង 13 pin `FROM node:22-alpine@sha256:…`; Lab 13 pin Postgres/Redis ក្នុង Compose ដែរ។ Digest ហួសសម័យដោយចេតនា — refresh ពេល upgrade (Dependabot បើក PR សម្រាប់ Dockerfile ទាំងនោះ)។
-
-សាក pull តាម digest (bits ដូច tag *ថ្ងៃនេះ*):
-
-```bash
-docker pull alpine@sha256:14358309a308569c32bdc37e2e0e9694be33a9d99e68afb0f5ff33cc1f695dce
-```
 
 ## ពិភាក្សា
 

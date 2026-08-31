@@ -52,6 +52,8 @@ jobs:
           docker compose -f labs/13-capstone/compose.yaml config >/dev/null
           REGISTRY_OWNER=example IMAGE_REF=:sha-deadbee \
             docker compose -f labs/12-ci-cd/compose.prod.yaml config >/dev/null
+          REGISTRY_OWNER=example IMAGE_REF=:sha-deadbee \
+            docker compose -f labs/13-capstone/compose.prod.yaml config >/dev/null
       - name: Smoke-test Compose stacks
         run: ./scripts/smoke_labs.sh
       - name: Smoke-test concept lab helpers
@@ -59,6 +61,9 @@ jobs:
       - name: Scan lab images
         run: |
           set -euo pipefail
+          # Pin Trivy by digest (Lab 11). Refresh when upgrading the tag:
+          #   docker buildx imagetools inspect aquasec/trivy:0.63.0
+          TRIVY_IMAGE='aquasec/trivy:0.63.0@sha256:6fb0646988fcd2fdf7bf123f7174945ebc2c9c72d1fa1567c8d7daeeb70f8037'
           mkdir -p /tmp/rean-trivy
           scan_report_high() {
             local tag="$1"
@@ -66,7 +71,7 @@ jobs:
             docker save "$tag" -o "$tar"
             # Load from a tar so the scanner does not need the Docker socket
             # (Lab 11: mounting docker.sock is nearly root on the host).
-            docker run --rm -v /tmp/rean-trivy:/in aquasec/trivy:0.63.0 image \
+            docker run --rm -v /tmp/rean-trivy:/in "$TRIVY_IMAGE" image \
               --input "/in/$(basename "$tar")" \
               --severity HIGH \
               --exit-code 0
@@ -80,7 +85,7 @@ jobs:
             fi
             # Fail on unfixed CRITICAL in what the image still ships.
             # Labs strip the base image's npm/corepack after npm ci (CVE-2026-59873 lived there).
-            docker run --rm -v /tmp/rean-trivy:/in aquasec/trivy:0.63.0 image \
+            docker run --rm -v /tmp/rean-trivy:/in "$TRIVY_IMAGE" image \
               --input "/in/$(basename "$tar")" \
               --severity CRITICAL \
               --ignore-unfixed \
