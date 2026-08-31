@@ -4,6 +4,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$ROOT"
 SECRET="${TMPDIR:-/tmp}/rean-demo.secret.$$"
 cleanup() {
   rm -f "${SECRET}"
@@ -14,7 +15,7 @@ trap cleanup EXIT
 echo "== 1. Who is PID 1? =="
 # Build Lab 03 if the tagged image is missing (same whoami check as the README).
 if ! docker image inspect rean-hello:1.0 >/dev/null 2>&1; then
-  docker build -t rean-hello:1.0 "${ROOT}/../03-dockerfile"
+  docker build -t rean-hello:1.0 ../03-dockerfile
 fi
 hello_user="$(docker run --rm --entrypoint whoami rean-hello:1.0)"
 alpine_user="$(docker run --rm --entrypoint whoami alpine:3.22)"
@@ -25,11 +26,12 @@ echo "alpine:3.22 → ${alpine_user}"
 
 echo "== 2. BuildKit secret (must not land in history) =="
 echo 'super-secret-token' > "${SECRET}"
+# -f is resolved from cwd (not the build context) — stay in this lab folder.
 docker build \
   --secret "id=demo,src=${SECRET}" \
   -t rean-secret:lab11 \
   -f Dockerfile.secret \
-  "${ROOT}"
+  .
 history="$(docker history --no-trunc rean-secret:lab11)"
 printf '%s\n' "${history}"
 if printf '%s\n' "${history}" | grep -Fq 'super-secret-token'; then
