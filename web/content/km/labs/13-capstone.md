@@ -25,6 +25,15 @@
 - CI job: `docker compose config` + build + smoke + push (copy `workflows/ci.yml` ពី Lab 12)
 - ស្កេន image ក្នុង CI (Lab 11)
 
+**Optional references** (ចូលចិត្តសរសេរដោយខ្លួនឯងមុន)៖ ថតនេះមាន starter `compose.prod.yaml` និង `workflows/ci.yml` តាម Lab 12 រួច។ Validate prod config ដោយ៖
+
+```bash
+REGISTRY_OWNER=example IMAGE_REF=:sha-deadbee \
+  docker compose -f compose.prod.yaml config
+```
+
+Reverse proxy មុខ API នៅតែ DIY stretch — គ្មានឯកសារ reference សម្រាប់នោះដោយចេតនា។
+
 ## ចាប់ផ្ដើមណែនាំ
 
 ```bash

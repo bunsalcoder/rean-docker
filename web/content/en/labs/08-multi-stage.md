@@ -6,6 +6,8 @@ Compare a fat single-stage image (compiler + source + app) with a multi-stage im
 
 This lab compiles TypeScript on purpose so the size gap is obvious. `typescript` is a **devDependency** — the slim image must not contain `tsc`.
 
+**Optional helper:** `./run.sh` builds `:fat` and `:slim`, asserts the size/USER contrast, and curls the slim image. Prefer typing the commands yourself the first time.
+
 ## Steps
 
 ```bash

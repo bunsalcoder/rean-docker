@@ -6,6 +6,8 @@
 
 Lab នេះ compile TypeScript ដោយចេតនា ដើម្បីឱ្យគម្លាតទំហំច្បាស់។ `typescript` គឺ **devDependency** — slim image មិនត្រូវមាន `tsc`។
 
+**Optional helper:** `./run.sh` build `:fat` និង `:slim`, assert size/USER, រួច curl slim image។ ចូលចិត្តវាយពាក្យបញ្ជាពី README ដោយខ្លួនឯងលើកដំបូង។
+
 ## ជំហាន
 
 ```bash

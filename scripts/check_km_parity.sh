@@ -65,13 +65,19 @@ require_in_both "Lab 07 .bind hint" '\.bind' \
   "$EN_DIR/labs/07-volumes.md" "$KM_DIR/labs/07-volumes.md"
 require_in_both "Lab 10 compose.fixed" 'compose\.fixed\.yaml' \
   "$EN_DIR/labs/10-debugging.md" "$KM_DIR/labs/10-debugging.md"
+require_in_both "Lab 08 run.sh" '\./run\.sh' \
+  "$EN_DIR/labs/08-multi-stage.md" "$KM_DIR/labs/08-multi-stage.md"
 require_in_both "Lab 09 npm strip" 'npm.*corepack|corepack.*npm' \
   "$EN_DIR/labs/09-production.md" "$KM_DIR/labs/09-production.md"
+require_in_both "Lab 11 run.sh" '\./run\.sh' \
+  "$EN_DIR/labs/11-security.md" "$KM_DIR/labs/11-security.md"
 require_in_both "Lab 11 Trivy gate" 'unfixed CRITICAL' \
   "$EN_DIR/labs/11-security.md" "$KM_DIR/labs/11-security.md"
 require_in_both "Lab 12 IMAGE_REF" 'IMAGE_REF' \
   "$EN_DIR/labs/12-ci-cd.md" "$KM_DIR/labs/12-ci-cd.md"
 require_in_both "Lab 13 scaffold" 'starter scaffold' \
+  "$EN_DIR/labs/13-capstone.md" "$KM_DIR/labs/13-capstone.md"
+require_in_both "Lab 13 compose.prod ref" 'compose\.prod\.yaml' \
   "$EN_DIR/labs/13-capstone.md" "$KM_DIR/labs/13-capstone.md"
 
 require_in_both "Guide IMAGE_REF" 'IMAGE_REF' \

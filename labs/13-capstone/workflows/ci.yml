@@ -1,0 +1,69 @@
+# Optional stretch reference — copy to your repo root as:
+#   .github/workflows/rean-capstone-ci.yml
+# Prefer writing your own from Lab 12 before relying on this starter.
+
+name: Capstone CI — build, smoke, push
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "labs/13-capstone/**"
+      - ".github/workflows/rean-capstone-ci.yml"
+  pull_request:
+    paths:
+      - "labs/13-capstone/**"
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  IMAGE: ghcr.io/${{ github.repository_owner }}/rean-capstone-api
+  WORKDIR: labs/13-capstone
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Validate Compose files
+        working-directory: ${{ env.WORKDIR }}
+        run: |
+          cp -f .env.example .env
+          docker compose -f compose.yaml config >/dev/null
+          REGISTRY_OWNER=example IMAGE_REF=:sha-deadbee \
+            docker compose -f compose.prod.yaml config >/dev/null
+
+      - name: Build image
+        working-directory: ${{ env.WORKDIR }}
+        run: |
+          TAG=sha-$(git rev-parse --short HEAD)
+          docker build -t "$IMAGE:$TAG" .
+          echo "TAG=$TAG" >> "$GITHUB_ENV"
+
+      - name: Smoke test
+        working-directory: ${{ env.WORKDIR }}
+        run: |
+          cp -f .env.example .env
+          docker compose up -d --build --wait --wait-timeout 120
+          curl -fsS http://127.0.0.1:3000/health
+          echo
+
+      - name: Teardown smoke stack
+        if: always()
+        working-directory: ${{ env.WORKDIR }}
+        run: docker compose down -v
+
+      - name: Login to GHCR
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push image
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: docker push "$IMAGE:$TAG"

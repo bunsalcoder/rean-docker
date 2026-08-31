@@ -48,7 +48,7 @@ English site copies must match the handbook and lab READMEs. After editing eithe
 make sync    # copy sources → web/content/en/
 make check   # fail if anything drifted
 make smoke          # optional: compose smoke for labs 04, 05, 09, 12, 13
-make smoke-concept  # optional: run.sh helpers for labs 01, 02, 06, 07, 10
+make smoke-concept  # optional: run.sh helpers for labs 01, 02, 06, 07, 08, 10, 11
 ```
 
 Or run the scripts directly: `./scripts/sync_en_content.sh` / `./scripts/check_content_sync.sh`.
@@ -86,10 +86,10 @@ Work in order:
 | 05 | Compose (API + Postgres + Redis) | [labs/05-compose](labs/05-compose) |
 | 06 | Networks | [labs/06-networks](labs/06-networks) (`run.sh` / Compose) |
 | 07 | Volumes | [labs/07-volumes](labs/07-volumes) (`run.sh` / Compose) |
-| 08 | Multi-stage builds | [labs/08-multi-stage](labs/08-multi-stage) |
+| 08 | Multi-stage builds | [labs/08-multi-stage](labs/08-multi-stage) (`run.sh`) |
 | 09 | Production practices | [labs/09-production](labs/09-production) |
 | 10 | Debugging & troubleshooting | [labs/10-debugging](labs/10-debugging) (`run.sh`) |
-| 11 | Security essentials | [labs/11-security](labs/11-security) |
+| 11 | Security essentials | [labs/11-security](labs/11-security) (`run.sh`) |
 | 12 | Deploy & CI/CD (special) | [labs/12-ci-cd](labs/12-ci-cd) |
 | 13 | Capstone (starter scaffold) | [labs/13-capstone](labs/13-capstone) |
 
@@ -116,7 +116,7 @@ Follow the **Suggested weekly plan** section at the end of the handbook. Do not 
 
 ## PDF export (optional)
 
-**From the site:** open a chapter in [Learn](./web/learn.html) or a lab page, then use **Print** (or your browser’s Print → Save as PDF). Chrome chrome and the sidebar are hidden for a clean page.
+**From the site:** open a chapter in [Learn](./web/learn.html) or a lab page, then use **Print** (or your browser’s Print → Save as PDF). Chrome UI and the sidebar are hidden for a clean page.
 
 **From the handbook Markdown:**
 

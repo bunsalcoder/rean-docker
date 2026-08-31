@@ -25,6 +25,15 @@ Work in this folder (`labs/13-capstone`) so your capstone stays separate from th
 - CI job: `docker compose config` + build + smoke + push (copy Lab 12’s `workflows/ci.yml`)
 - Image scan in CI (Lab 11)
 
+**Optional references** (prefer writing your own first): this folder already includes a starter `compose.prod.yaml` and `workflows/ci.yml` patterned on Lab 12. Validate prod config with:
+
+```bash
+REGISTRY_OWNER=example IMAGE_REF=:sha-deadbee \
+  docker compose -f compose.prod.yaml config
+```
+
+A reverse proxy in front of the API remains a DIY stretch — there is no reference file for that on purpose.
+
 ## Suggested start
 
 ```bash

@@ -6,6 +6,8 @@ See three habits from handbook **Chapter 15**: don’t run as root when you can 
 
 Pair with Lab 04 (leaky `ENV`) and Lab 08/09 (non-root + slim images).
 
+**Optional helper:** `./run.sh` covers whoami, the BuildKit secret check, and digest inspect (Trivy scan stays manual). Prefer typing the commands yourself the first time.
+
 ## Steps
 
 ### 1. Who is PID 1?
@@ -55,6 +57,7 @@ docker rmi rean-secret:lab11
 If you have network access, run Trivy in a container (no extra install):
 
 ```bash
+# Prefer a digest pin in CI (this repo pins aquasec/trivy:0.63.0@sha256:…).
 docker run --rm aquasec/trivy:0.63.0 image alpine:3.22
 ```
 
@@ -65,17 +68,15 @@ This repo’s CI scans teaching builds with Trivy: **HIGH** is reported, and **u
 ### 4. Digest vs tag
 
 ```bash
-docker image inspect alpine:3.22 --format '{{index .RepoDigests 0}}'
+docker pull alpine:3.22
+# Refresh today's digest (tags move — do not copy an old sha from a blog forever):
+DIGEST=$(docker image inspect alpine:3.22 --format '{{index .RepoDigests 0}}')
+echo "$DIGEST"
 # Example shape: alpine@sha256:14358309a308569c32bdc37e2e0e9694be33a9d99e68afb0f5ff33cc1f695dce
+docker pull "$DIGEST"
 ```
 
 Tags move. A digest (`alpine@sha256:…`) is the bits you actually pulled. Pin digests when supply-chain control matters (CI, production). Labs 09, 12, and 13 pin `FROM node:22-alpine@sha256:…`; Lab 13 also pins Postgres/Redis in Compose. Digests go stale on purpose — refresh them when you upgrade (Dependabot opens PRs for those Dockerfiles).
-
-Try pulling by digest (same bits as the tag *today*):
-
-```bash
-docker pull alpine@sha256:14358309a308569c32bdc37e2e0e9694be33a9d99e68afb0f5ff33cc1f695dce
-```
 
 ## Discuss
 
