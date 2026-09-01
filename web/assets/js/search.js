@@ -3,45 +3,9 @@
   const contentPath = (path) =>
     window.ReanI18n ? window.ReanI18n.contentPath(path) : `./content/en/${path}`;
 
-  const CHAPTER_MATCHERS = [
-    { id: "how-to-use", match: /^## (How to use this guide|របៀបប្រើមគ្គុទ្ទេសក៍នេះ)$/m },
-    { id: "1", match: /^## 1\. /m },
-    { id: "2", match: /^## 2\. /m },
-    { id: "3", match: /^## 3\. /m },
-    { id: "4", match: /^## 4\. /m },
-    { id: "5", match: /^## 5\. /m },
-    { id: "6", match: /^## 6\. /m },
-    { id: "7", match: /^## 7\. /m },
-    { id: "8", match: /^## 8\. /m },
-    { id: "9", match: /^## 9\. /m },
-    { id: "10", match: /^## 10\. /m },
-    { id: "11", match: /^## 11\. /m },
-    { id: "12", match: /^## 12\. /m },
-    { id: "13", match: /^## 13\. /m },
-    { id: "14", match: /^## 14\. /m },
-    { id: "15", match: /^## 15\. /m },
-    { id: "16", match: /^## 16\. /m },
-    { id: "17", match: /^## 17\. /m },
-    { id: "18", match: /^## 18\. /m },
-    { id: "19", match: /^## 19\. /m },
-    { id: "20", match: /^## 20\. /m },
-  ];
+  const CHAPTER_MATCHERS = window.ReanRoutes?.CHAPTERS || [];
 
-  const LAB_IDS = window.ReanProgress?.LAB_IDS || [
-    "01-isolation-basics",
-    "02-hello",
-    "03-dockerfile",
-    "04-env-secrets",
-    "05-compose",
-    "06-networks",
-    "07-volumes",
-    "08-multi-stage",
-    "09-production",
-    "10-debugging",
-    "11-security",
-    "12-ci-cd",
-    "13-capstone",
-  ];
+  const LAB_IDS = window.ReanRoutes?.LAB_IDS || [];
 
   let indexPromise = null;
   let dialog = null;
@@ -93,7 +57,8 @@
         type: "chapter",
         id: s.id,
         title: t(`chapter.${s.id}`),
-        href: `./learn.html?c=${encodeURIComponent(s.id)}`,
+        href: window.ReanI18n?.localeHref?.(`./learn.html?c=${encodeURIComponent(s.id)}`) ??
+          `./learn.html?c=${encodeURIComponent(s.id)}`,
         text: stripMd(body),
       };
     });
@@ -118,7 +83,8 @@
             type: "lab",
             id,
             title: t(`labMeta.${id}`),
-            href: `./lab.html?id=${encodeURIComponent(id)}`,
+            href: window.ReanI18n?.localeHref?.(`./lab.html?id=${encodeURIComponent(id)}`) ??
+              `./lab.html?id=${encodeURIComponent(id)}`,
             text: stripMd(md),
           });
         } catch {

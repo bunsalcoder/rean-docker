@@ -8,15 +8,7 @@ on:
 
 jobs:
   check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
-      - name: Verify English content copies match sources
-        run: ./scripts/check_content_sync.sh
-      - name: Verify Khmer content matches English structure
-        run: ./scripts/check_km_content.sh
-      - name: Verify Khmer teaching parity
-        run: ./scripts/check_km_parity.sh
+    uses: ./.github/workflows/checks.yml
 
   labs:
     runs-on: ubuntu-latest

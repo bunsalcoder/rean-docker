@@ -1,7 +1,7 @@
 # Common local tasks for rean-docker
 PORT ?= 5501
 
-.PHONY: help serve sync check check-km check-all sitemap smoke smoke-concept
+.PHONY: help serve sync check check-km check-all sitemap smoke smoke-concept ci-local
 
 help:
 	@echo "rean-docker make targets:"
@@ -14,6 +14,7 @@ help:
 	@echo "  make sitemap       # regenerate web/robots.txt and web/sitemap.xml"
 	@echo "  make smoke         # compose smoke for labs 04, 05, 09, 12, 13"
 	@echo "  make smoke-concept # run.sh helpers for labs 01, 02, 06, 07, 08, 10, 11"
+	@echo "  make ci-local      # content checks + sitemap (Docker smokes optional)"
 	@echo ""
 	@echo "Override port:  make serve PORT=8080"
 
@@ -44,3 +45,8 @@ smoke:
 
 smoke-concept:
 	./scripts/smoke_concept_labs.sh
+
+ci-local: check-all sitemap
+	@echo ""
+	@echo "ci-local passed (content + sitemap)."
+	@echo "Optional with Docker:  make smoke && make smoke-concept"

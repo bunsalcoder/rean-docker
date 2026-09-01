@@ -1,5 +1,8 @@
 # rean-docker
 
+[![Content sync](https://github.com/bunsalcoder/rean-docker/actions/workflows/content-sync.yml/badge.svg)](https://github.com/bunsalcoder/rean-docker/actions/workflows/content-sync.yml)
+[![Pages](https://github.com/bunsalcoder/rean-docker/actions/workflows/pages.yml/badge.svg)](https://bunsalcoder.github.io/rean-docker/)
+
 Learn Docker from absolute beginner to advanced — guided path with a full handbook, runnable labs, and a responsive static learning site.
 
 ## Learning website (UI)
@@ -27,7 +30,7 @@ cd web && python3 -m http.server 5501
 | `web/labs.html` | Labs index |
 | `web/lab.html` | Individual lab instructions |
 
-Use the **EN / ខ្មែរ** control in the header to switch language. Choice is saved in `localStorage` (`rean-locale`).
+Use the **EN / ខ្មែរ** control in the header to switch language. Choice is saved in `localStorage` (`rean-locale`) and reflected in the URL as `?lang=km` (shareable Khmer links).
 
 Localized lesson Markdown lives under:
 
@@ -49,6 +52,7 @@ English site copies must match the handbook and lab READMEs. After editing eithe
 ```bash
 make sync    # copy sources → web/content/en/
 make check   # fail if anything drifted
+make ci-local    # check-all + regenerate sitemap (CI content gate)
 make smoke          # optional: compose smoke for labs 04, 05, 09, 12, 13
 make smoke-concept  # optional: run.sh helpers for labs 01, 02, 06, 07, 08, 10, 11
 ```
