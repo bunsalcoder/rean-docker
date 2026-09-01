@@ -19,11 +19,23 @@
   }
 
   try {
-    const storedLocale = localStorage.getItem("rean-locale");
-    let locale = storedLocale === "km" || storedLocale === "en" ? storedLocale : null;
+    const params = new URLSearchParams(location.search);
+    const urlLang = params.get("lang");
+    let locale = urlLang === "km" || urlLang === "en" ? urlLang : null;
+    if (!locale) {
+      const storedLocale = localStorage.getItem("rean-locale");
+      locale = storedLocale === "km" || storedLocale === "en" ? storedLocale : null;
+    }
     if (!locale) {
       const langs = Array.isArray(navigator.languages) ? navigator.languages : [navigator.language];
       locale = langs.some((l) => String(l || "").toLowerCase().startsWith("km")) ? "km" : "en";
+    }
+    if (urlLang === "km" || urlLang === "en") {
+      try {
+        localStorage.setItem("rean-locale", urlLang);
+      } catch (_) {
+        /* private mode */
+      }
     }
     document.documentElement.lang = locale === "km" ? "km" : "en";
     document.documentElement.dataset.locale = locale;

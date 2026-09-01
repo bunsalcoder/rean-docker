@@ -1516,6 +1516,26 @@ body > main.section > .wrap {
   transform: translateX(0);
 }
 
+.side-nav a.is-started:not(.is-active) {
+  color: var(--ocean);
+}
+
+.side-nav a.is-started:not(.is-active)::before {
+  height: 42%;
+  opacity: 0.75;
+  background: var(--ocean);
+}
+
+.side-nav a.is-complete:not(.is-active) {
+  color: var(--ocean-deep);
+}
+
+.side-nav a.is-complete:not(.is-active)::before {
+  height: 58%;
+  opacity: 1;
+  background: var(--ocean-deep);
+}
+
 .md-body.is-leaving,
 .content-pane.is-chapter-leaving [data-chapter-title],
 .content-pane.is-chapter-leaving [data-lab-title],
@@ -2179,6 +2199,16 @@ body > main.section > .wrap {
 .progress-summary.is-compact {
   margin: 0 0 1.5rem;
   align-items: center;
+}
+
+.progress-summary-dual {
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  align-items: start;
+}
+
+.progress-summary-dual .progress-next,
+.progress-summary-dual .progress-done-msg {
+  grid-column: 1 / -1;
 }
 
 .progress-meter-track {

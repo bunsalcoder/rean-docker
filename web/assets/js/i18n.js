@@ -154,17 +154,23 @@
     "progress.eyebrow": "Your progress",
     "progress.title": "Pick up where you left off",
     "progress.lead": "Checklist ticks on Learn and Lab pages stay on this device.",
-    "progress.empty": "Open a lab and tick its success criteria — progress will show up here.",
+    "progress.empty": "Open a chapter or lab and tick its checklists — progress will show up here.",
     "progress.startLearn": "Start learning",
     "progress.startLabs": "Browse labs",
     "progress.next": "Continue with",
+    "progress.nextChapter": "Continue chapter",
+    "progress.nextLab": "Continue lab",
     "progress.continue": "Continue",
     "progress.partial": "{done}/{total}",
     "progress.notStarted": "Not started",
     "progress.complete": "Done",
     "progress.allDone": "All lab checklists complete. Nice work.",
+    "progress.allChaptersDone": "All chapter checklists complete. Nice work.",
+    "progress.allDoneBoth": "All chapter and lab checklists complete. Nice work.",
     "progress.labsCount": "{complete} of {total} labs complete",
     "progress.labsAria": "Lab progress: {complete} of {total} complete",
+    "progress.chaptersCount": "{complete} of {total} chapters complete",
+    "progress.chaptersAria": "Chapter progress: {complete} of {total} complete",
     "progress.labsLegend": "Lab completion map",
     "search.title": "Search",
     "search.open": "Search chapters and labs",
@@ -198,6 +204,14 @@
     return DEFAULT_LOCALE;
   };
 
+  const readUrlLocale = () => {
+    try {
+      return normalize(new URLSearchParams(location.search).get("lang"));
+    } catch {
+      return null;
+    }
+  };
+
   const readStored = () => {
     try {
       return normalize(localStorage.getItem(LOCALE_KEY));
@@ -206,9 +220,38 @@
     }
   };
 
-  const resolveLocale = () => readStored() || detectBrowserLocale() || DEFAULT_LOCALE;
+  const resolveLocale = () => readUrlLocale() || readStored() || detectBrowserLocale() || DEFAULT_LOCALE;
+
+  const syncLocaleUrl = (locale) => {
+    try {
+      const url = new URL(location.href);
+      if (locale === DEFAULT_LOCALE) url.searchParams.delete("lang");
+      else url.searchParams.set("lang", locale);
+      history.replaceState(history.state, "", url);
+    } catch {
+      /* ignore */
+    }
+  };
+
+  const localeHref = (href) => {
+    try {
+      const url = new URL(href, location.href);
+      if (currentLocale !== DEFAULT_LOCALE) url.searchParams.set("lang", currentLocale);
+      else url.searchParams.delete("lang");
+      const file = url.pathname.split("/").pop() || "index.html";
+      return `./${file}${url.search}${url.hash}`;
+    } catch {
+      return href;
+    }
+  };
 
   let currentLocale = resolveLocale();
+
+  try {
+    localStorage.setItem(LOCALE_KEY, currentLocale);
+  } catch {
+    /* private mode */
+  }
 
   const t = (key, vars = {}) => {
     const table = STRINGS[currentLocale] || STRINGS.en;
@@ -286,6 +329,7 @@
     } catch {
       /* private mode */
     }
+    syncLocaleUrl(locale);
     if (reload) {
       const switches = document.querySelectorAll(".lang-switch");
       switches.forEach((group) => {
@@ -328,6 +372,7 @@
     },
     t,
     contentPath,
+    localeHref,
     apply,
     setLocale,
     initLangSwitch,

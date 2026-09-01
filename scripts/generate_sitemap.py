@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate web/robots.txt and web/sitemap.xml from learn.js route definitions."""
+"""Generate web/robots.txt and web/sitemap.xml from routes.js route definitions."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ from xml.sax.saxutils import escape
 
 ROOT = Path(__file__).resolve().parents[1]
 WEB = ROOT / "web"
-LEARN_JS = WEB / "assets/js/learn.js"
+ROUTES_JS = WEB / "assets/js/routes.js"
 
 
 def base_url() -> str:
@@ -28,14 +28,14 @@ def parse_routes(text: str) -> tuple[list[str], list[str]]:
     chapters_block = re.search(r"const CHAPTERS = \[(.*?)\];", text, re.S)
     labs_block = re.search(r"const LAB_DEFS = \[(.*?)\];", text, re.S)
     if not chapters_block or not labs_block:
-        raise SystemExit(f"Could not parse route tables in {LEARN_JS}")
+        raise SystemExit(f"Could not parse route tables in {ROUTES_JS}")
 
     chapter_ids = re.findall(r'id: "([^"]+)"', chapters_block.group(1))
     lab_ids = re.findall(r'id: "([^"]+)"', labs_block.group(1))
     if not chapter_ids:
-        raise SystemExit(f"No chapter routes found in {LEARN_JS}")
+        raise SystemExit(f"No chapter routes found in {ROUTES_JS}")
     if not lab_ids:
-        raise SystemExit(f"No lab routes found in {LEARN_JS}")
+        raise SystemExit(f"No lab routes found in {ROUTES_JS}")
     return chapter_ids, lab_ids
 
 
@@ -52,16 +52,26 @@ def url_entry(base: str, path: str, changefreq: str, priority: str, lastmod: str
     )
 
 
+def with_lang(path: str, lang: str | None) -> str:
+    if not lang:
+        return path
+    joiner = "&" if "?" in path else "?"
+    return f"{path}{joiner}lang={lang}"
+
+
 def main() -> int:
-    text = LEARN_JS.read_text(encoding="utf-8")
+    text = ROUTES_JS.read_text(encoding="utf-8")
     chapter_ids, lab_ids = parse_routes(text)
     base = base_url()
     lastmod = date.today().isoformat()
 
     entries = [
         url_entry(base, "index.html", "weekly", "1.0", lastmod),
+        url_entry(base, with_lang("index.html", "km"), "weekly", "0.9", lastmod),
         url_entry(base, "learn.html", "weekly", "0.9", lastmod),
+        url_entry(base, with_lang("learn.html", "km"), "weekly", "0.8", lastmod),
         url_entry(base, "labs.html", "weekly", "0.9", lastmod),
+        url_entry(base, with_lang("labs.html", "km"), "weekly", "0.8", lastmod),
     ]
     for chapter_id in chapter_ids:
         entries.append(
@@ -73,6 +83,15 @@ def main() -> int:
                 lastmod,
             )
         )
+        entries.append(
+            url_entry(
+                base,
+                with_lang(f"learn.html?c={chapter_id}", "km"),
+                "monthly",
+                "0.7",
+                lastmod,
+            )
+        )
     for lab_id in lab_ids:
         entries.append(
             url_entry(
@@ -80,6 +99,15 @@ def main() -> int:
                 f"lab.html?id={lab_id}",
                 "monthly",
                 "0.8",
+                lastmod,
+            )
+        )
+        entries.append(
+            url_entry(
+                base,
+                with_lang(f"lab.html?id={lab_id}", "km"),
+                "monthly",
+                "0.7",
                 lastmod,
             )
         )

@@ -1,22 +1,11 @@
 (() => {
   const PROGRESS_KEY = "rean-docker:progress";
-  const LAB_IDS = [
-    "01-isolation-basics",
-    "02-hello",
-    "03-dockerfile",
-    "04-env-secrets",
-    "05-compose",
-    "06-networks",
-    "07-volumes",
-    "08-multi-stage",
-    "09-production",
-    "10-debugging",
-    "11-security",
-    "12-ci-cd",
-    "13-capstone",
-  ];
+  const LAB_IDS = window.ReanRoutes?.LAB_IDS || [];
+  const CHAPTER_IDS = () => (window.ReanRoutes?.CHAPTERS || []).map((ch) => ch.id);
 
   const t = (key, vars) => (window.ReanI18n ? window.ReanI18n.t(key, vars) : key);
+
+  const localeHref = (href) => window.ReanI18n?.localeHref?.(href) ?? href;
 
   const readAll = () => {
     try {
@@ -62,7 +51,22 @@
         id,
         num: id.slice(0, 2),
         title: t(`labMeta.${id}`),
-        href: `./lab.html?id=${encodeURIComponent(id)}`,
+        href: localeHref(`./lab.html?id=${encodeURIComponent(id)}`),
+        done: stats?.done || 0,
+        total: stats?.total || 0,
+        started: Boolean(stats),
+        complete: Boolean(stats?.complete),
+      };
+    });
+
+  const chapterEntries = () =>
+    CHAPTER_IDS().map((id, index) => {
+      const stats = entry(`learn:${id}`);
+      return {
+        id,
+        num: String(index + 1).padStart(2, "0"),
+        title: t(`chapter.${id}`),
+        href: localeHref(`./learn.html?c=${encodeURIComponent(id)}`),
         done: stats?.done || 0,
         total: stats?.total || 0,
         started: Boolean(stats),
@@ -78,57 +82,108 @@
     return { labs, started, complete, total: labs.length, next };
   };
 
+  const summarizeChapters = () => {
+    const chapters = chapterEntries();
+    const started = chapters.filter((c) => c.started).length;
+    const complete = chapters.filter((c) => c.complete).length;
+    const next = chapters.find((c) => !c.complete) || null;
+    return { chapters, started, complete, total: chapters.length, next };
+  };
+
   const pct = (done, total) => {
     if (!total) return 0;
     return Math.round((100 * done) / total);
   };
 
+  const renderMeter = ({ complete, total, labelKey, ariaKey }) => {
+    const fill = pct(complete, total);
+    return `
+      <div class="progress-meter" role="img" aria-label="${t(ariaKey, { complete, total })}">
+        <div class="progress-meter-track">
+          <div class="progress-meter-fill" style="width:${fill}%"></div>
+        </div>
+        <p class="progress-meter-label">${t(labelKey, { complete, total })}</p>
+      </div>`;
+  };
+
   const renderHome = (root) => {
     if (!root) return;
-    const { labs, complete, total, next, started } = summarizeLabs();
-    const fill = pct(complete, total);
+    const labStats = summarizeLabs();
+    const chapterStats = summarizeChapters();
+    const { labs, complete: labsComplete, total: labsTotal, next: nextLab, started: labsStarted } =
+      labStats;
+    const {
+      chapters,
+      complete: chaptersComplete,
+      total: chaptersTotal,
+      next: nextChapter,
+      started: chaptersStarted,
+    } = chapterStats;
 
-    if (!started) {
+    if (!labsStarted && !chaptersStarted) {
       root.innerHTML = `
         <div class="progress-empty">
           <p>${t("progress.empty")}</p>
           <div class="cta-row">
-            <a class="btn btn-primary" href="./learn.html">${t("progress.startLearn")}</a>
-            <a class="btn btn-ghost" href="./labs.html">${t("progress.startLabs")}</a>
+            <a class="btn btn-primary" href="${localeHref("./learn.html")}">${t("progress.startLearn")}</a>
+            <a class="btn btn-ghost" href="${localeHref("./labs.html")}">${t("progress.startLabs")}</a>
           </div>
         </div>`;
       return;
     }
 
-    const nextBlock = next
-      ? `<a class="progress-next" href="${next.href}">
-           <span class="eyebrow">${t("progress.next")}</span>
-           <strong>${next.num} · ${next.title}</strong>
+    const nextBlocks = [];
+    if (nextChapter && chaptersStarted) {
+      nextBlocks.push(`<a class="progress-next" href="${nextChapter.href}">
+           <span class="eyebrow">${t("progress.nextChapter")}</span>
+           <strong>${nextChapter.num} · ${nextChapter.title}</strong>
            <span class="progress-next-meta">${
-             next.started
-               ? t("progress.partial", { done: next.done, total: next.total })
+             nextChapter.started
+               ? t("progress.partial", { done: nextChapter.done, total: nextChapter.total })
                : t("progress.notStarted")
            }</span>
-         </a>`
-      : `<p class="progress-done-msg">${t("progress.allDone")}</p>`;
+         </a>`);
+    }
+    if (nextLab && labsStarted) {
+      nextBlocks.push(`<a class="progress-next" href="${nextLab.href}">
+           <span class="eyebrow">${t("progress.nextLab")}</span>
+           <strong>${nextLab.num} · ${nextLab.title}</strong>
+           <span class="progress-next-meta">${
+             nextLab.started
+               ? t("progress.partial", { done: nextLab.done, total: nextLab.total })
+               : t("progress.notStarted")
+           }</span>
+         </a>`);
+    }
+
+    const doneMsg =
+      chaptersComplete === chaptersTotal && labsComplete === labsTotal
+        ? `<p class="progress-done-msg">${t("progress.allDoneBoth")}</p>`
+        : chaptersComplete === chaptersTotal && chaptersStarted
+          ? `<p class="progress-done-msg">${t("progress.allChaptersDone")}</p>`
+          : labsComplete === labsTotal && labsStarted
+            ? `<p class="progress-done-msg">${t("progress.allDone")}</p>`
+            : "";
 
     root.innerHTML = `
-      <div class="progress-summary">
-        <div class="progress-meter" role="img" aria-label="${t("progress.labsAria", {
-          complete,
-          total,
-        })}">
-          <div class="progress-meter-track">
-            <div class="progress-meter-fill" style="width:${fill}%"></div>
-          </div>
-          <p class="progress-meter-label">${t("progress.labsCount", {
-            complete,
-            total,
-          })}</p>
-        </div>
-        ${nextBlock}
+      <div class="progress-summary progress-summary-dual">
+        ${chaptersStarted ? renderMeter({
+          complete: chaptersComplete,
+          total: chaptersTotal,
+          labelKey: "progress.chaptersCount",
+          ariaKey: "progress.chaptersAria",
+        }) : ""}
+        ${labsStarted ? renderMeter({
+          complete: labsComplete,
+          total: labsTotal,
+          labelKey: "progress.labsCount",
+          ariaKey: "progress.labsAria",
+        }) : ""}
+        ${nextBlocks.join("") || doneMsg}
       </div>
-      <ol class="progress-lab-dots" aria-label="${t("progress.labsLegend")}">
+      ${
+        labsStarted
+          ? `<ol class="progress-lab-dots" aria-label="${t("progress.labsLegend")}">
         ${labs
           .map(
             (lab) => `<li>
@@ -145,8 +200,26 @@
             </li>`
           )
           .join("")}
-      </ol>`;
+      </ol>`
+          : ""
+      }`;
   };
+
+  const decorateSideNav = (nav, entries, idAttr) => {
+    if (!nav) return;
+    const byId = Object.fromEntries(entries.map((row) => [row.id, row]));
+    nav.querySelectorAll(`a[${idAttr}]`).forEach((link) => {
+      const id = link.getAttribute(idAttr);
+      const row = byId[id];
+      link.classList.remove("is-complete", "is-started");
+      if (!row?.started) return;
+      link.classList.add(row.complete ? "is-complete" : "is-started");
+    });
+  };
+
+  const decorateChapterNav = (nav) => decorateSideNav(nav, chapterEntries(), "data-chapter-id");
+
+  const decorateLabNav = (nav) => decorateSideNav(nav, labEntries(), "data-lab-id");
 
   const decorateLabGrid = (grid) => {
     if (!grid) return;
@@ -214,13 +287,20 @@
 
     const grid = document.querySelector(".lab-grid");
     if (grid) decorateLabGrid(grid);
+
+    decorateChapterNav(document.querySelector("[data-chapter-nav]"));
+    decorateLabNav(document.querySelector("[data-lab-nav]"));
   };
 
   window.ReanProgress = {
     record,
     entry,
     labEntries,
+    chapterEntries,
     summarizeLabs,
+    summarizeChapters,
+    decorateChapterNav,
+    decorateLabNav,
     init,
     LAB_IDS,
   };
