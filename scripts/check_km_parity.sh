@@ -75,7 +75,7 @@ require_in_both "Lab 11 Trivy gate" 'unfixed CRITICAL' \
   "$EN_DIR/labs/11-security.md" "$KM_DIR/labs/11-security.md"
 require_in_both "Lab 12 IMAGE_REF" 'IMAGE_REF' \
   "$EN_DIR/labs/12-ci-cd.md" "$KM_DIR/labs/12-ci-cd.md"
-require_in_both "Lab 13 scaffold" 'starter scaffold' \
+require_in_both "Lab 13 CAPSTONE_OWN" 'CAPSTONE_OWN' \
   "$EN_DIR/labs/13-capstone.md" "$KM_DIR/labs/13-capstone.md"
 require_in_both "Lab 13 compose.prod ref" 'compose\.prod\.yaml' \
   "$EN_DIR/labs/13-capstone.md" "$KM_DIR/labs/13-capstone.md"

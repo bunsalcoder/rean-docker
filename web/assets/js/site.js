@@ -28,15 +28,55 @@
     el.setAttribute("content", value);
   };
 
+  const upsertLink = (rel, hreflang, href) => {
+    if (!href) return;
+    const selector = hreflang
+      ? `link[rel="${rel}"][hreflang="${hreflang}"]`
+      : `link[rel="${rel}"]:not([hreflang])`;
+    let el = document.head.querySelector(selector);
+    if (!el) {
+      el = document.createElement("link");
+      el.rel = rel;
+      if (hreflang) el.hreflang = hreflang;
+      document.head.appendChild(el);
+    }
+    el.href = href;
+  };
+
+  const stripLangParam = (path) => {
+    const raw = String(path || currentPath());
+    const qIndex = raw.indexOf("?");
+    if (qIndex === -1) return raw;
+    const file = raw.slice(0, qIndex);
+    const params = new URLSearchParams(raw.slice(qIndex + 1));
+    params.delete("lang");
+    const qs = params.toString();
+    return qs ? `${file}?${qs}` : file;
+  };
+
+  const withLangParam = (path, lang) => {
+    const basePath = stripLangParam(path);
+    if (!lang || lang === "en") return basePath;
+    const joiner = basePath.includes("?") ? "&" : "?";
+    return `${basePath}${joiner}lang=${lang}`;
+  };
+
   const syncSeo = ({ title, description, path, type } = {}) => {
     if (document.body?.dataset?.seo === "none") return;
     const pageTitle = title || document.title;
     const descEl = document.querySelector('meta[name="description"]');
     const desc = description || descEl?.getAttribute("content") || "";
     if (description && descEl) descEl.setAttribute("content", description);
-    const url = absoluteUrl(path || currentPath());
+    const pathForSeo = path || currentPath();
+    const enPath = stripLangParam(pathForSeo);
+    const kmPath = withLangParam(enPath, "km");
+    const url = absoluteUrl(withLangParam(enPath, document.documentElement.lang === "km" ? "km" : null));
+    const enUrl = absoluteUrl(enPath);
+    const kmUrl = absoluteUrl(kmPath);
     const image = `${siteBase()}/assets/img/hero-harbor.jpg`;
-    const locale = document.documentElement.lang === "km" ? "km_KH" : "en_US";
+    const isKm = document.documentElement.lang === "km";
+    const locale = isKm ? "km_KH" : "en_US";
+    const alternateLocale = isKm ? "en_US" : "km_KH";
 
     let canonical = document.head.querySelector('link[rel="canonical"]');
     if (!canonical) {
@@ -46,6 +86,10 @@
     }
     canonical.href = url;
 
+    upsertLink("alternate", "en", enUrl);
+    upsertLink("alternate", "km", kmUrl);
+    upsertLink("alternate", "x-default", enUrl);
+
     upsertMeta("property", "og:site_name", "rean-docker");
     upsertMeta("property", "og:type", type || "website");
     upsertMeta("property", "og:title", pageTitle);
@@ -53,6 +97,7 @@
     upsertMeta("property", "og:url", url);
     upsertMeta("property", "og:image", image);
     upsertMeta("property", "og:locale", locale);
+    upsertMeta("property", "og:locale:alternate", alternateLocale);
     upsertMeta("name", "twitter:card", "summary_large_image");
     upsertMeta("name", "twitter:title", pageTitle);
     upsertMeta("name", "twitter:description", desc);

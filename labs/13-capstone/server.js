@@ -47,6 +47,9 @@ app.get("/", async (_req, res) => {
   }
 });
 
+// CAPSTONE_OWN: add a route that is clearly yours (name, payload, or behavior),
+// then document how to curl it in this lab's README.
+
 app.get("/health", async (_req, res) => {
   try {
     await pool.query("SELECT 1");
