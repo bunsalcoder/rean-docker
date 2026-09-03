@@ -36,6 +36,13 @@ docker history rean-hello:1.0
 1. ប្ដូរសារក្នុង `server.js`, rebuild, rerun — សង្កេតថា layers ណាខ្លះ rebuild។
 2. រៀប Dockerfile ឡើងវិញឱ្យ `COPY . .` *មុន* `npm ci` ហើយ rebuild ពីរដងបន្ទាប់ពីកែ code តិច — មានអារម្មណ៍ «cache pain»។ (ឯកសារពិតប្រើ `npm ci` ដែលត្រូវការ `package-lock.json` ហើយគួរប្រើជាង `npm install` ក្នុង Dockerfiles។)
 3. បន្ថែម instruction `ENV PORT=3000` ហើយបញ្ជាក់ដោយ `docker inspect`។
+4. បើក `.dockerignore` ក្នុងថតនេះ។ វារក្សា `node_modules`, `.env` និង `*.md` ចេញពី build context។ ពន្យល់ខ្លីថាហេតុអ្វីមិនគួរដឹក host `node_modules` ចូល image រួចបញ្ជាក់ថា paths ទាំងនោះមិននៅក្នុង context៖
+
+```bash
+# paths listed in .dockerignore should not appear
+docker build -t rean-hello:1.0 . 2>&1 | head -n 5
+# or: docker build --no-cache -t rean-hello:ctx . && docker run --rm rean-hello:1.0 ls -la /app
+```
 
 ## លក្ខខណ្ឌជោគជ័យ
 
@@ -43,6 +50,7 @@ docker history rean-hello:1.0
 - [ ] `/` ត្រឡប់ JSON
 - [ ] `/health` ត្រឡប់ `{"status":"ok"}`
 - [ ] អ្នកអាចពន្យល់ហេតុអ្វី `package.json` / `package-lock.json` ត្រូវ copy មុន source
+- [ ] អ្នកអាចពន្យល់ហេតុអ្វី lab នេះមាន `.dockerignore` (អ្វីដែលវារក្សាចេញពី context)
 
 ## បន្ទាប់
 

@@ -39,6 +39,21 @@
     }
     document.documentElement.lang = locale === "km" ? "km" : "en";
     document.documentElement.dataset.locale = locale;
+
+    // Preload the critical face for the active locale (avoids late font swap on brand/UI).
+    const fontHref =
+      locale === "km"
+        ? "./assets/fonts/kantumruy-pro/khmer-700.woff2"
+        : "./assets/fonts/space-grotesk/latin-700.woff2";
+    if (!document.head.querySelector(`link[rel="preload"][href="${fontHref}"]`)) {
+      const preload = document.createElement("link");
+      preload.rel = "preload";
+      preload.as = "font";
+      preload.type = "font/woff2";
+      preload.href = fontHref;
+      preload.crossOrigin = "anonymous";
+      document.head.appendChild(preload);
+    }
   } catch (_) {
     document.documentElement.lang = "en";
     document.documentElement.dataset.locale = "en";
