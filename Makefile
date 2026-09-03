@@ -1,7 +1,7 @@
 # Common local tasks for rean-docker
 PORT ?= 5501
 
-.PHONY: help serve sync check check-km check-km-parity check-all sitemap smoke smoke-concept ci-local
+.PHONY: help serve sync check check-km check-km-parity check-all sitemap sync-km-i18n smoke smoke-concept ci-local
 
 help:
 	@echo "rean-docker make targets:"
@@ -12,6 +12,7 @@ help:
 	@echo "  make check-km-parity  # fail if Khmer labs drift in checklists/code/invariants"
 	@echo "  make check-all     # run English + Khmer structure + parity checks"
 	@echo "  make sitemap       # regenerate sitemap, robots.txt, and search indexes"
+	@echo "  make sync-km-i18n  # refresh Khmer chapter titles in i18n-km.js from km guide"
 	@echo "  make smoke         # compose smoke for labs 04, 05, 09, 12, 13"
 	@echo "  make smoke-concept # run.sh helpers for labs 01, 02, 06, 07, 08, 10, 11"
 	@echo "  make ci-local      # content checks + sitemap + search index (Docker smokes optional)"
@@ -40,6 +41,9 @@ check-km-parity:
 sitemap:
 	python3 ./scripts/generate_sitemap.py
 	python3 ./scripts/generate_search_index.py
+
+sync-km-i18n:
+	python3 ./scripts/sync_km_i18n.py
 
 smoke:
 	./scripts/smoke_labs.sh

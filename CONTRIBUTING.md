@@ -27,7 +27,7 @@ make check-km-parity  # checklist/code-fence counts + teaching invariants (IMAGE
 make check-all   # English copies + Khmer structure + parity
 ```
 
-Optional: `python3 scripts/sync_km_i18n.py` refreshes Khmer chapter titles in `i18n-km.js` from the Khmer handbook.
+Optional: `make sync-km-i18n` (or `python3 scripts/sync_km_i18n.py`) refreshes Khmer chapter titles in `i18n-km.js` from the Khmer handbook.
 
 ## Shared Node lab apps
 

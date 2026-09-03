@@ -16,6 +16,10 @@ docker compose ps
 curl http://127.0.0.1:3000/health
 docker inspect --format='{{json .State.Health}}' "$(docker compose ps -q api)" | python3 -m json.tool
 
+# Compose V2 applies deploy.resources.limits — Memory should be 268435456 (256MiB)
+docker inspect --format='Memory={{.HostConfig.Memory}} NanoCPUs={{.HostConfig.NanoCpus}}' \
+  "$(docker compose ps -q api)"
+
 docker compose down
 ```
 
@@ -30,10 +34,12 @@ docker compose down
 - Why delete `npm` / `corepack` from the image after `npm ci`?
 - Why `ENV NODE_ENV=production` in the Dockerfile as well as in Compose?
 - Why does the healthcheck use `node` + `fetch` instead of `wget` or `curl`?
+- Did `HostConfig.Memory` match `deploy.resources.limits.memory: 256M`? What happens if you omit `deploy` under Compose V2?
 
 ## Success criteria
 
 - [ ] Container reports healthy
+- [ ] `HostConfig.Memory` is `268435456` (256MiB limit applied)
 - [ ] You can list at least 5 production practices from the main guide chapter 13
 
 ## Next
