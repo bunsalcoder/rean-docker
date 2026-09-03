@@ -1833,9 +1833,9 @@ curl -fsS https://your.domain/health
 
 ### Lab: `labs/13-capstone`
 
-បង្កើត stack តូចក្នុង repo នេះ។ **Starter scaffold** (Compose + Node API) មានរួចក្នុងថត capstone — run រួចកែតម្រូវ (ឬចាប់ផ្ដើមស្អាតពី `labs/05-compose` បើចង់)៖
+បង្កើត stack តូចក្នុង repo នេះ។ **Day-one runnable baseline** (Compose + Node API) មានរួចក្នុងថត capstone ដើម្បី `up` ភ្លាម — រួច **own** វា (`CAPSTONE_OWN` ក្នុង Lab 13)៖ បន្ថែម routes, កែ Compose/Dockerfile ឬបន្ថែម proxy។ ចូលចិត្តកែថតនោះជាងទុក Lab 05 ដដែល (ឬចាប់ផ្ដើមស្អាតពី `labs/05-compose` បើចង់)។
 
-**គោលដៅ:** Web API + Postgres + Redis
+**គោលដៅ:** Web API + Postgres + Redis ដែលមិត្តរួមការដឹងថាជារបស់អ្នក
 
 តម្រូវការ៖
 
@@ -1846,6 +1846,7 @@ curl -fsS https://your.domain/health
 5. Healthchecks លើ API និង Postgres។
 6. API ភ្ជាប់តាម hostname `db` និង `redis`។
 7. ផ្នែក `README`: របៀប `up`, migrate (បើមាន) និង `down`។
+8. ការផ្លាស់ប្តូរ ownership យ៉ាងហោចពីរពីបញ្ជី `CAPSTONE_OWN` ក្នុង Lab 13 (កត់ក្នុង lab README)។
 
 Stretch goals៖
 

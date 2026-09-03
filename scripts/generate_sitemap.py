@@ -39,24 +39,32 @@ def parse_routes(text: str) -> tuple[list[str], list[str]]:
     return chapter_ids, lab_ids
 
 
-def url_entry(base: str, path: str, changefreq: str, priority: str, lastmod: str) -> str:
-    # These locs are the canonical reader URLs (query strings on learn.html / lab.html).
-    loc = f"{base}/{path}" if path else f"{base}/"
-    return (
-        "  <url>\n"
-        f"    <loc>{escape(loc)}</loc>\n"
-        f"    <lastmod>{lastmod}</lastmod>\n"
-        f"    <changefreq>{changefreq}</changefreq>\n"
-        f"    <priority>{priority}</priority>\n"
-        "  </url>"
-    )
-
-
 def with_lang(path: str, lang: str | None) -> str:
     if not lang:
         return path
     joiner = "&" if "?" in path else "?"
     return f"{path}{joiner}lang={lang}"
+
+
+def absolute(base: str, path: str) -> str:
+    return f"{base}/{path}" if path else f"{base}/"
+
+
+def url_entry(base: str, path: str, changefreq: str, priority: str, lastmod: str) -> str:
+    # Canonical EN loc + xhtml hreflang alternates for KM / x-default.
+    en_loc = absolute(base, path)
+    km_loc = absolute(base, with_lang(path, "km"))
+    return (
+        "  <url>\n"
+        f"    <loc>{escape(en_loc)}</loc>\n"
+        f"    <lastmod>{lastmod}</lastmod>\n"
+        f"    <changefreq>{changefreq}</changefreq>\n"
+        f"    <priority>{priority}</priority>\n"
+        f'    <xhtml:link rel="alternate" hreflang="en" href="{escape(en_loc)}" />\n'
+        f'    <xhtml:link rel="alternate" hreflang="km" href="{escape(km_loc)}" />\n'
+        f'    <xhtml:link rel="alternate" hreflang="x-default" href="{escape(en_loc)}" />\n'
+        "  </url>"
+    )
 
 
 def main() -> int:
@@ -65,56 +73,22 @@ def main() -> int:
     base = base_url()
     lastmod = date.today().isoformat()
 
-    entries = [
-        url_entry(base, "index.html", "weekly", "1.0", lastmod),
-        url_entry(base, with_lang("index.html", "km"), "weekly", "0.9", lastmod),
-        url_entry(base, "learn.html", "weekly", "0.9", lastmod),
-        url_entry(base, with_lang("learn.html", "km"), "weekly", "0.8", lastmod),
-        url_entry(base, "labs.html", "weekly", "0.9", lastmod),
-        url_entry(base, with_lang("labs.html", "km"), "weekly", "0.8", lastmod),
+    paths: list[tuple[str, str, str]] = [
+        ("index.html", "weekly", "1.0"),
+        ("learn.html", "weekly", "0.9"),
+        ("labs.html", "weekly", "0.9"),
     ]
     for chapter_id in chapter_ids:
-        entries.append(
-            url_entry(
-                base,
-                f"learn.html?c={chapter_id}",
-                "monthly",
-                "0.8",
-                lastmod,
-            )
-        )
-        entries.append(
-            url_entry(
-                base,
-                with_lang(f"learn.html?c={chapter_id}", "km"),
-                "monthly",
-                "0.7",
-                lastmod,
-            )
-        )
+        paths.append((f"learn.html?c={chapter_id}", "monthly", "0.8"))
     for lab_id in lab_ids:
-        entries.append(
-            url_entry(
-                base,
-                f"lab.html?id={lab_id}",
-                "monthly",
-                "0.8",
-                lastmod,
-            )
-        )
-        entries.append(
-            url_entry(
-                base,
-                with_lang(f"lab.html?id={lab_id}", "km"),
-                "monthly",
-                "0.7",
-                lastmod,
-            )
-        )
+        paths.append((f"lab.html?id={lab_id}", "monthly", "0.8"))
+
+    entries = [url_entry(base, path, freq, prio, lastmod) for path, freq, prio in paths]
 
     sitemap = (
         '<?xml version="1.0" encoding="UTF-8"?>\n'
-        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n'
+        '        xmlns:xhtml="http://www.w3.org/1999/xhtml">\n'
         + "\n".join(entries)
         + "\n</urlset>\n"
     )

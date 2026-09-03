@@ -1837,9 +1837,9 @@ Next: **Lab 12** makes you run the CI steps locally, then optionally push. After
 
 ### Lab: `labs/13-capstone`
 
-Build a small stack in this repo. A **starter scaffold** (Compose + Node API) already lives in the capstone folder — run it, then reshape it (or restart from `labs/05-compose` if you prefer a clean room):
+Build a small stack in this repo. A **day-one runnable baseline** (Compose + Node API) already lives in the capstone folder so you can `up` immediately — then **own** it (`CAPSTONE_OWN` in Lab 13): add routes, reshape Compose/Dockerfile, or add a proxy. Prefer editing that folder over leaving Lab 05 untouched (or restart from `labs/05-compose` if you want a clean room).
 
-**Goal:** Web API + Postgres + Redis
+**Goal:** Web API + Postgres + Redis that a teammate can tell is yours
 
 Requirements:
 
@@ -1850,6 +1850,7 @@ Requirements:
 5. Healthchecks on API and Postgres.
 6. API connects using service hostnames `db` and `redis`.
 7. `README` section: how to `up`, migrate (if any), and `down`.
+8. At least two ownership changes from Lab 13’s `CAPSTONE_OWN` list (documented in the lab README).
 
 Stretch goals:
 

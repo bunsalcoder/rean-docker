@@ -1,6 +1,6 @@
 # rean-docker
 
-[![Content sync](https://github.com/bunsalcoder/rean-docker/actions/workflows/content-sync.yml/badge.svg)](https://github.com/bunsalcoder/rean-docker/actions/workflows/content-sync.yml)
+[![CI](https://github.com/bunsalcoder/rean-docker/actions/workflows/content-sync.yml/badge.svg)](https://github.com/bunsalcoder/rean-docker/actions/workflows/content-sync.yml)
 [![Pages](https://github.com/bunsalcoder/rean-docker/actions/workflows/pages.yml/badge.svg)](https://bunsalcoder.github.io/rean-docker/)
 
 Learn Docker from absolute beginner to advanced — guided path with a full handbook, runnable labs, and a responsive static learning site.
@@ -15,7 +15,7 @@ make serve
 
 Then open [http://localhost:5501](http://localhost:5501). Same port as the VS Code / Cursor **Live Server** extension (`.vscode/settings.json`). Override with `make serve PORT=8080` if needed.
 
-The live site deploys from **`main`** via GitHub Pages ([bunsalcoder.github.io/rean-docker](https://bunsalcoder.github.io/rean-docker/)). Pushes and PRs on `develop` still **dry-run** the Pages build (content sync + sitemap) so site regressions fail CI before merge — they do not publish.
+The live site deploys from **`main`** via GitHub Pages ([bunsalcoder.github.io/rean-docker](https://bunsalcoder.github.io/rean-docker/)). Content checks and lab smoke/scan run once in the **CI** workflow. Pushes and PRs on `develop` still **dry-run** the Pages build (sync + sitemap + search index) so site regressions fail before merge — they do not publish.
 
 Equivalent without Make:
 
@@ -52,7 +52,7 @@ English site copies must match the handbook and lab READMEs. After editing eithe
 ```bash
 make sync    # copy sources → web/content/en/
 make check   # fail if anything drifted
-make ci-local    # check-all + regenerate sitemap (CI content gate)
+make ci-local    # check-all + sitemap + search index (CI content gate)
 make smoke          # optional: compose smoke for labs 04, 05, 09, 12, 13
 make smoke-concept  # optional: run.sh helpers for labs 01, 02, 06, 07, 08, 10, 11
 ```
@@ -97,7 +97,7 @@ Work in order:
 | 10 | Debugging & troubleshooting | [labs/10-debugging](labs/10-debugging) (`run.sh`) |
 | 11 | Security essentials | [labs/11-security](labs/11-security) (`run.sh`) |
 | 12 | Deploy & CI/CD (special) | [labs/12-ci-cd](labs/12-ci-cd) |
-| 13 | Capstone (starter scaffold) | [labs/13-capstone](labs/13-capstone) |
+| 13 | Capstone (own the baseline) | [labs/13-capstone](labs/13-capstone) |
 
 ## Prerequisites
 

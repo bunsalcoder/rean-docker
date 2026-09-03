@@ -19,18 +19,18 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  check:
-    uses: ./.github/workflows/checks.yml
-
+  # Content/structure checks + lab smoke/scan live in content-sync.yml (once per event).
+  # This workflow only builds the static site (and deploys from main).
   build:
-    needs: check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Sync English site copies from sources
         run: ./scripts/sync_en_content.sh
-      - name: Generate sitemap and robots.txt
-        run: python3 ./scripts/generate_sitemap.py
+      - name: Generate sitemap, robots.txt, and search indexes
+        run: |
+          python3 ./scripts/generate_sitemap.py
+          python3 ./scripts/generate_search_index.py
       # Pages artifact only when we will (or may) deploy — avoids fork-PR token limits.
       - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
         if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
@@ -40,7 +40,7 @@ jobs:
           path: web
 
   deploy:
-    # Production site only — PRs and develop still run check+build above.
+    # Production site only — PRs and develop still dry-run build above.
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: build
     environment:

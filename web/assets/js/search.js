@@ -64,7 +64,62 @@
     });
   };
 
-  const buildIndex = async () => {
+  const hydrateDoc = (raw) => {
+    const id = raw.id;
+    if (raw.type === "lab") {
+      return {
+        type: "lab",
+        id,
+        title: t(`labMeta.${id}`),
+        href:
+          window.ReanI18n?.localeHref?.(`./lab.html?id=${encodeURIComponent(id)}`) ??
+          `./lab.html?id=${encodeURIComponent(id)}`,
+        text: raw.text || "",
+      };
+    }
+    return {
+      type: "chapter",
+      id,
+      title: t(`chapter.${id}`),
+      href:
+        window.ReanI18n?.localeHref?.(`./learn.html?c=${encodeURIComponent(id)}`) ??
+        `./learn.html?c=${encodeURIComponent(id)}`,
+      text: raw.text || "",
+    };
+  };
+
+  const loadPrebuiltIndex = async () => {
+    const locale = window.ReanI18n?.locale || "en";
+    const url = `./assets/search-index-${locale}.json`;
+    const fallbackUrl = locale === "en" ? null : "./assets/search-index-en.json";
+    try {
+      const res = await fetch(url);
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data?.docs) && data.docs.length) {
+          return data.docs.map(hydrateDoc);
+        }
+      }
+    } catch {
+      /* fall through */
+    }
+    if (fallbackUrl) {
+      try {
+        const res = await fetch(fallbackUrl);
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data?.docs) && data.docs.length) {
+            return data.docs.map(hydrateDoc);
+          }
+        }
+      } catch {
+        /* fall through to markdown build */
+      }
+    }
+    return null;
+  };
+
+  const buildIndexFromMarkdown = async () => {
     const docs = [];
     const guideUrl = localized("guide.md");
     try {
@@ -83,7 +138,8 @@
             type: "lab",
             id,
             title: t(`labMeta.${id}`),
-            href: window.ReanI18n?.localeHref?.(`./lab.html?id=${encodeURIComponent(id)}`) ??
+            href:
+              window.ReanI18n?.localeHref?.(`./lab.html?id=${encodeURIComponent(id)}`) ??
               `./lab.html?id=${encodeURIComponent(id)}`,
             text: stripMd(md),
           });
@@ -93,6 +149,12 @@
       })
     );
     return docs;
+  };
+
+  const buildIndex = async () => {
+    const prebuilt = await loadPrebuiltIndex();
+    if (prebuilt?.length) return prebuilt;
+    return buildIndexFromMarkdown();
   };
 
   const ensureIndex = () => {
