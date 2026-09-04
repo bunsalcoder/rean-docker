@@ -6,6 +6,8 @@ Pass config at **runtime**, and see why a password must never be `ENV` in a Dock
 
 Pair with handbook **Chapter 10**. Do this after Lab 03 (you already write Dockerfiles) and before Lab 05 (Compose will keep using env files).
 
+**Optional helper:** `./run.sh` covers `--env-file`, Compose `env_file`, and the leaky Dockerfile history check. Prefer typing the README commands yourself the first time.
+
 ## Steps
 
 ### 1. Runtime env (the good path)

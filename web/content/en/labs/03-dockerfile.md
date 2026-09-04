@@ -6,6 +6,8 @@ Build a custom image for a tiny Node/Express API and run it.
 
 This Dockerfile is intentionally **simple** (tag-based `FROM`, no digest pin, no healthcheck, npm stays in the image). Later labs harden the same ideas: Lab 08 multi-stage + non-root contrast, Lab 09 healthchecks / read-only / digest pins, Lab 11 secrets + scanning. Do not copy Lab 03 patterns into production work unchanged.
 
+**Optional helper:** `./run.sh` builds, runs, and curls `/` + `/health`. Prefer typing the README commands yourself the first time.
+
 ## Steps
 
 ```bash

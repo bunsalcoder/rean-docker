@@ -13,6 +13,7 @@ run_one() {
 
 run_one labs/01-isolation-basics/run.sh
 run_one labs/02-hello/run.sh
+run_one labs/03-dockerfile/run.sh
 run_one labs/06-networks/run.sh
 run_one labs/07-volumes/run.sh
 run_one labs/08-multi-stage/run.sh

@@ -4,6 +4,8 @@
 
 Run API ជាមួយ healthchecks, `init`, restart policy, read-only rootfs, dropped capabilities, log rotation និង resource limits។ Port ដែល publish ត្រូវ bind តែ localhost។
 
+**Optional helper:** `./run.sh` បើក stack, curl `/health` និងពិនិត្យ memory limit 256MiB។ ចូលចិត្តវាយពាក្យបញ្ជាពី README ដោយខ្លួនឯងលើកដំបូង។
+
 ## ជំហាន
 
 ```bash

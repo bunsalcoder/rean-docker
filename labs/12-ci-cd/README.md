@@ -6,6 +6,8 @@ Practice the same steps a CI pipeline runs: validate Compose, build an image, sm
 
 Pair with handbook **Chapter 17 — Deploy with Docker & CI/CD**.
 
+**Optional helper:** `./run.sh` validates Compose files and smoke-tests `/health`. Prefer typing the README commands yourself the first time.
+
 ## Steps
 
 ### 1. Validate (CI “config” stage)

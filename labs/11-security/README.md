@@ -78,6 +78,33 @@ docker pull "$DIGEST"
 
 Tags move. A digest (`alpine@sha256:…`) is the bits you actually pulled. Pin digests when supply-chain control matters (CI, production). Labs 09, 12, and 13 pin `FROM node:22-alpine@sha256:…`; Lab 13 also pins Postgres/Redis in Compose. Digests go stale on purpose — refresh them when you upgrade (Dependabot opens PRs for those Dockerfiles).
 
+### 5. Stretch — BuildKit cache + multi-arch (Chapter 16)
+
+Optional. Pair with handbook **Chapter 16**. No new images required beyond Alpine.
+
+```bash
+# Cache mount (BuildKit) — second build should reuse the apk cache layer faster
+docker buildx version
+
+cat > /tmp/rean-lab11-cache.Dockerfile <<'EOF'
+# syntax=docker/dockerfile:1
+FROM alpine:3.22
+RUN --mount=type=cache,target=/var/cache/apk \
+    apk add --no-cache curl
+EOF
+
+docker build -t rean-cache:lab11 -f /tmp/rean-lab11-cache.Dockerfile /tmp
+docker build -t rean-cache:lab11 -f /tmp/rean-lab11-cache.Dockerfile /tmp
+
+# Multi-platform *inspect* (pushing multi-arch needs a registry; skip --push here)
+docker buildx imagetools inspect alpine:3.22 | head -n 40
+
+rm -f /tmp/rean-lab11-cache.Dockerfile
+docker rmi rean-cache:lab11 >/dev/null 2>&1 || true
+```
+
+Notice: cache mounts speed package installs without baking the cache into the image; `imagetools inspect` shows amd64/arm64 manifests behind a single tag.
+
 ## Discuss
 
 - Why is mounting `/var/run/docker.sock` into an app container almost the same as giving it root on the host?
@@ -89,6 +116,7 @@ Tags move. A digest (`alpine@sha256:…`) is the bits you actually pulled. Pin d
 - [ ] `whoami` showed `node` on `rean-hello:1.0` and `root` on Alpine
 - [ ] BuildKit `--secret` built; `docker history` did not print the token
 - [ ] You can explain tag vs digest in one sentence
+- [ ] (Stretch) You ran a BuildKit cache-mount build or inspected a multi-arch manifest
 
 ## Next
 

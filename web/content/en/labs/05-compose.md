@@ -4,6 +4,8 @@
 
 Run a multi-container app with service DNS, volumes, healthchecks, and config from `.env` (Lab 04).
 
+**Optional helper:** `./run.sh` brings the stack up and curls `/health`. Prefer typing the README commands yourself the first time.
+
 ## Steps
 
 ```bash

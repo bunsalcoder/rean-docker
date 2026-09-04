@@ -6,6 +6,8 @@ Build image ផ្ទាល់ខ្លួនសម្រាប់ Node/Express 
 
 Dockerfile នេះ **សាមញ្ញ** ដោយចេតនា (`FROM` តាម tag, គ្មាន digest pin, គ្មាន healthcheck, npm នៅក្នុង image)។ Labs ក្រោយរឹតគំនិតដូចគ្នា៖ Lab 08 multi-stage + non-root, Lab 09 healthchecks / read-only / digest pins, Lab 11 secrets + scanning។ កុំ copy pattern Lab 03 ទៅ production ដោយមិនកែ។
 
+**Optional helper:** `./run.sh` build, run និង curl `/` + `/health`។ ចូលចិត្តវាយពាក្យបញ្ជាពី README ដោយខ្លួនឯងលើកដំបូង។
+
 ## ជំហាន
 
 ```bash
