@@ -4,6 +4,8 @@
 
 Run an API with healthchecks, `init`, restart policy, read-only rootfs, dropped capabilities, log rotation, and resource limits. The published port is bound to localhost only.
 
+**Optional helper:** `./run.sh` brings the stack up, curls `/health`, and checks the 256MiB memory limit. Prefer typing the README commands yourself the first time.
+
 ## Steps
 
 ```bash

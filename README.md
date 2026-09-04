@@ -87,17 +87,17 @@ Work in order:
 |-----|--------|------|
 | 01 | Isolation basics (beginner) | [labs/01-isolation-basics](labs/01-isolation-basics) (`run.sh`) |
 | 02 | First containers | [labs/02-hello](labs/02-hello) (`run.sh`) |
-| 03 | Dockerfile | [labs/03-dockerfile](labs/03-dockerfile) |
-| 04 | Env, secrets, and config | [labs/04-env-secrets](labs/04-env-secrets) |
-| 05 | Compose (API + Postgres + Redis) | [labs/05-compose](labs/05-compose) |
+| 03 | Dockerfile | [labs/03-dockerfile](labs/03-dockerfile) (`run.sh`) |
+| 04 | Env, secrets, and config | [labs/04-env-secrets](labs/04-env-secrets) (`run.sh`) |
+| 05 | Compose (API + Postgres + Redis) | [labs/05-compose](labs/05-compose) (`run.sh`) |
 | 06 | Networks | [labs/06-networks](labs/06-networks) (`run.sh` / Compose) |
 | 07 | Volumes | [labs/07-volumes](labs/07-volumes) (`run.sh` / Compose) |
 | 08 | Multi-stage builds | [labs/08-multi-stage](labs/08-multi-stage) (`run.sh`) |
-| 09 | Production practices | [labs/09-production](labs/09-production) |
+| 09 | Production practices | [labs/09-production](labs/09-production) (`run.sh`) |
 | 10 | Debugging & troubleshooting | [labs/10-debugging](labs/10-debugging) (`run.sh`) |
-| 11 | Security essentials | [labs/11-security](labs/11-security) (`run.sh`) |
-| 12 | Deploy & CI/CD (special) | [labs/12-ci-cd](labs/12-ci-cd) |
-| 13 | Capstone (own the baseline) | [labs/13-capstone](labs/13-capstone) |
+| 11 | Security essentials | [labs/11-security](labs/11-security) (`run.sh`; Chapter 16 stretch) |
+| 12 | Deploy & CI/CD (special) | [labs/12-ci-cd](labs/12-ci-cd) (`run.sh`) |
+| 13 | Capstone (own the baseline) | [labs/13-capstone](labs/13-capstone) (`run.sh`) |
 
 ## Prerequisites
 

@@ -6,6 +6,8 @@
 
 ផ្គូផ្គងជាមួយ handbook **ជំពូក 17 — Deploy ជាមួយ Docker & CI/CD**។
 
+**Optional helper:** `./run.sh` validate Compose files និង smoke-test `/health`។ ចូលចិត្តវាយពាក្យបញ្ជាពី README ដោយខ្លួនឯងលើកដំបូង។
+
 ## ជំហាន
 
 ### 1. Validate (ដំណាក់កាល CI “config”)

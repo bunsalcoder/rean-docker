@@ -4,6 +4,8 @@
 
 Run កម្មវិធីពហុ container ជាមួយ service DNS, volumes, healthchecks និង config ពី `.env` (Lab 04)។
 
+**Optional helper:** `./run.sh` បើក stack ហើយ curl `/health`។ ចូលចិត្តវាយពាក្យបញ្ជាពី README ដោយខ្លួនឯងលើកដំបូង។
+
 ## ជំហាន
 
 ```bash

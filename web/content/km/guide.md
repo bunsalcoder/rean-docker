@@ -1405,6 +1405,8 @@ depends_on:
 
 ## 16. ប្រធានបទកម្រិតខ្ពស់
 
+Hands-on stretch សម្រាប់ជំពូកនេះស្ថិតនៅ **Lab 11 §5** (BuildKit cache mount + multi-arch inspect)។ Secrets mounts បានអនុវត្តរួចក្នុង Lab 11 §2។
+
 ### BuildKit
 
 Builder ទំនើប (ធម្មតាជា default ឥឡូវ)៖

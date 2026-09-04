@@ -8,6 +8,8 @@
 
 ធ្វើការក្នុងថតនេះ (`labs/13-capstone`) ដើម្បីឱ្យ capstone ដាច់ពី labs បង្រៀន។
 
+**Optional helper:** `./run.sh` validate Compose និង smoke-test **baseline** stack តែប៉ុណ្ណោះ។ Capstone ownership (`CAPSTONE_OWN`) នៅដៃ។
+
 ## តម្រូវការ
 
 1. `Dockerfile` សម្រាប់ API (baseline pin Node តាម digest — ជំពូក 15; multi-stage បើ compile/build)។

@@ -35,4 +35,4 @@ Labs `03`, `05`, `08`, `09`, `12`, and `13` each have their own `package.json` /
 
 ## Pull requests
 
-CI runs `make check-all`, builds the lab Dockerfiles, smoke-tests labs 04, 05, 09, 12, and 13 (`make smoke`), runs concept-lab helpers (`make smoke-concept`), and fails on unfixed CRITICAL findings from Trivy. The Pages workflow builds the static site (sync + sitemap + search index) on PRs/`develop` and deploys only from `main` — content checks are not duplicated there. Keep secrets out of git (`.env` is ignored; commit `.env.example` only).
+CI runs `make check-all`, builds the lab Dockerfiles, smoke-tests labs 04, 05, 09, 12, and 13 via their `run.sh` helpers (`make smoke`), runs concept-lab helpers including Lab 03 (`make smoke-concept`), and fails on unfixed CRITICAL findings from Trivy. The Pages workflow builds the static site (sync + sitemap + search index) on PRs/`develop` and deploys only from `main` — content checks are not duplicated there. Keep secrets out of git (`.env` is ignored; commit `.env.example` only).

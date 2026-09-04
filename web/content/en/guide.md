@@ -1409,6 +1409,8 @@ docker image inspect alpine:3.22 --format '{{index .RepoDigests 0}}'
 
 ## 16. Advanced topics
 
+Hands-on stretch for this chapter lives in **Lab 11 §5** (BuildKit cache mount + multi-arch inspect). Secrets mounts are already practiced in Lab 11 §2.
+
 ### BuildKit
 
 Modern builder (usually default now):

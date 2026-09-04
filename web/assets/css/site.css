@@ -1179,6 +1179,7 @@ html[data-theme="dark"] .theme-icon-rays {
 
 .reveal-block .section-head,
 .reveal-block .path-list > li,
+.reveal-block .path-more,
 .reveal-block .progress-panel,
 .reveal-block.split > * {
   opacity: 0;
@@ -1191,6 +1192,7 @@ html[data-theme="dark"] .theme-icon-rays {
 
 .reveal-block.is-in .section-head,
 .reveal-block.is-in .path-list > li,
+.reveal-block.is-in .path-more,
 .reveal-block.is-in .progress-panel,
 .reveal-block.is-in.split > * {
   opacity: 1;
@@ -1345,6 +1347,23 @@ body > main.section > .wrap {
 .path-list a:hover .meta,
 .path-list a:focus-visible .meta {
   color: var(--ink-soft);
+}
+
+.path-more {
+  margin: 1.35rem 0 0;
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+}
+
+.path-more a {
+  color: var(--ocean-deep);
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--ocean) 45%, transparent);
+}
+
+.path-more a:hover,
+.path-more a:focus-visible {
+  border-bottom-color: var(--ocean);
 }
 
 .split {
@@ -2143,6 +2162,7 @@ body > main.section > .wrap {
 
   .reveal-block .section-head,
   .reveal-block .path-list > li,
+  .reveal-block .path-more,
   .reveal-block .progress-panel,
   .reveal-block.split > * {
     opacity: 1;
@@ -2304,6 +2324,36 @@ body > main.section > .wrap {
 .progress-lab-dots a.is-complete {
   color: var(--ocean-deep);
   border-color: var(--ocean);
+}
+
+.progress-transfer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line);
+}
+
+.progress-transfer .btn {
+  font-size: 0.88rem;
+}
+
+.progress-transfer-status {
+  flex: 1 1 100%;
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+.progress-transfer-status.is-error {
+  color: color-mix(in srgb, #b42318 85%, var(--ink));
+}
+
+.progress-empty .progress-transfer {
+  border-top: 0;
+  padding-top: 0;
 }
 
 .lab-grid a.is-started .num,

@@ -8,6 +8,8 @@ This folder ships a **day-one runnable baseline** (Compose + Node API) so CI and
 
 Work in this folder (`labs/13-capstone`) so your capstone stays separate from the teaching labs.
 
+**Optional helper:** `./run.sh` validates Compose and smoke-tests the **baseline** stack only. Capstone ownership (`CAPSTONE_OWN`) stays manual.
+
 ## Requirements
 
 1. `Dockerfile` for the API (baseline pins Node by digest — Chapter 15; multi-stage if you compile/build).

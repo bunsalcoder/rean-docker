@@ -78,6 +78,33 @@ docker pull "$DIGEST"
 
 Tags ផ្លាស់ទី។ Digest (`alpine@sha256:…`) គឺ bits ដែលអ្នកពិតជា pull។ Pin digests ពេលគ្រប់គ្រង supply-chain សំខាន់ (CI, production)។ Labs 09, 12, និង 13 pin `FROM node:22-alpine@sha256:…`; Lab 13 pin Postgres/Redis ក្នុង Compose ដែរ។ Digest ហួសសម័យដោយចេតនា — refresh ពេល upgrade (Dependabot បើក PR សម្រាប់ Dockerfile ទាំងនោះ)។
 
+### 5. Stretch — BuildKit cache + multi-arch (ជំពូក 16)
+
+Optional។ ផ្គូផ្គង handbook **ជំពូក 16**។ មិនត្រូវ image ថ្មីក្រៅពី Alpine។
+
+```bash
+# Cache mount (BuildKit) — second build should reuse the apk cache layer faster
+docker buildx version
+
+cat > /tmp/rean-lab11-cache.Dockerfile <<'EOF'
+# syntax=docker/dockerfile:1
+FROM alpine:3.22
+RUN --mount=type=cache,target=/var/cache/apk \
+    apk add --no-cache curl
+EOF
+
+docker build -t rean-cache:lab11 -f /tmp/rean-lab11-cache.Dockerfile /tmp
+docker build -t rean-cache:lab11 -f /tmp/rean-lab11-cache.Dockerfile /tmp
+
+# Multi-platform *inspect* (pushing multi-arch needs a registry; skip --push here)
+docker buildx imagetools inspect alpine:3.22 | head -n 40
+
+rm -f /tmp/rean-lab11-cache.Dockerfile
+docker rmi rean-cache:lab11 >/dev/null 2>&1 || true
+```
+
+សម្គាល់៖ cache mounts បង្កើនល្បឿន package install ដោយមិន bake cache ចូល image; `imagetools inspect` បង្ហាញ amd64/arm64 manifests ក្រោម tag តែមួយ។
+
 ## ពិភាក្សា
 
 - ហេតុអ្វី mount `/var/run/docker.sock` ចូល app container ស្ទើរតែដូចឱ្យវា root លើ host?
@@ -89,6 +116,7 @@ Tags ផ្លាស់ទី។ Digest (`alpine@sha256:…`) គឺ bits ដែ
 - [ ] `whoami` បង្ហាញ `node` លើ `rean-hello:1.0` និង `root` លើ Alpine
 - [ ] BuildKit `--secret` បាន build; `docker history` មិនបោះពុម្ព token
 - [ ] អ្នកអាចពន្យល់ tag vs digest ក្នុងមួយប្រយោគ
+- [ ] (Stretch) អ្នកបានរត់ BuildKit cache-mount build ឬ inspect multi-arch manifest
 
 ## បន្ទាប់
 

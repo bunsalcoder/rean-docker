@@ -1,5 +1,7 @@
 (() => {
   const PROGRESS_KEY = "rean-docker:progress";
+  const CHECKLIST_PREFIX = "rean-docker:checklist:";
+  const EXPORT_VERSION = 1;
   const LAB_IDS = window.ReanRoutes?.LAB_IDS || [];
   const CHAPTER_IDS = () => (window.ReanRoutes?.CHAPTERS || []).map((ch) => ch.id);
 
@@ -21,6 +23,83 @@
     } catch {
       /* private mode / quota */
     }
+  };
+
+  const readChecklists = () => {
+    const out = {};
+    try {
+      for (let i = 0; i < localStorage.length; i += 1) {
+        const key = localStorage.key(i);
+        if (!key || !key.startsWith(CHECKLIST_PREFIX)) continue;
+        const scope = key.slice(CHECKLIST_PREFIX.length);
+        try {
+          out[scope] = JSON.parse(localStorage.getItem(key) || "{}") || {};
+        } catch {
+          out[scope] = {};
+        }
+      }
+    } catch {
+      /* private mode */
+    }
+    return out;
+  };
+
+  const writeChecklists = (checklists) => {
+    if (!checklists || typeof checklists !== "object") return;
+    Object.entries(checklists).forEach(([scope, value]) => {
+      if (!scope || typeof value !== "object" || value === null) return;
+      try {
+        localStorage.setItem(CHECKLIST_PREFIX + scope, JSON.stringify(value));
+      } catch {
+        /* private mode / quota */
+      }
+    });
+  };
+
+  const buildExport = () => ({
+    version: EXPORT_VERSION,
+    exportedAt: new Date().toISOString(),
+    progress: readAll(),
+    checklists: readChecklists(),
+  });
+
+  const downloadExport = () => {
+    const payload = buildExport();
+    const stamp = payload.exportedAt.slice(0, 10);
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `rean-docker-progress-${stamp}.json`;
+    a.rel = "noopener";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    return payload;
+  };
+
+  const importPayload = (raw) => {
+    let data = raw;
+    if (typeof raw === "string") {
+      data = JSON.parse(raw);
+    }
+    if (!data || typeof data !== "object") {
+      throw new Error("invalid");
+    }
+    if (data.version !== EXPORT_VERSION) {
+      throw new Error("version");
+    }
+    if (data.progress && typeof data.progress === "object") {
+      writeAll(data.progress);
+    }
+    if (data.checklists && typeof data.checklists === "object") {
+      writeChecklists(data.checklists);
+    }
+    window.dispatchEvent(new CustomEvent("rean:progress", { detail: { imported: true } }));
+    return data;
   };
 
   const record = (scope, done, total) => {
@@ -106,6 +185,62 @@
       </div>`;
   };
 
+  const transferControlsHtml = () => `
+    <div class="progress-transfer">
+      <button type="button" class="btn btn-ghost" data-progress-export>${t("progress.export")}</button>
+      <button type="button" class="btn btn-ghost" data-progress-import>${t("progress.import")}</button>
+      <input type="file" accept="application/json,.json" hidden data-progress-file />
+      <p class="progress-transfer-status" data-progress-status hidden></p>
+    </div>`;
+
+  const bindTransferControls = (root) => {
+    if (!root) return;
+
+    const setStatus = (message, isError) => {
+      const status = root.querySelector("[data-progress-status]");
+      if (!status) return;
+      if (!message) {
+        status.hidden = true;
+        status.textContent = "";
+        status.classList.remove("is-error");
+        return;
+      }
+      status.hidden = false;
+      status.textContent = message;
+      status.classList.toggle("is-error", Boolean(isError));
+    };
+
+    if (root.dataset.transferBound === "1") return;
+    root.dataset.transferBound = "1";
+
+    root.addEventListener("click", (event) => {
+      const exportBtn = event.target.closest("[data-progress-export]");
+      if (exportBtn && root.contains(exportBtn)) {
+        downloadExport();
+        setStatus(t("progress.exportDone"));
+        return;
+      }
+      const importBtn = event.target.closest("[data-progress-import]");
+      if (importBtn && root.contains(importBtn)) {
+        root.querySelector("[data-progress-file]")?.click();
+      }
+    });
+
+    root.addEventListener("change", async (event) => {
+      const input = event.target.closest("[data-progress-file]");
+      if (!input || !root.contains(input) || !input.files?.length) return;
+      const file = input.files[0];
+      input.value = "";
+      try {
+        const text = await file.text();
+        importPayload(text);
+        setStatus(t("progress.importDone"));
+      } catch {
+        setStatus(t("progress.importFailed"), true);
+      }
+    });
+  };
+
   const renderHome = (root) => {
     if (!root) return;
     const labStats = summarizeLabs();
@@ -128,7 +263,9 @@
             <a class="btn btn-primary" href="${localeHref("./learn.html")}">${t("progress.startLearn")}</a>
             <a class="btn btn-ghost" href="${localeHref("./labs.html")}">${t("progress.startLabs")}</a>
           </div>
+          ${transferControlsHtml()}
         </div>`;
+      bindTransferControls(root);
       return;
     }
 
@@ -202,7 +339,9 @@
           .join("")}
       </ol>`
           : ""
-      }`;
+      }
+      ${transferControlsHtml()}`;
+    bindTransferControls(root);
   };
 
   const decorateSideNav = (nav, entries, idAttr) => {
@@ -301,6 +440,8 @@
     summarizeChapters,
     decorateChapterNav,
     decorateLabNav,
+    downloadExport,
+    importPayload,
     init,
     LAB_IDS,
   };

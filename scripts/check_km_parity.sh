@@ -65,16 +65,30 @@ require_in_both "Lab 07 .bind hint" '\.bind' \
   "$EN_DIR/labs/07-volumes.md" "$KM_DIR/labs/07-volumes.md"
 require_in_both "Lab 10 compose.fixed" 'compose\.fixed\.yaml' \
   "$EN_DIR/labs/10-debugging.md" "$KM_DIR/labs/10-debugging.md"
+require_in_both "Lab 03 run.sh" '\./run\.sh' \
+  "$EN_DIR/labs/03-dockerfile.md" "$KM_DIR/labs/03-dockerfile.md"
+require_in_both "Lab 04 run.sh" '\./run\.sh' \
+  "$EN_DIR/labs/04-env-secrets.md" "$KM_DIR/labs/04-env-secrets.md"
+require_in_both "Lab 05 run.sh" '\./run\.sh' \
+  "$EN_DIR/labs/05-compose.md" "$KM_DIR/labs/05-compose.md"
 require_in_both "Lab 08 run.sh" '\./run\.sh' \
   "$EN_DIR/labs/08-multi-stage.md" "$KM_DIR/labs/08-multi-stage.md"
+require_in_both "Lab 09 run.sh" '\./run\.sh' \
+  "$EN_DIR/labs/09-production.md" "$KM_DIR/labs/09-production.md"
 require_in_both "Lab 09 npm strip" 'npm.*corepack|corepack.*npm' \
   "$EN_DIR/labs/09-production.md" "$KM_DIR/labs/09-production.md"
 require_in_both "Lab 11 run.sh" '\./run\.sh' \
   "$EN_DIR/labs/11-security.md" "$KM_DIR/labs/11-security.md"
 require_in_both "Lab 11 Trivy gate" 'unfixed CRITICAL' \
   "$EN_DIR/labs/11-security.md" "$KM_DIR/labs/11-security.md"
+require_in_both "Lab 11 Chapter 16 stretch" 'Chapter 16|ជំពូក 16' \
+  "$EN_DIR/labs/11-security.md" "$KM_DIR/labs/11-security.md"
+require_in_both "Lab 12 run.sh" '\./run\.sh' \
+  "$EN_DIR/labs/12-ci-cd.md" "$KM_DIR/labs/12-ci-cd.md"
 require_in_both "Lab 12 IMAGE_REF" 'IMAGE_REF' \
   "$EN_DIR/labs/12-ci-cd.md" "$KM_DIR/labs/12-ci-cd.md"
+require_in_both "Lab 13 run.sh" '\./run\.sh' \
+  "$EN_DIR/labs/13-capstone.md" "$KM_DIR/labs/13-capstone.md"
 require_in_both "Lab 13 CAPSTONE_OWN" 'CAPSTONE_OWN' \
   "$EN_DIR/labs/13-capstone.md" "$KM_DIR/labs/13-capstone.md"
 require_in_both "Lab 13 compose.prod ref" 'compose\.prod\.yaml' \
@@ -83,6 +97,8 @@ require_in_both "Lab 13 compose.prod ref" 'compose\.prod\.yaml' \
 require_in_both "Guide IMAGE_REF" 'IMAGE_REF' \
   "$EN_DIR/guide.md" "$KM_DIR/guide.md"
 require_in_both "Guide digest labs note" 'Labs 09|Lab 09' \
+  "$EN_DIR/guide.md" "$KM_DIR/guide.md"
+require_in_both "Guide Chapter 16 Lab 11 stretch" 'Lab 11' \
   "$EN_DIR/guide.md" "$KM_DIR/guide.md"
 
 echo
