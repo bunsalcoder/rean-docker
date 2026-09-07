@@ -1405,7 +1405,7 @@ depends_on:
 
 ## 16. ប្រធានបទកម្រិតខ្ពស់
 
-Hands-on stretch សម្រាប់ជំពូកនេះស្ថិតនៅ **Lab 11 §5** (BuildKit cache mount + multi-arch inspect)។ Secrets mounts បានអនុវត្តរួចក្នុង Lab 11 §2។
+Hands-on stretch សម្រាប់ជំពូកនេះស្ថិតនៅ **Lab 11 §5–§7** (BuildKit cache + multi-arch, Compose Watch, SBOM)។ Secrets mounts បានអនុវត្តរួចក្នុង Lab 11 §2។ Profiles បានបង្ហាញខ្លីក្នុងជំពូក 11 — ត្រឡប់មកវិញពេល service ស្រេចចិត្តធ្វើឱ្យ Compose រាលថ្ងៃរញ៉េរញ៉ៃ។
 
 ### BuildKit
 
@@ -1449,6 +1449,70 @@ docker pull youruser/rean-hello:1.0
 ```
 
 ឧទាហរណ៍ GHCR tag: `ghcr.io/you/rean-hello:1.0`
+
+### Compose Watch (iteration មូលដ្ឋាន)
+
+`docker compose up` rebuild ពេលអ្នកស្នើ។ **Compose Watch** rebuild ឬ sync ពេលឯកសារផ្លាស់ — មានប្រយោជន៍សម្រាប់ iteration បែប bind-mount ដោយមិនត្រូវ file watcher ផ្ទាល់ខ្លួន។
+
+```yaml
+# sketch — see labs/11-security/compose.watch.yaml
+services:
+  demo:
+    image: alpine:3.22
+    develop:
+      watch:
+        - action: sync
+          path: ./watch-demo
+          target: /data
+```
+
+```bash
+docker compose -f compose.watch.yaml up -d
+docker compose -f compose.watch.yaml watch
+```
+
+ប្រើ Watch សម្រាប់ **feedback loop លើ laptop**។ ទុក production Compose គ្មាន `develop:` — ship images មិនមែន laptop sync rules (ជំពូក 17)។
+
+### SBOM & provenance
+
+**SBOM** (Software Bill of Materials) រាយអ្វីដែល image មាន ដើម្បីឱ្យ scanner និង auditor វិភាគ supply chain។ **Provenance** / attestations កត់ត្រា *របៀប* ដែលវាត្រូវបាន build (Dockerfile, git commit, builder)។
+
+វិធីមើលដោយមិនត្រូវដំឡើងឧបករណ៍បន្ថែម៖
+
+```bash
+# Trivy can emit SPDX (Lab 11 §7)
+docker run --rm aquasec/trivy:0.63.0 image --format spdx alpine:3.22 | head
+
+# BuildKit can attach SBOM + provenance when you build/push (needs a capable builder)
+docker buildx build --sbom=true --provenance=true -t you/app:1.0 --push .
+```
+
+មិនត្រូវចាំ SPDX។ ត្រូវមានទម្លាប់៖ **បង្កើត ឬភ្ជាប់ SBOM មុនចាត់ image ថា «release candidate»។**
+
+### Signing images (ទិដ្ឋភាព)
+
+Tags និង digests និយាយ *bits ណា*។ **Signatures** និយាយ *នរណាបោះផ្សាយ* (និងថាវាមិនត្រូវបានប្តូរ)។ ឧបករណ៍ដូច [Sigstore Cosign](https://docs.sigstore.dev/cosign/system_config/installation/) verify signature ក្នុង CI ឬពេល deploy។
+
+```bash
+# Shape only — install cosign separately if you try this for real
+cosign sign ghcr.io/you/app@sha256:...
+cosign verify ghcr.io/you/app@sha256:...
+```
+
+Signing ផ្គូផ្គង digests (ជំពូក 15) និង registry push (ជំពូក 17)។ កុំ install Cosign នៅថ្ងៃទីមួយ; ដឹងថា «pull by digest + verify signature» គឺរឿង trust កម្រិត production។
+
+### Rootless Docker (ទិដ្ឋភាព)
+
+តាមលំនាំដើម Docker daemon ច្រើនតែ run ជា root លើ host។ **Rootless mode** រត់ daemon ជា user របស់អ្នក ដើម្បីឱ្យ container ដែលត្រូវគេវាយប្រហារពិបាកជាងក្នុងការគ្រប់គ្រងម៉ាស៊ីន។ Trade-off: feature ខ្លះ (port ជាក់លាក់, storage driver, GPU) ត្រូវ setup បន្ថែម។
+
+```bash
+# After installing rootless extras (distro-specific — see Docker docs):
+dockerd-rootless-setuptool.sh install
+export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
+docker info
+```
+
+ចូលចិត្ត non-root **ក្នុង** images មុន (Lab 11 §1 / Lab 09)។ ទៅ rootless Engine ពេល harden laptop រួម ឬ CI runner។
 
 ### Docker Swarm vs Kubernetes (ទិដ្ឋភាព)
 
@@ -1824,7 +1888,7 @@ curl -fsS https://your.domain/health
 | 10 | Env/secrets — CI secrets + `.env` លើ server |
 | 11 | Compose ជា unit deploy |
 | 13 / 15 | Healthchecks, non-root, limits, scanning |
-| 16 | BuildKit, registries, multi-arch បើត្រូវ ARM + AMD |
+| 16 | BuildKit, registries, multi-arch, Watch, SBOM/signing orientation |
 
 បន្ទាប់៖ **Lab 12** ធ្វើឱ្យអ្នករត់ជំហាន CI លើម៉ាស៊ីនផ្ទាល់ រួច push បើចង់។ ក្រោយនោះ **Capstone (ជំពូក 18)** អាចមាន CI workflow ពិតជា stretch goal — អ្នកស្គាល់រូបរាងហើយ។
 
@@ -1884,7 +1948,13 @@ docker network ls|create|inspect|rm
 docker compose up -d --build
 docker compose logs -f
 docker compose exec SERVICE sh
+docker compose --profile tools up -d
+docker compose watch
 docker compose down
+
+# Supply chain (orientation)
+docker buildx imagetools inspect IMAGE
+# cosign verify IMAGE@sha256:...
 
 # Cleanup
 docker system df
@@ -1920,6 +1990,7 @@ docker system prune
 - [ ] User មិនមែន root, healthchecks, restart policies
 - [ ] Debug ដោយ `inspect`, `logs`, `stats`, shell បណ្ដោះអាសន្ន (`labs/10-debugging`)
 - [ ] ស្កេន images; BuildKit secrets; pin tags/digests (`labs/11-security`)
+- [ ] (Stretch) Compose Watch, SBOM peek, ឬ multi-arch inspect (Lab 11 §5–§7 / ជំពូក 16)
 - [ ] Push/pull ពី registry
 - [ ] បញ្ចប់ checklist deploy ជំពូក 17; បញ្ចប់ `labs/12-ci-cd`
 - [ ] ពន្យល់ CI vs CD និងផ្លូវ build → registry → pull → up
