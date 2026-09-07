@@ -39,6 +39,7 @@ jobs:
           docker compose -f labs/07-volumes/compose.yaml config >/dev/null
           docker compose -f labs/10-debugging/compose.yaml config >/dev/null
           docker compose -f labs/10-debugging/compose.fixed.yaml config >/dev/null
+          docker compose -f labs/11-security/compose.watch.yaml config >/dev/null
           docker compose -f labs/12-ci-cd/compose.yaml config >/dev/null
           cp labs/13-capstone/.env.example labs/13-capstone/.env
           docker compose -f labs/13-capstone/compose.yaml config >/dev/null

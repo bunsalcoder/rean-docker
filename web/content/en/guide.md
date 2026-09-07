@@ -1409,7 +1409,7 @@ docker image inspect alpine:3.22 --format '{{index .RepoDigests 0}}'
 
 ## 16. Advanced topics
 
-Hands-on stretch for this chapter lives in **Lab 11 §5** (BuildKit cache mount + multi-arch inspect). Secrets mounts are already practiced in Lab 11 §2.
+Hands-on stretches for this chapter live in **Lab 11 §5–§7** (BuildKit cache + multi-arch, Compose Watch, SBOM). Secrets mounts are already practiced in Lab 11 §2. Profiles showed up briefly in Chapter 11 — revisit them when optional services clutter your day-to-day Compose file.
 
 ### BuildKit
 
@@ -1453,6 +1453,70 @@ docker pull youruser/rean-hello:1.0
 ```
 
 GHCR example tag: `ghcr.io/you/rean-hello:1.0`
+
+### Compose Watch (local iterate)
+
+`docker compose up` rebuilds when you ask. **Compose Watch** rebuilds or syncs when files change — useful for bind-mount-style iteration without a custom file watcher.
+
+```yaml
+# sketch — see labs/11-security/compose.watch.yaml
+services:
+  demo:
+    image: alpine:3.22
+    develop:
+      watch:
+        - action: sync
+          path: ./watch-demo
+          target: /data
+```
+
+```bash
+docker compose -f compose.watch.yaml up -d
+docker compose -f compose.watch.yaml watch
+```
+
+Use Watch for **local feedback loops**. Keep production Compose free of `develop:` blocks — ship images, not laptop sync rules (Chapter 17).
+
+### SBOM & provenance
+
+An **SBOM** (Software Bill of Materials) lists what an image contains so scanners and auditors can reason about supply chain risk. **Provenance** / attestations record *how* it was built (Dockerfile, git commit, builder).
+
+Practical ways to see one without installing extra tools:
+
+```bash
+# Trivy can emit SPDX (Lab 11 §7)
+docker run --rm aquasec/trivy:0.63.0 image --format spdx alpine:3.22 | head
+
+# BuildKit can attach SBOM + provenance when you build/push (needs a capable builder)
+docker buildx build --sbom=true --provenance=true -t you/app:1.0 --push .
+```
+
+You do not need to memorize SPDX. You do need the habit: **generate or attach an SBOM before you treat an image as “release candidate.”**
+
+### Signing images (orientation)
+
+Tags and digests say *which bits*. **Signatures** say *who published them* (and that they were not swapped). Tools such as [Sigstore Cosign](https://docs.sigstore.dev/cosign/system_config/installation/) verify signatures in CI or at deploy time.
+
+```bash
+# Shape only — install cosign separately if you try this for real
+cosign sign ghcr.io/you/app@sha256:...
+cosign verify ghcr.io/you/app@sha256:...
+```
+
+Signing pairs with digests (Chapter 15) and registry push (Chapter 17). Skip installing Cosign on day one; know that “pull by digest + verify signature” is the production-grade trust story.
+
+### Rootless Docker (orientation)
+
+By default the Docker daemon often runs as root on the host. **Rootless mode** runs the daemon as your user so a compromised container has a harder path to owning the machine. Trade-offs: some features (certain ports, storage drivers, GPU) need extra setup.
+
+```bash
+# After installing rootless extras (distro-specific — see Docker docs):
+dockerd-rootless-setuptool.sh install
+export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
+docker info
+```
+
+Prefer non-root **inside** images first (Lab 11 §1 / Lab 09). Graduate to rootless Engine when hardening a shared laptop or CI runner.
 
 ### Docker Swarm vs Kubernetes (orientation)
 
@@ -1828,7 +1892,7 @@ Then graduate to log shipping and uptime checks. A green CI build is not a subst
 | 10 | Env/secrets — CI secrets + server `.env` |
 | 11 | Compose as the deploy unit |
 | 13 / 15 | Healthchecks, non-root, limits, scanning |
-| 16 | BuildKit, registries, multi-arch if you need ARM + AMD |
+| 16 | BuildKit, registries, multi-arch, Watch, SBOM/signing orientation |
 
 Next: **Lab 12** makes you run the CI steps locally, then optionally push. After that, the **Capstone (Chapter 18)** can include a real CI workflow as a stretch goal — you will already know the shape.
 
@@ -1888,7 +1952,13 @@ docker network ls|create|inspect|rm
 docker compose up -d --build
 docker compose logs -f
 docker compose exec SERVICE sh
+docker compose --profile tools up -d
+docker compose watch
 docker compose down
+
+# Supply chain (orientation)
+docker buildx imagetools inspect IMAGE
+# cosign verify IMAGE@sha256:...
 
 # Cleanup
 docker system df
@@ -1924,6 +1994,7 @@ docker system prune
 - [ ] Non-root user, healthchecks, restart policies
 - [ ] Debug with `inspect`, `logs`, `stats`, ephemeral shells (`labs/10-debugging`)
 - [ ] Scan images; BuildKit secrets; pin tags/digests (`labs/11-security`)
+- [ ] (Stretch) Compose Watch, SBOM peek, or multi-arch inspect (Lab 11 §5–§7 / Chapter 16)
 - [ ] Push/pull from a registry
 - [ ] Complete Chapter 17 deploy checklist; finish `labs/12-ci-cd`
 - [ ] Explain CI vs CD and a build → registry → pull → up path

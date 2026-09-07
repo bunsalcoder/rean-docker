@@ -1,0 +1,18 @@
+# Teaching sketch for Lab 11 §6 / Chapter 16 — Compose Watch.
+# Not a production stack. Validate with: docker compose -f compose.watch.yaml config
+services:
+  demo:
+    image: alpine:3.22
+    command:
+      [
+        "sh",
+        "-c",
+        "while true; do echo \"$$(date -u +%H:%M:%S) $$(cat /data/hello.txt 2>/dev/null || echo waiting)\"; sleep 2; done",
+      ]
+    volumes:
+      - ./watch-demo:/data
+    develop:
+      watch:
+        - action: sync
+          path: ./watch-demo
+          target: /data

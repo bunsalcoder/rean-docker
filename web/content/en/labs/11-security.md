@@ -4,9 +4,9 @@
 
 See three habits from handbook **Chapter 15**: don’t run as root when you can avoid it, don’t bake secrets into layers, and look at what an image scan reports.
 
-Pair with Lab 04 (leaky `ENV`) and Lab 08/09 (non-root + slim images).
+Pair with Lab 04 (leaky `ENV`) and Lab 08/09 (non-root + slim images). Stretches §5–§7 pair with **Chapter 16** (BuildKit cache, Compose Watch, SBOM).
 
-**Optional helper:** `./run.sh` covers whoami, the BuildKit secret check, and digest inspect (Trivy scan stays manual). Prefer typing the commands yourself the first time.
+**Optional helper:** `./run.sh` covers whoami, the BuildKit secret check, digest inspect, and `compose.watch.yaml` config (Trivy / Watch / SBOM stay manual). Prefer typing the commands yourself the first time.
 
 ## Steps
 
@@ -105,11 +105,39 @@ docker rmi rean-cache:lab11 >/dev/null 2>&1 || true
 
 Notice: cache mounts speed package installs without baking the cache into the image; `imagetools inspect` shows amd64/arm64 manifests behind a single tag.
 
+### 6. Stretch — Compose Watch (Chapter 16)
+
+Optional. Validate the teaching file, then try Watch if you want the live loop:
+
+```bash
+cd labs/11-security
+docker compose -f compose.watch.yaml config >/dev/null
+
+# Interactive (Ctrl+C when done):
+docker compose -f compose.watch.yaml up -d
+docker compose -f compose.watch.yaml watch
+# In another terminal, edit watch-demo/hello.txt and watch the container pick it up.
+docker compose -f compose.watch.yaml down
+```
+
+`develop.watch` is for **laptop iteration**. Keep it out of production Compose (Chapter 17).
+
+### 7. Stretch — SBOM peek (Chapter 16)
+
+Optional. Same Trivy image as §3, different output format — a tiny SPDX bill of materials:
+
+```bash
+docker run --rm aquasec/trivy:0.63.0 image --format spdx alpine:3.22 | head -n 40
+```
+
+You should see package identity lines (SPDX). Signing with Cosign is orientation-only in the handbook — no install required for this lab.
+
 ## Discuss
 
 - Why is mounting `/var/run/docker.sock` into an app container almost the same as giving it root on the host?
 - When is `ENV NODE_ENV=production` fine, and when is `ENV` a secret leak (Lab 04)?
 - What would you fail CI on: critical CVEs in *your* app deps, or every CVE in the base image?
+- Predict: if `develop.watch` shipped in `compose.prod.yaml`, what breaks for a teammate who only pulls images?
 
 ## Success criteria
 
@@ -117,6 +145,8 @@ Notice: cache mounts speed package installs without baking the cache into the im
 - [ ] BuildKit `--secret` built; `docker history` did not print the token
 - [ ] You can explain tag vs digest in one sentence
 - [ ] (Stretch) You ran a BuildKit cache-mount build or inspected a multi-arch manifest
+- [ ] (Stretch) You validated `compose.watch.yaml` or ran `docker compose watch`
+- [ ] (Stretch) You peeked at an SPDX SBOM (or can explain why one matters)
 
 ## Next
 

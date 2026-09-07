@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Optional helper for Lab 11 — non-root whoami, BuildKit secret, digest inspect.
-# Prefer typing the README commands yourself the first time. Trivy scan stays manual.
+# Optional helper for Lab 11 — non-root whoami, BuildKit secret, digest inspect,
+# and compose.watch.yaml config. Prefer typing the README commands yourself the
+# first time. Trivy scan / Watch / SBOM stretches stay manual.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -48,4 +49,8 @@ digest="$(docker image inspect alpine:3.22 --format '{{index .RepoDigests 0}}')"
 echo "RepoDigest=${digest}"
 [[ "${digest}" == alpine@sha256:* ]]
 
-echo "Lab 11 helper OK (run the optional Trivy scan from the README yourself)."
+echo "== 4. Compose Watch teaching file =="
+docker compose -f compose.watch.yaml config >/dev/null
+[[ -f watch-demo/hello.txt ]]
+
+echo "Lab 11 helper OK (run optional Trivy / Watch / SBOM stretches from the README yourself)."

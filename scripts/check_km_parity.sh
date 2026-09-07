@@ -83,6 +83,10 @@ require_in_both "Lab 11 Trivy gate" 'unfixed CRITICAL' \
   "$EN_DIR/labs/11-security.md" "$KM_DIR/labs/11-security.md"
 require_in_both "Lab 11 Chapter 16 stretch" 'Chapter 16|ជំពូក 16' \
   "$EN_DIR/labs/11-security.md" "$KM_DIR/labs/11-security.md"
+require_in_both "Lab 11 Compose Watch" 'compose\.watch\.yaml' \
+  "$EN_DIR/labs/11-security.md" "$KM_DIR/labs/11-security.md"
+require_in_both "Lab 11 SBOM" 'spdx|SPDX' \
+  "$EN_DIR/labs/11-security.md" "$KM_DIR/labs/11-security.md"
 require_in_both "Lab 12 run.sh" '\./run\.sh' \
   "$EN_DIR/labs/12-ci-cd.md" "$KM_DIR/labs/12-ci-cd.md"
 require_in_both "Lab 12 IMAGE_REF" 'IMAGE_REF' \
@@ -99,6 +103,10 @@ require_in_both "Guide IMAGE_REF" 'IMAGE_REF' \
 require_in_both "Guide digest labs note" 'Labs 09|Lab 09' \
   "$EN_DIR/guide.md" "$KM_DIR/guide.md"
 require_in_both "Guide Chapter 16 Lab 11 stretch" 'Lab 11' \
+  "$EN_DIR/guide.md" "$KM_DIR/guide.md"
+require_in_both "Guide Compose Watch" 'compose\.watch\.yaml|Compose Watch' \
+  "$EN_DIR/guide.md" "$KM_DIR/guide.md"
+require_in_both "Guide SBOM" 'SBOM' \
   "$EN_DIR/guide.md" "$KM_DIR/guide.md"
 
 echo
