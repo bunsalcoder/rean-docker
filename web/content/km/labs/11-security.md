@@ -63,7 +63,7 @@ docker run --rm aquasec/trivy:0.63.0 image alpine:3.22
 
 អានរបាយការណ៍; កុំភ័យនឹង «LOW» គ្រប់មួយ។ ចំណុចគឺ៖ **ដឹងរបៀបស្កេន** មុន promote image។ `docker scout` ជាជម្រើសមួយទៀត បើ Docker Desktop មាន។
 
-CI របស់ repo នេះស្កេន teaching builds ជាមួយ Trivy៖ **HIGH** ជារបាយការណ៍ ហើយ **unfixed CRITICAL** fail job។ Runtime Dockerfiles លុប `npm`/`corepack` ពី base image បន្ទាប់ពី `npm ci` ដើម្បីឱ្យ gate ផ្តោតលើអ្វីដែល app ផ្ញើ — មិនមែន CVE គ្រប់មួយក្នុង package manager របស់ Node (ពិភាក្សា Lab 09)។
+CI របស់ repo នេះស្កេន teaching builds ជាមួយ Trivy៖ **HIGH** ជារបាយការណ៍ ហើយ **unfixed CRITICAL** fail job សម្រាប់ Labs **05, 08 (slim), 09, 12, និង 13**។ Builds ដែល **ខ្សោយ/ដំបូងដោយចេតនា** (Lab 03, Lab 08 fat image, Lab 04 leaky `ENV`, Lab 11 secret demo) នៅតែ compile ក្នុង CI ប៉ុន្តែ **មិន** នៅលើ CRITICAL gate — កុំមើល pipeline បៃតងថាជា “Dockerfile គ្រប់មួយ production-clean”។ Runtime Dockerfiles លុប `npm`/`corepack` ពី base image បន្ទាប់ពី `npm ci` ដើម្បីឱ្យ gate ផ្តោតលើអ្វីដែល app ផ្ញើ — មិនមែន CVE គ្រប់មួយក្នុង package manager របស់ Node (ពិភាក្សា Lab 09)។
 
 ### 4. Digest vs tag
 

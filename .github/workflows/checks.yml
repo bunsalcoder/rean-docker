@@ -16,6 +16,8 @@ jobs:
         run: ./scripts/check_km_parity.sh
       - name: Verify local site links
         run: python3 ./scripts/check_site_links.py
+      - name: Verify vendor script SRI hashes
+        run: ./scripts/check_vendor_sri.sh
       - name: Regenerate sitemap, robots.txt, and search indexes
         run: |
           python3 ./scripts/generate_sitemap.py

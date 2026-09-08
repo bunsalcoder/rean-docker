@@ -1,7 +1,7 @@
 # Common local tasks for rean-docker
 PORT ?= 5501
 
-.PHONY: help serve sync check check-km check-km-parity check-all check-links sitemap sync-km-i18n smoke smoke-concept ci-local
+.PHONY: help serve sync check check-km check-km-parity check-all check-links check-vendor-sri sitemap sync-km-i18n smoke smoke-concept ci-local
 
 help:
 	@echo "rean-docker make targets:"
@@ -11,7 +11,8 @@ help:
 	@echo "  make check-km      # fail if Khmer site content drifted from English structure"
 	@echo "  make check-km-parity  # fail if Khmer labs drift in checklists/code/invariants"
 	@echo "  make check-links   # fail if HTML/CSS/MD points at missing local files"
-	@echo "  make check-all     # run English + Khmer structure + parity + link checks"
+	@echo "  make check-vendor-sri  # fail if marked/DOMPurify SRI hashes drifted"
+	@echo "  make check-all     # run English + Khmer structure + parity + link + SRI checks"
 	@echo "  make sitemap       # regenerate sitemap, robots.txt, and search indexes"
 	@echo "  make sync-km-i18n  # refresh Khmer chapter titles in i18n-km.js from km guide"
 	@echo "  make smoke         # compose smoke via labs 04, 05, 09, 12, 13 run.sh"
@@ -34,13 +35,16 @@ check:
 check-km:
 	./scripts/check_km_content.sh
 
-check-all: check check-km check-km-parity check-links
+check-all: check check-km check-km-parity check-links check-vendor-sri
 
 check-km-parity:
 	./scripts/check_km_parity.sh
 
 check-links:
 	python3 ./scripts/check_site_links.py
+
+check-vendor-sri:
+	./scripts/check_vendor_sri.sh
 
 sitemap:
 	python3 ./scripts/generate_sitemap.py
