@@ -2,7 +2,9 @@ services:
   api:
     build: .
     ports:
-      - "${PORT:-3000}:3000"
+      # Publish on localhost only (same idea as Lab 09) so a forgotten stack
+      # is not reachable from other machines on the LAN.
+      - "127.0.0.1:${PORT:-3000}:3000"
     env_file: .env
     environment:
       PORT: ${PORT:-3000}

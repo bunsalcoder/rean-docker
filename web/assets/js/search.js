@@ -188,6 +188,14 @@
     return slice;
   };
 
+  const escapeAttr = (value) =>
+    String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+
   const highlight = (text, terms) => {
     let out = text.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
     terms.forEach((term) => {
@@ -240,7 +248,7 @@
         const kind = doc.type === "lab" ? t("search.kindLab") : t("search.kindChapter");
         const snip = highlight(snippetFor(doc, terms), terms);
         return `<li>
-          <a href="${doc.href}" data-search-item data-index="${i}">
+          <a href="${escapeAttr(doc.href)}" data-search-item data-index="${i}">
             <span class="search-kind">${kind}</span>
             <span class="search-title">${highlight(doc.title, terms)}</span>
             <span class="search-snippet">${snip}</span>

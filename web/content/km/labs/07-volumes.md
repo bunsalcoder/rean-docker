@@ -6,7 +6,7 @@
 
 ## ជំហាន
 
-**Optional helper:** `./run.sh`។ **Optional Compose:** `docker compose up -d --wait` រួច `exec` / `down` vs `down -v`។
+**Optional helper:** `./run.sh`។ **Optional Compose:** `cp .env.example .env` រួច `docker compose up -d --wait` រួច `exec` / `down` vs `down -v`។ Password នៅក្នុង `.env` (Labs 04/05) មិន hardcode ក្នុង YAML។
 
 ```bash
 docker volume create lab07-pgdata

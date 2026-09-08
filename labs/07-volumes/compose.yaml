@@ -1,9 +1,10 @@
 # Optional Compose form of Lab 07 — named volume `pgdata` outlives the container.
+# Password comes from `.env` (copy `.env.example`), same rule as Labs 04/05.
 services:
   db:
     image: postgres:16-alpine
     environment:
-      POSTGRES_PASSWORD: secret
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:

@@ -46,6 +46,7 @@ If you changed `POSTGRES_USER` / `POSTGRES_DB` in `.env`, use those names in `ps
 3. Named volume `pgdata` survives `docker compose down` (unless `-v`).
 4. The password lives in `.env`, not as a literal in `compose.yaml`. Compose interpolates `${POSTGRES_PASSWORD}` at start time.
 5. `DATABASE_URL` is still assembled from those variables. Run `docker compose config` and you will see the interpolated URL — including the password. That is why production setups prefer Docker secrets or a vault, not a connection string sitting in Compose output.
+6. The API publishes as `127.0.0.1:${PORT}:3000` — reachable via curl on this machine, not advertised on every host interface.
 
 ## Success criteria
 
