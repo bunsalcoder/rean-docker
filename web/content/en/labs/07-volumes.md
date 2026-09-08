@@ -7,7 +7,7 @@ Prove that named volumes keep data after a container is deleted.
 ## Steps
 
 **Optional helper:** `./run.sh` proves the named volume survives recreate (uses `.bind/` for the bind-mount contrast).  
-**Optional Compose form:** `docker compose up -d --wait`, then `docker compose exec db psql …`, `docker compose down` (keep volume) vs `docker compose down -v`.
+**Optional Compose form:** `cp .env.example .env`, then `docker compose up -d --wait`, `docker compose exec db psql …`, `docker compose down` (keep volume) vs `docker compose down -v`. The password stays in `.env` (Labs 04/05), not hardcoded in YAML.
 
 ```bash
 docker volume create lab07-pgdata

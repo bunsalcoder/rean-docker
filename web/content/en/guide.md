@@ -1086,7 +1086,8 @@ services:
   web:
     build: .
     ports:
-      - "3000:3000"
+      # Lab 05 binds localhost so a forgotten stack is not open on the LAN.
+      - "127.0.0.1:3000:3000"
     env_file: .env
     environment:
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
@@ -1113,7 +1114,7 @@ networks:
   rean:
 ```
 
-Copy `.env.example` → `.env` before `docker compose up`. A value in the Compose file is visible in `docker compose config` on your machine — that is expected. The rule is: **do not commit `.env` or bake secrets into the image**.
+Copy `.env.example` → `.env` before `docker compose up`. A value in the Compose file is visible in `docker compose config` on your machine — that is expected. The rule is: **do not commit `.env` or bake secrets into the image**. Use `3000:3000` (all interfaces) only when you intentionally need remote access.
 
 ### Essential Compose commands
 

@@ -56,6 +56,12 @@ smoke-concept:
 	./scripts/smoke_concept_labs.sh
 
 ci-local: check-all sitemap
+	@git diff --exit-code -- \
+		web/sitemap.xml \
+		web/robots.txt \
+		web/assets/search-index-en.json \
+		web/assets/search-index-km.json \
+		|| (echo "Generated site artifacts drifted. Commit make sitemap output." && exit 1)
 	@echo ""
 	@echo "ci-local passed (content + sitemap + search index)."
 	@echo "Optional with Docker:  make smoke && make smoke-concept"

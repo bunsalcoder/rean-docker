@@ -22,6 +22,7 @@ run_one labs/11-security/run.sh
 
 echo "== compose config (06 / 07 / 10 fixed) =="
 docker compose -f labs/06-networks/compose.yaml config >/dev/null
+cp labs/07-volumes/.env.example labs/07-volumes/.env
 docker compose -f labs/07-volumes/compose.yaml config >/dev/null
 docker compose -f labs/10-debugging/compose.yaml config >/dev/null
 docker compose -f labs/10-debugging/compose.fixed.yaml config >/dev/null

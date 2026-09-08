@@ -46,6 +46,7 @@ docker compose down -v     # DELETE database volume
 3. Named volume `pgdata` នៅរស់បន្ទាប់ពី `docker compose down` (លុះត្រាតែ `-v`)។
 4. Password ស្ថិតក្នុង `.env` មិនមែនជាតួអក្សរក្នុង `compose.yaml`។ Compose interpolate `${POSTGRES_PASSWORD}` ពេលចាប់ផ្ដើម។
 5. `DATABASE_URL` នៅតែត្រូវផ្គុំពី variables ទាំងនោះ។ រត់ `docker compose config` អ្នកនឹងឃើញ URL រួម password។ នោះហើយជាហេតុ production ចូលចិត្ត Docker secrets ឬ vault មិនមែន connection string នៅក្នុងលទ្ធផល Compose។
+6. API publish ជា `127.0.0.1:${PORT}:3000` — curl បានលើម៉ាស៊ីននេះ មិនផ្សព្វផ្សាយលើគ្រប់ host interface។
 
 ## លក្ខខណ្ឌជោគជ័យ
 

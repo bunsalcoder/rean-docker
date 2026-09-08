@@ -190,7 +190,8 @@ function sanitizeHtml(html) {
       ADD_ATTR: ["checked", "disabled"],
     });
   }
-  return html;
+  // Fail closed: never inject unsanitized Markdown HTML if DOMPurify is missing.
+  return String(html || "").replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
 }
 
 function renderMarkdown(target, md, { checklistScope } = {}) {

@@ -16,3 +16,17 @@ jobs:
         run: ./scripts/check_km_parity.sh
       - name: Verify local site links
         run: python3 ./scripts/check_site_links.py
+      - name: Regenerate sitemap, robots.txt, and search indexes
+        run: |
+          python3 ./scripts/generate_sitemap.py
+          python3 ./scripts/generate_search_index.py
+      - name: Verify generated site artifacts are committed
+        run: |
+          if ! git diff --exit-code -- \
+            web/sitemap.xml \
+            web/robots.txt \
+            web/assets/search-index-en.json \
+            web/assets/search-index-km.json; then
+            echo "::error::Generated site artifacts drifted from git. Run: make sitemap && commit the results."
+            exit 1
+          fi
