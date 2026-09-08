@@ -2,7 +2,8 @@ services:
   api:
     build: .
     ports:
-      - "${PORT:-3000}:3000"
+      # Match Labs 05/09 — publish on localhost so a forgotten baseline is not LAN-wide.
+      - "127.0.0.1:${PORT:-3000}:3000"
     env_file: .env
     environment:
       PORT: ${PORT:-3000}

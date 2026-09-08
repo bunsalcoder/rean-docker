@@ -34,6 +34,15 @@ Optional: `make sync-km-i18n` (or `python3 scripts/sync_km_i18n.py`) refreshes K
 
 Labs `03`, `05`, `08`, `09`, `12`, and `13` each have their own `package.json` / lockfile on purpose (isolated teaching folders). When bumping Express or other shared deps, update **all six** locks (or merge the Dependabot PRs for each directory). Do not assume a change in one lab propagates.
 
+## Site vendor libraries (marked / DOMPurify)
+
+Self-hosted under `web/assets/js/vendor/` (no CDN). Versions are tracked in `web/package.json` for Dependabot. After a bump:
+
+```bash
+./scripts/vendor_site_libs.sh   # copy UMD builds + refresh SRI on learn.html / lab.html
+make check-vendor-sri
+```
+
 ## Pull requests
 
-CI runs `make check-all` (English sync, Khmer structure/parity, and local site link checks), builds the lab Dockerfiles, smoke-tests labs 04, 05, 09, 12, and 13 via their `run.sh` helpers (`make smoke`), runs concept-lab helpers including Lab 03 (`make smoke-concept`), and fails on unfixed CRITICAL findings from Trivy. The Pages workflow builds the static site (sync + sitemap + search index) on PRs/`develop` and deploys only from `main` — content checks are not duplicated there. Keep secrets out of git (`.env` is ignored; commit `.env.example` only).
+CI runs `make check-all` (English sync, Khmer structure/parity, local site link checks, and vendor SRI), builds the lab Dockerfiles, smoke-tests labs 04, 05, 09, 12, and 13 via their `run.sh` helpers (`make smoke`), runs concept-lab helpers including Lab 03 (`make smoke-concept`), and fails on unfixed CRITICAL findings from Trivy for Labs **05, 08 (slim), 09, 12, and 13**. Early or intentional anti-pattern images (03, 08-fat, leaky, secret demo) are built but not CRITICAL-gated. The Pages workflow deploys from `main` **only after CI succeeds**; PRs dry-run the site build. Keep secrets out of git (`.env` is ignored; commit `.env.example` only). After content that affects SEO/search, run `make sitemap` and commit the generated files so CI’s dirty-tree check stays green.

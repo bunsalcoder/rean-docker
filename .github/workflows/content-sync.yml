@@ -85,6 +85,12 @@ jobs:
               --ignore-unfixed \
               --exit-code 1
           }
+          # CRITICAL gate: progressive / prod-minded teaching images only.
+          # Intentionally NOT gated (still built above for smoke/compile checks):
+          #   rean-ci:03      — early Dockerfile (pre-hardening pedagogy)
+          #   rean-ci:08-fat  — fat multi-stage contrast image
+          #   rean-ci:leaky   — Lab 04 anti-pattern (ENV secret)
+          #   rean-ci:secret  — Lab 11 BuildKit secret demo
           for tag in rean-ci:05 rean-ci:08 rean-ci:09 rean-ci:12 rean-ci:13; do
             scan_report_high "$tag"
             scan_fail_critical "$tag"

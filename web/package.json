@@ -1,0 +1,9 @@
+{
+  "name": "rean-docker-site-vendor",
+  "private": true,
+  "description": "Tracks marked + DOMPurify for the self-hosted copies under assets/js/vendor/. Not used by the static site at runtime — after Dependabot bumps, run: ./scripts/vendor_site_libs.sh",
+  "dependencies": {
+    "dompurify": "3.4.13",
+    "marked": "15.0.12"
+  }
+}

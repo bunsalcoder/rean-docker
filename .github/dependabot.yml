@@ -61,3 +61,11 @@ updates:
     schedule:
       interval: monthly
     open-pull-requests-limit: 2
+
+  # Self-hosted marked + DOMPurify (copied into assets/js/vendor/). After a bump PR:
+  #   ./scripts/vendor_site_libs.sh
+  - package-ecosystem: npm
+    directory: /web
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 2
