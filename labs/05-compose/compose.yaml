@@ -32,6 +32,8 @@ services:
     restart: unless-stopped
 
   db:
+    # Floating series tags on purpose (Chapter 15 pins come in Lab 13).
+    # Contrast: Capstone uses postgres:16-alpine@sha256:… — do not copy Lab 05 into prod as-is.
     image: postgres:16-alpine
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
@@ -49,6 +51,7 @@ services:
       - rean
 
   redis:
+    # Same floating-tag pedagogy as db above.
     image: redis:7-alpine
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]

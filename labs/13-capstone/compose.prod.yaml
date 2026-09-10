@@ -2,6 +2,13 @@
 # Prod pulls a pre-built API image; db + redis still run beside it.
 # Prefer adapting this yourself before copying — then validate with:
 #   REGISTRY_OWNER=example IMAGE_REF=:sha-deadbee docker compose -f compose.prod.yaml config
+#
+# Hardening note: the API below gets read_only / cap_drop / no-new-privileges.
+# db + redis stay softer on purpose (teaching baseline). Stretch ideas:
+#   - cap_drop + no-new-privileges on db/redis
+#   - Redis AUTH (--requirepass) and drop the open ping healthcheck pattern
+#   - Put db/redis on an internal network with no published ports (already true here)
+# Refresh Postgres/Redis digests: make refresh-digests
 services:
   api:
     # IMAGE_REF is ":sha-…" (tag) or "@sha256:…" (digest). Required — no :latest default.

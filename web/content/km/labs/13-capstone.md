@@ -40,6 +40,7 @@ cp -R ../05-compose/. .
 ## Stretch goals
 
 - `compose.prod.yaml` ដាច់ដោយឡែក ជាមួយ restart policy និង resource limits (ជំពូក 17 / Lab 12)
+- រឹត `db` / `redis` ក្នុង prod Compose ដូច API រួច (`cap_drop`, Redis AUTH, network ខាងក្នុង) — មើល comments ក្នុង `compose.prod.yaml`
 - Nginx ឬ Caddy reverse proxy មុខ API
 - CI job: `docker compose config` + build + smoke + push (pattern: `workflows/ci.yml` ពី Lab 12)
 - ស្កេន image ក្នុង CI (Lab 11)

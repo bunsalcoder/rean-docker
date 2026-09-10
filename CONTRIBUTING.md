@@ -34,6 +34,26 @@ Optional: `make sync-km-i18n` (or `python3 scripts/sync_km_i18n.py`) refreshes K
 
 Labs `03`, `05`, `08`, `09`, `12`, and `13` each have their own `package.json` / lockfile on purpose (isolated teaching folders). When bumping Express or other shared deps, update **all six** locks (or merge the Dependabot PRs for each directory). Do not assume a change in one lab propagates.
 
+| Lab | App shape | Hardening notes |
+|-----|-----------|-----------------|
+| 03 | Express hello | Floating `FROM` tag; pre-hardening |
+| 05 | API + Postgres + Redis | Floating Compose tags for db/redis |
+| 08 | TypeScript multi-stage | Slim vs fat contrast |
+| 09 | Prod-minded API | Digest-pinned Node; Dependabot docker |
+| 12 | Deploy/CI API | Digest-pinned Node; Dependabot docker |
+| 13 | Capstone baseline | Digest-pinned Node + Compose db/redis |
+
+## Compose image digests (Lab 13)
+
+Dependabot’s `docker` ecosystem updates Dockerfiles, not Compose `image: …@sha256:` pins. After you intentionally upgrade Postgres/Redis series tags (or Hub moved the tag):
+
+```bash
+make refresh-digests          # rewrite Lab 13 compose.yaml + compose.prod.yaml
+# optional: make refresh-digests-check   # fail if pins ≠ current Hub digests
+```
+
+Lab 05 keeps floating tags on purpose — do not “fix” those to digests until Capstone / Chapter 15.
+
 ## Site vendor libraries (marked / DOMPurify)
 
 Self-hosted under `web/assets/js/vendor/` (no CDN). Versions are tracked in `web/package.json` for Dependabot. After a bump:
