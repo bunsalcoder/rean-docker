@@ -7,6 +7,8 @@ updates:
     open-pull-requests-limit: 5
 
   # Production-minded Dockerfiles pin base digests — keep them refreshable.
+  # Compose image digests (Lab 13 Postgres/Redis) are not covered here; run:
+  #   make refresh-digests
   - package-ecosystem: docker
     directory: /labs/09-production
     schedule:

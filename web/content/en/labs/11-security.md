@@ -76,7 +76,7 @@ echo "$DIGEST"
 docker pull "$DIGEST"
 ```
 
-Tags move. A digest (`alpine@sha256:…`) is the bits you actually pulled. Pin digests when supply-chain control matters (CI, production). Labs 09, 12, and 13 pin `FROM node:22-alpine@sha256:…`; Lab 13 also pins Postgres/Redis in Compose. Digests go stale on purpose — refresh them when you upgrade (Dependabot opens PRs for those Dockerfiles).
+Tags move. A digest (`alpine@sha256:…`) is the bits you actually pulled. Pin digests when supply-chain control matters (CI, production). Labs 09, 12, and 13 pin `FROM node:22-alpine@sha256:…`; Lab 13 also pins Postgres/Redis in Compose. Digests go stale on purpose — refresh Dockerfiles via Dependabot, and Lab 13 Compose pins with `make refresh-digests`.
 
 ### 5. Stretch — BuildKit cache + multi-arch (Chapter 16)
 
