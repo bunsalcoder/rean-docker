@@ -4,6 +4,9 @@ FROM node:22-alpine@sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a55
 
 WORKDIR /app
 
+# Config, not a secret (Lab 04 / Lab 11). Set here so `docker run` matches Compose.
+ENV NODE_ENV=production
+
 COPY package.json package-lock.json ./
 # Install app deps, then drop the base image's npm/corepack (CVE surface we do not need at runtime).
 RUN npm ci --omit=dev \

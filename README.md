@@ -1,6 +1,6 @@
 # rean-docker
 
-[![CI](https://github.com/bunsalcoder/rean-docker/actions/workflows/content-sync.yml/badge.svg)](https://github.com/bunsalcoder/rean-docker/actions/workflows/content-sync.yml)
+[![CI](https://github.com/bunsalcoder/rean-docker/actions/workflows/ci.yml/badge.svg)](https://github.com/bunsalcoder/rean-docker/actions/workflows/ci.yml)
 [![Pages](https://github.com/bunsalcoder/rean-docker/actions/workflows/pages.yml/badge.svg)](https://bunsalcoder.github.io/rean-docker/)
 
 Learn Docker from absolute beginner to advanced — guided path with a full handbook, runnable labs, and a responsive static learning site.
