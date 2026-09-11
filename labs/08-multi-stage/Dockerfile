@@ -4,7 +4,7 @@
 # as the contrast anti-pattern. Refresh with:
 #   docker buildx imagetools inspect node:22-alpine --format '{{json .Manifest}}'
 # ---- build stage: TypeScript compiler + full node_modules ----
-FROM node:22-alpine@sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32 AS build
+FROM node:26-alpine@sha256:ef24c5053d50fdc3e4e56eb4e7ddb7861874ab0fdc797046ba897581deb8e868 AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN --mount=type=cache,target=/root/.npm \
@@ -13,7 +13,7 @@ COPY tsconfig.json server.ts ./
 RUN npm run build
 
 # ---- runtime: production deps + compiled JS only (no tsc, no npm) ----
-FROM node:22-alpine@sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32 AS runtime
+FROM node:26-alpine@sha256:ef24c5053d50fdc3e4e56eb4e7ddb7861874ab0fdc797046ba897581deb8e868 AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
 COPY package.json package-lock.json ./
