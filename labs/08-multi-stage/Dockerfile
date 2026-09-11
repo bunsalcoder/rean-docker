@@ -1,7 +1,10 @@
 # syntax=docker/dockerfile:1
 
+# Pin Node on the slim (CRITICAL-gated) image. Dockerfile.fat stays on a floating tag
+# as the contrast anti-pattern. Refresh with:
+#   docker buildx imagetools inspect node:22-alpine --format '{{json .Manifest}}'
 # ---- build stage: TypeScript compiler + full node_modules ----
-FROM node:22-alpine AS build
+FROM node:22-alpine@sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32 AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN --mount=type=cache,target=/root/.npm \
@@ -10,7 +13,7 @@ COPY tsconfig.json server.ts ./
 RUN npm run build
 
 # ---- runtime: production deps + compiled JS only (no tsc, no npm) ----
-FROM node:22-alpine AS runtime
+FROM node:22-alpine@sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32 AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
 COPY package.json package-lock.json ./

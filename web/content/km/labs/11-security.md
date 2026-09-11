@@ -76,7 +76,7 @@ echo "$DIGEST"
 docker pull "$DIGEST"
 ```
 
-Tags ផ្លាស់ទី។ Digest (`alpine@sha256:…`) គឺ bits ដែលអ្នកពិតជា pull។ Pin digests ពេលគ្រប់គ្រង supply-chain សំខាន់ (CI, production)។ Labs 09, 12, និង 13 pin `FROM node:22-alpine@sha256:…`; Lab 13 pin Postgres/Redis ក្នុង Compose ដែរ។ Digest ហួសសម័យដោយចេតនា — refresh Dockerfiles តាម Dependabot ហើយ Lab 13 Compose pins តាម `make refresh-digests`។
+Tags ផ្លាស់ទី។ Digest (`alpine@sha256:…`) គឺ bits ដែលអ្នកពិតជា pull។ Pin digests ពេលគ្រប់គ្រង supply-chain សំខាន់ (CI, production)។ Labs 05, 08 (slim), 09, 12, និង 13 pin `FROM node:22-alpine@sha256:…`; Lab 13 pin Postgres/Redis ក្នុង Compose ដែរ។ Digest ហួសសម័យដោយចេតនា — refresh Dockerfiles តាម Dependabot ហើយ Lab 13 Compose pins តាម `make refresh-digests` (CI រត់ `make refresh-digests-check` តាម weekly schedule ដែរ)។
 
 ### 5. Stretch — BuildKit cache + multi-arch (ជំពូក 16)
 

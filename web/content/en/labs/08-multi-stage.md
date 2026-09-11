@@ -33,7 +33,7 @@ docker run --rm -p 3001:3000 rean-multi:slim
 - `RUN --mount=type=cache,target=/root/.npm` keeps the npm download cache between builds without copying it into a layer (BuildKit; Chapter 16).
 - Image size and layer history differ between `:fat` and `:slim`.
 - `:slim` runs as `USER node`. `:fat` still runs as root — smaller is not the only win.
-- Digests are **not** required here — Lab 09 pins `FROM …@sha256:…` once you care about bit-for-bit reproducibility. Slim + non-root is the win for this lab.
+- The slim `Dockerfile` pins `FROM …@sha256:…` so the CRITICAL-gated image is reproducible; `Dockerfile.fat` still uses a floating tag on purpose. Lab 09 adds healthchecks, limits, and a read-only rootfs — slim + non-root is still the win to notice here.
 
 ```bash
 docker run --rm --entrypoint whoami rean-multi:slim
@@ -48,4 +48,4 @@ docker run --rm --entrypoint whoami rean-multi:fat
 
 ## Next
 
-Go to **Lab 09 — Production-minded container** for healthchecks, limits, digest pins, and a read-only rootfs.
+Go to **Lab 09 — Production-minded container** for healthchecks, limits, a read-only rootfs, and production Compose habits.

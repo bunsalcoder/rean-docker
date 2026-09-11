@@ -37,8 +37,8 @@ Labs `03`, `05`, `08`, `09`, `12`, and `13` each have their own `package.json` /
 | Lab | App shape | Hardening notes |
 |-----|-----------|-----------------|
 | 03 | Express hello | Floating `FROM` tag; pre-hardening |
-| 05 | API + Postgres + Redis | Floating Compose tags for db/redis |
-| 08 | TypeScript multi-stage | Slim vs fat contrast |
+| 05 | API + Postgres + Redis | Digest-pinned Node API; floating Compose tags for db/redis |
+| 08 | TypeScript multi-stage | Slim digest-pinned; fat floating contrast |
 | 09 | Prod-minded API | Digest-pinned Node; Dependabot docker |
 | 12 | Deploy/CI API | Digest-pinned Node; Dependabot docker |
 | 13 | Capstone baseline | Digest-pinned Node + Compose db/redis |
@@ -52,7 +52,7 @@ make refresh-digests          # rewrite Lab 13 compose.yaml + compose.prod.yaml
 # optional: make refresh-digests-check   # fail if pins ≠ current Hub digests
 ```
 
-Lab 05 keeps floating tags on purpose — do not “fix” those to digests until Capstone / Chapter 15.
+A weekly GitHub Actions workflow runs `make refresh-digests-check` so Compose pins cannot age silently. Lab 05 keeps floating Compose tags on purpose — do not “fix” those to digests until Capstone / Chapter 15.
 
 ## Site vendor libraries (marked / DOMPurify)
 

@@ -16,7 +16,7 @@ help:
 	@echo "  make sitemap       # regenerate sitemap, robots.txt, and search indexes"
 	@echo "  make sync-km-i18n  # refresh Khmer chapter titles in i18n-km.js from km guide"
 	@echo "  make refresh-digests       # update Lab 13 Postgres/Redis Compose digests from Hub"
-	@echo "  make refresh-digests-check # fail if Lab 13 Compose digests drifted from Hub"
+	@echo "  make refresh-digests-check # fail if Lab 13 Compose digests drifted from Hub (also weekly CI)"
 	@echo "  make smoke         # compose smoke via labs 04, 05, 09, 12, 13 run.sh"
 	@echo "  make smoke-concept # run.sh helpers for labs 01–03, 06–08, 10, 11"
 	@echo "  make ci-local      # content checks + sitemap + search index (Docker smokes optional)"
