@@ -40,8 +40,17 @@ Labs `03`, `05`, `08`, `09`, `12`, and `13` each have their own `package.json` /
 | 05 | API + Postgres + Redis | Digest-pinned Node API; floating Compose tags for db/redis |
 | 08 | TypeScript multi-stage | Slim digest-pinned; fat floating contrast |
 | 09 | Prod-minded API | Digest-pinned Node; Dependabot docker |
-| 12 | Deploy/CI API | Digest-pinned Node; Dependabot docker |
-| 13 | Capstone baseline | Digest-pinned Node + Compose db/redis |
+| 12 | Deploy/CI API | Same Dockerfile shape as 09/13; Dependabot docker |
+| 13 | Capstone baseline | Same Dockerfile shape as 09/12; Compose db/redis digests |
+
+`make check-lab-invariants` (part of `make check-all`) fails if:
+
+- CRITICAL-gated Node digests diverge across Labs 05 / 08 slim / 09 / 12 / 13
+- Labs **09, 12, and 13** Dockerfiles are not byte-identical
+- Express versions diverge across the six Node labs (or `pg`/`redis` between 05 and 13)
+- The npm/corepack strip is missing from a CRITICAL-gated Dockerfile
+
+Keep app `server.js` files different on purpose (each lab teaches a different API shape). Only the shared hardening surface is gated.
 
 ## Compose image digests (Lab 13)
 
@@ -65,4 +74,4 @@ make check-vendor-sri
 
 ## Pull requests
 
-CI runs `make check-all` (English sync, Khmer structure/parity, local site link checks, and vendor SRI), builds the lab Dockerfiles, smoke-tests labs 04, 05, 09, 12, and 13 via their `run.sh` helpers (`make smoke`), runs concept-lab helpers including Lab 03 (`make smoke-concept`), and fails on unfixed CRITICAL findings from Trivy for Labs **05, 08 (slim), 09, 12, and 13**. Early or intentional anti-pattern images (03, 08-fat, leaky, secret demo) are built but not CRITICAL-gated. The Pages workflow deploys from `main` **only after CI succeeds**; PRs dry-run the site build. Keep secrets out of git (`.env` is ignored; commit `.env.example` only). After content that affects SEO/search, run `make sitemap` and commit the generated files so CI’s dirty-tree check stays green.
+CI runs `make check-all` (English sync, Khmer structure/parity, shared lab hardening invariants, local site link checks, and vendor SRI), builds the lab Dockerfiles, smoke-tests labs 04, 05, 09, 12, and 13 via their `run.sh` helpers (`make smoke`), runs concept-lab helpers including Lab 03 (`make smoke-concept`), and fails on unfixed CRITICAL findings from Trivy for Labs **05, 08 (slim), 09, 12, and 13**. Early or intentional anti-pattern images (03, 08-fat, leaky, secret demo) are built but not CRITICAL-gated. The Pages workflow deploys from `main` **only after CI succeeds**; PRs dry-run the site build. Keep secrets out of git (`.env` is ignored; commit `.env.example` only). After content that affects SEO/search, run `make sitemap` and commit the generated files so CI’s dirty-tree check stays green.
