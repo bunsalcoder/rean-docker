@@ -6,9 +6,22 @@ updates:
       interval: weekly
     open-pull-requests-limit: 5
 
-  # Production-minded Dockerfiles pin base digests — keep them refreshable.
+  # CRITICAL-gated / production-minded Dockerfiles pin base digests — keep them refreshable.
   # Compose image digests (Lab 13 Postgres/Redis) are not covered here; run:
   #   make refresh-digests
+  # Weekly workflow: .github/workflows/digests.yml → make refresh-digests-check
+  - package-ecosystem: docker
+    directory: /labs/05-compose
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 2
+
+  - package-ecosystem: docker
+    directory: /labs/08-multi-stage
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 2
+
   - package-ecosystem: docker
     directory: /labs/09-production
     schedule:

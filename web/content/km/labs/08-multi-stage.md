@@ -33,7 +33,7 @@ docker run --rm -p 3001:3000 rean-multi:slim
 - `RUN --mount=type=cache,target=/root/.npm` រក្សា cache download npm រវាង builds ដោយមិន copy វាចូល layer (BuildKit; ជំពូក 16)។
 - Image size និង layer history ខុសគ្នារវាង `:fat` និង `:slim`។
 - `:slim` run ជា `USER node`។ `:fat` នៅតែ run ជា root — តូចជាងមិនមែនជាជ័យជម្នះតែមួយ។
-- Digests **មិន** ត្រូវនៅទីនេះ — Lab 09 pin `FROM …@sha256:…` នៅពេលអ្នកចង់ reproducibility bit-for-bit។ Slim + non-root គឺជាជ័យជម្នះនៃ lab នេះ។
+- Slim `Dockerfile` pin `FROM …@sha256:…` ដើម្បីឱ្យ image CRITICAL-gated reproducible; `Dockerfile.fat` នៅប្រើ floating tag ដោយចេតនា។ Lab 09 បន្ថែម healthchecks, limits និង read-only rootfs — slim + non-root នៅតែជាជ័យជម្នះដែលត្រូវកត់សម្គាល់នៅទីនេះ។
 
 ```bash
 docker run --rm --entrypoint whoami rean-multi:slim
@@ -48,4 +48,4 @@ docker run --rm --entrypoint whoami rean-multi:fat
 
 ## បន្ទាប់
 
-ទៅ **Lab 09 — Container តាមទម្លាប់ production** សម្រាប់ healthchecks, limits, digest pins និង read-only rootfs។
+ទៅ **Lab 09 — Container តាមទម្លាប់ production** សម្រាប់ healthchecks, limits, read-only rootfs និងទម្លាប់ Compose បែប production។

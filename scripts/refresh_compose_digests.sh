@@ -98,4 +98,5 @@ done
 
 echo
 echo "Done. Review the diff, then commit if digests changed."
-echo "Note: Lab 05 intentionally uses floating tags (postgres:16-alpine / redis:7-alpine)."
+echo "Note: Lab 05 Compose intentionally uses floating tags (postgres:16-alpine / redis:7-alpine)."
+echo "      Lab 05/08 Dockerfiles pin Node — Dependabot covers those; this script is Compose-only."

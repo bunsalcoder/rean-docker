@@ -47,7 +47,7 @@ docker compose down -v     # DELETE database volume
 4. Password ស្ថិតក្នុង `.env` មិនមែនជាតួអក្សរក្នុង `compose.yaml`។ Compose interpolate `${POSTGRES_PASSWORD}` ពេលចាប់ផ្ដើម។
 5. `DATABASE_URL` នៅតែត្រូវផ្គុំពី variables ទាំងនោះ។ រត់ `docker compose config` អ្នកនឹងឃើញ URL រួម password។ នោះហើយជាហេតុ production ចូលចិត្ត Docker secrets ឬ vault មិនមែន connection string នៅក្នុងលទ្ធផល Compose។
 6. API publish ជា `127.0.0.1:${PORT}:3000` — curl បានលើម៉ាស៊ីននេះ មិនផ្សព្វផ្សាយលើគ្រប់ host interface។
-7. `postgres:16-alpine` / `redis:7-alpine` នៅទីនេះជា **floating series tags** ដើម្បីឱ្យ Compose ងាយចូល។ Lab 13 (និងជំពូក 15) pin digests សម្រាប់ supply-chain — កុំយក file នេះធ្វើ production template។
+7. API `Dockerfile` pin `FROM node:22-alpine@sha256:…` ដើម្បីឱ្យ CRITICAL scan ក្នុង CI reproducible។ `postgres:16-alpine` / `redis:7-alpine` នៅតែ **floating series tags** ក្នុង Compose ដើម្បីឱ្យ file ងាយចូល។ Lab 13 (និងជំពូក 15) pin digests ទាំងនោះសម្រាប់ supply-chain — កុំយក Compose file នេះធ្វើ production template។
 
 ## លក្ខខណ្ឌជោគជ័យ
 
