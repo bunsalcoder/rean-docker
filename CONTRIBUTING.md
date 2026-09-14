@@ -2,6 +2,19 @@
 
 Handbook English is canonical in `docs/DOCKER_FROM_ZERO_TO_HERO.md`. Lab English is canonical in each `labs/*/README.md`. The site copies under `web/content/en/` must match those sources.
 
+## Branch workflow
+
+| Branch | Role |
+|--------|------|
+| `develop` | Integration branch — open PRs here |
+| `main` | Published GitHub Pages site — promote only when ready to ship |
+
+Day-to-day work: branch from **`develop`**, open PRs into **`develop`**. Dependabot is configured the same way (`target-branch: develop`).
+
+**Promote to learners:** open a PR (or merge) **`develop` → `main`**. CI must pass; Pages then deploys from `main`. Before promoting, run `make ci-local` locally; if Docker is available, also `make smoke` and `make smoke-concept`.
+
+Do not treat a stale local `main` as current — update from `origin/main` only when releasing, or check out `develop` for active work.
+
 ## Edit English, then sync
 
 ```bash
@@ -76,4 +89,4 @@ make check-vendor-sri
 
 ## Pull requests
 
-CI runs `make check-all` (English sync, Khmer structure/parity, shared lab hardening invariants, local site link checks, and vendor SRI), builds the lab Dockerfiles, smoke-tests labs 04, 05, 09, 12, and 13 via their `run.sh` helpers (`make smoke`), runs concept-lab helpers including Lab 03 (`make smoke-concept`), and fails on unfixed CRITICAL findings from Trivy for Labs **05, 08 (slim), 09, 12, and 13**. Early or intentional anti-pattern images (03, 08-fat, leaky, secret demo) are built but not CRITICAL-gated. The Pages workflow deploys from `main` **only after CI succeeds**; PRs dry-run the site build. Keep secrets out of git (`.env` is ignored; commit `.env.example` only). After content that affects SEO/search, run `make sitemap` and commit the generated files so CI’s dirty-tree check stays green.
+Open PRs against **`develop`** (not `main`). CI runs `make check-all` (English sync, Khmer structure/parity, shared lab hardening invariants, local site link checks, and vendor SRI), builds the lab Dockerfiles, smoke-tests labs 04, 05, 09, 12, and 13 via their `run.sh` helpers (`make smoke`), runs concept-lab helpers including Lab 03 (`make smoke-concept`), and fails on unfixed CRITICAL findings from Trivy for Labs **05, 08 (slim), 09, 12, and 13**. Early or intentional anti-pattern images (03, 08-fat, leaky, secret demo) are built but not CRITICAL-gated. The Pages workflow deploys from `main` **only after CI succeeds**; PRs dry-run the site build. Keep secrets out of git (`.env` is ignored; commit `.env.example` only). After content that affects SEO/search, run `make sitemap` and commit the generated files so CI’s dirty-tree check stays green.

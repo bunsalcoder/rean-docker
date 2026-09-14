@@ -2,6 +2,7 @@ version: 2
 updates:
   - package-ecosystem: github-actions
     directory: /
+    target-branch: develop
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
@@ -12,30 +13,35 @@ updates:
   # Weekly workflow: .github/workflows/digests.yml → make refresh-digests-check
   - package-ecosystem: docker
     directory: /labs/05-compose
+    target-branch: develop
     schedule:
       interval: weekly
     open-pull-requests-limit: 2
 
   - package-ecosystem: docker
     directory: /labs/08-multi-stage
+    target-branch: develop
     schedule:
       interval: weekly
     open-pull-requests-limit: 2
 
   - package-ecosystem: docker
     directory: /labs/09-production
+    target-branch: develop
     schedule:
       interval: weekly
     open-pull-requests-limit: 2
 
   - package-ecosystem: docker
     directory: /labs/12-ci-cd
+    target-branch: develop
     schedule:
       interval: weekly
     open-pull-requests-limit: 2
 
   - package-ecosystem: docker
     directory: /labs/13-capstone
+    target-branch: develop
     schedule:
       interval: weekly
     open-pull-requests-limit: 2
@@ -43,36 +49,42 @@ updates:
   # Teaching Node apps share Express (and friends). Bump all six when Dependabot opens PRs.
   - package-ecosystem: npm
     directory: /labs/03-dockerfile
+    target-branch: develop
     schedule:
       interval: monthly
     open-pull-requests-limit: 2
 
   - package-ecosystem: npm
     directory: /labs/05-compose
+    target-branch: develop
     schedule:
       interval: monthly
     open-pull-requests-limit: 2
 
   - package-ecosystem: npm
     directory: /labs/08-multi-stage
+    target-branch: develop
     schedule:
       interval: monthly
     open-pull-requests-limit: 2
 
   - package-ecosystem: npm
     directory: /labs/09-production
+    target-branch: develop
     schedule:
       interval: monthly
     open-pull-requests-limit: 2
 
   - package-ecosystem: npm
     directory: /labs/12-ci-cd
+    target-branch: develop
     schedule:
       interval: monthly
     open-pull-requests-limit: 2
 
   - package-ecosystem: npm
     directory: /labs/13-capstone
+    target-branch: develop
     schedule:
       interval: monthly
     open-pull-requests-limit: 2
@@ -81,6 +93,7 @@ updates:
   #   ./scripts/vendor_site_libs.sh
   - package-ecosystem: npm
     directory: /web
+    target-branch: develop
     schedule:
       interval: monthly
     open-pull-requests-limit: 2
