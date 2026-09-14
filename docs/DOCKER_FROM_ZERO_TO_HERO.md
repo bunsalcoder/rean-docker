@@ -1116,6 +1116,8 @@ networks:
 
 Copy `.env.example` → `.env` before `docker compose up`. A value in the Compose file is visible in `docker compose config` on your machine — that is expected. The rule is: **do not commit `.env` or bake secrets into the image**. Use `3000:3000` (all interfaces) only when you intentionally need remote access.
 
+**URL passwords:** `DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:…` breaks if the password contains `@`, `:`, `/`, or `#` (Compose interpolates before the URL parser runs). Lab passwords stay simple on purpose. In real apps, prefer discrete env vars into the process, or URL-encode the password before assembling the string.
+
 ### Essential Compose commands
 
 ```bash
@@ -1906,6 +1908,8 @@ Next: **Lab 12** makes you run the CI steps locally, then optionally push. After
 
 Build a small stack in this repo. A **day-one runnable baseline** (Compose + Node API) already lives in the capstone folder so you can `up` immediately — then **own** it (`CAPSTONE_OWN` in Lab 13): add routes, reshape Compose/Dockerfile, or add a proxy. Prefer editing that folder over leaving Lab 05 untouched (or restart from `labs/05-compose` if you want a clean room).
 
+The baseline `compose.yaml` is intentionally softer than Lab 09 / `compose.prod.yaml`. Stopping after a green `/health` on the soft stack is not Capstone — own the product **and** validate (or adopt) the prod Compose habits.
+
 **Goal:** Web API + Postgres + Redis that a teammate can tell is yours
 
 Requirements:
@@ -1918,6 +1922,7 @@ Requirements:
 6. API connects using service hostnames `db` and `redis`.
 7. `README` section: how to `up`, migrate (if any), and `down`.
 8. At least two ownership changes from Lab 13’s `CAPSTONE_OWN` list (documented in the lab README).
+9. Validate `compose.prod.yaml` with `IMAGE_REF` set, or fold at least one hardening habit from it into the stack you ship.
 
 Stretch goals:
 

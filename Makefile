@@ -1,7 +1,7 @@
 # Common local tasks for rean-docker
 PORT ?= 5501
 
-.PHONY: help serve sync check check-km check-km-parity check-lab-invariants check-all check-links check-vendor-sri sitemap sync-km-i18n smoke smoke-concept ci-local refresh-digests refresh-digests-check
+.PHONY: help serve sync check check-km check-km-parity check-lab-invariants check-all check-links check-vendor-sri sitemap sync-km-i18n sync-prod-dockerfiles smoke smoke-concept ci-local refresh-digests refresh-digests-check
 
 help:
 	@echo "rean-docker make targets:"
@@ -16,6 +16,7 @@ help:
 	@echo "  make check-all     # run English + Khmer structure + parity + lab invariants + link + SRI checks"
 	@echo "  make sitemap       # regenerate sitemap, robots.txt, and search indexes"
 	@echo "  make sync-km-i18n  # refresh Khmer chapter titles in i18n-km.js from km guide"
+	@echo "  make sync-prod-dockerfiles  # copy Lab 09 Dockerfile → Labs 12 and 13"
 	@echo "  make refresh-digests       # update Lab 13 Postgres/Redis Compose digests from Hub"
 	@echo "  make refresh-digests-check # fail if Lab 13 Compose digests drifted from Hub (also weekly CI)"
 	@echo "  make smoke         # compose smoke via labs 04, 05, 09, 12, 13 run.sh"
@@ -58,6 +59,9 @@ sitemap:
 
 sync-km-i18n:
 	python3 ./scripts/sync_km_i18n.py
+
+sync-prod-dockerfiles:
+	./scripts/sync_prod_dockerfiles.sh
 
 refresh-digests:
 	./scripts/refresh_compose_digests.sh

@@ -138,3 +138,5 @@ pandoc docs/DOCKER_FROM_ZERO_TO_HERO.md -o docs/DOCKER_FROM_ZERO_TO_HERO.pdf
 ## License
 
 Handbook, lab instructions, and website copy: [CC BY 4.0](LICENSE). Example code under `labs/`: MIT (see [LICENSE](LICENSE)).
+
+Security reports: see [SECURITY.md](SECURITY.md).

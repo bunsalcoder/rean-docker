@@ -1,4 +1,7 @@
 services:
+  # Day-one baseline: soft on purpose so newcomers can `up` quickly.
+  # Prod habits (read_only, cap_drop, IMAGE_REF, …) → compose.prod.yaml
+  # Capstone is not done until you own the stack (see README CAPSTONE_OWN).
   api:
     build: .
     ports:
