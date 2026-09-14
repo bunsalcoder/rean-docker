@@ -6,6 +6,8 @@
 
 ថតនេះមាន **day-one runnable baseline** (Compose + Node API) ដើម្បីឱ្យ CI និងអ្នកថ្មី `up` បានភ្លាម។ Baseline នោះ **មិនមែន** ជាចុងបញ្ចប់ — Capstone មានន័យថាអ្នក **own** stack (marker: `CAPSTONE_OWN`)។
 
+**Baseline vs prod:** `compose.yaml` ទន់ដោយចេតនា (ងាយ `up` ដំបូង)។ ទម្លាប់ prod — `read_only`, `cap_drop`, `no-new-privileges`, log limits, `IMAGE_REF` — ស្ថិតក្នុង `compose.prod.yaml` (pattern Lab 09 / 12)។ បញ្ចប់ Capstone មានន័យ ownership **និង** យល់ពីគម្លាតនោះ មិនមែនឈប់បន្ទាប់ពី soft stack។
+
 ធ្វើការក្នុងថតនេះ (`labs/13-capstone`) ដើម្បីឱ្យ capstone ដាច់ពី labs បង្រៀន។
 
 **Optional helper:** `./run.sh` validate Compose និង smoke-test **baseline** stack តែប៉ុណ្ណោះ។ Capstone ownership (`CAPSTONE_OWN`) នៅដៃ។
@@ -28,7 +30,7 @@ Run baseline ដោយមិនកែ **មិន** បញ្ចប់ lab ន�
 2. ប្តូរឈ្មោះ services ឬ Compose project ហើយ update healthchecks / env docs ឱ្យត្រូវ។
 3. ប្តូរ API image ទៅ **multi-stage** (Lab 08) ខណៈរក្សា digests / non-root។
 4. បន្ថែម reverse proxy (Nginx ឬ Caddy) មុខ API — គ្មានឯកសារ reference ដោយចេតនា។
-5. Customize `compose.prod.yaml` និង/ឬ `workflows/ci.yml` ហួសពី copy-paste (limits, scan, ឈ្មោះ image របស់អ្នក)។
+5. Customize `compose.prod.yaml` និង/ឬ `workflows/ci.yml` ហួសពី copy-paste (limits, scan, ឈ្មោះ image របស់អ្នក) — ឬយក hardening យ៉ាងហោចមួយពី `compose.prod.yaml` ដាក់ចូល stack ដែលអ្នកផ្ញើ។
 
 Optional clean-room restart ពី Lab 05 បើចង់សរសេរ Compose ពីដើម៖
 
@@ -63,7 +65,12 @@ curl -s http://localhost:3000/ | python3 -m json.tool
 docker compose down
 ```
 
-រួចអនុវត្តការផ្លាស់ប្តូរ `CAPSTONE_OWN` របស់អ្នក ហើយ curl ម្ដងទៀត (បូក route ថ្មីបើមាន)។
+រួចអនុវត្តការផ្លាស់ប្តូរ `CAPSTONE_OWN` របស់អ្នក ហើយ curl ម្ដងទៀត (បូក route ថ្មីបើមាន)។ មុនហៅថា lab រួច ផ្ទៀងផ្ទាត់ផងដែរ prod Compose (ឬអនុវត្ត hardening ពីវា)៖
+
+```bash
+REGISTRY_OWNER=example IMAGE_REF=:sha-deadbee \
+  docker compose -f compose.prod.yaml config
+```
 
 ## Run / tear down
 
@@ -80,6 +87,7 @@ docker compose down
 - [ ] `/health` បៃតង ហើយ API និយាយជាមួយ `db` និង `redis`
 - [ ] `.env` ត្រូវ gitignore; `.env.example` ត្រូវ commit
 - [ ] អ្នកអាច `docker compose down` ហើយពន្យល់ថា `-v` នឹងលុបអ្វី
+- [ ] អ្នក validate `compose.prod.yaml` ដោយកំណត់ `IMAGE_REF` (ឬយក hardening យ៉ាងហោចមួយពីវាដាក់ចូល stack ដែលអ្នក own)
 - [ ] `CAPSTONE_OWN`: ការផ្លាស់ប្តូរ ownership យ៉ាងហោចពីរពីបញ្ជីខាងលើរួច ហើយកត់ក្នុង README នេះ
 
 អ្នកបញ្ចប់ផ្លូវណែនាំហើយ។ ជំហានបន្ទាប់៖ containerize app ដែលអ្នកស្គាល់ រួចភ្ជាប់ pipeline ជំពូក 17។

@@ -50,6 +50,8 @@ Labs `03`, `05`, `08`, `09`, `12`, and `13` each have their own `package.json` /
 - Express versions diverge across the six Node labs (or `pg`/`redis` between 05 and 13)
 - The npm/corepack strip is missing from a CRITICAL-gated Dockerfile
 
+**Dockerfile twins:** edit only `labs/09-production/Dockerfile`, then run `make sync-prod-dockerfiles` to copy it into Labs 12 and 13. Do not hand-edit 12/13 Dockerfiles.
+
 Keep app `server.js` files different on purpose (each lab teaches a different API shape). Only the shared hardening surface is gated.
 
 ## Compose image digests (Lab 13)

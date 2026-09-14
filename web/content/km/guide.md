@@ -1116,6 +1116,8 @@ networks:
 
 Copy `.env.example` → `.env` មុន `docker compose up`។ តម្លៃក្នុង Compose file មើលឃើញតាម `docker compose config` លើម៉ាស៊ីនអ្នក — នេះធម្មតា។ ច្បាប់គឺ៖ **កុំ commit `.env` ហើយកុំដុត secrets ចូល image**។ ប្រើ `3000:3000` (គ្រប់ interface) តែពេលអ្នកចង់ remote access ដោយចេតនា។
 
+**URL passwords:** `DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:…` បែក បើ password មាន `@`, `:`, `/`, ឬ `#` (Compose interpolate មុន URL parser)។ Lab passwords សាមញ្ញដោយចេតនា។ ក្នុង app ពិត ចូលចិត្ត env vars ដាច់ដោយឡែក ឬ URL-encode password មុនផ្គុំ string។
+
 ### Compose commands សំខាន់
 
 ```bash
@@ -1902,6 +1904,8 @@ curl -fsS https://your.domain/health
 
 បង្កើត stack តូចក្នុង repo នេះ។ **Day-one runnable baseline** (Compose + Node API) មានរួចក្នុងថត capstone ដើម្បី `up` ភ្លាម — រួច **own** វា (`CAPSTONE_OWN` ក្នុង Lab 13)៖ បន្ថែម routes, កែ Compose/Dockerfile ឬបន្ថែម proxy។ ចូលចិត្តកែថតនោះជាងទុក Lab 05 ដដែល (ឬចាប់ផ្ដើមស្អាតពី `labs/05-compose` បើចង់)។
 
+Baseline `compose.yaml` ទន់ជាង Lab 09 / `compose.prod.yaml` ដោយចេតនា។ ឈប់បន្ទាប់ពី `/health` បៃតងលើ soft stack មិនមែន Capstone — own ផលិតផល **និង** validate (ឬយក) ទម្លាប់ prod Compose។
+
 **គោលដៅ:** Web API + Postgres + Redis ដែលមិត្តរួមការដឹងថាជារបស់អ្នក
 
 តម្រូវការ៖
@@ -1914,6 +1918,7 @@ curl -fsS https://your.domain/health
 6. API ភ្ជាប់តាម hostname `db` និង `redis`។
 7. ផ្នែក `README`: របៀប `up`, migrate (បើមាន) និង `down`។
 8. ការផ្លាស់ប្តូរ ownership យ៉ាងហោចពីរពីបញ្ជី `CAPSTONE_OWN` ក្នុង Lab 13 (កត់ក្នុង lab README)។
+9. Validate `compose.prod.yaml` ដោយកំណត់ `IMAGE_REF` ឬយក hardening យ៉ាងហោចមួយពីវាដាក់ចូល stack ដែលអ្នកផ្ញើ។
 
 Stretch goals៖
 

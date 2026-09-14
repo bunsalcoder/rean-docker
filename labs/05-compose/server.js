@@ -63,7 +63,16 @@ waitForDeps()
 
     const shutdown = (signal) => {
       console.log(`received ${signal}, shutting down`);
-      server.close(() => process.exit(0));
+      server.close(async () => {
+        try {
+          await Promise.allSettled([
+            pool.end(),
+            redis.isOpen ? redis.quit() : Promise.resolve(),
+          ]);
+        } finally {
+          process.exit(0);
+        }
+      });
     };
 
     process.on("SIGTERM", () => shutdown("SIGTERM"));

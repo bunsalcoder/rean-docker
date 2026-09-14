@@ -6,6 +6,8 @@ Build a small **API + Postgres + Redis** stack that you could show a teammate. P
 
 This folder ships a **day-one runnable baseline** (Compose + Node API) so CI and newcomers can `up` immediately. That baseline is **not** the finish line — Capstone means you **own** the stack (marker: `CAPSTONE_OWN`).
 
+**Baseline vs prod:** `compose.yaml` is intentionally soft (easy first `up`). Prod habits — `read_only`, `cap_drop`, `no-new-privileges`, log limits, `IMAGE_REF` — live in `compose.prod.yaml` (Lab 09 / 12 pattern). Finishing Capstone means ownership **and** knowing that gap, not stopping after the soft stack.
+
 Work in this folder (`labs/13-capstone`) so your capstone stays separate from the teaching labs.
 
 **Optional helper:** `./run.sh` validates Compose and smoke-tests the **baseline** stack only. Capstone ownership (`CAPSTONE_OWN`) stays manual.
@@ -28,7 +30,7 @@ Running the baseline unchanged does **not** complete this lab. Change the produc
 2. Rename services or the Compose project and update healthchecks / env docs to match.
 3. Turn the API image into a **multi-stage** build (Lab 08) while keeping digests / non-root habits.
 4. Ship a reverse proxy (Nginx or Caddy) in front of the API — no reference file on purpose.
-5. Customize `compose.prod.yaml` and/or `workflows/ci.yml` beyond copy-paste (limits, scan, your image name).
+5. Customize `compose.prod.yaml` and/or `workflows/ci.yml` beyond copy-paste (limits, scan, your image name) — or fold at least one API hardening habit from `compose.prod.yaml` into the stack you ship.
 
 Optional clean-room restart from Lab 05 if you prefer writing Compose from scratch:
 
@@ -63,7 +65,12 @@ curl -s http://localhost:3000/ | python3 -m json.tool
 docker compose down
 ```
 
-Then apply your `CAPSTONE_OWN` changes and re-run the curls (plus any new route).
+Then apply your `CAPSTONE_OWN` changes and re-run the curls (plus any new route). Before you call the lab done, also validate prod Compose (or apply hardening from it):
+
+```bash
+REGISTRY_OWNER=example IMAGE_REF=:sha-deadbee \
+  docker compose -f compose.prod.yaml config
+```
 
 ## Run / tear down
 
@@ -80,6 +87,7 @@ Then apply your `CAPSTONE_OWN` changes and re-run the curls (plus any new route)
 - [ ] `/health` is green and the API talks to both `db` and `redis`
 - [ ] `.env` is gitignored; `.env.example` is committed
 - [ ] You can tear down with `docker compose down` and explain what `-v` would delete
+- [ ] You validated `compose.prod.yaml` with `IMAGE_REF` set (or folded at least one hardening habit from it into your owned stack)
 - [ ] `CAPSTONE_OWN`: at least two ownership changes from the list above are done and noted in this README
 
 You are done with the guided path. Next steps: containerize an app you already know, then wire Chapter 17’s pipeline to it.

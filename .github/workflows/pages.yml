@@ -35,6 +35,12 @@ jobs:
           ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
       - name: Sync English site copies from sources
         run: ./scripts/sync_en_content.sh
+      - name: Verify English content matches committed sources
+        run: |
+          if ! git diff --exit-code -- web/content/en; then
+            echo "::error::web/content/en drifted after sync. Run: make sync && commit the results."
+            exit 1
+          fi
       - name: Generate sitemap, robots.txt, and search indexes
         run: |
           python3 ./scripts/generate_sitemap.py
