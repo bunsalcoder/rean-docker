@@ -12,22 +12,9 @@ ROOT = Path(__file__).resolve().parents[1]
 WEB = ROOT / "web"
 CONTENT = WEB / "content"
 OUT_DIR = WEB / "assets"
-ROUTES_JS = WEB / "assets/js/routes.js"
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-CHAPTER_IDS = [
-    "how-to-use",
-    *[str(i) for i in range(1, 21)],
-]
-
-
-def parse_lab_ids(text: str) -> list[str]:
-    labs_block = re.search(r"const LAB_DEFS = \[(.*?)\];", text, re.S)
-    if not labs_block:
-        raise SystemExit(f"Could not parse LAB_DEFS in {ROUTES_JS}")
-    lab_ids = re.findall(r'id: "([^"]+)"', labs_block.group(1))
-    if not lab_ids:
-        raise SystemExit(f"No lab ids found in {ROUTES_JS}")
-    return lab_ids
+from rean_routes import lab_ids, load_manifest  # noqa: E402
 
 
 def strip_md(md: str) -> str:
@@ -69,12 +56,12 @@ def split_guide(markdown: str, locale: str) -> list[dict]:
     return docs
 
 
-def build_locale(locale: str, lab_ids: list[str]) -> dict:
+def build_locale(locale: str, labs: list[str]) -> dict:
     guide_path = CONTENT / locale / "guide.md"
     docs: list[dict] = []
     if guide_path.is_file():
         docs.extend(split_guide(guide_path.read_text(encoding="utf-8"), locale))
-    for lab_id in lab_ids:
+    for lab_id in labs:
         lab_path = CONTENT / locale / "labs" / f"{lab_id}.md"
         if not lab_path.is_file():
             continue
@@ -89,11 +76,11 @@ def build_locale(locale: str, lab_ids: list[str]) -> dict:
 
 
 def main() -> int:
-    routes = ROUTES_JS.read_text(encoding="utf-8")
-    lab_ids = parse_lab_ids(routes)
+    data = load_manifest()
+    labs = lab_ids(data)
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     for locale in ("en", "km"):
-        payload = build_locale(locale, lab_ids)
+        payload = build_locale(locale, labs)
         out = OUT_DIR / f"search-index-{locale}.json"
         out.write_text(json.dumps(payload, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
         print(f"Wrote {out} ({len(payload['docs'])} docs)")

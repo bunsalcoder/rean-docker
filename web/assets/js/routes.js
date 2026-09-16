@@ -1,4 +1,4 @@
-/* Shared chapter and lab route tables — single source for learn, search, progress, sitemap. */
+/* Generated from web/assets/routes.json — edit the JSON, then: make sync-routes */
 (() => {
   const CHAPTERS = [
     {
