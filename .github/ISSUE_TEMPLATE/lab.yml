@@ -1,0 +1,37 @@
+name: Lab feedback
+description: Clarification, broken step, or improvement for a hands-on lab
+title: "[lab] "
+labels: ["lab"]
+body:
+  - type: dropdown
+    id: lab
+    attributes:
+      label: Lab
+      options:
+        - 01-isolation-basics
+        - 02-hello
+        - 03-dockerfile
+        - 04-env-secrets
+        - 05-compose
+        - 06-networks
+        - 07-volumes
+        - 08-multi-stage
+        - 09-production
+        - 10-debugging
+        - 11-security
+        - 12-ci-cd
+        - 13-capstone
+        - Multiple / unclear
+    validations:
+      required: true
+  - type: textarea
+    id: feedback
+    attributes:
+      label: Feedback
+      description: What was confusing, wrong, or could be clearer? Quote the README step if you can.
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested fix (optional)

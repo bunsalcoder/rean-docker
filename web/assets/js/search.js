@@ -188,16 +188,18 @@
     return slice;
   };
 
-  const escapeAttr = (value) =>
+  const escapeHtml = (value) =>
     String(value || "")
       .replace(/&/g, "&amp;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#39;")
       .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;");
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+
+  const escapeAttr = escapeHtml;
 
   const highlight = (text, terms) => {
-    let out = text.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+    let out = escapeHtml(text);
     terms.forEach((term) => {
       if (term.length < 2) return;
       const re = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi");
@@ -245,7 +247,9 @@
     statusEl.textContent = t("search.count", { n: rows.length });
     resultsEl.innerHTML = rows
       .map(({ doc, terms }, i) => {
-        const kind = doc.type === "lab" ? t("search.kindLab") : t("search.kindChapter");
+        const kind = escapeHtml(
+          doc.type === "lab" ? t("search.kindLab") : t("search.kindChapter")
+        );
         const snip = highlight(snippetFor(doc, terms), terms);
         return `<li>
           <a href="${escapeAttr(doc.href)}" data-search-item data-index="${i}">
@@ -295,25 +299,34 @@
     dialog.innerHTML = `
       <div class="search-shell">
         <div class="search-head">
-          <h2 id="rean-search-title">${t("search.title")}</h2>
-          <button type="button" class="search-close" data-search-close aria-label="${t("search.close")}">×</button>
+          <h2 id="rean-search-title"></h2>
+          <button type="button" class="search-close" data-search-close aria-label="">×</button>
         </div>
         <label class="search-field">
-          <span class="visually-hidden">${t("search.title")}</span>
-          <input type="search" data-search-input autocomplete="off" spellcheck="false" placeholder="${t(
-            "search.placeholder"
-          )}" />
+          <span class="visually-hidden" data-search-title-sr></span>
+          <input type="search" data-search-input autocomplete="off" spellcheck="false" placeholder="" />
         </label>
-        <p class="search-status" data-search-status>${t("search.hint")}</p>
+        <p class="search-status" data-search-status></p>
         <ul class="search-results" data-search-results role="listbox"></ul>
-        <p class="search-kbd"><kbd>/</kbd> ${t("search.openHint")}</p>
+        <p class="search-kbd"><kbd>/</kbd> <span data-search-open-hint></span></p>
       </div>`;
     document.body.appendChild(dialog);
     input = dialog.querySelector("[data-search-input]");
     resultsEl = dialog.querySelector("[data-search-results]");
     statusEl = dialog.querySelector("[data-search-status]");
 
-    dialog.querySelector("[data-search-close]")?.addEventListener("click", close);
+    const titleEl = dialog.querySelector("#rean-search-title");
+    if (titleEl) titleEl.textContent = t("search.title");
+    const titleSr = dialog.querySelector("[data-search-title-sr]");
+    if (titleSr) titleSr.textContent = t("search.title");
+    const closeBtn = dialog.querySelector("[data-search-close]");
+    if (closeBtn) closeBtn.setAttribute("aria-label", t("search.close"));
+    if (input) input.placeholder = t("search.placeholder");
+    if (statusEl) statusEl.textContent = t("search.hint");
+    const openHint = dialog.querySelector("[data-search-open-hint]");
+    if (openHint) openHint.textContent = t("search.openHint");
+
+    closeBtn?.addEventListener("click", close);
     dialog.addEventListener("click", (event) => {
       if (event.target === dialog) close();
     });
@@ -342,11 +355,13 @@
     if (!dialog) return;
     const title = dialog.querySelector("#rean-search-title");
     if (title) title.textContent = t("search.title");
+    const titleSr = dialog.querySelector("[data-search-title-sr]");
+    if (titleSr) titleSr.textContent = t("search.title");
     const closeBtn = dialog.querySelector("[data-search-close]");
     if (closeBtn) closeBtn.setAttribute("aria-label", t("search.close"));
     if (input) input.placeholder = t("search.placeholder");
-    const kbd = dialog.querySelector(".search-kbd");
-    if (kbd) kbd.innerHTML = `<kbd>/</kbd> ${t("search.openHint")}`;
+    const openHint = dialog.querySelector("[data-search-open-hint]");
+    if (openHint) openHint.textContent = t("search.openHint");
     indexPromise = null;
     runQuery();
   };

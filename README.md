@@ -13,14 +13,14 @@ Serve the static site from the repo root:
 make serve
 ```
 
-Then open [http://localhost:5501](http://localhost:5501). Same port as the VS Code / Cursor **Live Server** extension (`.vscode/settings.json`). Override with `make serve PORT=8080` if needed.
+Then open [http://127.0.0.1:5501](http://127.0.0.1:5501). Same port as the VS Code / Cursor **Live Server** extension (`.vscode/settings.json`). Override with `make serve PORT=8080` if needed. The helper serves `web/404.html` with status 404 (closer to GitHub Pages than plain `http.server`).
 
 The live site deploys from **`main`** via GitHub Pages ([bunsalcoder.github.io/rean-docker](https://bunsalcoder.github.io/rean-docker/)) **only after the CI workflow succeeds** (content checks + lab smoke/Trivy). Day-to-day contributions target **`develop`**; merging `develop` → `main` is what publishes. PRs still **dry-run** the Pages build (sync + sitemap + search index) so site regressions fail before merge — they do not publish. Pushes to `develop` dry-run the Pages build after CI succeeds, without publishing. See [CONTRIBUTING.md](CONTRIBUTING.md) (Branch workflow).
 
 Equivalent without Make:
 
 ```bash
-cd web && python3 -m http.server 5501
+python3 ./scripts/serve_web.py --port 5501
 ```
 
 | Page | Purpose |

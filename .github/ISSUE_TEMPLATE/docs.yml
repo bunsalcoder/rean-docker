@@ -1,0 +1,28 @@
+name: Docs / handbook
+description: Typo, unclear chapter, or content sync issue
+title: "[docs] "
+labels: ["docs"]
+body:
+  - type: dropdown
+    id: lang
+    attributes:
+      label: Language
+      options:
+        - English
+        - Khmer
+        - Both / tooling
+    validations:
+      required: true
+  - type: textarea
+    id: where
+    attributes:
+      label: Where?
+      description: Chapter number, file path, or site URL.
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: What should change?
+    validations:
+      required: true

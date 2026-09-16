@@ -1,0 +1,39 @@
+name: Bug report
+description: Something broken in the site, labs, or tooling
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Learning site (web/)
+        - Lab instructions or run.sh
+        - Lab Docker / Compose
+        - Makefile / scripts / CI
+        - Handbook (docs/)
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: Expected vs actual. Include URLs, lab id, and commands when relevant.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. …
+        2. …
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: Environment (optional)
+      placeholder: "OS, Docker version, browser"
