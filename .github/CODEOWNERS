@@ -1,0 +1,8 @@
+# Default owner for review routing (Dependabot, security, and content PRs).
+* @bunsalcoder
+
+/.github/ @bunsalcoder
+/web/ @bunsalcoder
+/labs/ @bunsalcoder
+/scripts/ @bunsalcoder
+/docs/ @bunsalcoder

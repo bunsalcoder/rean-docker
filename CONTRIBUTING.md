@@ -45,16 +45,23 @@ Optional: `make sync-km-i18n` (or `python3 scripts/sync_km_i18n.py`) refreshes K
 
 ## Shared Node lab apps
 
-Labs `03`, `05`, `08`, `09`, `12`, and `13` each have their own `package.json` / lockfile on purpose (isolated teaching folders). When bumping Express or other shared deps, update **all six** locks (or merge the Dependabot PRs for each directory). Do not assume a change in one lab propagates.
+Labs `03`, `05`, `08`, `09`, `12`, and `13` each have their own `package.json` / lockfile on purpose (isolated teaching folders). When bumping Express or other shared deps, update **all six** locks together:
+
+```bash
+make bump-node-deps PKG=express@^4.21.2
+make check-lab-invariants
+```
+
+Or merge the Dependabot PRs for each directory in one sitting. Do not assume a change in one lab propagates.
 
 | Lab | App shape | Hardening notes |
 |-----|-----------|-----------------|
 | 03 | Express hello | Floating `FROM` tag; pre-hardening |
 | 05 | API + Postgres + Redis | Digest-pinned Node API; floating Compose tags for db/redis |
 | 08 | TypeScript multi-stage | Slim digest-pinned; fat floating contrast |
-| 09 | Prod-minded API | Digest-pinned Node; Dependabot docker |
-| 12 | Deploy/CI API | Same Dockerfile shape as 09/13; Dependabot docker |
-| 13 | Capstone baseline | Same Dockerfile shape as 09/12; Compose db/redis digests |
+| 09 | Prod-minded API | Digest-pinned Node; Dependabot docker (canonical twin) |
+| 12 | Deploy/CI API | Same Dockerfile as 09/13 — **not** Dependabot-watched; sync from 09 |
+| 13 | Capstone baseline | Same Dockerfile as 09/12; Compose db/redis digests |
 
 `make check-lab-invariants` (part of `make check-all`) fails if:
 
@@ -63,7 +70,7 @@ Labs `03`, `05`, `08`, `09`, `12`, and `13` each have their own `package.json` /
 - Express versions diverge across the six Node labs (or `pg`/`redis` between 05 and 13)
 - The npm/corepack strip is missing from a CRITICAL-gated Dockerfile
 
-**Dockerfile twins:** edit only `labs/09-production/Dockerfile`, then run `make sync-prod-dockerfiles` to copy it into Labs 12 and 13. Do not hand-edit 12/13 Dockerfiles.
+**Dockerfile twins:** edit only `labs/09-production/Dockerfile`, then run `make sync-prod-dockerfiles` to copy it into Labs 12 and 13. Do not hand-edit 12/13 Dockerfiles. Dependabot watches Docker only under Lab 09 (plus 05 and 08); after a Lab 09 base-image bump merges, run `make sync-prod-dockerfiles` before pushing.
 
 Keep app `server.js` files different on purpose (each lab teaches a different API shape). Only the shared hardening surface is gated.
 
@@ -76,7 +83,7 @@ make refresh-digests          # rewrite Lab 13 compose.yaml + compose.prod.yaml
 # optional: make refresh-digests-check   # fail if pins ≠ current Hub digests
 ```
 
-A weekly GitHub Actions workflow runs `make refresh-digests-check` so Compose pins cannot age silently. Lab 05 keeps floating Compose tags on purpose — do not “fix” those to digests until Capstone / Chapter 15.
+A weekly GitHub Actions workflow runs `make refresh-digests` and opens a PR against **`develop`** when pins drift, so Compose digests cannot age silently. Lab 05 keeps floating Compose tags on purpose — do not “fix” those to digests until Capstone / Chapter 15.
 
 ## Site vendor libraries (marked / DOMPurify)
 

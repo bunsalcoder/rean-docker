@@ -19,6 +19,10 @@ If advisories are unavailable, open a private contact via the repository ownerâ€
 
 Do **not** open a public issue for unfixed CRITICAL findings or leaked credentials.
 
+## Site hardening notes
+
+The static site under `web/` uses self-hosted scripts (SRI-checked marked/DOMPurify), Markdown sanitization, and a restrictive **Content-Security-Policy** meta tag on every HTML page. GitHub Pages does not allow custom response headers (`Content-Security-Policy`, `X-Frame-Options`, etc.), so meta CSP is the practical defense-in-depth layer for Pages.
+
 ## Response
 
 We aim to acknowledge reports within a few days and ship fixes or clarifying docs on the teaching path as needed.

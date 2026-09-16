@@ -54,6 +54,7 @@ docker rmi rean-leaky:lab04
 - ហេតុអ្វី `ENV NODE_ENV=production` ទទួលបាន តែ `ENV DB_PASSWORD=...` មិនបាន?
 - Password production គួរនៅណា (host `.env`, Docker secrets, vault) vs ក្នុង image?
 - បើ commit `.env` ខុសមានអ្វីកើតឡើង?
+- Lab 05 បង្កើត `DATABASE_URL` ពី Compose vars — password ដែលមាន `@`, `:`, `/`, ឬ `#` បំបែក URL interpolation លុះត្រា URL-encode ឬបញ្ជូន `POSTGRES_*` ដាច់ដោយឡែក។
 - Lab 11 បង្ហាញ BuildKit `--secret` mount ដែលមិន copy ឯកសារចូល layer។
 
 ## លក្ខខណ្ឌជោគជ័យ

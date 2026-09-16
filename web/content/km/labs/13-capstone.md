@@ -65,6 +65,8 @@ curl -s http://localhost:3000/ | python3 -m json.tool
 docker compose down
 ```
 
+**អន្ទាក់:** baseline Compose បង្កើត `DATABASE_URL` ពី `POSTGRES_USER` / `POSTGRES_PASSWORD`។ រក្សា password lab ឱ្យសាមញ្ញ ឬ URL-encode តួអក្សរ `@`, `:`, `/`, និង `#` (មេរៀនដូច Lab 05)។
+
 រួចអនុវត្តការផ្លាស់ប្តូរ `CAPSTONE_OWN` របស់អ្នក ហើយ curl ម្ដងទៀត (បូក route ថ្មីបើមាន)។ មុនហៅថា lab រួច ផ្ទៀងផ្ទាត់ផងដែរ prod Compose (ឬអនុវត្ត hardening ពីវា)៖
 
 ```bash

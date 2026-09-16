@@ -1,5 +1,5 @@
 # Lab 13 Compose pins Postgres/Redis by digest. Dependabot does not cover those
-# `image:` lines — fail loudly when Hub moves the series tag.
+# `image:` lines — refresh from Hub and open a PR on develop when pins drift.
 name: Compose digest drift
 
 on:
@@ -8,12 +8,53 @@ on:
     - cron: "0 6 * * 1"
   workflow_dispatch:
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
-  check:
+  refresh:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: develop
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3.11.1
-      - name: Fail if Lab 13 Compose digests drifted from Hub
-        run: make refresh-digests-check
+
+      - name: Refresh Lab 13 Compose digests from Hub
+        run: make refresh-digests
+
+      - name: Open PR if digests changed
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- \
+            labs/13-capstone/compose.yaml \
+            labs/13-capstone/compose.prod.yaml; then
+            echo "Compose digests already match Hub."
+            exit 0
+          fi
+
+          BRANCH="chore/refresh-compose-digests"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$BRANCH"
+          git add labs/13-capstone/compose.yaml labs/13-capstone/compose.prod.yaml
+          git commit -m "chore: refresh Lab 13 Compose image digests"
+          git push -u origin "HEAD:refs/heads/${BRANCH}" --force-with-lease
+
+          if gh pr list --base develop --head "$BRANCH" --json number --jq 'length' | grep -qx '0'; then
+            gh pr create --base develop --head "$BRANCH" \
+              --title "chore: refresh Lab 13 Compose image digests" \
+              --body "## Summary
+- Regenerated Postgres/Redis digests in Lab 13 Compose from Docker Hub (\`make refresh-digests\`).
+
+## Test plan
+- [ ] CI green on this PR
+- [ ] Spot-check \`labs/13-capstone/compose.yaml\` / \`compose.prod.yaml\` pins match expected series tags"
+          else
+            echo "PR already open for ${BRANCH}; branch updated."
+          fi

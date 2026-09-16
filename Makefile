@@ -1,11 +1,11 @@
 # Common local tasks for rean-docker
 PORT ?= 5501
 
-.PHONY: help serve sync check check-km check-km-parity check-lab-invariants check-all check-links check-vendor-sri sitemap sync-km-i18n sync-prod-dockerfiles smoke smoke-concept ci-local refresh-digests refresh-digests-check
+.PHONY: help serve sync check check-km check-km-parity check-lab-invariants check-all check-links check-vendor-sri sitemap sync-km-i18n sync-prod-dockerfiles bump-node-deps smoke smoke-concept ci-local refresh-digests refresh-digests-check
 
 help:
 	@echo "rean-docker make targets:"
-	@echo "  make serve         # serve web/ on http://localhost:$(PORT)"
+	@echo "  make serve         # serve web/ on http://127.0.0.1:$(PORT) (Pages-like 404)"
 	@echo "  make sync          # copy handbook + lab READMEs → web/content/en/"
 	@echo "  make check         # fail if English site content drifted from sources"
 	@echo "  make check-km      # fail if Khmer site content drifted from English structure"
@@ -17,8 +17,9 @@ help:
 	@echo "  make sitemap       # regenerate sitemap, robots.txt, and search indexes"
 	@echo "  make sync-km-i18n  # refresh Khmer chapter titles in i18n-km.js from km guide"
 	@echo "  make sync-prod-dockerfiles  # copy Lab 09 Dockerfile → Labs 12 and 13"
+	@echo "  make bump-node-deps PKG=express@^4.21.2  # bump a shared dep across Node labs + locks"
 	@echo "  make refresh-digests       # update Lab 13 Postgres/Redis Compose digests from Hub"
-	@echo "  make refresh-digests-check # fail if Lab 13 Compose digests drifted from Hub (also weekly CI)"
+	@echo "  make refresh-digests-check # fail if Lab 13 Compose digests drifted from Hub"
 	@echo "  make smoke         # compose smoke via labs 04, 05, 09, 12, 13 run.sh"
 	@echo "  make smoke-concept # run.sh helpers for labs 01–03, 06–08, 10, 11"
 	@echo "  make ci-local      # content checks + sitemap + search index (Docker smokes optional)"
@@ -26,9 +27,11 @@ help:
 	@echo "Override port:  make serve PORT=8080"
 
 serve:
-	@echo "Serving web/ at http://localhost:$(PORT)"
-	@echo "Press Ctrl+C to stop."
-	cd web && python3 -m http.server $(PORT)
+	python3 ./scripts/serve_web.py --port $(PORT)
+
+bump-node-deps:
+	@test -n "$(PKG)" || (echo "Usage: make bump-node-deps PKG=express@^4.21.2" && exit 1)
+	./scripts/bump_shared_node_deps.sh "$(PKG)"
 
 sync:
 	./scripts/sync_en_content.sh

@@ -54,6 +54,7 @@ docker rmi rean-leaky:lab04
 - Why is `ENV NODE_ENV=production` fine, but `ENV DB_PASSWORD=...` is not?
 - Where should production passwords live (host `.env`, Docker secrets, a vault) vs the image?
 - What happens if you commit `.env` by accident?
+- Lab 05 builds `DATABASE_URL` from Compose vars — passwords with `@`, `:`, `/`, or `#` break URL interpolation unless you URL-encode or pass discrete `POSTGRES_*` vars.
 - Lab 11 shows the BuildKit `--secret` mount, which never copies the file into a layer.
 
 ## Success criteria
