@@ -16,10 +16,16 @@ jobs:
         run: ./scripts/check_km_parity.sh
       - name: Verify shared lab hardening invariants
         run: ./scripts/check_lab_invariants.sh
+      - name: Verify routes.js matches routes.json
+        run: ./scripts/check_routes_sync.sh
       - name: Verify local site links
         run: python3 ./scripts/check_site_links.py
       - name: Verify vendor script SRI hashes
         run: ./scripts/check_vendor_sri.sh
+      - name: Verify vendor versions match package.json
+        run: ./scripts/check_vendor_versions.sh
+      - name: Smoke-test static site pages and indexes
+        run: python3 ./scripts/check_site_smoke.py
       - name: Regenerate sitemap, robots.txt, and search indexes
         run: |
           python3 ./scripts/generate_sitemap.py

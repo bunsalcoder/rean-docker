@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-"""Generate web/robots.txt and web/sitemap.xml from routes.js route definitions."""
+"""Generate web/robots.txt and web/sitemap.xml from web/assets/routes.json."""
 
 from __future__ import annotations
 
 import os
-import re
 import sys
 from datetime import date
 from pathlib import Path
@@ -12,7 +11,9 @@ from xml.sax.saxutils import escape
 
 ROOT = Path(__file__).resolve().parents[1]
 WEB = ROOT / "web"
-ROUTES_JS = WEB / "assets/js/routes.js"
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from rean_routes import chapter_ids, lab_ids, load_manifest  # noqa: E402
 
 
 def base_url() -> str:
@@ -22,21 +23,6 @@ def base_url() -> str:
         owner, name = repo.split("/", 1)
         return f"https://{owner}.github.io/{name}"
     return "https://bunsalcoder.github.io/rean-docker"
-
-
-def parse_routes(text: str) -> tuple[list[str], list[str]]:
-    chapters_block = re.search(r"const CHAPTERS = \[(.*?)\];", text, re.S)
-    labs_block = re.search(r"const LAB_DEFS = \[(.*?)\];", text, re.S)
-    if not chapters_block or not labs_block:
-        raise SystemExit(f"Could not parse route tables in {ROUTES_JS}")
-
-    chapter_ids = re.findall(r'id: "([^"]+)"', chapters_block.group(1))
-    lab_ids = re.findall(r'id: "([^"]+)"', labs_block.group(1))
-    if not chapter_ids:
-        raise SystemExit(f"No chapter routes found in {ROUTES_JS}")
-    if not lab_ids:
-        raise SystemExit(f"No lab routes found in {ROUTES_JS}")
-    return chapter_ids, lab_ids
 
 
 def with_lang(path: str, lang: str | None) -> str:
@@ -51,7 +37,6 @@ def absolute(base: str, path: str) -> str:
 
 
 def url_entry(base: str, path: str, changefreq: str, priority: str, lastmod: str) -> str:
-    # Canonical EN loc + xhtml hreflang alternates for KM / x-default.
     en_loc = absolute(base, path)
     km_loc = absolute(base, with_lang(path, "km"))
     return (
@@ -68,8 +53,9 @@ def url_entry(base: str, path: str, changefreq: str, priority: str, lastmod: str
 
 
 def main() -> int:
-    text = ROUTES_JS.read_text(encoding="utf-8")
-    chapter_ids, lab_ids = parse_routes(text)
+    data = load_manifest()
+    chapters = chapter_ids(data)
+    labs = lab_ids(data)
     base = base_url()
     lastmod = date.today().isoformat()
 
@@ -78,9 +64,9 @@ def main() -> int:
         ("learn.html", "weekly", "0.9"),
         ("labs.html", "weekly", "0.9"),
     ]
-    for chapter_id in chapter_ids:
+    for chapter_id in chapters:
         paths.append((f"learn.html?c={chapter_id}", "monthly", "0.8"))
-    for lab_id in lab_ids:
+    for lab_id in labs:
         paths.append((f"lab.html?id={lab_id}", "monthly", "0.8"))
 
     entries = [url_entry(base, path, freq, prio, lastmod) for path, freq, prio in paths]

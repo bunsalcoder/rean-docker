@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "chapters": [
+    {
+      "id": "how-to-use",
+      "match": "^## (How to use this guide|របៀបប្រើមគ្គុទ្ទេសក៍នេះ)$"
+    },
+    { "id": "1" },
+    { "id": "2" },
+    { "id": "3" },
+    { "id": "4" },
+    { "id": "5" },
+    { "id": "6" },
+    { "id": "7" },
+    { "id": "8" },
+    { "id": "9" },
+    { "id": "10" },
+    { "id": "11" },
+    { "id": "12" },
+    { "id": "13" },
+    { "id": "14" },
+    { "id": "15" },
+    { "id": "16" },
+    { "id": "17" },
+    { "id": "18" },
+    { "id": "19" },
+    { "id": "20" }
+  ],
+  "labs": [
+    { "id": "01-isolation-basics", "levelKey": "lab.level.beginner" },
+    { "id": "02-hello", "levelKey": "lab.level.beginner" },
+    { "id": "03-dockerfile", "levelKey": "lab.level.beginner" },
+    { "id": "04-env-secrets", "levelKey": "lab.level.intermediate" },
+    { "id": "05-compose", "levelKey": "lab.level.intermediate" },
+    { "id": "06-networks", "levelKey": "lab.level.intermediate" },
+    { "id": "07-volumes", "levelKey": "lab.level.intermediate" },
+    { "id": "08-multi-stage", "levelKey": "lab.level.advanced" },
+    { "id": "09-production", "levelKey": "lab.level.advanced" },
+    { "id": "10-debugging", "levelKey": "lab.level.advanced" },
+    { "id": "11-security", "levelKey": "lab.level.advanced" },
+    { "id": "12-ci-cd", "levelKey": "lab.level.special" },
+    { "id": "13-capstone", "levelKey": "lab.level.special" }
+  ]
+}

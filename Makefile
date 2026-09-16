@@ -1,19 +1,23 @@
 # Common local tasks for rean-docker
 PORT ?= 5501
 
-.PHONY: help serve sync check check-km check-km-parity check-lab-invariants check-all check-links check-vendor-sri sitemap sync-km-i18n sync-prod-dockerfiles bump-node-deps smoke smoke-concept ci-local refresh-digests refresh-digests-check
+.PHONY: help serve sync check check-km check-km-parity check-lab-invariants check-all check-links check-vendor-sri check-vendor-versions check-routes sync-routes check-site-smoke sitemap sync-km-i18n sync-prod-dockerfiles bump-node-deps smoke smoke-concept ci-local refresh-digests refresh-digests-check
 
 help:
 	@echo "rean-docker make targets:"
 	@echo "  make serve         # serve web/ on http://127.0.0.1:$(PORT) (Pages-like 404)"
 	@echo "  make sync          # copy handbook + lab READMEs → web/content/en/"
+	@echo "  make sync-routes   # regenerate web/assets/js/routes.js from routes.json"
 	@echo "  make check         # fail if English site content drifted from sources"
 	@echo "  make check-km      # fail if Khmer site content drifted from English structure"
 	@echo "  make check-km-parity  # fail if Khmer labs drift in checklists/code/invariants"
 	@echo "  make check-lab-invariants  # fail if shared Node digest/Express/Dockerfile twins drift"
+	@echo "  make check-routes  # fail if routes.js drifted from routes.json"
 	@echo "  make check-links   # fail if HTML/CSS/MD points at missing local files"
 	@echo "  make check-vendor-sri  # fail if marked/DOMPurify SRI hashes drifted"
-	@echo "  make check-all     # run English + Khmer structure + parity + lab invariants + link + SRI checks"
+	@echo "  make check-vendor-versions  # fail if package.json ≠ vendor README versions"
+	@echo "  make check-site-smoke  # HTTP smoke for pages, routes, indexes, 404"
+	@echo "  make check-all     # content + routes + links + vendor + site smoke checks"
 	@echo "  make sitemap       # regenerate sitemap, robots.txt, and search indexes"
 	@echo "  make sync-km-i18n  # refresh Khmer chapter titles in i18n-km.js from km guide"
 	@echo "  make sync-prod-dockerfiles  # copy Lab 09 Dockerfile → Labs 12 and 13"
@@ -42,7 +46,7 @@ check:
 check-km:
 	./scripts/check_km_content.sh
 
-check-all: check check-km check-km-parity check-lab-invariants check-links check-vendor-sri
+check-all: check check-km check-km-parity check-lab-invariants check-routes check-links check-vendor-sri check-vendor-versions check-site-smoke
 
 check-km-parity:
 	./scripts/check_km_parity.sh
@@ -50,15 +54,27 @@ check-km-parity:
 check-lab-invariants:
 	./scripts/check_lab_invariants.sh
 
+check-routes:
+	./scripts/check_routes_sync.sh
+
 check-links:
 	python3 ./scripts/check_site_links.py
 
 check-vendor-sri:
 	./scripts/check_vendor_sri.sh
 
+check-vendor-versions:
+	./scripts/check_vendor_versions.sh
+
+check-site-smoke:
+	python3 ./scripts/check_site_smoke.py
+
 sitemap:
 	python3 ./scripts/generate_sitemap.py
 	python3 ./scripts/generate_search_index.py
+
+sync-routes:
+	python3 ./scripts/sync_routes_js.py
 
 sync-km-i18n:
 	python3 ./scripts/sync_km_i18n.py

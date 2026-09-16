@@ -85,6 +85,16 @@ make refresh-digests          # rewrite Lab 13 compose.yaml + compose.prod.yaml
 
 A weekly GitHub Actions workflow runs `make refresh-digests` and opens a PR against **`develop`** when pins drift, so Compose digests cannot age silently. Lab 05 keeps floating Compose tags on purpose — do not “fix” those to digests until Capstone / Chapter 15.
 
+## Site routes (chapters + labs)
+
+Canonical route tables live in `web/assets/routes.json`. The browser bundle `web/assets/js/routes.js` is generated from that file (sitemap + search index generators read the JSON too). After editing the manifest:
+
+```bash
+make sync-routes   # refresh routes.js
+make sitemap       # refresh sitemap + search indexes
+make check-routes
+```
+
 ## Site vendor libraries (marked / DOMPurify)
 
 Self-hosted under `web/assets/js/vendor/` (no CDN). Versions are tracked in `web/package.json` for Dependabot. After a bump:
@@ -92,8 +102,9 @@ Self-hosted under `web/assets/js/vendor/` (no CDN). Versions are tracked in `web
 ```bash
 ./scripts/vendor_site_libs.sh   # copy UMD builds + refresh SRI on learn.html / lab.html
 make check-vendor-sri
+make check-vendor-versions      # package.json must match vendor README versions
 ```
 
 ## Pull requests
 
-Open PRs against **`develop`** (not `main`). CI runs `make check-all` (English sync, Khmer structure/parity, shared lab hardening invariants, local site link checks, and vendor SRI), builds the lab Dockerfiles, smoke-tests labs 04, 05, 09, 12, and 13 via their `run.sh` helpers (`make smoke`), runs concept-lab helpers including Lab 03 (`make smoke-concept`), and fails on unfixed CRITICAL findings from Trivy for Labs **05, 08 (slim), 09, 12, and 13**. Early or intentional anti-pattern images (03, 08-fat, leaky, secret demo) are built but not CRITICAL-gated. The Pages workflow deploys from `main` **only after CI succeeds**; PRs dry-run the site build. Keep secrets out of git (`.env` is ignored; commit `.env.example` only). After content that affects SEO/search, run `make sitemap` and commit the generated files so CI’s dirty-tree check stays green.
+Open PRs against **`develop`** (not `main`). CI runs `make check-all` (English sync, Khmer structure/parity, shared lab hardening invariants, routes.json sync, local site link checks, vendor SRI/versions, and a static-site HTTP smoke), builds the lab Dockerfiles, smoke-tests labs 04, 05, 09, 12, and 13 via their `run.sh` helpers (`make smoke`), runs concept-lab helpers including Lab 03 (`make smoke-concept`), and fails on unfixed CRITICAL findings from Trivy for Labs **05, 08 (slim), 09, 12, and 13**. Early or intentional anti-pattern images (03, 08-fat, leaky, secret demo) are built but not CRITICAL-gated. The Pages workflow deploys from `main` **only after CI succeeds**; PRs dry-run the site build. Keep secrets out of git (`.env` is ignored; commit `.env.example` only). After content that affects SEO/search, run `make sitemap` and commit the generated files so CI’s dirty-tree check stays green.
