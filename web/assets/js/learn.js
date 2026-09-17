@@ -12,6 +12,7 @@ const labsLocalized = () =>
     id: lab.id,
     title: t(`labMeta.${lab.id}`),
     level: t(lab.levelKey),
+    minutes: lab.minutes,
   }));
 
 function getParam(name) {
@@ -490,7 +491,10 @@ async function initLabPage() {
     }
     if (progressEl) {
       progressEl.removeAttribute("data-i18n");
-      progressEl.textContent = t("lab.of", { n: index + 1, total: LABS.length, level: lab.level });
+      const base = t("lab.of", { n: index + 1, total: LABS.length, level: lab.level });
+      progressEl.textContent = lab.minutes
+        ? `${base} · ${t("labs.duration", { n: lab.minutes })}`
+        : base;
     }
     document.title = `${lab.title} — rean-docker`;
     const num = lab.id.slice(0, 2);

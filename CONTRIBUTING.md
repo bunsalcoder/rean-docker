@@ -87,7 +87,7 @@ A weekly GitHub Actions workflow runs `make refresh-digests` and opens a PR agai
 
 ## Site routes (chapters + labs)
 
-Canonical route tables live in `web/assets/routes.json`. The browser bundle `web/assets/js/routes.js` is generated from that file (sitemap + search index generators read the JSON too). After editing the manifest:
+Canonical route tables live in `web/assets/routes.json`. Lab entries include `levelKey` and a first-pass `minutes` estimate (shown on the Labs index and lab reader). The browser bundle `web/assets/js/routes.js` is generated from that file (sitemap + search index generators read the JSON too). After editing the manifest:
 
 ```bash
 make sync-routes   # refresh routes.js

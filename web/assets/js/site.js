@@ -337,6 +337,38 @@
     btn.addEventListener("click", () => window.print());
   });
 
+  const t = (key, vars) => (window.ReanI18n ? window.ReanI18n.t(key, vars) : key);
+
+  const decorateLabDurations = () => {
+    const defs = window.ReanRoutes?.LAB_DEFS || [];
+    if (!defs.length) return;
+    const byId = Object.fromEntries(defs.map((lab) => [lab.id, lab]));
+
+    document.querySelectorAll(".lab-grid a[href*='lab.html']").forEach((link) => {
+      let id = "";
+      try {
+        id = new URL(link.href, location.href).searchParams.get("id") || "";
+      } catch {
+        id = "";
+      }
+      const lab = byId[id];
+      if (!lab?.minutes) return;
+
+      let el = link.querySelector("[data-lab-duration]");
+      if (!el) {
+        el = document.createElement("p");
+        el.className = "lab-duration";
+        el.setAttribute("data-lab-duration", "");
+        const title = link.querySelector("h3");
+        if (title) title.insertAdjacentElement("afterend", el);
+        else (link.querySelector("div") || link).prepend(el);
+      }
+      el.textContent = t("labs.duration", { n: lab.minutes });
+    });
+  };
+
+  decorateLabDurations();
+
   // Below-fold reveals: armed after leaving the hero, then one soft staggered pass per section
   const revealBlocks = document.querySelectorAll(".reveal-block");
   if (!revealBlocks.length) return;

@@ -57,7 +57,8 @@
     "labs.eyebrow": "Practice",
     "labs.heading": "Labs",
     "labs.intro":
-      "Work through these in order. Lab numbers match the path: 01 isolation, 02 workflow, 03 Dockerfile, 04 env/secrets, then Compose and the rest. Each lab lives under labs/ — open a terminal next to this page.",
+      "Work through these in order. Lab numbers match the path: 01 isolation, 02 workflow, 03 Dockerfile, 04 env/secrets, then Compose and the rest. Each lab lives under labs/ — open a terminal next to this page. Times are a first-pass estimate.",
+    "labs.duration": "~{n} min",
     "labs.back": "Back to curriculum",
     "labs.01.title": "Isolation basics",
     "labs.01.desc": "Beginner: see process, file, network, and memory isolation.",

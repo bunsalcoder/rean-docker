@@ -37,6 +37,11 @@ def load_manifest(path: Path | None = None) -> dict:
     for lab in data["labs"]:
         if "id" not in lab or "levelKey" not in lab:
             raise SystemExit(f"Lab entries need id + levelKey in {manifest_path}")
+        minutes = lab.get("minutes")
+        if not isinstance(minutes, int) or minutes <= 0:
+            raise SystemExit(
+                f"Lab {lab.get('id')!r} needs a positive integer minutes in {manifest_path}"
+            )
     return data
 
 
@@ -53,6 +58,10 @@ def lab_ids(data: dict | None = None) -> list[str]:
 def lab_defs(data: dict | None = None) -> list[dict]:
     manifest = data or load_manifest()
     return [
-        {"id": str(lab["id"]), "levelKey": str(lab["levelKey"])}
+        {
+            "id": str(lab["id"]),
+            "levelKey": str(lab["levelKey"]),
+            "minutes": int(lab["minutes"]),
+        }
         for lab in manifest["labs"]
     ]
