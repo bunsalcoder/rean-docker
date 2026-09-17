@@ -40,7 +40,11 @@ def render_routes_js(data: dict) -> str:
             )
 
     lab_lines = [
-        f"    {{ id: {js_string(str(lab['id']))}, levelKey: {js_string(str(lab['levelKey']))} }},"
+        "    {"
+        f" id: {js_string(str(lab['id']))},"
+        f" levelKey: {js_string(str(lab['levelKey']))},"
+        f" minutes: {int(lab['minutes'])}"
+        " },"
         for lab in data["labs"]
     ]
 

@@ -27,18 +27,18 @@
     { "id": "20" }
   ],
   "labs": [
-    { "id": "01-isolation-basics", "levelKey": "lab.level.beginner" },
-    { "id": "02-hello", "levelKey": "lab.level.beginner" },
-    { "id": "03-dockerfile", "levelKey": "lab.level.beginner" },
-    { "id": "04-env-secrets", "levelKey": "lab.level.intermediate" },
-    { "id": "05-compose", "levelKey": "lab.level.intermediate" },
-    { "id": "06-networks", "levelKey": "lab.level.intermediate" },
-    { "id": "07-volumes", "levelKey": "lab.level.intermediate" },
-    { "id": "08-multi-stage", "levelKey": "lab.level.advanced" },
-    { "id": "09-production", "levelKey": "lab.level.advanced" },
-    { "id": "10-debugging", "levelKey": "lab.level.advanced" },
-    { "id": "11-security", "levelKey": "lab.level.advanced" },
-    { "id": "12-ci-cd", "levelKey": "lab.level.special" },
-    { "id": "13-capstone", "levelKey": "lab.level.special" }
+    { "id": "01-isolation-basics", "levelKey": "lab.level.beginner", "minutes": 25 },
+    { "id": "02-hello", "levelKey": "lab.level.beginner", "minutes": 20 },
+    { "id": "03-dockerfile", "levelKey": "lab.level.beginner", "minutes": 30 },
+    { "id": "04-env-secrets", "levelKey": "lab.level.intermediate", "minutes": 30 },
+    { "id": "05-compose", "levelKey": "lab.level.intermediate", "minutes": 40 },
+    { "id": "06-networks", "levelKey": "lab.level.intermediate", "minutes": 25 },
+    { "id": "07-volumes", "levelKey": "lab.level.intermediate", "minutes": 25 },
+    { "id": "08-multi-stage", "levelKey": "lab.level.advanced", "minutes": 30 },
+    { "id": "09-production", "levelKey": "lab.level.advanced", "minutes": 30 },
+    { "id": "10-debugging", "levelKey": "lab.level.advanced", "minutes": 30 },
+    { "id": "11-security", "levelKey": "lab.level.advanced", "minutes": 40 },
+    { "id": "12-ci-cd", "levelKey": "lab.level.special", "minutes": 40 },
+    { "id": "13-capstone", "levelKey": "lab.level.special", "minutes": 90 }
   ]
 }
