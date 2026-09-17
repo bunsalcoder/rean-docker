@@ -807,14 +807,14 @@ docker history redis:7-alpine
 
 Tag ពិសេស: `latest` — **កុំពឹងផ្អែកលើវាក្នុង production**។ គួរប្រើ version ច្បាស់៖ `nginx:1.28-alpine`។ Labs ក្នុង repo នេះ pin tag បែបនោះសម្រាប់ commands ដែលអ្នក run។ `nginx:alpine` នៅតែជា tag ពិត; វាផ្លាស់ទីពេល publisher ផ្សាយឡើងវិញ។
 
-### Official vs custom images
+### Image ផ្លូវការ និងផ្ទាល់ខ្លួន
 
 - **Official images** នៅ Docker Hub ត្រូវបាន curate (postgres, redis, python…)។
 - **Images របស់អ្នក** ត្រូវបាន build ពី Dockerfile ហើយ push ទៅ registry។
 
-### Image IDs vs names
+### Image ID និងឈ្មោះ
 
-Images មាន content digest / ID។ ឈ្មោះគឺស្លាកសម្រាប់មនុស្សដែលចង្អុលទៅ ID។ Retag មិន copy layers ទេ — វាបន្ថែមឈ្មោះមួយទៀត។
+Image មាន content digest / ID។ ឈ្មោះគឺស្លាកសម្រាប់មនុស្សដែលចង្អុលទៅ ID។ Retag មិនចម្លង layers ទេ — វាបន្ថែមឈ្មោះមួយទៀត។
 
 ```bash
 docker tag nginx:1.28-alpine my-nginx:dev
@@ -827,7 +827,7 @@ docker images | grep nginx
 
 ### Lab: `labs/03-dockerfile`
 
-Dockerfile script instructions។ Example (Node static-ish app):
+Dockerfile គឺជា script នៃ instructions។ ឧទាហរណ៍ (កម្មវិធី Node សាមញ្ញ):
 
 ```dockerfile
 # Start from a small official base
@@ -1408,7 +1408,7 @@ depends_on:
 
 ## 16. ប្រធានបទកម្រិតខ្ពស់
 
-Hands-on stretch សម្រាប់ជំពូកនេះស្ថិតនៅ **Lab 11 §5–§7** (BuildKit cache + multi-arch, Compose Watch, SBOM)។ Secrets mounts បានអនុវត្តរួចក្នុង Lab 11 §2។ Profiles បានបង្ហាញខ្លីក្នុងជំពូក 11 — ត្រឡប់មកវិញពេល service ស្រេចចិត្តធ្វើឱ្យ Compose រាលថ្ងៃរញ៉េរញ៉ៃ។
+លំហាត់បន្ថែមសម្រាប់ជំពូកនេះស្ថិតនៅ **Lab 11 §5–§7** (BuildKit cache + multi-arch, Compose Watch, SBOM)។ Secrets mounts បានអនុវត្តរួចក្នុង Lab 11 §2។ Profiles បានបង្ហាញខ្លីក្នុងជំពូក 11 — ត្រឡប់មកវិញពេល service ស្រេចចិត្តធ្វើឱ្យ Compose រាលថ្ងៃរញ៉េរញ៉ៃ។
 
 ### BuildKit
 
@@ -1720,6 +1720,8 @@ Containers ល្អក្នុងការរត់ app។ Reverse proxy ទ�
 - លាក់ internal ports
 
 អ្នក **មិន** ត្រូវការ Kubernetes សម្រាប់ API + Postgres តែមួយលើ VPS មួយ។ Compose + proxy គឺ setup production ធម្មតា និងស្មោះត្រង់។
+
+**អនុវត្ត:** Lab 12 §5 មាន `compose.proxy.yaml` + `Caddyfile` — demo HTTP មូលដ្ឋាននៃ hop ដូចគ្នា (`http://127.0.0.1:8080` → Caddy → `api:3000`)។ TLS ពិតនៅតែត្រូវការ DNS name; comments ក្នុង Caddyfile បង្ហាញរាង production។
 
 ### Releases ដោយគ្មានរឿងរ៉ាវ
 

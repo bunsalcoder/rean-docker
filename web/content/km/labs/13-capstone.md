@@ -10,7 +10,7 @@
 
 ធ្វើការក្នុងថតនេះ (`labs/13-capstone`) ដើម្បីឱ្យ capstone ដាច់ពី labs បង្រៀន។
 
-**Optional helper:** `./run.sh` validate Compose និង smoke-test **baseline** stack តែប៉ុណ្ណោះ។ Capstone ownership (`CAPSTONE_OWN`) នៅដៃ។
+**ជំនួយស្រេចចិត្ត:** `./run.sh` validate Compose និង smoke-test **baseline** stack តែប៉ុណ្ណោះ។ Capstone ownership (`CAPSTONE_OWN`) នៅដៃ។
 
 ## តម្រូវការ
 
@@ -32,22 +32,22 @@ Run baseline ដោយមិនកែ **មិន** បញ្ចប់ lab ន�
 4. បន្ថែម reverse proxy (Nginx ឬ Caddy) មុខ API — គ្មានឯកសារ reference ដោយចេតនា។
 5. Customize `compose.prod.yaml` និង/ឬ `workflows/ci.yml` ហួសពី copy-paste (limits, scan, ឈ្មោះ image របស់អ្នក) — ឬយក hardening យ៉ាងហោចមួយពី `compose.prod.yaml` ដាក់ចូល stack ដែលអ្នកផ្ញើ។
 
-Optional clean-room restart ពី Lab 05 បើចង់សរសេរ Compose ពីដើម៖
+ចាប់ផ្ដើមស្អាតស្រេចចិត្តពី Lab 05 បើចង់សរសេរ Compose ពីដើម៖
 
 ```bash
 cp -R ../05-compose/. .
 # then restore this README and re-apply digests + your ideas
 ```
 
-## Stretch goals
+## គោលដៅលំហាត់បន្ថែម
 
 - `compose.prod.yaml` ដាច់ដោយឡែក ជាមួយ restart policy និង resource limits (ជំពូក 17 / Lab 12)
 - រឹត `db` / `redis` ក្នុង prod Compose ដូច API រួច (`cap_drop`, Redis AUTH, network ខាងក្នុង) — មើល comments ក្នុង `compose.prod.yaml`
-- Nginx ឬ Caddy reverse proxy មុខ API
+- Nginx ឬ Caddy reverse proxy មុខ API (Lab 12 មាន `compose.proxy.yaml` + `Caddyfile` ជា demo មូលដ្ឋាន — ចូលចិត្តសរសេរផ្ទាល់មុន)
 - CI job: `docker compose config` + build + smoke + push (pattern: `workflows/ci.yml` ពី Lab 12)
 - ស្កេន image ក្នុង CI (Lab 11)
 
-**Optional references** (ចូលចិត្តសរសេរដោយខ្លួនឯងមុន)៖ ថតនេះមាន baseline `compose.prod.yaml` និង `workflows/ci.yml` តាម Lab 12។ Validate prod config ដោយ៖
+**ឯកសារយោងស្រេចចិត្ត** (ចូលចិត្តសរសេរដោយខ្លួនឯងមុន)៖ ថតនេះមាន baseline `compose.prod.yaml` និង `workflows/ci.yml` តាម Lab 12។ សម្រាប់ TLS hop មើល `compose.proxy.yaml` របស់ Lab 12។ Validate prod config ដោយ៖
 
 ```bash
 REGISTRY_OWNER=example IMAGE_REF=:sha-deadbee \
@@ -74,7 +74,7 @@ REGISTRY_OWNER=example IMAGE_REF=:sha-deadbee \
   docker compose -f compose.prod.yaml config
 ```
 
-## Run / tear down
+## រត់ / បិទ
 
 | ពាក្យបញ្ជា | អ្វីដែលវាធ្វើ |
 |---------|----------------|

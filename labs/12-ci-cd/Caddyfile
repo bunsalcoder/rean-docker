@@ -1,0 +1,14 @@
+# Local reverse-proxy demo for Lab 12 (Chapter 17).
+# HTTP on :8080 inside the proxy container → api:3000 on the Compose network.
+#
+# Production shape (needs a real DNS name pointing at the host):
+#   your.domain {
+#     reverse_proxy api:3000
+#   }
+# Caddy then terminates TLS (Let's Encrypt) on :443. Keep the API published
+# only as 127.0.0.1:3000 (or drop the host port and reach it only via the
+# Compose network) so the internet hits the proxy, not the app raw.
+
+:8080 {
+	reverse_proxy api:3000
+}

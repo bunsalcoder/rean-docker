@@ -91,6 +91,10 @@ require_in_both "Lab 12 run.sh" '\./run\.sh' \
   "$EN_DIR/labs/12-ci-cd.md" "$KM_DIR/labs/12-ci-cd.md"
 require_in_both "Lab 12 IMAGE_REF" 'IMAGE_REF' \
   "$EN_DIR/labs/12-ci-cd.md" "$KM_DIR/labs/12-ci-cd.md"
+require_in_both "Lab 12 compose.proxy" 'compose\.proxy\.yaml' \
+  "$EN_DIR/labs/12-ci-cd.md" "$KM_DIR/labs/12-ci-cd.md"
+require_in_both "Guide compose.proxy" 'compose\.proxy\.yaml' \
+  "$EN_DIR/guide.md" "$KM_DIR/guide.md"
 require_in_both "Lab 13 run.sh" '\./run\.sh' \
   "$EN_DIR/labs/13-capstone.md" "$KM_DIR/labs/13-capstone.md"
 require_in_both "Lab 13 CAPSTONE_OWN" 'CAPSTONE_OWN' \

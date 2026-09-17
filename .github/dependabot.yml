@@ -10,7 +10,8 @@ updates:
   # CRITICAL-gated / production-minded Dockerfiles pin base digests — keep them refreshable.
   # Labs 12 and 13 Dockerfiles are byte-copies of Lab 09 (make sync-prod-dockerfiles).
   # Watch only 09 here so Dependabot does not open three twin PRs that break CI.
-  # After merging a Lab 09 base bump: make sync-prod-dockerfiles && commit 12/13.
+  # After a Lab 09 base bump merges on develop, .github/workflows/sync-prod-dockerfiles.yml
+  # opens a PR that copies 09 → 12/13. Prefer still running: make sync-prod-dockerfiles.
   # Compose image digests (Lab 13 Postgres/Redis) are not covered here; run:
   #   make refresh-digests
   # Weekly workflow: .github/workflows/digests.yml → refresh + open PR on drift
@@ -37,13 +38,18 @@ updates:
 
   # Teaching Node apps share Express (and friends). Prefer one bump via:
   #   make bump-node-deps PKG=express@^4.22.0
-  # or merge the six Dependabot PRs together.
+  # Groups collapse multi-package noise per lab; still merge all six lab PRs together
+  # (or use bump-node-deps) so check-lab-invariants stays green.
   - package-ecosystem: npm
     directory: /labs/03-dockerfile
     target-branch: develop
     schedule:
       interval: monthly
     open-pull-requests-limit: 2
+    groups:
+      lab-node-deps:
+        patterns:
+          - "*"
 
   - package-ecosystem: npm
     directory: /labs/05-compose
@@ -51,6 +57,10 @@ updates:
     schedule:
       interval: monthly
     open-pull-requests-limit: 2
+    groups:
+      lab-node-deps:
+        patterns:
+          - "*"
 
   - package-ecosystem: npm
     directory: /labs/08-multi-stage
@@ -58,6 +68,10 @@ updates:
     schedule:
       interval: monthly
     open-pull-requests-limit: 2
+    groups:
+      lab-node-deps:
+        patterns:
+          - "*"
 
   - package-ecosystem: npm
     directory: /labs/09-production
@@ -65,6 +79,10 @@ updates:
     schedule:
       interval: monthly
     open-pull-requests-limit: 2
+    groups:
+      lab-node-deps:
+        patterns:
+          - "*"
 
   - package-ecosystem: npm
     directory: /labs/12-ci-cd
@@ -72,6 +90,10 @@ updates:
     schedule:
       interval: monthly
     open-pull-requests-limit: 2
+    groups:
+      lab-node-deps:
+        patterns:
+          - "*"
 
   - package-ecosystem: npm
     directory: /labs/13-capstone
@@ -79,6 +101,10 @@ updates:
     schedule:
       interval: monthly
     open-pull-requests-limit: 2
+    groups:
+      lab-node-deps:
+        patterns:
+          - "*"
 
   # Self-hosted marked + DOMPurify (copied into assets/js/vendor/). After a bump PR:
   #   ./scripts/vendor_site_libs.sh
@@ -88,3 +114,7 @@ updates:
     schedule:
       interval: monthly
     open-pull-requests-limit: 2
+    groups:
+      site-vendor:
+        patterns:
+          - "*"

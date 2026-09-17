@@ -43,11 +43,11 @@ cp -R ../05-compose/. .
 
 - Separate `compose.prod.yaml` with restart policy and resource limits (Chapter 17 / Lab 12)
 - Harden `db` / `redis` in prod Compose the way the API already is (`cap_drop`, Redis AUTH, internal-only networks) — see comments in `compose.prod.yaml`
-- Nginx or Caddy reverse proxy in front of the API
+- Nginx or Caddy reverse proxy in front of the API (Lab 12 ships `compose.proxy.yaml` + `Caddyfile` as a local demo — prefer writing your own first)
 - CI job: `docker compose config` + build + smoke + push (pattern: Lab 12’s `workflows/ci.yml`)
 - Image scan in CI (Lab 11)
 
-**Optional references** (prefer writing your own first): this folder includes baseline `compose.prod.yaml` and `workflows/ci.yml` patterned on Lab 12. Validate prod config with:
+**Optional references** (prefer writing your own first): this folder includes baseline `compose.prod.yaml` and `workflows/ci.yml` patterned on Lab 12. For the TLS hop, see Lab 12’s `compose.proxy.yaml`. Validate prod config with:
 
 ```bash
 REGISTRY_OWNER=example IMAGE_REF=:sha-deadbee \
