@@ -141,6 +141,7 @@ window.REAN_I18N_KM = {
   "notFound.title": "រកមិនឃើញ — rean-docker",
   "print.button": "បោះពុម្ព",
   "print.hint": "បោះពុម្ព ឬរក្សាទុកទំព័រនេះជា PDF",
+  "edit.onGitHub": "កែនៅ GitHub",
   "progress.allChaptersDone": "Checklist ជំពូកទាំងអស់រួចហើយ។ ល្អណាស់។",
   "progress.allDone": "Checklist លំហាត់ទាំងអស់រួចហើយ។ ល្អណាស់។",
   "progress.allDoneBoth": "Checklist ជំពូក និងលំហាត់ទាំងអស់រួចហើយ។ ល្អណាស់។",

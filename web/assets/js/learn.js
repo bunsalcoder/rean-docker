@@ -34,6 +34,29 @@ function labHref(id) {
   return window.ReanI18n?.localeHref?.(base) ?? base;
 }
 
+const GH_EDIT_BASE = "https://github.com/bunsalcoder/rean-docker/edit/develop/";
+
+function currentLocale() {
+  return window.ReanI18n?.locale || document.documentElement.dataset.locale || "en";
+}
+
+function setEditSource(kind, id) {
+  const link = document.querySelector("[data-edit-source]");
+  if (!link) return;
+  const locale = currentLocale();
+  let path = "README.md";
+  if (kind === "learn") {
+    path = locale === "km" ? "web/content/km/guide.md" : "docs/DOCKER_FROM_ZERO_TO_HERO.md";
+  } else if (kind === "lab" && id) {
+    path =
+      locale === "km"
+        ? `web/content/km/labs/${id}.md`
+        : `labs/${id}/README.md`;
+  }
+  link.href = `${GH_EDIT_BASE}${path}`;
+  link.textContent = t("edit.onGitHub");
+}
+
 function splitGuide(markdown) {
   const lines = markdown.split("\n");
   const starts = [];
@@ -314,6 +337,7 @@ async function initLearnPage() {
         type: "article",
       });
       renderMarkdown(bodyEl, chapter.body, { checklistScope: `learn:${chapter.id}` });
+      setEditSource("learn", chapter.id);
       renderPager(index);
     };
 
@@ -482,6 +506,7 @@ async function initLabPage() {
       const md = await loadLabMarkdown(lab.id);
       renderMarkdown(bodyEl, md, { checklistScope: `lab:${lab.id}` });
       bodyEl.querySelector("h1")?.remove();
+      setEditSource("lab", lab.id);
     } catch (err) {
       bodyEl.innerHTML = `<div class="error"><strong>${t("lab.loadError")}</strong><br>${err.message}<br><br>${t("lab.serveHint")}</div>`;
     }

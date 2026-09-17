@@ -6,7 +6,7 @@ See three habits from handbook **Chapter 15**: don’t run as root when you can 
 
 Pair with Lab 04 (leaky `ENV`) and Lab 08/09 (non-root + slim images). Stretches §5–§7 pair with **Chapter 16** (BuildKit cache, Compose Watch, SBOM).
 
-**Optional helper:** `./run.sh` covers whoami, the BuildKit secret check, digest inspect, and `compose.watch.yaml` config (Trivy / Watch / SBOM stay manual). Prefer typing the commands yourself the first time.
+**Optional helper:** `./run.sh` covers whoami, the BuildKit secret check, digest inspect, `compose.watch.yaml` config, the BuildKit cache-mount stretch, and an SPDX peek (interactive Compose Watch stays manual). Prefer typing the commands yourself the first time.
 
 ## Steps
 

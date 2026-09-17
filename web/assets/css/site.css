@@ -1893,6 +1893,24 @@ body > main.section > .wrap {
   font-family: var(--font-ui);
 }
 
+.edit-source {
+  margin: 1.25rem 0 0;
+  font-family: var(--font-ui);
+  font-size: 0.88rem;
+}
+
+.edit-source a {
+  color: var(--muted);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color var(--dur-fast), border-color var(--dur-fast);
+}
+
+.edit-source a:hover {
+  color: var(--ocean);
+  border-bottom-color: var(--ocean);
+}
+
 .pager a {
   min-width: 0;
   text-decoration: none;
@@ -2562,6 +2580,7 @@ body > main.section > .wrap {
   .toolbar,
   .pager,
   .search-dialog,
+  .edit-source,
   .copy-btn,
   .side-toggle,
   .print-btn {

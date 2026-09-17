@@ -14,11 +14,10 @@ on:
     paths:
       - "labs/12-ci-cd/**"
 
+# Least privilege: workflow default is read-only. The push job alone
+# adds packages:write (Chapter 17 / Lab 11 supply-chain habits).
 permissions:
   contents: read
-  # packages: write is only used by the GHCR push steps (gated to main).
-  # Pull requests validate and smoke-test; they do not push.
-  packages: write
 
 env:
   IMAGE: ghcr.io/${{ github.repository_owner }}/rean-deploy-api
@@ -34,6 +33,7 @@ jobs:
         working-directory: ${{ env.WORKDIR }}
         run: |
           docker compose -f compose.yaml config >/dev/null
+          docker compose -f compose.yaml -f compose.proxy.yaml config >/dev/null
           REGISTRY_OWNER=example IMAGE_REF=:sha-deadbee \
             docker compose -f compose.prod.yaml config >/dev/null
 
@@ -51,19 +51,37 @@ jobs:
           curl -fsS http://127.0.0.1:3000/health
           echo
 
+      # Stretch (Chapter 15 / 17) — uncomment when you want CI to scan before push:
+      # - name: Scan image (Trivy)
+      #   run: |
+      #     docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+      #       aquasec/trivy:0.63.0 image --severity CRITICAL --exit-code 1 \
+      #       "$IMAGE:$TAG"
+      #
+      # Stretch — attach SBOM/provenance when you push with buildx:
+      #   docker buildx build --sbom=true --provenance=true -t "$IMAGE:$TAG" --push .
+
       - name: Teardown smoke stack
         if: always()
         working-directory: ${{ env.WORKDIR }}
         run: docker compose down -v
 
-      - name: Login to GHCR
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+  push:
+    needs: ci
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
-      - name: Push image
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: docker push "$IMAGE:$TAG"
+      - name: Build and push image
+        working-directory: ${{ env.WORKDIR }}
+        run: |
+          TAG=sha-$(git rev-parse --short HEAD)
+          docker build -t "$IMAGE:$TAG" .
+          echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+          docker push "$IMAGE:$TAG"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

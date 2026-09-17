@@ -1,0 +1,13 @@
+# Normalize text files to LF (helps WSL / Windows clones).
+* text=auto eol=lf
+
+*.sh text eol=lf
+*.py text eol=lf
+Makefile text eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+*.woff2 binary

@@ -1,0 +1,58 @@
+# After Dependabot bumps Lab 09's Dockerfile digest, Labs 12/13 must stay
+# byte-identical (make sync-prod-dockerfiles). Open a PR on develop when they drift.
+name: Sync prod Dockerfiles
+
+on:
+  push:
+    branches: [develop]
+    paths:
+      - "labs/09-production/Dockerfile"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: develop
+
+      - name: Sync Lab 09 Dockerfile → Labs 12 and 13
+        run: make sync-prod-dockerfiles
+
+      - name: Open PR if twins drifted
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- \
+            labs/12-ci-cd/Dockerfile \
+            labs/13-capstone/Dockerfile; then
+            echo "Prod Dockerfiles already match Lab 09."
+            exit 0
+          fi
+
+          BRANCH="chore/sync-prod-dockerfiles"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$BRANCH"
+          git add labs/12-ci-cd/Dockerfile labs/13-capstone/Dockerfile
+          git commit -m "chore: sync Lab 09 Dockerfile to Labs 12 and 13"
+          git push -u origin "HEAD:refs/heads/${BRANCH}" --force-with-lease
+
+          if gh pr list --base develop --head "$BRANCH" --json number --jq 'length' | grep -qx '0'; then
+            gh pr create --base develop --head "$BRANCH" \
+              --title "chore: sync Lab 09 Dockerfile to Labs 12 and 13" \
+              --body "## Summary
+- Copied \`labs/09-production/Dockerfile\` → Labs 12 and 13 (\`make sync-prod-dockerfiles\`).
+
+## Test plan
+- [ ] CI green on this PR
+- [ ] \`make check-lab-invariants\` passes locally"
+          else
+            echo "PR already open for ${BRANCH}; branch updated."
+          fi

@@ -6,7 +6,7 @@
 
 ផ្គូផ្គង Lab 04 (`ENV` លេច) និង Lab 08/09 (non-root + images ស្ដើង)។ Stretch §5–§7 ផ្គូផ្គង **ជំពូក 16** (BuildKit cache, Compose Watch, SBOM)។
 
-**Optional helper:** `./run.sh` គ្រប whoami, BuildKit secret check, digest inspect និង `compose.watch.yaml` config (Trivy / Watch / SBOM នៅដៃ)។ ចូលចិត្តវាយពាក្យបញ្ជាពី README ដោយខ្លួនឯងលើកដំបូង។
+**ជំនួយស្រេចចិត្ត:** `./run.sh` គ្រប whoami, BuildKit secret check, digest inspect, `compose.watch.yaml` config, BuildKit cache-mount stretch និង SPDX peek (Compose Watch អន្តរកម្មនៅដៃ)។ ចូលចិត្តវាយពាក្យបញ្ជាពី README ដោយខ្លួនឯងលើកដំបូង។
 
 ## ជំហាន
 
@@ -78,7 +78,7 @@ docker pull "$DIGEST"
 
 Tags ផ្លាស់ទី។ Digest (`alpine@sha256:…`) គឺ bits ដែលអ្នកពិតជា pull។ Pin digests ពេលគ្រប់គ្រង supply-chain សំខាន់ (CI, production)។ Labs 05, 08 (slim), 09, 12, និង 13 pin `FROM node:22-alpine@sha256:…`; Lab 13 pin Postgres/Redis ក្នុង Compose ដែរ។ Digest ហួសសម័យដោយចេតនា — refresh Dockerfiles តាម Dependabot ហើយ Lab 13 Compose pins តាម `make refresh-digests` (CI រត់ `make refresh-digests-check` តាម weekly schedule ដែរ)។
 
-### 5. Stretch — BuildKit cache + multi-arch (ជំពូក 16)
+### 5. លំហាត់បន្ថែម — BuildKit cache + multi-arch (ជំពូក 16)
 
 Optional។ ផ្គូផ្គង handbook **ជំពូក 16**។ មិនត្រូវ image ថ្មីក្រៅពី Alpine។
 
@@ -105,7 +105,7 @@ docker rmi rean-cache:lab11 >/dev/null 2>&1 || true
 
 សម្គាល់៖ cache mounts បង្កើនល្បឿន package install ដោយមិន bake cache ចូល image; `imagetools inspect` បង្ហាញ amd64/arm64 manifests ក្រោម tag តែមួយ។
 
-### 6. Stretch — Compose Watch (ជំពូក 16)
+### 6. លំហាត់បន្ថែម — Compose Watch (ជំពូក 16)
 
 Optional។ Validate ឯកសារបង្រៀន រួចសាក Watch បើចង់ loop ផ្ទាល់៖
 
@@ -122,7 +122,7 @@ docker compose -f compose.watch.yaml down
 
 `develop.watch` សម្រាប់ **iteration លើ laptop**។ កុំដាក់ក្នុង production Compose (ជំពូក 17)។
 
-### 7. Stretch — SBOM peek (ជំពូក 16)
+### 7. លំហាត់បន្ថែម — SBOM peek (ជំពូក 16)
 
 Optional។ Image Trivy ដូច §3 ទម្រង់ output ផ្សេង — SPDX bill of materials តូចៗ៖
 

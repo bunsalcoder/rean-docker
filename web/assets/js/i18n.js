@@ -112,6 +112,7 @@
     "lab.serveHint": "Serve the web/ folder over HTTP.",
     "print.button": "Print",
     "print.hint": "Print or save this page as PDF",
+    "edit.onGitHub": "Edit on GitHub",
     "lab.level.beginner": "Beginner",
     "lab.level.intermediate": "Intermediate",
     "lab.level.advanced": "Advanced",

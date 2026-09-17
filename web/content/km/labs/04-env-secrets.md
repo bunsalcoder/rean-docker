@@ -6,7 +6,7 @@
 
 ផ្គូផ្គងជាមួយ handbook **ជំពូក 10**។ ធ្វើបន្ទាប់ពី Lab 03 (អ្នកសរសេរ Dockerfile រួច) និងមុន Lab 05 (Compose នឹងប្រើ env files បន្ត)។
 
-**Optional helper:** `./run.sh` គ្រប `--env-file`, Compose `env_file` និង leaky Dockerfile history check។ ចូលចិត្តវាយពាក្យបញ្ជាពី README ដោយខ្លួនឯងលើកដំបូង។
+**ជំនួយស្រេចចិត្ត:** `./run.sh` គ្រប `--env-file`, Compose `env_file` និង leaky Dockerfile history check។ ចូលចិត្តវាយពាក្យបញ្ជាពី README ដោយខ្លួនឯងលើកដំបូង។
 
 ## ជំហាន
 

@@ -6,7 +6,7 @@
 
 ផ្គូផ្គងជាមួយ handbook **ជំពូក 17 — Deploy ជាមួយ Docker & CI/CD**។
 
-**Optional helper:** `./run.sh` validate Compose files និង smoke-test `/health`។ ចូលចិត្តវាយពាក្យបញ្ជាពី README ដោយខ្លួនឯងលើកដំបូង។
+**ជំនួយស្រេចចិត្ត:** `./run.sh` validate Compose (រួម `compose.proxy.yaml`) និង smoke-test `/health` តាម API + proxy។ ចូលចិត្តវាយពាក្យបញ្ជាពី README ដោយខ្លួនឯងលើកដំបូង។
 
 ## ជំហាន
 
@@ -76,6 +76,19 @@ curl -fsS http://127.0.0.1:3000/health
 
 អ្នក **មិន** ត្រូវការ server ពិតដើម្បីបញ្ចប់ lab នេះ — ជំហាន 1–4 (រហូតអាន workflow) គ្រប់គ្រាន់ហើយ។
 
+### 5. លំហាត់បន្ថែម — reverse proxy (TLS hop ជំពូក 17)
+
+ស្រេចចិត្ត។ គំរូគំនិតជំពូក 17 គឺ `Internet → :443 (Caddy/Nginx) → localhost:3000`។ ថតនេះមាន **demo HTTP មូលដ្ឋាន** នៃ hop នោះ (មិនត្រូវការ domain ឬ certificate)៖
+
+```bash
+cd labs/12-ci-cd
+docker compose -f compose.yaml -f compose.proxy.yaml up --build -d
+curl -fsS http://127.0.0.1:8080/health
+docker compose -f compose.yaml -f compose.proxy.yaml down -v
+```
+
+អាន `Caddyfile`៖ `:8080` proxy ទៅ `api:3000` លើ Compose network។ Block ដែល comment បង្ហាញរាង production (`your.domain { reverse_proxy api:3000 }` ជាមួយ Let’s Encrypt លើ `:443`)។ នៅតែ publish API ជា `127.0.0.1:3000` ដើម្បីឱ្យ VPS ពិត expose proxy មិនមែន app ផ្ទាល់។
+
 ## ពិភាក្សា
 
 - ហេតុអ្វី `compose.prod.yaml` ប្រើ `image:` ហើយមិនមែន `build:`?
@@ -86,6 +99,8 @@ curl -fsS http://127.0.0.1:3000/health
 - ហេតុអ្វី `compose.prod.yaml` error បើ `IMAGE_REF` មិនកំណត់ ជំនួសឱ្យ default `latest`?
 - ហេតុអ្វី `IMAGE_REF` អាចជា `:sha-…` ឬ `@sha256:…`?
 - ហេតុអ្វី pin GitHub Actions ទៅ commit SHA ហើយមិនមែន `@v4`?
+- ហេតុអ្វី workflow ផ្ដល់ `packages: write` តែនៅ push job មិនមែនលើ pull requests?
+- (លំហាត់បន្ថែម) ហេតុអ្វីដាក់ TLS នៅ Caddy/Nginx ជំនួសឱ្យបង្រៀន Node API ឱ្យនិយាយ HTTPS ខ្លួនឯង?
 
 ## លក្ខខណ្ឌជោគជ័យ
 
@@ -95,6 +110,7 @@ curl -fsS http://127.0.0.1:3000/health
 - [ ] អ្នកដឹងហេតុអ្វី prod Compose ត្រូវការ `IMAGE_REF` (`:sha-…` ឬ `@sha256:…`) ហើយមិន fallback ទៅ `latest`
 - [ ] អ្នកដឹងហេតុអ្វី workflow pin Actions តាម SHA មិនមែន `@v4`
 - [ ] អ្នកដឹងថាដាក់ secrets សម្រាប់ SSH deploy នៅណា (host / GitHub Secrets — មិនមែនក្នុង image)
+- [ ] (លំហាត់បន្ថែម) អ្នក hit `/health` តាម `compose.proxy.yaml` លើ `:8080` ឬអាចពន្យល់ Internet → proxy → `127.0.0.1:3000`
 
 ## បន្ទាប់
 

@@ -1725,6 +1725,8 @@ Containers are great at running the app. A reverse proxy handles:
 
 You do **not** need Kubernetes for a single API + Postgres on one VPS. Compose + proxy is a common, honest production setup.
 
+**Hands-on:** Lab 12 §5 ships `compose.proxy.yaml` + `Caddyfile` — a local HTTP demo of the same hop (`http://127.0.0.1:8080` → Caddy → `api:3000`). Real TLS still needs a DNS name; the Caddyfile comments show the production shape.
+
 ### Releases without drama
 
 | Practice | Why |

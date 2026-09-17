@@ -70,7 +70,7 @@ Or merge the Dependabot PRs for each directory in one sitting. Do not assume a c
 - Express versions diverge across the six Node labs (or `pg`/`redis` between 05 and 13)
 - The npm/corepack strip is missing from a CRITICAL-gated Dockerfile
 
-**Dockerfile twins:** edit only `labs/09-production/Dockerfile`, then run `make sync-prod-dockerfiles` to copy it into Labs 12 and 13. Do not hand-edit 12/13 Dockerfiles. Dependabot watches Docker only under Lab 09 (plus 05 and 08); after a Lab 09 base-image bump merges, run `make sync-prod-dockerfiles` before pushing.
+**Dockerfile twins:** edit only `labs/09-production/Dockerfile`, then run `make sync-prod-dockerfiles` to copy it into Labs 12 and 13. Do not hand-edit 12/13 Dockerfiles. Dependabot watches Docker only under Lab 09 (plus 05 and 08); after a Lab 09 base-image bump merges on `develop`, `.github/workflows/sync-prod-dockerfiles.yml` opens a PR that copies 09 → 12/13. You can still run `make sync-prod-dockerfiles` locally before pushing.
 
 Keep app `server.js` files different on purpose (each lab teaches a different API shape). Only the shared hardening surface is gated.
 

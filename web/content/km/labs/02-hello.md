@@ -12,7 +12,7 @@
 
 ## ជំហាន
 
-**Optional helper:** `./run.sh` គ្រប hello-world + nginx។ នៅតែធ្វើ Ubuntu interactive និង `docker exec -it` ដោយដៃ។
+**ជំនួយស្រេចចិត្ត:** `./run.sh` គ្រប hello-world + nginx។ នៅតែធ្វើ Ubuntu interactive និង `docker exec -it` ដោយដៃ។
 
 ### 1. Hello World
 

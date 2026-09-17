@@ -6,7 +6,7 @@ Practice the same steps a CI pipeline runs: validate Compose, build an image, sm
 
 Pair with handbook **Chapter 17 — Deploy with Docker & CI/CD**.
 
-**Optional helper:** `./run.sh` validates Compose files and smoke-tests `/health`. Prefer typing the README commands yourself the first time.
+**Optional helper:** `./run.sh` validates Compose files (including `compose.proxy.yaml`) and smoke-tests `/health` through the API and the proxy. Prefer typing the README commands yourself the first time.
 
 ## Steps
 
@@ -76,6 +76,19 @@ curl -fsS http://127.0.0.1:3000/health
 
 You do **not** need a real server to finish this lab — steps 1–4 (through reading the workflow) are enough.
 
+### 5. Stretch — reverse proxy (Chapter 17 TLS hop)
+
+Optional. Chapter 17’s mental model is `Internet → :443 (Caddy/Nginx) → localhost:3000`. This folder ships a **local HTTP demo** of that hop (no domain or certificates required):
+
+```bash
+cd labs/12-ci-cd
+docker compose -f compose.yaml -f compose.proxy.yaml up --build -d
+curl -fsS http://127.0.0.1:8080/health
+docker compose -f compose.yaml -f compose.proxy.yaml down -v
+```
+
+Read `Caddyfile`: `:8080` proxies to `api:3000` on the Compose network. The commented block shows the production shape (`your.domain { reverse_proxy api:3000 }` with Let’s Encrypt on `:443`). Keep publishing the API as `127.0.0.1:3000` so a real VPS would expose the proxy, not the app raw.
+
 ## Discuss
 
 - Why does `compose.prod.yaml` use `image:` instead of `build:`?
@@ -86,6 +99,8 @@ You do **not** need a real server to finish this lab — steps 1–4 (through re
 - Why does `compose.prod.yaml` error if `IMAGE_REF` is unset, instead of defaulting to `latest`?
 - Why can `IMAGE_REF` be either `:sha-…` or `@sha256:…`?
 - Why pin GitHub Actions to a commit SHA instead of `@v4`?
+- Why does the workflow grant `packages: write` only on the push job, not on pull requests?
+- (Stretch) Why put TLS on Caddy/Nginx instead of teaching the Node API to speak HTTPS itself?
 
 ## Success criteria
 
@@ -95,6 +110,7 @@ You do **not** need a real server to finish this lab — steps 1–4 (through re
 - [ ] You know why prod Compose requires `IMAGE_REF` (`:sha-…` or `@sha256:…`) and does not fall back to `latest`
 - [ ] You know why the workflow pins Actions by SHA, not `@v4`
 - [ ] You know where you would put secrets for SSH deploy (host / GitHub Secrets — not the image)
+- [ ] (Stretch) You hit `/health` through `compose.proxy.yaml` on `:8080`, or can explain Internet → proxy → `127.0.0.1:3000`
 
 ## Next
 

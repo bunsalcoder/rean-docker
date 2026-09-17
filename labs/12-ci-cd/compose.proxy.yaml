@@ -1,0 +1,17 @@
+# Optional reverse-proxy hop (Chapter 17). Merge with the local stack:
+#   docker compose -f compose.yaml -f compose.proxy.yaml up --build -d
+#
+# Local demo: http://127.0.0.1:8080 → Caddy → api:3000
+# Real TLS: point a domain at the host and use the commented block in Caddyfile.
+# Keep the API on 127.0.0.1:3000 so the internet would hit the proxy, not the app raw.
+services:
+  proxy:
+    image: caddy:2.10-alpine
+    ports:
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped

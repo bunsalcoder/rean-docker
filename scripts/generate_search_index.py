@@ -82,7 +82,10 @@ def main() -> int:
     for locale in ("en", "km"):
         payload = build_locale(locale, labs)
         out = OUT_DIR / f"search-index-{locale}.json"
-        out.write_text(json.dumps(payload, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+        out.write_text(
+            json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + "\n",
+            encoding="utf-8",
+        )
         print(f"Wrote {out} ({len(payload['docs'])} docs)")
     return 0
 
