@@ -67,7 +67,7 @@ cd path/to/rean-docker
 You build an app on your laptop. It works. On a teammate’s machine: broken. On the server: broken. Reasons usually include:
 
 - Different OS packages
-- Different language runtimes (Node 18 vs 20, Python 3.10 vs 3.12)
+- Different language runtimes (Node 20 vs 22, Python 3.10 vs 3.12)
 - Missing system libraries
 - “It works on my machine” configuration drift
 
@@ -970,6 +970,8 @@ docker run -d --name rean-pg \
   -p 5432:5432 \
   postgres:16-alpine
 ```
+
+`POSTGRES_PASSWORD=secret` here is **demo-only** shorthand for a short copy-paste. Prefer `.env` / `--env-file` (Labs 04/05 / Lab 07 Compose) when you care about the secrets habit.
 
 Stop/remove container — **data remains** in `rean-pgdata`.
 

@@ -51,12 +51,17 @@ jobs:
           curl -fsS http://127.0.0.1:3000/health
           echo
 
-      # Stretch (Chapter 15 / 17) — uncomment when you want CI to scan before push:
+      # Stretch (Chapter 15 / 17) — uncomment when you want CI to scan before push.
+      # Prefer tar + --input (same pattern as this repo's root .github/workflows/ci.yml).
+      # Do not mount /var/run/docker.sock — that is nearly root on the host (Lab 11).
       # - name: Scan image (Trivy)
       #   run: |
-      #     docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
-      #       aquasec/trivy:0.63.0 image --severity CRITICAL --exit-code 1 \
-      #       "$IMAGE:$TAG"
+      #     TRIVY_IMAGE='aquasec/trivy:0.63.0'
+      #     tar="/tmp/rean-trivy-$TAG.tar"
+      #     docker save "$IMAGE:$TAG" -o "$tar"
+      #     docker run --rm -v /tmp:/in "$TRIVY_IMAGE" image \
+      #       --input "/in/$(basename "$tar")" \
+      #       --severity CRITICAL --exit-code 1
       #
       # Stretch — attach SBOM/provenance when you push with buildx:
       #   docker buildx build --sbom=true --provenance=true -t "$IMAGE:$TAG" --push .

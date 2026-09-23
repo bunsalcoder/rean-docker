@@ -118,6 +118,8 @@ docker compose version
 docker run --rm hello-world
 ```
 
+Contributor commands (content sync, Khmer checks, digests, vendor libs): run `make help`, then see [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## Suggested pace
 
 Follow the **Suggested weekly plan** section at the end of the handbook. Do not skip labs — typing the commands is the learning.
@@ -139,4 +141,4 @@ pandoc docs/DOCKER_FROM_ZERO_TO_HERO.md -o docs/DOCKER_FROM_ZERO_TO_HERO.pdf
 
 Handbook, lab instructions, and website copy: [CC BY 4.0](LICENSE). Example code under `labs/`: MIT (see [LICENSE](LICENSE)).
 
-Security reports: see [SECURITY.md](SECURITY.md).
+Security reports: see [SECURITY.md](SECURITY.md). Community standards: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).

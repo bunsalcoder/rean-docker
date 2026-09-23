@@ -95,15 +95,32 @@ make sitemap       # refresh sitemap + search indexes
 make check-routes
 ```
 
+Sitemap `lastmod` is derived from content file mtimes (or `SOURCE_DATE_EPOCH`), not the calendar day — so regenerating without content changes stays dirty-tree clean.
+
 ## Site vendor libraries (marked / DOMPurify)
 
 Self-hosted under `web/assets/js/vendor/` (no CDN). Versions are tracked in `web/package.json` for Dependabot. After a bump:
 
 ```bash
-./scripts/vendor_site_libs.sh   # copy UMD builds + refresh SRI on learn.html / lab.html
+make vendor-site            # copy UMD builds + refresh SRI on learn.html / lab.html
 make check-vendor-sri
-make check-vendor-versions      # package.json must match vendor README versions
+make check-vendor-versions  # package.json must match vendor README versions
 ```
+
+## `.dockerignore` baseline (Node labs)
+
+Labs that build a Dockerfile should ignore at least:
+
+```
+node_modules
+npm-debug.log
+.git
+*.md
+.env
+.env.*
+```
+
+Add lab-specific extras as needed (`dist` for Lab 08, `watch-demo` for Lab 11, `workflows` for Labs 12/13). Keep early labs without a Dockerfile free of ignore files.
 
 ## Pull requests
 
