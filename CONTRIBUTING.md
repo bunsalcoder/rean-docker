@@ -15,6 +15,19 @@ Day-to-day work: branch from **`develop`**, open PRs into **`develop`**. Dependa
 
 Do not treat a stale local `main` as current — update from `origin/main` only when releasing, or check out `develop` for active work.
 
+### Pages deploy triage (`workflow_run`)
+
+The Pages workflow (`.github/workflows/pages.yml`) does **not** run on every push by itself. It listens for a completed **CI** run:
+
+| Symptom | Likely cause | What to check |
+|---------|--------------|---------------|
+| Site did not update after merging to `main` | CI failed, or Pages never saw a successful CI `push` | Actions → **CI** on that commit (must be green). Then **Deploy site to GitHub Pages** — look for a `workflow_run` triggered by that CI. |
+| Pages job skipped / “no jobs” | CI conclusion ≠ `success`, or event was not a `push` (e.g. only a PR) | Confirm the triggering CI run is a **push** to `main` (or `develop` for dry-run). PRs dry-run via the `pull_request` trigger, they do not publish. |
+| Dry-run green on `develop`, still no live update | Expected — only `main` deploys | Promote with a `develop` → `main` merge after CI is green. |
+| Manual publish needed | Rare; use after fixing a stuck deploy | Actions → Pages → **Run workflow** from `main` (`workflow_dispatch`). |
+
+Required checks for contributors: keep **CI** green on PRs into `develop`. Pages dry-run on the PR catches sync/sitemap/search drift before merge.
+
 ## Edit English, then sync
 
 ```bash
