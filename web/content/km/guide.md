@@ -67,7 +67,7 @@ cd path/to/rean-docker
 អ្នក build app នៅ laptop។ វាដំណើរការ។ នៅ machine មិត្តរួមការ៖ ខូច។ នៅ server៖ ខូច។ មូលហេតុជាធរមានរួមមាន៖
 
 - OS packages ខុសគ្នា
-- Language runtime ខុសគ្នា (Node 18 vs 20, Python 3.10 vs 3.12)
+- Language runtime ខុសគ្នា (Node 20 vs 22, Python 3.10 vs 3.12)
 - System libraries ខ្វះ
 - Configuration drift «វាដំណើរការនៅ machine ខ្ញុំ»
 
@@ -970,6 +970,8 @@ docker run -d --name rean-pg \
   -p 5432:5432 \
   postgres:16-alpine
 ```
+
+`POSTGRES_PASSWORD=secret` នៅទីនេះគឺ **demo-only** shorthand សម្រាប់ copy-paste ខ្លី។ ចូលចិត្ត `.env` / `--env-file` (Labs 04/05 / Lab 07 Compose) ពេលចង់រក្សាទម្លាប់ secrets។
 
 Stop/remove container — **data remains** in `rean-pgdata`។
 

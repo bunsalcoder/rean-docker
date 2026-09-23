@@ -6,12 +6,17 @@ on:
   pull_request:
     branches: [main, develop]
 
+# Least privilege: content checks + lab builds need read-only checkout.
+permissions:
+  contents: read
+
 jobs:
   check:
     uses: ./.github/workflows/checks.yml
 
   labs:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Build lab images

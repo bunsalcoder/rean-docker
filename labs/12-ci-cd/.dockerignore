@@ -1,6 +1,7 @@
 node_modules
 npm-debug.log
-.env
 .git
+*.md
+.env
+.env.*
 workflows
-README.md

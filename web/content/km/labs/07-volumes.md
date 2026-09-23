@@ -8,6 +8,8 @@
 
 **ជំនួយស្រេចចិត្ត:** `./run.sh`។ **Compose ស្រេចចិត្ត:** `cp .env.example .env` រួច `docker compose up -d --wait` រួច `exec` / `down` vs `down -v`។ Password នៅក្នុង `.env` (Labs 04/05) មិន hardcode ក្នុង YAML។
 
+> **Password demo-only:** ជំហាន `docker run` ខាងក្រោមប្រើ `-e POSTGRES_PASSWORD=secret` ដើម្បី copy-paste ខ្លីៗ។ នេះជា shorthand បង្រៀន — មិនមែនទម្លាប់ Lab 04/05។ ចូលចិត្ត Compose path (ឬ `--env-file .env`) ពេលចង់រក្សា secrets ចេញពី command line។
+
 ```bash
 docker volume create lab07-pgdata
 

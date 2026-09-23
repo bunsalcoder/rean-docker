@@ -9,6 +9,8 @@ Prove that named volumes keep data after a container is deleted.
 **Optional helper:** `./run.sh` proves the named volume survives recreate (uses `.bind/` for the bind-mount contrast).  
 **Optional Compose form:** `cp .env.example .env`, then `docker compose up -d --wait`, `docker compose exec db psql …`, `docker compose down` (keep volume) vs `docker compose down -v`. The password stays in `.env` (Labs 04/05), not hardcoded in YAML.
 
+> **Demo-only password:** the bare `docker run` steps below use `-e POSTGRES_PASSWORD=secret` so the volume lesson stays a short copy-paste. That is intentional teaching shorthand — not the Lab 04/05 habit. Prefer the Compose path (or `--env-file .env`) when you care about keeping secrets out of the command line.
+
 ```bash
 docker volume create lab07-pgdata
 

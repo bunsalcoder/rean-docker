@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import os
 import sys
-from datetime import date
+from datetime import date, datetime, timezone
 from pathlib import Path
 from xml.sax.saxutils import escape
 
@@ -36,6 +36,33 @@ def absolute(base: str, path: str) -> str:
     return f"{base}/{path}" if path else f"{base}/"
 
 
+def content_lastmod() -> str:
+    """Stable lastmod from content mtimes (or SOURCE_DATE_EPOCH) — not calendar today.
+
+    Using date.today() made CI's dirty-tree check fail every calendar day even when
+    no content changed. Derive from sources that feed the site instead.
+    """
+    if epoch := os.environ.get("SOURCE_DATE_EPOCH", "").strip():
+        return datetime.fromtimestamp(int(epoch), tz=timezone.utc).date().isoformat()
+
+    candidates: list[Path] = [
+        WEB / "assets" / "routes.json",
+        WEB / "index.html",
+        WEB / "learn.html",
+        WEB / "labs.html",
+        WEB / "lab.html",
+        ROOT / "docs" / "DOCKER_FROM_ZERO_TO_HERO.md",
+    ]
+    for folder in (WEB / "content", ROOT / "labs"):
+        if folder.is_dir():
+            candidates.extend(folder.rglob("*.md"))
+
+    mtimes = [p.stat().st_mtime for p in candidates if p.is_file()]
+    if not mtimes:
+        return date.today().isoformat()
+    return datetime.fromtimestamp(max(mtimes), tz=timezone.utc).date().isoformat()
+
+
 def url_entry(base: str, path: str, changefreq: str, priority: str, lastmod: str) -> str:
     en_loc = absolute(base, path)
     km_loc = absolute(base, with_lang(path, "km"))
@@ -57,7 +84,7 @@ def main() -> int:
     chapters = chapter_ids(data)
     labs = lab_ids(data)
     base = base_url()
-    lastmod = date.today().isoformat()
+    lastmod = content_lastmod()
 
     paths: list[tuple[str, str, str]] = [
         ("index.html", "weekly", "1.0"),
@@ -87,7 +114,7 @@ def main() -> int:
 
     (WEB / "sitemap.xml").write_text(sitemap, encoding="utf-8")
     (WEB / "robots.txt").write_text(robots, encoding="utf-8")
-    print(f"Wrote {WEB / 'robots.txt'} and {WEB / 'sitemap.xml'} ({len(entries)} URLs, base {base})")
+    print(f"Wrote {WEB / 'robots.txt'} and {WEB / 'sitemap.xml'} ({len(entries)} URLs, base {base}, lastmod {lastmod})")
     return 0
 
 

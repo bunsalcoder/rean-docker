@@ -1,7 +1,7 @@
 # Common local tasks for rean-docker
 PORT ?= 5501
 
-.PHONY: help serve sync check check-km check-km-parity check-lab-invariants check-all check-links check-vendor-sri check-vendor-versions check-routes sync-routes check-site-smoke sitemap sync-km-i18n sync-prod-dockerfiles bump-node-deps smoke smoke-concept ci-local refresh-digests refresh-digests-check
+.PHONY: help serve sync check check-km check-km-parity check-lab-invariants check-all check-links check-vendor-sri check-vendor-versions check-routes sync-routes check-site-smoke sitemap sync-km-i18n sync-prod-dockerfiles bump-node-deps vendor-site smoke smoke-concept ci-local refresh-digests refresh-digests-check
 
 help:
 	@echo "rean-docker make targets:"
@@ -22,6 +22,7 @@ help:
 	@echo "  make sync-km-i18n  # refresh Khmer chapter titles in i18n-km.js from km guide"
 	@echo "  make sync-prod-dockerfiles  # copy Lab 09 Dockerfile → Labs 12 and 13"
 	@echo "  make bump-node-deps PKG=express@^4.21.2  # bump a shared dep across Node labs + locks"
+	@echo "  make vendor-site   # re-vendor marked/DOMPurify + refresh SRI after package.json bumps"
 	@echo "  make refresh-digests       # update Lab 13 Postgres/Redis Compose digests from Hub"
 	@echo "  make refresh-digests-check # fail if Lab 13 Compose digests drifted from Hub"
 	@echo "  make smoke         # compose smoke via labs 04, 05, 09, 12, 13 run.sh"
@@ -36,6 +37,9 @@ serve:
 bump-node-deps:
 	@test -n "$(PKG)" || (echo "Usage: make bump-node-deps PKG=express@^4.21.2" && exit 1)
 	./scripts/bump_shared_node_deps.sh "$(PKG)"
+
+vendor-site:
+	./scripts/vendor_site_libs.sh
 
 sync:
 	./scripts/sync_en_content.sh

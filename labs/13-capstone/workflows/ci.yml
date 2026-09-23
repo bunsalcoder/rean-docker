@@ -51,6 +51,12 @@ jobs:
           curl -fsS http://127.0.0.1:3000/health
           echo
 
+      # Stretch — scan without mounting docker.sock (same pattern as Lab 12 / root CI):
+      #   tar="/tmp/rean-capstone-$TAG.tar"
+      #   docker save "$IMAGE:$TAG" -o "$tar"
+      #   docker run --rm -v /tmp:/in aquasec/trivy:0.63.0 image \
+      #     --input "/in/$(basename "$tar")" --severity CRITICAL --exit-code 1
+
       - name: Teardown smoke stack
         if: always()
         working-directory: ${{ env.WORKDIR }}
