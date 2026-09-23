@@ -10,6 +10,8 @@
     "nav.cheatsheet": "Cheat sheet",
     "nav.menu": "Menu",
     "a11y.skip": "Skip to content",
+    "a11y.langEn": "Language set to English",
+    "a11y.langKm": "Language set to Khmer",
     "notFound.title": "Not found — rean-docker",
     "notFound.description": "This page is not in the rean-docker learning site.",
     "notFound.heading": "Page not found",
@@ -311,6 +313,24 @@
     typeof window.matchMedia === "function" &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  const announceLocale = (locale) => {
+    let live = document.getElementById("rean-a11y-live");
+    if (!live) {
+      live = document.createElement("div");
+      live.id = "rean-a11y-live";
+      live.className = "visually-hidden";
+      live.setAttribute("aria-live", "polite");
+      live.setAttribute("aria-atomic", "true");
+      document.body.prepend(live);
+    }
+    const key = locale === "km" ? "a11y.langKm" : "a11y.langEn";
+    live.textContent = "";
+    // Clear then set so repeated switches still announce.
+    window.requestAnimationFrame(() => {
+      live.textContent = t(key);
+    });
+  };
+
   const syncLangSwitch = (locale = currentLocale) => {
     document.querySelectorAll(".lang-switch").forEach((group) => {
       group.querySelectorAll("[data-set-lang]").forEach((btn) => {
@@ -339,6 +359,7 @@
       /* private mode */
     }
     syncLocaleUrl(locale);
+    announceLocale(locale);
     if (reload) {
       const switches = document.querySelectorAll(".lang-switch");
       switches.forEach((group) => {

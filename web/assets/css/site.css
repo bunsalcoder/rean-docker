@@ -583,6 +583,29 @@ rean-header {
   outline: none;
 }
 
+/* Shared keyboard focus ring — stays visible in light and dark themes */
+.btn:focus-visible,
+.theme-toggle:focus-visible,
+.nav-toggle:focus-visible,
+.side-toggle:focus-visible,
+.nav a:focus-visible,
+.search-toggle:focus-visible {
+  outline: 2px solid var(--ocean);
+  outline-offset: 3px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .site-header {
   position: sticky;
   top: 0;
@@ -2208,18 +2231,6 @@ body > main.section > .wrap {
 }
 
 /* —— Progress —— */
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
 .progress-panel {
   margin-top: 0.5rem;
 }

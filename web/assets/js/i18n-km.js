@@ -1,6 +1,8 @@
 /* Khmer UI strings for rean-docker. Loaded before i18n.js */
 window.REAN_I18N_KM = {
   "a11y.skip": "រំលងទៅមាតិកា",
+  "a11y.langEn": "បានកំណត់ភាសាជាអង់គ្លេស",
+  "a11y.langKm": "បានកំណត់ភាសាជាខ្មែរ",
   "chapter.1": "តើ Docker ដោះស្រាយបញ្ហាអ្វី?",
   "chapter.10": "Environment, secrets និង config",
   "chapter.11": "Docker Compose — កម្មវិធីពហុ container",
