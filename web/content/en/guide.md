@@ -1402,9 +1402,9 @@ docker image inspect alpine:3.22 --format '{{index .RepoDigests 0}}'
 # Labs 05/08(slim)/09/12/13 pin FROM node:22-alpine@sha256:…; Lab 13 Compose pins Postgres/Redis too.
 ```
 
-   ```bash
-   docker pull nginx@sha256:...
-   ```
+```bash
+docker pull nginx@sha256:...
+```
 
 6. **Drop capabilities** / use security options when needed (`--cap-drop ALL`).
 7. **Keep Engine updated**.

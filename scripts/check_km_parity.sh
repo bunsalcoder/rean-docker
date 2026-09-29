@@ -57,6 +57,17 @@ for en_file in "$EN_DIR"/labs/*.md; do
 done
 
 echo
+echo "== Handbook fence parity =="
+en_guide_fences="$(count_matches '^```' "$EN_DIR/guide.md")"
+km_guide_fences="$(count_matches '^```' "$KM_DIR/guide.md")"
+if [[ "$en_guide_fences" != "$km_guide_fences" ]]; then
+  echo "DRIFT: guide.md code fences EN=$en_guide_fences KM=$km_guide_fences"
+  fail=1
+else
+  echo "guide.md code fences: $en_guide_fences (matched)"
+fi
+
+echo
 echo "== Teaching invariants =="
 
 require_in_both "Lab 01 .share hint" '\.share/' \
