@@ -1,5 +1,10 @@
 # Lab 03 — Dockerfile ដំបូងរបស់អ្នក
 
+## កម្រិត
+
+**ថ្នាក់ដើម។** សរសេរ និង build Dockerfile សាមញ្ញសម្រាប់ Node API។  
+Labs ក្រោយនឹង harden គំនិតដូចគ្នា — កុំចាត់លំនាំ Lab 03 ថាជា production-ready។
+
 ## គោលដៅ
 
 Build image ផ្ទាល់ខ្លួនសម្រាប់ Node/Express API តូចមួយ ហើយ run វា។

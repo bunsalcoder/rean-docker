@@ -113,6 +113,24 @@ require_in_both "Lab 13 CAPSTONE_OWN" 'CAPSTONE_OWN' \
 require_in_both "Lab 13 compose.prod ref" 'compose\.prod\.yaml' \
   "$EN_DIR/labs/13-capstone.md" "$KM_DIR/labs/13-capstone.md"
 
+echo
+echo "== Lab Level heading (EN ## Level / KM ## កម្រិត) =="
+for en_file in "$EN_DIR"/labs/*.md; do
+  rel="$(basename "$en_file" .md)"
+  km="$KM_DIR/labs/${rel}.md"
+  if ! grep -qE '^## Level$' "$en_file"; then
+    echo "DRIFT: $rel missing ## Level in English"
+    fail=1
+  fi
+  if ! grep -qE '^## កម្រិត$' "$km"; then
+    echo "DRIFT: $rel missing ## កម្រិត in Khmer"
+    fail=1
+  fi
+done
+if [[ "$fail" -eq 0 ]]; then
+  echo "All labs have Level / កម្រិត headings"
+fi
+
 require_in_both "Guide IMAGE_REF" 'IMAGE_REF' \
   "$EN_DIR/guide.md" "$KM_DIR/guide.md"
 require_in_both "Guide digest labs note" 'Labs 09|Lab 09' \

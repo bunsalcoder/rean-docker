@@ -1,5 +1,9 @@
 # Lab 11 — Security essentials
 
+## Level
+
+**Advanced.** Non-root, BuildKit secrets, and image scanning (handbook Chapter 15).
+
 ## Goal
 
 See three habits from handbook **Chapter 15**: don’t run as root when you can avoid it, don’t bake secrets into layers, and look at what an image scan reports.

@@ -1,5 +1,10 @@
 # Lab 03 — Your first Dockerfile
 
+## Level
+
+**Beginner.** Write and build a simple Dockerfile for a Node API.  
+Later labs harden the same ideas — do not treat Lab 03 patterns as production-ready.
+
 ## Goal
 
 Build a custom image for a tiny Node/Express API and run it.

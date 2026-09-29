@@ -127,6 +127,16 @@ for dep in pg redis; do
 done
 
 echo
+echo "== Lab README Level heading =="
+for readme in labs/*/README.md; do
+  if grep -qE '^## Level$' "$readme"; then
+    ok "$readme has ## Level"
+  else
+    bad "$readme missing ## Level (place before ## Goal)"
+  fi
+done
+
+echo
 if [[ "$fail" -ne 0 ]]; then
   echo "Lab invariant check failed."
   echo "Update the drifted lab files together, or see CONTRIBUTING.md (Shared Node lab apps)."

@@ -1,5 +1,10 @@
 # Lab 05 — Docker Compose (API + Postgres + Redis)
 
+## កម្រិត
+
+**ថ្នាក់កណ្តាល។** Compose ពហុសេវាបន្ទាប់ពី env files (Lab 04)។  
+អ្នកគួរស្គាល់ការបង្កើត image សេវាតែមួយរួច (Lab 03)។
+
 ## គោលដៅ
 
 Run កម្មវិធីពហុ container ជាមួយ service DNS, volumes, healthchecks និង config ពី `.env` (Lab 04)។

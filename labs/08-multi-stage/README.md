@@ -1,5 +1,10 @@
 # Lab 08 — Multi-stage builds
 
+## Level
+
+**Advanced.** Multi-stage builds and image size contrast.  
+Comfortable writing Dockerfiles (Lab 03+) helps.
+
 ## Goal
 
 Compare a fat single-stage image (compiler + source + app) with a multi-stage image that ships only compiled JavaScript and production dependencies.

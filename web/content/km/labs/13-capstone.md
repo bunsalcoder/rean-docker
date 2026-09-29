@@ -1,5 +1,9 @@
 # Lab 13 — Capstone
 
+## កម្រិត
+
+**ពិសេស។** គ្រប់គ្រង stack API + Postgres + Redis ពីដើមដល់ចប់ (handbook ជំពូក 18)។
+
 ## គោលដៅ
 
 បង្កើត stack **API + Postgres + Redis** តូចមួយដែលអ្នកអាចបង្ហាញមិត្តរួមការ។ ផ្គូផ្គង handbook **ជំពូក 18**។

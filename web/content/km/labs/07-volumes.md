@@ -1,5 +1,9 @@
 # Lab 07 — Volumes
 
+## កម្រិត
+
+**ថ្នាក់កណ្តាល។** Named volumes និង persistence បន្ទាប់ពី networks (Lab 06)។
+
 ## គោលដៅ
 
 បង្ហាញថា named volumes រក្សាទិន្នន័យបន្ទាប់ពី container ត្រូវបានលុប។

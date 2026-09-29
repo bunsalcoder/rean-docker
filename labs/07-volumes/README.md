@@ -1,5 +1,9 @@
 # Lab 07 — Volumes
 
+## Level
+
+**Intermediate.** Named volumes and persistence after networks (Lab 06).
+
 ## Goal
 
 Prove that named volumes keep data after a container is deleted.

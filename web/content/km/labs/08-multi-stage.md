@@ -1,5 +1,10 @@
 # Lab 08 — Multi-stage builds
 
+## កម្រិត
+
+**ថ្នាក់ខ្ពស់។** Multi-stage builds និងប្រៀបធៀបទំហំ image។  
+ស្គាល់ការសរសេរ Dockerfiles (Lab 03+) ជួយ។
+
 ## គោលដៅ
 
 ប្រៀបធៀប image single-stage ធំ (compiler + source + app) ជាមួយ multi-stage image ដែលដឹកតែ JavaScript ដែល compile រួច និង production dependencies។
