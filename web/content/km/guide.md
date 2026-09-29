@@ -1397,10 +1397,14 @@ depends_on:
 4. **កុំ commit secrets**; កុំ `ENV PASSWORD=...` ជាមួយ secret ពិតក្នុង Dockerfile។
 5. **Pin digests** សម្រាប់គ្រប់គ្រង supply-chain៖
 
-   ```bash
-   docker image inspect alpine:3.22 --format '{{index .RepoDigests 0}}'
-   # Labs 05/08(slim)/09/12/13 pin FROM node:22-alpine@sha256:…; Lab 13 Compose pin Postgres/Redis ដែរ។
-   ```
+```bash
+docker image inspect alpine:3.22 --format '{{index .RepoDigests 0}}'
+# Labs 05/08(slim)/09/12/13 pin FROM node:22-alpine@sha256:…; Lab 13 Compose pin Postgres/Redis ដែរ។
+```
+
+```bash
+docker pull nginx@sha256:...
+```
 
 6. **Drop capabilities** / ប្រើ security options ពេលត្រូវ (`--cap-drop ALL`)។
 7. **Update Engine** ឱ្យទាន់។
