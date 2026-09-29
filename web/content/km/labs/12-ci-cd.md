@@ -1,5 +1,9 @@
 # Lab 12 — ផ្លូវ Deploy & CI/CD (ពិសេស)
 
+## កម្រិត
+
+**ពិសេស។** ផ្លូវ Deploy និង CI/CD — validate, smoke, tag និង ship (handbook ជំពូក 17)។
+
 ## គោលដៅ
 
 អនុវត្តជំហានដូច CI pipeline៖ validate Compose, build image, smoke-test `/health`, tag សម្រាប់ registry និងយល់ថា `compose.prod.yaml` pull image នោះនៅលើ server យ៉ាងដូចម្ដេច។

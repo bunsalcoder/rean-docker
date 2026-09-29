@@ -1,5 +1,9 @@
 # Lab 10 — Debugging & troubleshooting
 
+## Level
+
+**Advanced.** Debugging with `logs`, `inspect`, and a Compose file that fails until you fix it.
+
 ## Goal
 
 Practice the commands you reach for when a container **exits**, **cannot connect**, or **uses the wrong hostname**. Pair with handbook **Chapter 14**.

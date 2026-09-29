@@ -1,5 +1,9 @@
 # Lab 13 — Capstone
 
+## Level
+
+**Special.** Own an API + Postgres + Redis stack end to end (handbook Chapter 18).
+
 ## Goal
 
 Build a small **API + Postgres + Redis** stack that you could show a teammate. Pair with handbook **Chapter 18**.

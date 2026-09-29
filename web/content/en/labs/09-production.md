@@ -1,5 +1,9 @@
 # Lab 09 — Production-minded container
 
+## Level
+
+**Advanced.** Production Compose habits — healthchecks, limits, and a hardened runtime.
+
 ## Goal
 
 Run an API with healthchecks, `init`, restart policy, read-only rootfs, dropped capabilities, log rotation, and resource limits. The published port is bound to localhost only.

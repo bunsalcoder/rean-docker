@@ -1,5 +1,9 @@
 # Lab 11 — សុវត្ថិភាពសំខាន់ៗ
 
+## កម្រិត
+
+**ថ្នាក់ខ្ពស់។** Non-root, BuildKit secrets និងការស្កេន image (handbook ជំពូក 15)។
+
 ## គោលដៅ
 
 មើលទម្លាប់បីពី handbook **ជំពូក 15**: កុំ run ជា root ពេលអាចជៀស, កុំដុត secrets ចូល layers និងមើលរបាយការណ៍ scan image។

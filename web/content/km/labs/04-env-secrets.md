@@ -1,5 +1,10 @@
 # Lab 04 — Environment, secrets និង config
 
+## កម្រិត
+
+**ថ្នាក់កណ្តាល។** Config ពេល run និង anti-pattern សម្រាប់ secrets។  
+ធ្វើបន្ទាប់ Lab 03; មុន Lab 05 (Compose នៅប្រើ env files)។
+
 ## គោលដៅ
 
 ផ្ទេរ config នៅ **ពេល run** ហើយមើលថាហេតុអ្វី password មិនត្រូវដាក់ `ENV` ក្នុង Dockerfile។

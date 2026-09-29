@@ -1,5 +1,10 @@
 # Lab 05 — Docker Compose (API + Postgres + Redis)
 
+## Level
+
+**Intermediate.** Multi-service Compose after Lab 04 env files.  
+You should already be comfortable building a single-service image (Lab 03).
+
 ## Goal
 
 Run a multi-container app with service DNS, volumes, healthchecks, and config from `.env` (Lab 04).

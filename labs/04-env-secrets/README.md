@@ -1,5 +1,10 @@
 # Lab 04 — Environment, secrets, and config
 
+## Level
+
+**Intermediate.** Runtime config and secret anti-patterns.  
+Do after Lab 03; before Lab 05 (Compose keeps using env files).
+
 ## Goal
 
 Pass config at **runtime**, and see why a password must never be `ENV` in a Dockerfile.

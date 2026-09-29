@@ -1,5 +1,9 @@
 # Lab 09 — Container តាមទម្លាប់ production
 
+## កម្រិត
+
+**ថ្នាក់ខ្ពស់។** ទម្លាប់ Compose បែប production — healthchecks, limits និង runtime ដែល harden។
+
 ## គោលដៅ
 
 Run API ជាមួយ healthchecks, `init`, restart policy, read-only rootfs, dropped capabilities, log rotation និង resource limits។ Port ដែល publish ត្រូវ bind តែ localhost។

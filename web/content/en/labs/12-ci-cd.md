@@ -1,5 +1,9 @@
 # Lab 12 — Deploy path & CI/CD (special)
 
+## Level
+
+**Special.** Deploy and CI/CD path — validate, smoke, tag, and ship (handbook Chapter 17).
+
 ## Goal
 
 Practice the same steps a CI pipeline runs: validate Compose, build an image, smoke-test `/health`, tag for a registry, and understand how `compose.prod.yaml` pulls that image on a server.

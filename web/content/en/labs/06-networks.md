@@ -1,5 +1,9 @@
 # Lab 06 — Networks
 
+## Level
+
+**Intermediate.** User-defined networks and DNS after Compose basics (Lab 05).
+
 ## Goal
 
 See Docker DNS: containers reach each other by **name** on a user-defined network.

@@ -1,5 +1,9 @@
 # Lab 06 — Networks
 
+## កម្រិត
+
+**ថ្នាក់កណ្តាល។** User-defined networks និង DNS បន្ទាប់ពីមូលដ្ឋាន Compose (Lab 05)។
+
 ## គោលដៅ
 
 មើល Docker DNS៖ containers ទៅដល់គ្នាតាម **ឈ្មោះ** លើ user-defined network។
