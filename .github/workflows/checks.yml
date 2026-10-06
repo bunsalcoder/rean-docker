@@ -19,6 +19,17 @@ jobs:
         run: ./scripts/check_km_content.sh
       - name: Verify Khmer teaching parity
         run: ./scripts/check_km_parity.sh
+      - name: Verify Khmer handbook subsection headings are not Latin-only
+        run: python3 ./scripts/check_km_headings.py
+      - name: Shellcheck lab and repo scripts
+        run: |
+          set -euo pipefail
+          # Pin ShellCheck by release asset (no apt). Refresh when upgrading.
+          SC_VER=v0.10.0
+          curl -fsSL -o /tmp/shellcheck.tgz \
+            "https://github.com/koalaman/shellcheck/releases/download/${SC_VER}/shellcheck-${SC_VER}.linux.x86_64.tar.xz"
+          tar -xJf /tmp/shellcheck.tgz -C /tmp
+          "/tmp/shellcheck-${SC_VER}/shellcheck" scripts/*.sh labs/*/run.sh
       - name: Verify shared lab hardening invariants
         run: ./scripts/check_lab_invariants.sh
       - name: Verify routes.js matches routes.json

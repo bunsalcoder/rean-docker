@@ -1,7 +1,7 @@
 # Common local tasks for rean-docker
 PORT ?= 5501
 
-.PHONY: help serve sync check check-km check-km-parity check-lab-invariants check-all check-links check-vendor-sri check-vendor-versions check-routes sync-routes check-site-smoke sitemap sync-km-i18n sync-prod-dockerfiles bump-node-deps vendor-site smoke smoke-concept ci-local refresh-digests refresh-digests-check
+.PHONY: help serve sync check check-km check-km-parity check-km-headings check-lab-invariants check-all check-links check-vendor-sri check-vendor-versions check-routes sync-routes check-site-smoke sitemap sync-km-i18n sync-prod-dockerfiles bump-node-deps vendor-site smoke smoke-concept ci-local refresh-digests refresh-digests-check
 
 help:
 	@echo "rean-docker make targets:"
@@ -11,6 +11,7 @@ help:
 	@echo "  make check         # fail if English site content drifted from sources"
 	@echo "  make check-km      # fail if Khmer site content drifted from English structure"
 	@echo "  make check-km-parity  # fail if Khmer labs drift in checklists/code/invariants"
+	@echo "  make check-km-headings  # fail if Khmer handbook ###/#### titles are Latin-only"
 	@echo "  make check-lab-invariants  # fail if shared Node digest/Express/Dockerfile twins drift"
 	@echo "  make check-routes  # fail if routes.js drifted from routes.json"
 	@echo "  make check-links   # fail if HTML/CSS/MD points at missing local files"
@@ -50,10 +51,13 @@ check:
 check-km:
 	./scripts/check_km_content.sh
 
-check-all: check check-km check-km-parity check-lab-invariants check-routes check-links check-vendor-sri check-vendor-versions check-site-smoke
+check-all: check check-km check-km-parity check-km-headings check-lab-invariants check-routes check-links check-vendor-sri check-vendor-versions check-site-smoke
 
 check-km-parity:
 	./scripts/check_km_parity.sh
+
+check-km-headings:
+	python3 ./scripts/check_km_headings.py
 
 check-lab-invariants:
 	./scripts/check_lab_invariants.sh

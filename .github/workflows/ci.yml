@@ -14,7 +14,9 @@ jobs:
   check:
     uses: ./.github/workflows/checks.yml
 
+  # Fail fast: skip expensive Docker build/smoke/Trivy when content gates fail.
   labs:
+    needs: [check]
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:

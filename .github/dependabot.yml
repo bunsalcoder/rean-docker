@@ -106,8 +106,9 @@ updates:
         patterns:
           - "*"
 
-  # Self-hosted marked + DOMPurify (copied into assets/js/vendor/). After a bump PR:
-  #   ./scripts/vendor_site_libs.sh
+  # Self-hosted marked + DOMPurify (copied into assets/js/vendor/).
+  # Before merging a /web bump PR, run locally (CI will fail otherwise):
+  #   make vendor-site && make check-vendor-sri && make check-vendor-versions
   - package-ecosystem: npm
     directory: /web
     target-branch: develop

@@ -39,7 +39,7 @@ Localized lesson Markdown lives under:
 
 If a Khmer file is missing, the site falls back to English for that page.
 
-> The Learn and Lab pages load Markdown over HTTP, so open them via a local server (not as `file://`).
+> The Learn and Lab pages load Markdown over HTTP, so open them via a local server (not as `file://`). Chapter and lab bodies are rendered client-side; without JavaScript, those pages link to the raw Markdown under `web/content/`.
 
 ## Handbook (Markdown)
 

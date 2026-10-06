@@ -81,7 +81,7 @@ Unit នោះ៖
 - Start ក្នុងរយៈពេលពីរបីវិនាទី (ស្រាលជាង virtual machine ពេញ)
 - Isolate processes, filesystems និង (ជម្រើស) networks
 
-### Containers vs virtual machines
+### Containers vs ម៉ាស៊ីន virtual (VM)
 
 | | Virtual Machine | Container |
 |--|-----------------|-----------|
@@ -153,7 +153,7 @@ Unit នោះគឺ **container**។
 4. **Portability** — ផ្ទេរ unit រវាង environments ដោយមិន reinstall ពិភពលូត។
 5. **Clear boundaries** — dependencies នៅ *ក្នុង* unit មិនមែន «នៅណាមួយនៅ host»។
 
-#### Containerization vs Docker vs Kubernetes
+#### Containerization vs Docker vs Kubernetes (ប្រៀបធៀប)
 
 | ពាក្យ | គឺអ្វី |
 |------|------------|
@@ -293,7 +293,7 @@ Docker Desktop (Mac/Windows) stack run **ក្នុង Linux VM ស្រា�
 
 Demos ដូច Lab 01 ទុកនៅ handbook។ សន្មត Docker installed (Chapter 4)។ Skim ឥឡូវ read ahead រួច re-run បន្ទាប់ install — ឬធ្វើ lab។
 
-#### Example A — Isolation processes (pid namespace)
+#### ឧទាហរណ៍ A — Isolation process (pid namespace)
 
 ```bash
 # Start a quiet container
@@ -310,7 +310,7 @@ docker rm -f rean-ps
 
 → ក្នុង container **មិន**ឃើញ Chrome/Slack processes host។ នោះគឺ pid isolation។
 
-#### Example B — Isolation filesystem (mnt namespace)
+#### ឧទាហរណ៍ B — Isolation filesystem (mnt namespace)
 
 ```bash
 docker run --rm -it alpine:3.22 sh -c 'echo hello-from-container > /tmp/note.txt; cat /tmp/note.txt; ls /'
@@ -329,7 +329,7 @@ docker run --rm -v /tmp/rean-share:/data alpine:3.22 cat /data/msg.txt
 
 Isolation default; sharing opt-in។
 
-#### Example C — Isolation network (net namespace)
+#### ឧទាហរណ៍ C — Isolation network (net namespace)
 
 ```bash
 # Two containers, each with nginx on container-port 80
@@ -344,7 +344,7 @@ docker rm -f rean-web-a rean-web-b
 
 → Container នីមួយៗគិតថាមាន port `80`។ Host map published ports ខុសគ្នា។ Network namespacing + port publishing។
 
-#### Example D — Resource limits (cgroups)
+#### ឧទាហរណ៍ D — Resource limits (cgroups)
 
 ```bash
 # Limit memory; watch Docker enforce it
@@ -376,7 +376,7 @@ docker rm -f rean-r1 rean-r2 rean-r3
 
 → Image មួយ Redis processes isolated បី។ Density win ធៀប VMs បី។
 
-#### Example F — Packaging «works the same» (portable unit)
+#### ឧទាហរណ៍ F — Packaging «works the same» (portable unit)
 
 ```bash
 # Official image already packages Redis + its defaults
@@ -387,7 +387,7 @@ docker run --rm -p 6379:6379 redis:7-alpine
 
 Chapters ក្រោយ **build portable unit** ផ្ទាល់ Dockerfile។ គំនិតដូចគ្នា៖ ship environment ជាមួយ app។
 
-### *Inside* typical container image?
+### *Inside* image container ធម្មតា?
 
 ជាធរមាន៖
 
@@ -459,23 +459,23 @@ Chapters ក្រោយ **build portable unit** ផ្ទាល់ Dockerfile�
 
 Memorize ពាក្យបួន៖
 
-### Image
+### Image (រូបភាព)
 
 **Read-only template** — ដូច class ឬ snapshot filesystem + metadata (default command, env, exposed ports)។
 
 Examples: `nginx:1.28-alpine`, `postgres:16`, `node:22-alpine`។
 
-### Container
+### Container (ប្រៀបធៀប)
 
 **Running (ឬ stopped) instance** image — ដូច object ពី class។
 
 Start containers ច្រើន image មួយ។
 
-### Dockerfile
+### Dockerfile (រូបភាព)
 
 **Recipe** (text file) Dockerfile build image ជួរតាមជួរ។
 
-### Registry
+### Registry (ឃ្លាំង)
 
 **Storage/server images**។ Public default: [Docker Hub](https://hub.docker.com)។ Private: GHCR, ECR, GCR, Harbor ជាដើម។
 
@@ -487,7 +487,7 @@ Dockerfile  →  docker build  →  Image  →  docker run  →  Container
                                 Registry
 ```
 
-### Layers
+### Layers (រូបភាព)
 
 Images stack **layers**។ Dockerfile instruction ជាធរមាន layer។ Layers unchanged **cached** rebuilds លឿន order instructions wisely។
 
@@ -501,7 +501,7 @@ Official: [https://docs.docker.com/get-started/get-docker/](https://docs.docker.
 
 Pick OS ខាងក្រោម រួច **Verify** shared។
 
-### Windows
+### Windows (ប្រព័ន្ធ)
 
 **Recommended:** Docker Desktop **WSL 2** backend។
 
@@ -550,7 +550,7 @@ wsl --status
 - Settings → Resources → WSL Integration enable distro
 - `wsl --update` elevated PowerShell
 
-### macOS
+### macOS (ប្រព័ន្ធ)
 
 **Recommended:** Docker Desktop for Mac។
 
@@ -584,7 +584,7 @@ wsl --status
 - Quit Docker (whale → Quit) reopen
 - Apple Silicon build on M-series (Intel builds poor)
 
-### Linux
+### Linux (ប្រព័ន្ធ)
 
 Two choices:
 
@@ -593,7 +593,7 @@ Two choices:
 | **Docker Desktop for Linux** | GUI easy all-in-one |
 | **Docker Engine** (daemon + CLI) | Lighter Ubuntu/Debian/Fedora |
 
-#### Option A — Docker Desktop for Linux
+#### ជម្រើស A — Docker Desktop សម្រាប់ Linux
 
 1. Distro supported (Ubuntu, Debian, Fedora): [Desktop for Linux](https://docs.docker.com/desktop/setup/install/linux/)
 2. Install `.deb` or `.rpm` official
@@ -601,7 +601,7 @@ Two choices:
 4. Accept agreement engine running
 5. Verify below
 
-#### Option B — Docker Engine (CLI) Ubuntu/Debian-family
+#### ជម្រើស B — Docker Engine (CLI) Ubuntu/Debian-family
 
 Steps usual Linux learners។ Other distros: [Install Docker Engine](https://docs.docker.com/engine/install/)។
 
@@ -653,7 +653,7 @@ sudo usermod -aG docker $USER
 
 **Log out log back in** (or reboot) group applies។ Until then `sudo docker …`។
 
-### Verify (all platforms)
+### ផ្ទៀងផ្ទាត់ (គ្រប់ platform)
 
 Docker installed running terminal:
 
@@ -673,7 +673,7 @@ docker run --rm hello-world
 
 `docker info` or `hello-world` fails → Docker not fully running — start Docker Desktop (`sudo systemctl start docker` Linux Engine) retry។
 
-### Important Linux note: permissions
+### ចំណាំ Linux សំខាន់៖ permissions
 
 `permission denied` Docker socket:
 
@@ -685,7 +685,7 @@ sudo usermod -aG docker $USER
 sudo docker ps
 ```
 
-### Daemon vs client
+### Daemon vs client (ប្រៀបធៀប)
 
 - **Client:** `docker` CLI you type
 - **Daemon:** `dockerd` background creates containers
@@ -701,9 +701,9 @@ Windows/macOS Docker Desktop daemon inside Desktop Linux VM — keep Desktop run
 
 ## 5. Container ដំបូងរបស់អ្នក
 
-### Lab: `labs/02-hello`
+### Lab៖ `labs/02-hello`
 
-### Run container (foreground)
+### Run container នៅ foreground
 
 ```bash
 docker run -it ubuntu:24.04 bash
@@ -727,7 +727,7 @@ exit
 
 When `exit` container **stops**។ Still exists until remove។
 
-### Run background (detached)
+### Run នៅ background (detached)
 
 ```bash
 docker run -d --name my-nginx -p 8080:80 nginx:1.28-alpine
@@ -741,7 +741,7 @@ docker run -d --name my-nginx -p 8080:80 nginx:1.28-alpine
 
 Open: [http://localhost:8080](http://localhost:8080)
 
-### Essential day-1 commands
+### ពាក្យបញ្ជា day-1 សំខាន់ៗ
 
 ```bash
 docker ps                 # running containers
@@ -755,14 +755,14 @@ docker rm my-nginx        # delete stopped container
 docker rm -f my-nginx     # force remove (stop + delete)
 ```
 
-### `--rm` throwaway containers
+### `--rm` containers ប្រើរួចលុប
 
 ```bash
 docker run --rm -it alpine sh
 # when you exit, container is auto-deleted
 ```
 
-### Cleaning up (safe practice early)
+### សម្អាត (ទម្លាប់ សុវត្ថិភាព ពីដើម)
 
 ```bash
 docker ps -a                      # see leftover containers
@@ -784,7 +784,7 @@ docker system prune -a
 
 ## 6. ពន្យល់ images ឱ្យជ្រៅ
 
-### List and inspect
+### List និង inspect
 
 ```bash
 docker images
@@ -798,7 +798,7 @@ docker history redis:7-alpine
 
 `history` បង្ហាញ layers និងទំហំប្រហែល — មានប្រយោជន៍ខ្លាំងសម្រាប់មើលថាតើ image ធំហួសហេតុនៅណា។
 
-### Tags
+### Tags (រូបភាព)
 
 `nginx:alpine` មានន័យថា:
 
@@ -825,7 +825,7 @@ docker images | grep nginx
 
 ## 7. Dockerfile — បង្កើត image ផ្ទាល់ខ្លួន
 
-### Lab: `labs/03-dockerfile`
+### Lab៖ `labs/03-dockerfile`
 
 Dockerfile គឺជា script នៃ instructions។ ឧទាហរណ៍ (កម្មវិធី Node សាមញ្ញ):
 
@@ -855,7 +855,7 @@ EXPOSE 3000
 CMD ["node", "server.js"]
 ```
 
-### Instruction cheat sheet
+### តារាងសង្ខេប instruction
 
 | Instruction | Purpose |
 |-------------|---------|
@@ -872,7 +872,7 @@ CMD ["node", "server.js"]
 | `HEALTHCHECK` | How Docker probes container health |
 | `ARG` | Build-time variables |
 
-### CMD vs ENTRYPOINT
+### CMD vs ENTRYPOINT (ប្រៀបធៀប)
 
 ```dockerfile
 ENTRYPOINT ["nginx"]
@@ -892,7 +892,7 @@ CMD ["node", "server.js"]
 CMD node server.js
 ```
 
-### Build and run
+### Build និង run
 
 From `labs/03-dockerfile`:
 
@@ -908,7 +908,7 @@ docker run --rm -p 3000:3000 rean-hello:1.0
 | `-t rean-hello:1.0` | Name:tag |
 | `.` | Build context (files sent to daemon) |
 
-### Build context & `.dockerignore`
+### Build context និង `.dockerignore`
 
 Everything context directory sent Docker។ Exclude junk:
 
@@ -922,7 +922,7 @@ npm-debug.log
 
 **Why it matters:** Smaller context = faster builds។ Never copy secrets into images accidentally។
 
-### Layer caching strategy (critical skill)
+### ទម្លាប់ layer caching (សំខាន់)
 
 **Bad order** (any code change busts `npm install` cache):
 
@@ -945,7 +945,7 @@ Rule: **ដាក់ជំហានដែលផ្លាស់ប្តូយក
 
 ## 8. Volumes — រក្សាទិន្នន័យឱ្យនៅរស់
 
-### Lab: `labs/07-volumes`
+### Lab៖ `labs/07-volumes`
 
 Containers **ephemeral** (មិនអចិន្ត)។ Delete container → writable layer បាត់។
 
@@ -959,7 +959,7 @@ Containers **ephemeral** (មិនអចិន្ត)។ Delete container → w
 | **Bind mount** | Live-edit source code host | `-v $(pwd):/app` |
 | **tmpfs** | Sensitive/temp in memory | `--tmpfs /tmp` |
 
-### Named volume example (Postgres)
+### ឧទាហរណ៍ named volume (Postgres)
 
 ```bash
 docker volume create rean-pgdata
@@ -980,7 +980,7 @@ docker volume ls
 docker volume inspect rean-pgdata
 ```
 
-### Bind mount example (dev)
+### ឧទាហរណ៍ bind mount (dev)
 
 ```bash
 docker run --rm -v "$PWD":/app -w /app node:22-alpine node -e "console.log('hi from bind mount')"
@@ -999,7 +999,7 @@ Bind mounts inherit host UID/GID issues។ Prefer matching user Dockerfile (`USE
 
 ## 9. Networks — របៀបដែល containers និយាយគ្នា
 
-### Lab: `labs/06-networks`
+### Lab៖ `labs/06-networks`
 
 Default containers same user-defined bridge network reach each other **by container name** (DNS)។
 
@@ -1018,7 +1018,7 @@ Hostnames:
 - Container ផ្សេង `rean-net`: `rean-redis`
 - Host machine: via published ports (`localhost:6379`) មិនមែន internal name
 
-### Network types (simplified)
+### ប្រភេទ network (សាមញ្ញ)
 
 | Driver | Typical use |
 |--------|-------------|
@@ -1037,11 +1037,11 @@ Example: app connects `postgres:5432` internally; publish `5432` only if host to
 
 ## 10. Environment, secrets និង config
 
-### Lab: `labs/04-env-secrets`
+### Lab៖ `labs/04-env-secrets`
 
 ធ្វើបន្ទាប់ពី Lab 03 (អ្នកសរសេរ Dockerfile រួច) និងមុន Lab 05។ អ្នកនឹងផ្ទេរ config នៅ **ពេល run** រួចមើល password ដែលដុតក្នុង image លេចក្នុង `docker history`។
 
-### Pass env vars
+### បញ្ជូន env vars
 
 ```bash
 docker run --rm -e GREETING=Hello alpine printenv GREETING
@@ -1049,19 +1049,19 @@ docker run --rm -e GREETING=Hello alpine printenv GREETING
 docker run --rm --env-file .env alpine printenv
 ```
 
-### Inside Dockerfile
+### ក្នុង Dockerfile
 
 ```dockerfile
 ENV NODE_ENV=production
 ```
 
-### Rules of thumb
+### ច្បាប់ ងាយ
 
 1. **Config** (non-secret): env vars, Compose `environment`, config files។
 2. **Secrets** (passwords, API keys): never bake image layers; env runtime, Docker secrets, vault — keep `.env` out git។
 3. Prefer **12-factor**: same image, different env per environment (dev/stage/prod)។
 
-### Example `.env` (do not commit secrets)
+### ឧទាហរណ៍ `.env` (កុំ commit secrets)
 
 ```env
 POSTGRES_USER=rean
@@ -1075,11 +1075,11 @@ Add `.env` to `.gitignore`។
 
 ## 11. Docker Compose — កម្មវិធីពហុ container
 
-### Lab: `labs/05-compose`
+### Lab៖ `labs/05-compose`
 
 Manually `docker run` app + db + redis painful។ **Compose** describes whole stack YAML។
 
-### Minimal `compose.yaml`
+### `compose.yaml` តូច (សាមញ្ញ)
 
 Lab 05 រក្សា **password ក្នុង `.env`** មិនមែនក្នុង YAML (Lab 04)។ Compose interpolate `${POSTGRES_PASSWORD}` ពេល stack ចាប់ផ្តើម៖
 
@@ -1147,13 +1147,13 @@ docker compose up --build   # rebuild then start
 | `networks` | Isolated networks for the project |
 | `env_file` / `.env` | Runtime config និង secrets (មិនដុតក្នុង image) |
 
-### Service DNS
+### Service DNS (ប្រៀបធៀប)
 
 Compose service name = hostname។ Web service connects Postgres host `db` not `localhost`។
 
 **`localhost` inside container means that container itself**, never host or sibling services។
 
-### Profiles & overrides (intermediate)
+### Profiles និង overrides (កម្រិត)
 
 ```yaml
 # compose.override.yaml is auto-merged for local dev
@@ -1181,7 +1181,7 @@ docker compose --profile tools up -d
 
 ## 12. Multi-stage builds និងទំហំ image
 
-### Lab: `labs/08-multi-stage`
+### Lab៖ `labs/08-multi-stage`
 
 Problem: build tools (compilers, TypeScript/`tsc`, npm all deps, Go toolchain) bloat production images increase attack surface។
 
@@ -1221,7 +1221,7 @@ Benefits:
 
 បន្ទាត់ `# syntax=docker/dockerfile:1` (Lab 08) បើកលក្ខណៈ BuildKit ដូច cache mounts។ `RUN --mount=type=cache,target=/root/.npm` រក្សា cache download npm រវាង builds **ដោយមិន** copy វាចូល image layer។
 
-### Alpine vs distroless vs slim
+### Alpine vs distroless vs slim (ប្រៀបធៀប)
 
 | Base | Pros | Cons |
 |------|------|------|
@@ -1231,7 +1231,7 @@ Benefits:
 
 Choose based on app needs; consistency across services helps ops។
 
-### Size inspection habits
+### ទម្លាប់ ពិនិត្យ ទំហំ
 
 ```bash
 docker images rean-hello
@@ -1243,7 +1243,7 @@ dive rean-hello:1.0   # if you install dive — visual layer explorer
 
 ## 13. ទម្លាប់គិតបែប production
 
-### Lab: `labs/09-production`
+### Lab៖ `labs/09-production`
 
 ### Checklist មុន deploy «real»
 
@@ -1312,7 +1312,7 @@ logging:
 
 12. **Drop Linux capabilities** — `cap_drop: [ALL]` (ឬ `docker run --cap-drop ALL`) ដើម្បីកុំឱ្យ process ទទួលសិទ្ធិ kernel ដែលវាមិនត្រូវការ។ គូជាមួយ `no-new-privileges`។
 
-### Restart policies
+### Restart policies (ច្បាប់ restart)
 
 | Policy | Behavior |
 |--------|----------|
@@ -1325,7 +1325,7 @@ logging:
 
 ## 14. Debug និងដោះស្រាយបញ្ហា
 
-### Lab: `labs/10-debugging`
+### Lab៖ `labs/10-debugging`
 
 អនុវត្ត `logs`, `inspect` និង Compose client ដែលនិយាយទៅ `localhost` ខុស។ កែ hostname រួចត្រឡប់មកទីនេះសម្រាប់ pattern ផ្សេងទៀត។
 
@@ -1387,7 +1387,7 @@ depends_on:
 
 ## 15. សុវត្ថិភាពសំខាន់ៗ
 
-### Lab: `labs/11-security`
+### Lab៖ `labs/11-security`
 
 ប្រៀបធៀប `whoami` លើ image ដែលមិនមែន root vs Alpine, build ជាមួយ BuildKit `--secret` (គ្មានអ្វីក្នុង `docker history`) ហើយស្កេនដោយ Trivy បើចង់។ Lab 04 បានបង្ហាញ anti-pattern `ENV` ដែលលេច secret រួចហើយ។
 
@@ -1416,7 +1416,7 @@ docker pull nginx@sha256:...
 
 លំហាត់បន្ថែមសម្រាប់ជំពូកនេះស្ថិតនៅ **Lab 11 §5–§7** (BuildKit cache + multi-arch, Compose Watch, SBOM)។ Secrets mounts បានអនុវត្តរួចក្នុង Lab 11 §2។ Profiles បានបង្ហាញខ្លីក្នុងជំពូក 11 — ត្រឡប់មកវិញពេល service ស្រេចចិត្តធ្វើឱ្យ Compose រាលថ្ងៃរញ៉េរញ៉ៃ។
 
-### BuildKit
+### BuildKit (សំខាន់)
 
 Builder ទំនើប (ធម្មតាជា default ឥឡូវ)៖
 
@@ -1439,7 +1439,7 @@ RUN --mount=type=cache,target=/root/.npm \
 docker build --secret id=npmrc,src=$HOME/.npmrc -t myapp .
 ```
 
-### Multi-arch builds
+### Build multi-arch (ប្រៀបធៀប)
 
 ```bash
 docker buildx create --use
@@ -1448,7 +1448,7 @@ docker buildx build --platform linux/amd64,linux/arm64 -t you/app:1.0 --push .
 
 មានប្រយោជន៍សម្រាប់ Apple Silicon + Linux servers។
 
-### Registries
+### Registries (ឃ្លាំង)
 
 ```bash
 docker login
@@ -1482,7 +1482,7 @@ docker compose -f compose.watch.yaml watch
 
 ប្រើ Watch សម្រាប់ **feedback loop លើ laptop**។ ទុក production Compose គ្មាន `develop:` — ship images មិនមែន laptop sync rules (ជំពូក 17)។
 
-### SBOM & provenance
+### SBOM និង provenance
 
 **SBOM** (Software Bill of Materials) រាយអ្វីដែល image មាន ដើម្បីឱ្យ scanner និង auditor វិភាគ supply chain។ **Provenance** / attestations កត់ត្រា *របៀប* ដែលវាត្រូវបាន build (Dockerfile, git commit, builder)។
 
@@ -1554,7 +1554,7 @@ docker run -d --network rean-custom --network-alias cache redis:7-alpine
 
 > **ជំពូកពិសេស:** នេះគឺផ្លូវ «ship it» — app ដែល containerize ចាកចេញពី laptop, ត្រូវ build ក្នុង CI, ចូល registry, រួច run លើ server។ បញ្ចប់ជំពូក 11–13 (និង 15–16 បើអាច) មុន។
 
-### Lab: `labs/12-ci-cd`
+### Lab៖ `labs/12-ci-cd`
 
 Deploy មិនមែនពាក្យបញ្ជាតែមួយ។ វាជា **pipeline** នៃការសម្រេចចិត្ត៖
 
@@ -1593,7 +1593,7 @@ Docker Compose គ្រប់គ្រាន់សម្រាប់ production
 3. ចូលចិត្ត **`IMAGE:git-sha`** (ឬ semver) ជាងពឹង `latest`។
 4. ទុក **prod Compose** ដែល pull images (`image:`) មិនមែន build លើ server (`build:`) នៅពេលអាច។
 
-### Production Compose layout
+### Compose សម្រាប់ production
 
 ការបែងចែកជាក់ស្តែងក្នុង Lab 12៖
 
@@ -1669,7 +1669,7 @@ IMAGE_REF=:sha-deadbee docker compose -f compose.prod.yaml config
 
 `compose.prod.yaml` បដិសេធ interpolate បើ `IMAGE_REF` ខ្វះ — នេះចេតនា។ Prod ត្រូវ pin SHA tag ឬ digest (`:sha-…` / `@sha256:…`) មិនមែន `:latest`។
 
-### Registry workflow (build → tag → push → pull)
+### ទម្លាប់ Registry (build → tag → push → pull)
 
 ```bash
 # Authenticate (Docker Hub, GHCR, etc.)
@@ -1908,7 +1908,7 @@ curl -fsS https://your.domain/health
 
 ## 18. គម្រោង capstone
 
-### Lab: `labs/13-capstone`
+### Lab៖ `labs/13-capstone`
 
 បង្កើត stack តូចក្នុង repo នេះ។ **Day-one runnable baseline** (Compose + Node API) មានរួចក្នុងថត capstone ដើម្បី `up` ភ្លាម — រួច **own** វា (`CAPSTONE_OWN` ក្នុង Lab 13)៖ បន្ថែម routes, កែ Compose/Dockerfile ឬបន្ថែម proxy។ ចូលចិត្តកែថតនោះជាងទុក Lab 05 ដដែល (ឬចាប់ផ្ដើមស្អាតពី `labs/05-compose` បើចង់)។
 
