@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>Core mental model — rean-docker</title>
+    <meta name="description" content="Memorize these four words: Image A read only template — like a class or a snapshot of a filesystem + metadata default command, env, exposed ports . Examples: ng…" />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/3.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/3.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/3.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/learn/3.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Core mental model — rean-docker" />
+    <meta property="og:description" content="Memorize these four words: Image A read only template — like a class or a snapshot of a filesystem + metadata default command, env, exposed ports . Examples: ng…" />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/3.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Core mental model — rean-docker" />
+    <meta name="twitter:description" content="Memorize these four words: Image A read only template — like a class or a snapshot of a filesystem + metadata default command, env, exposed ports . Examples: ng…" />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-chapter"
+    data-static-locale="en"
+    data-static-twin="./3.km.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">Curriculum</p>
+      <h1>Core mental model</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./learn.html?c=3">Open interactive reader</a>
+      </p>
+      <div class="md-body">
+<p>Memorize these four words:</p>
+<h3>Image</h3>
+<p>A <strong>read-only template</strong> — like a class or a snapshot of a filesystem + metadata (default command, env, exposed ports).</p>
+<p>Examples: <code>nginx:1.28-alpine</code>, <code>postgres:16</code>, <code>node:22-alpine</code>.</p>
+<h3>Container</h3>
+<p>A <strong>running (or stopped) instance</strong> of an image — like an object created from a class.</p>
+<p>You can start many containers from one image.</p>
+<h3>Dockerfile</h3>
+<p>A <strong>recipe</strong> (text file) that tells Docker how to build an image, line by line.</p>
+<h3>Registry</h3>
+<p>A <strong>storage/server for images</strong>. Public default: <a href="https://hub.docker.com">Docker Hub</a>. Private options: GHCR, ECR, GCR, Harbor, etc.</p>
+<pre><code>Dockerfile  →  docker build  →  Image  →  docker run  →  Container
+                                    ↓
+                              docker push/pull
+                                    ↓
+                                Registry
+</code></pre>
+<h3>Layers</h3>
+<p>Images are stacks of <strong>layers</strong>. Each Dockerfile instruction often creates a layer. Unchanged layers are <strong>cached</strong>, so rebuilds are fast when you order instructions wisely.</p>
+<hr>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        <a class="pager-prev" href="./learn/2.html"><span>Previous</span>Containerization foundations</a>
+        <a class="pager-next" href="./learn/4.html"><span>Next</span>Install &amp; verify</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

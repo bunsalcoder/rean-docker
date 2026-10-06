@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="km">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>តើ Docker ដោះស្រាយបញ្ហាអ្វី? — rean-docker</title>
+    <meta name="description" content="ការឈឺចដែលជាប់ទម្លាប់ អ្នក build app នៅ laptop។ វាដំណើរការ។ នៅ machine មិត្តរួមការ៖ ខូច។ នៅ server៖ ខូច។ មូលហេតុជាធរមានរួមមាន៖ OS packages ខុសគ្នា Language runti…" />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/1.km.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/1.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/1.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/learn/1.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="តើ Docker ដោះស្រាយបញ្ហាអ្វី? — rean-docker" />
+    <meta property="og:description" content="ការឈឺចដែលជាប់ទម្លាប់ អ្នក build app នៅ laptop។ វាដំណើរការ។ នៅ machine មិត្តរួមការ៖ ខូច។ នៅ server៖ ខូច។ មូលហេតុជាធរមានរួមមាន៖ OS packages ខុសគ្នា Language runti…" />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/1.km.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="តើ Docker ដោះស្រាយបញ្ហាអ្វី? — rean-docker" />
+    <meta name="twitter:description" content="ការឈឺចដែលជាប់ទម្លាប់ អ្នក build app នៅ laptop។ វាដំណើរការ។ នៅ machine មិត្តរួមការ៖ ខូច។ នៅ server៖ ខូច។ មូលហេតុជាធរមានរួមមាន៖ OS packages ខុសគ្នា Language runti…" />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-chapter"
+    data-static-locale="km"
+    data-static-twin="./1.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">កម្មវិធីសិក្សា</p>
+      <h1>តើ Docker ដោះស្រាយបញ្ហាអ្វី?</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./learn.html?c=1&amp;lang=km">បើកអ្នកអានអន្តរកម្ម</a>
+      </p>
+      <div class="md-body">
+<h3>ការឈឺចដែលជាប់ទម្លាប់</h3>
+<p>អ្នក build app នៅ laptop។ វាដំណើរការ។ នៅ machine មិត្តរួមការ៖ ខូច។ នៅ server៖ ខូច។ មូលហេតុជាធរមានរួមមាន៖</p>
+<ul>
+<li>OS packages ខុសគ្នា</li>
+<li>Language runtime ខុសគ្នា (Node 20 vs 22, Python 3.10 vs 3.12)</li>
+<li>System libraries ខ្វះ</li>
+<li>Configuration drift «វាដំណើរការនៅ machine ខ្ញុំ»</li>
+</ul>
+<h3>ចម្លើយរបស់ Docker</h3>
+<p><strong>Package application <em>និង</em> runtime dependencies របស់វាទៅក្នុង unit ដែលអាចផ្ទេរបាន ហៅថា container។</strong></p>
+<p>Unit នោះ៖</p>
+<ul>
+<li>Run ដូចគ្នានៅ laptop, CI និង server</li>
+<li>Start ក្នុងរយៈពេលពីរបីវិនាទី (ស្រាលជាង virtual machine ពេញ)</li>
+<li>Isolate processes, filesystems និង (ជម្រើស) networks</li>
+</ul>
+<h3>Containers vs ម៉ាស៊ីន virtual (VM)</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Virtual Machine</th>
+<th>Container</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>រួមបញ្ចូល guest OS?</td>
+<td>បាទ (OS ពេញ)</td>
+<td>ទេ — share host kernel</td>
+</tr>
+<tr>
+<td>ទំហំ</td>
+<td>GB</td>
+<td>MB–រយៈរាប hundreds of MB</td>
+</tr>
+<tr>
+<td>ពេល start</td>
+<td>នាទី</td>
+<td>វិនាទី</td>
+</tr>
+<tr>
+<td>Isolation</td>
+<td>រឹង (hypervisor)</td>
+<td>Process-level (namespaces + cgroups)</td>
+</tr>
+<tr>
+<td>Density</td>
+<td>តិច per host</td>
+<td>ច្រើន per host</td>
+</tr>
+</tbody></table>
+<p><strong>រូបភាព:</strong> VM គឺជាផ្ទះពេញមួយ។ Container គឺជាបន្ទប់ក្នុងអគារដែល share plumbing និង electricity (host kernel) ប៉ុន្តែមានបន្ទប់ចាក់សោផ្ទាល់ (filesystem, process tree, network namespace)។</p>
+<p>បន្ទាប់ <strong>Chapter 2</strong> ពន្យល់ containerization ជាភាសាសាមញ្ញ (មូលដ្ឋាន beginner) រួច <strong>Lab 01</strong> ឱ្យអ្នកមានអារម្មណ៍ isolation ជាមួយ commands សាមញ្ញ។</p>
+<h3>Docker គឺអ្វី (និងមិនមែនអ្វី)</h3>
+<p><strong>Docker គឺ៖</strong></p>
+<ul>
+<li>Platform ដើម្បី build, ship និង run containers</li>
+<li>Client (<code>docker</code>) និយាយជាមួយ daemon (<code>dockerd</code>)</li>
+<li>Ecosystem៖ images, registries (Docker Hub), Compose ជាដើម</li>
+</ul>
+<p><strong>Docker មិនមែន៖</strong></p>
+<ul>
+<li>ជំនួស architecture application ល្អ</li>
+<li>«Secure by default» ដោយវេទម្ម (អ្នកនៅតែ harden images និង configs)</li>
+<li>ដូច Kubernetes (K8s <em>orchestrate</em> containers ក scale; Docker <em>run</em> ពួកវា)</li>
+</ul>
+<hr>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        <a class="pager-prev" href="./learn/how-to-use.km.html"><span>មុន</span>របៀបប្រើមគ្គុទ្ទេសក៍នេះ</a>
+        <a class="pager-next" href="./learn/2.km.html"><span>បន្ទាប់</span>មូលដ្ឋាន containerization</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

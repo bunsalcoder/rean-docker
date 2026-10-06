@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>Production-minded practices — rean-docker</title>
+    <meta name="description" content="Lab: labs/09 production Checklist before “real” deploy 1. Pin versions — postgres:16 alpine , not postgres:latest . Early labs use series tags redis:7 alpine ,…" />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/13.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/13.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/13.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/learn/13.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Production-minded practices — rean-docker" />
+    <meta property="og:description" content="Lab: labs/09 production Checklist before “real” deploy 1. Pin versions — postgres:16 alpine , not postgres:latest . Early labs use series tags redis:7 alpine ,…" />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/13.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Production-minded practices — rean-docker" />
+    <meta name="twitter:description" content="Lab: labs/09 production Checklist before “real” deploy 1. Pin versions — postgres:16 alpine , not postgres:latest . Early labs use series tags redis:7 alpine ,…" />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-chapter"
+    data-static-locale="en"
+    data-static-twin="./13.km.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">Curriculum</p>
+      <h1>Production-minded practices</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./learn.html?c=13">Open interactive reader</a>
+      </p>
+      <div class="md-body">
+<h3>Lab: <code>labs/09-production</code></h3>
+<h3>Checklist before “real” deploy</h3>
+<ol>
+<li><strong>Pin versions</strong> — <code>postgres:16-alpine</code>, not <code>postgres:latest</code>. Early labs use series tags (<code>redis:7-alpine</code>, <code>node:22-alpine</code>, <code>nginx:1.28-alpine</code>). CRITICAL-gated / production-minded labs pin digests (<code>FROM node:22-alpine@sha256:…</code> in Labs 05, 08 slim, 09, 12, and 13; Postgres/Redis in Lab 13 Compose — Lab 05 Compose still floats those tags on purpose). Chapter 15 explains tag vs digest.</li>
+<li><strong>Non-root user</strong> — <code>USER node</code> or custom UID</li>
+<li><strong>Read-only root filesystem</strong> where possible (<code>--read-only</code> + writable tmp mounts)</li>
+<li><strong>Healthchecks</strong> — Alpine Node images often have no <code>wget</code>/<code>curl</code>. Probe with the same Node runtime as the app:</li>
+</ol>
+<pre><code class="language-dockerfile">HEALTHCHECK --interval=15s --timeout=3s --start-period=5s --retries=3 \
+  CMD node -e &quot;fetch(&#39;http://127.0.0.1:3000/health&#39;).then(r=&gt;process.exit(r.ok?0:1)).catch(()=&gt;process.exit(1))&quot;
+</code></pre>
+<pre><code class="language-yaml">healthcheck:
+  test:
+    [
+      &quot;CMD&quot;,
+      &quot;node&quot;,
+      &quot;-e&quot;,
+      &quot;fetch(&#39;http://127.0.0.1:3000/health&#39;).then(r=&gt;process.exit(r.ok?0:1)).catch(()=&gt;process.exit(1))&quot;,
+    ]
+  interval: 15s
+  timeout: 3s
+  retries: 3
+  start_period: 5s
+</code></pre>
+<ol start="5">
+<li><strong>Resource limits</strong> — Compose V2 (<code>docker compose</code>) applies <code>deploy.resources</code> on a single node. You do not need Swarm or the old <code>mem_limit</code> / <code>cpus</code> keys.</li>
+</ol>
+<pre><code class="language-yaml">deploy:
+  resources:
+    limits:
+      cpus: &quot;0.50&quot;
+      memory: 256M
+</code></pre>
+<ol start="6">
+<li><strong>Restart policy</strong></li>
+</ol>
+<pre><code class="language-yaml">restart: unless-stopped
+</code></pre>
+<ol start="7">
+<li><strong>Init process</strong> — <code>init: true</code> (or <code>docker run --init</code>) so PID 1 reaps zombies and forwards <code>SIGTERM</code> from <code>docker stop</code>. Pair with exec-form <code>CMD</code> and a graceful shutdown in the app.</li>
+</ol>
+<pre><code class="language-yaml">init: true
+</code></pre>
+<ol start="8">
+<li><strong>Logging</strong> — don’t log secrets; ship logs to a collector; cap Docker json-file logs so a noisy app cannot fill the disk.</li>
+</ol>
+<pre><code class="language-yaml">logging:
+  driver: json-file
+  options:
+    max-size: &quot;10m&quot;
+    max-file: &quot;3&quot;
+</code></pre>
+<ol start="9">
+<li><p><strong>One process per container</strong> (guideline) — app in one, db in another; use Compose/K8s to compose them.</p>
+</li>
+<li><p><strong>Immutable images</strong> — rebuild and redeploy; don’t “hotfix” running containers.</p>
+</li>
+<li><p><strong>Publish on localhost</strong> when a reverse proxy will terminate TLS — <code>127.0.0.1:3000:3000</code> so the API is not advertised on every host interface. Lab 09 and Lab 12’s prod Compose do this.</p>
+</li>
+<li><p><strong>Drop Linux capabilities</strong> — <code>cap_drop: [ALL]</code> (or <code>docker run --cap-drop ALL</code>) so the process cannot gain kernel privileges it does not need. Pair with <code>no-new-privileges</code>.</p>
+</li>
+</ol>
+<h3>Restart policies</h3>
+<table>
+<thead>
+<tr>
+<th>Policy</th>
+<th>Behavior</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>no</code></td>
+<td>Never restart</td>
+</tr>
+<tr>
+<td><code>always</code></td>
+<td>Always restart</td>
+</tr>
+<tr>
+<td><code>on-failure</code></td>
+<td>Restart on non-zero exit</td>
+</tr>
+<tr>
+<td><code>unless-stopped</code></td>
+<td>Always, except if you manually stopped it</td>
+</tr>
+</tbody></table>
+<hr>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        <a class="pager-prev" href="./learn/12.html"><span>Previous</span>Multi-stage builds &amp; image size</a>
+        <a class="pager-next" href="./learn/14.html"><span>Next</span>Debugging &amp; troubleshooting</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

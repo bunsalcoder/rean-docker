@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="km">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>Deploy និង CI/CD — rean-docker</title>
+    <meta name="description" content="ពិសេស៖ validate, smoke-test, tag និង ship ជាមួយ Compose + Actions។" />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/lab/12-ci-cd.km.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/lab/12-ci-cd.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/lab/12-ci-cd.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/lab/12-ci-cd.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Deploy និង CI/CD — rean-docker" />
+    <meta property="og:description" content="ពិសេស៖ validate, smoke-test, tag និង ship ជាមួយ Compose + Actions។" />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/lab/12-ci-cd.km.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Deploy និង CI/CD — rean-docker" />
+    <meta name="twitter:description" content="ពិសេស៖ validate, smoke-test, tag និង ship ជាមួយ Compose + Actions។" />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-lab"
+    data-static-locale="km"
+    data-static-twin="./12-ci-cd.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">អនុវត្ត</p>
+      <h1>Deploy និង CI/CD</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./lab.html?id=12-ci-cd&amp;lang=km">បើកអ្នកអានអន្តរកម្ម</a>
+      </p>
+      <div class="md-body">
+<h2>កម្រិត</h2>
+<p><strong>ពិសេស។</strong> ផ្លូវ Deploy និង CI/CD — validate, smoke, tag និង ship (handbook ជំពូក 17)។</p>
+<h2>គោលដៅ</h2>
+<p>អនុវត្តជំហានដូច CI pipeline៖ validate Compose, build image, smoke-test <code>/health</code>, tag សម្រាប់ registry និងយល់ថា <code>compose.prod.yaml</code> pull image នោះនៅលើ server យ៉ាងដូចម្ដេច។</p>
+<p>ផ្គូផ្គងជាមួយ handbook <strong>ជំពូក 17 — Deploy ជាមួយ Docker &amp; CI/CD</strong>។</p>
+<p><strong>ជំនួយស្រេចចិត្ត:</strong> <code>./run.sh</code> validate Compose (រួម <code>compose.proxy.yaml</code>) និង smoke-test <code>/health</code> តាម API + proxy។ ចូលចិត្តវាយពាក្យបញ្ជាពី README ដោយខ្លួនឯងលើកដំបូង។</p>
+<h2>ជំហាន</h2>
+<h3>1. Validate (ដំណាក់កាល CI “config”)</h3>
+<pre><code class="language-bash">cd labs/12-ci-cd
+
+docker compose -f compose.yaml config &gt;/dev/null
+REGISTRY_OWNER=example IMAGE_REF=:sha-deadbee \
+  docker compose -f compose.prod.yaml config &gt;/dev/null
+echo &quot;compose files OK&quot;
+</code></pre>
+<p>ចូលចិត្ត digest លើ server ពិត (variable ដូចគ្នា រាងផ្សេង)៖</p>
+<pre><code class="language-bash">export REGISTRY_OWNER=YOUR_GITHUB_USER
+export IMAGE_REF=@sha256:REPLACE_WITH_IMAGE_DIGEST
+docker compose -f compose.prod.yaml config &gt;/dev/null
+</code></pre>
+<h3>2. Build + smoke (ដំណាក់កាល CI “build/test”)</h3>
+<pre><code class="language-bash">docker compose up --build -d
+
+# Wait until healthy, then:
+curl -fsS http://127.0.0.1:3000/health
+curl -fsS http://127.0.0.1:3000/ | python3 -m json.tool
+
+docker compose down -v
+</code></pre>
+<h3>3. Tag ដូច CI</h3>
+<pre><code class="language-bash">GIT_SHA=$(git rev-parse --short HEAD)
+docker build -t &quot;rean-deploy-api:sha-$GIT_SHA&quot; .
+docker images &quot;rean-deploy-api&quot;
+</code></pre>
+<h3>4. អាន workflow template</h3>
+<p>បើក <code>workflows/ci.yml</code>។ នេះគឺ GitHub Actions pattern ពីជំពូក 17។</p>
+<p>សង្កេត <code>uses:</code> pin commit SHA ៤០ តួ (មាន comment <code># v…</code>) មិនមែន <code>@v4</code>។ គំនិតដូចមិន deploy <code>:latest</code>។</p>
+<p>ជម្រើស (តែបើអ្នកមាន GitHub repo ហើយចង់ push ពិត)៖</p>
+<ol>
+<li>Copy <code>workflows/ci.yml</code> → <code>.github/workflows/rean-deploy-ci.yml</code> នៅ <strong>repo root</strong>។</li>
+<li>Push ទៅ <code>main</code> (path filter រួម lab នេះ)។</li>
+<li>នៅ GitHub → Packages បញ្ជាក់ថា <code>rean-deploy-api</code> បង្ហាញ។</li>
+<li>នៅ server ដែលមាន Docker៖</li>
+</ol>
+<pre><code class="language-bash">cp .env.example .env
+# edit APP_VERSION etc. (Compose reads .env for ${VAR} interpolation)
+
+export REGISTRY_OWNER=YOUR_GITHUB_USER
+export IMAGE_REF=:sha-YOURSHA
+# or: export IMAGE_REF=@sha256:YOUR_IMAGE_DIGEST
+docker compose -f compose.prod.yaml pull
+docker compose -f compose.prod.yaml up -d
+curl -fsS http://127.0.0.1:3000/health
+</code></pre>
+<p>អ្នក <strong>មិន</strong> ត្រូវការ server ពិតដើម្បីបញ្ចប់ lab នេះ — ជំហាន 1–4 (រហូតអាន workflow) គ្រប់គ្រាន់ហើយ។</p>
+<h3>5. លំហាត់បន្ថែម — reverse proxy (TLS hop ជំពូក 17)</h3>
+<p>ស្រេចចិត្ត។ គំរូគំនិតជំពូក 17 គឺ <code>Internet → :443 (Caddy/Nginx) → localhost:3000</code>។ ថតនេះមាន <strong>demo HTTP មូលដ្ឋាន</strong> នៃ hop នោះ (មិនត្រូវការ domain ឬ certificate)៖</p>
+<pre><code class="language-bash">cd labs/12-ci-cd
+docker compose -f compose.yaml -f compose.proxy.yaml up --build -d
+curl -fsS http://127.0.0.1:8080/health
+docker compose -f compose.yaml -f compose.proxy.yaml down -v
+</code></pre>
+<p>អាន <code>Caddyfile</code>៖ <code>:8080</code> proxy ទៅ <code>api:3000</code> លើ Compose network។ Block ដែល comment បង្ហាញរាង production (<code>your.domain { reverse_proxy api:3000 }</code> ជាមួយ Let’s Encrypt លើ <code>:443</code>)។ នៅតែ publish API ជា <code>127.0.0.1:3000</code> ដើម្បីឱ្យ VPS ពិត expose proxy មិនមែន app ផ្ទាល់។</p>
+<h2>ពិភាក្សា</h2>
+<ul>
+<li>ហេតុអ្វី <code>compose.prod.yaml</code> ប្រើ <code>image:</code> ហើយមិនមែន <code>build:</code>?</li>
+<li>ហេតុអ្វី publish <code>127.0.0.1:3000</code> ក្នុង prod Compose ហើយមិនមែន <code>0.0.0.0:3000</code>?</li>
+<li>ហេតុអ្វី <code>cap_drop: ALL</code> ក្នុង prod Compose?</li>
+<li>តើអ្វីជាភាពខុសគ្នារវាង CI (build/smoke/push) និង CD (deploy ទៅ host)?</li>
+<li>តើ rollback ទៅ SHA tag កាលពីម្សិលមិញធ្វើដូចម្ដេច?</li>
+<li>ហេតុអ្វី <code>compose.prod.yaml</code> error បើ <code>IMAGE_REF</code> មិនកំណត់ ជំនួសឱ្យ default <code>latest</code>?</li>
+<li>ហេតុអ្វី <code>IMAGE_REF</code> អាចជា <code>:sha-…</code> ឬ <code>@sha256:…</code>?</li>
+<li>ហេតុអ្វី pin GitHub Actions ទៅ commit SHA ហើយមិនមែន <code>@v4</code>?</li>
+<li>ហេតុអ្វី workflow ផ្ដល់ <code>packages: write</code> តែនៅ push job មិនមែនលើ pull requests?</li>
+<li>(លំហាត់បន្ថែម) ហេតុអ្វីដាក់ TLS នៅ Caddy/Nginx ជំនួសឱ្យបង្រៀន Node API ឱ្យនិយាយ HTTPS ខ្លួនឯង?</li>
+</ul>
+<h2>លក្ខខណ្ឌជោគជ័យ</h2>
+<ul>
+<li><input disabled="" type="checkbox"> <code>docker compose … config</code> ជោគជ័យសម្រាប់ files ទាំងពីរ</li>
+<li><input disabled="" type="checkbox"> Smoke test លើម៉ាស៊ីនផ្ទាល់ ត្រឡប់ <code>{&quot;status&quot;:&quot;ok&quot;,…}</code> ពី <code>/health</code></li>
+<li><input disabled="" type="checkbox"> អ្នកអាចពន្យល់ build → tag → (push) → pull → <code>compose up</code> ដោយគ្មាន notes</li>
+<li><input disabled="" type="checkbox"> អ្នកដឹងហេតុអ្វី prod Compose ត្រូវការ <code>IMAGE_REF</code> (<code>:sha-…</code> ឬ <code>@sha256:…</code>) ហើយមិន fallback ទៅ <code>latest</code></li>
+<li><input disabled="" type="checkbox"> អ្នកដឹងហេតុអ្វី workflow pin Actions តាម SHA មិនមែន <code>@v4</code></li>
+<li><input disabled="" type="checkbox"> អ្នកដឹងថាដាក់ secrets សម្រាប់ SSH deploy នៅណា (host / GitHub Secrets — មិនមែនក្នុង image)</li>
+<li><input disabled="" type="checkbox"> (លំហាត់បន្ថែម) អ្នក hit <code>/health</code> តាម <code>compose.proxy.yaml</code> លើ <code>:8080</code> ឬអាចពន្យល់ Internet → proxy → <code>127.0.0.1:3000</code></li>
+</ul>
+<h2>បន្ទាប់</h2>
+<p>ទៅ <strong>Lab 13 — Capstone</strong> ហើយបង្កើត stack ផ្ទាល់ខ្លួន (ឬពង្រីក Lab 05)។</p>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        <a class="pager-prev" href="./lab/11-security.km.html"><span>លំហាត់មុន</span>សុវត្ថិភាពសំខាន់ៗ</a>
+        <a class="pager-next" href="./lab/13-capstone.km.html"><span>លំហាត់បន្ទាប់</span>Capstone</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

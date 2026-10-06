@@ -25,15 +25,20 @@ def base_url() -> str:
     return "https://bunsalcoder.github.io/rean-docker"
 
 
-def with_lang(path: str, lang: str | None) -> str:
-    if not lang:
-        return path
-    joiner = "&" if "?" in path else "?"
-    return f"{path}{joiner}lang={lang}"
-
-
 def absolute(base: str, path: str) -> str:
     return f"{base}/{path}" if path else f"{base}/"
+
+
+def static_pair(en_path: str) -> tuple[str, str]:
+    """EN static path → (en_path, km twin path). Hubs keep ?lang=km style via with_lang_query."""
+    if en_path.endswith(".html") and "/" in en_path and not en_path.endswith(".km.html"):
+        return en_path, en_path[:-5] + ".km.html"
+    return en_path, en_path
+
+
+def with_lang_query(path: str, lang: str) -> str:
+    joiner = "&" if "?" in path else "?"
+    return f"{path}{joiner}lang={lang}"
 
 
 def content_lastmod() -> str:
@@ -63,9 +68,16 @@ def content_lastmod() -> str:
     return datetime.fromtimestamp(max(mtimes), tz=timezone.utc).date().isoformat()
 
 
-def url_entry(base: str, path: str, changefreq: str, priority: str, lastmod: str) -> str:
-    en_loc = absolute(base, path)
-    km_loc = absolute(base, with_lang(path, "km"))
+def url_entry(
+    base: str,
+    en_path: str,
+    km_path: str,
+    changefreq: str,
+    priority: str,
+    lastmod: str,
+) -> str:
+    en_loc = absolute(base, en_path)
+    km_loc = absolute(base, km_path)
     return (
         "  <url>\n"
         f"    <loc>{escape(en_loc)}</loc>\n"
@@ -86,17 +98,25 @@ def main() -> int:
     base = base_url()
     lastmod = content_lastmod()
 
-    paths: list[tuple[str, str, str]] = [
+    # Hubs stay on SPA shells; chapter/lab locs are crawlable static HTML.
+    entries: list[str] = []
+    hubs = [
         ("index.html", "weekly", "1.0"),
         ("learn.html", "weekly", "0.9"),
         ("labs.html", "weekly", "0.9"),
     ]
+    for path, freq, prio in hubs:
+        entries.append(
+            url_entry(base, path, with_lang_query(path, "km"), freq, prio, lastmod)
+        )
     for chapter_id in chapters:
-        paths.append((f"learn.html?c={chapter_id}", "monthly", "0.8"))
+        en_path = f"learn/{chapter_id}.html"
+        _en, km_path = static_pair(en_path)
+        entries.append(url_entry(base, en_path, km_path, "monthly", "0.8", lastmod))
     for lab_id in labs:
-        paths.append((f"lab.html?id={lab_id}", "monthly", "0.8"))
-
-    entries = [url_entry(base, path, freq, prio, lastmod) for path, freq, prio in paths]
+        en_path = f"lab/{lab_id}.html"
+        _en, km_path = static_pair(en_path)
+        entries.append(url_entry(base, en_path, km_path, "monthly", "0.8", lastmod))
 
     sitemap = (
         '<?xml version="1.0" encoding="UTF-8"?>\n'

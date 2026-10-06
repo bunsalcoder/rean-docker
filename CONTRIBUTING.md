@@ -105,9 +105,11 @@ Canonical route tables live in `web/assets/routes.json`. Lab entries include `le
 
 ```bash
 make sync-routes   # refresh routes.js
-make sitemap       # refresh sitemap + search indexes
+make sitemap       # static chapter/lab HTML + sitemap + search indexes
 make check-routes
 ```
+
+`make sitemap` also runs `make static-pages` (npm ci in `web/` + `scripts/generate_static_pages.mjs`) so crawlable HTML under `web/learn/` and `web/lab/` stays in sync with Markdown. Commit those files with the sitemap/search indexes.
 
 Sitemap `lastmod` is derived from content file mtimes (or `SOURCE_DATE_EPOCH`), not the calendar day — so regenerating without content changes stays dirty-tree clean.
 

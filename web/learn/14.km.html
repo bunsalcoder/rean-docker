@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="km">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>Debug និងដោះស្រាយបញ្ហា — rean-docker</title>
+    <meta name="description" content="Lab៖ labs/10 debugging អនុវត្ត logs , inspect និង Compose client ដែលនិយាយទៅ localhost ខុស។ កែ hostname រួចត្រឡប់មកទីនេះសម្រាប់ pattern ផ្សេងទៀត។ Container មិននៅ…" />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/14.km.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/14.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/14.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/learn/14.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Debug និងដោះស្រាយបញ្ហា — rean-docker" />
+    <meta property="og:description" content="Lab៖ labs/10 debugging អនុវត្ត logs , inspect និង Compose client ដែលនិយាយទៅ localhost ខុស។ កែ hostname រួចត្រឡប់មកទីនេះសម្រាប់ pattern ផ្សេងទៀត។ Container មិននៅ…" />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/14.km.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Debug និងដោះស្រាយបញ្ហា — rean-docker" />
+    <meta name="twitter:description" content="Lab៖ labs/10 debugging អនុវត្ត logs , inspect និង Compose client ដែលនិយាយទៅ localhost ខុស។ កែ hostname រួចត្រឡប់មកទីនេះសម្រាប់ pattern ផ្សេងទៀត។ Container មិននៅ…" />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-chapter"
+    data-static-locale="km"
+    data-static-twin="./14.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">កម្មវិធីសិក្សា</p>
+      <h1>Debug និងដោះស្រាយបញ្ហា</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./learn.html?c=14&amp;lang=km">បើកអ្នកអានអន្តរកម្ម</a>
+      </p>
+      <div class="md-body">
+<h3>Lab៖ <code>labs/10-debugging</code></h3>
+<p>អនុវត្ត <code>logs</code>, <code>inspect</code> និង Compose client ដែលនិយាយទៅ <code>localhost</code> ខុស។ កែ hostname រួចត្រឡប់មកទីនេះសម្រាប់ pattern ផ្សេងទៀត។</p>
+<h3>Container មិននៅ up</h3>
+<pre><code class="language-bash">docker ps -a
+docker logs &lt;name&gt;
+docker inspect &lt;name&gt;   # look at State.ExitCode, Error, Mounts, NetworkSettings
+</code></pre>
+<h3>Debug បែប interactive</h3>
+<pre><code class="language-bash">docker run --rm -it --entrypoint sh myimage:tag
+docker compose run --rm web sh
+</code></pre>
+<h3>Copy files ចូល/ចេញ</h3>
+<pre><code class="language-bash">docker cp my-nginx:/etc/nginx/nginx.conf ./nginx.conf
+docker cp ./file.txt my-nginx:/tmp/
+</code></pre>
+<h3>មើល processes / ការប្រើ resource</h3>
+<pre><code class="language-bash">docker top my-nginx
+docker stats
+</code></pre>
+<h3>Failure patterns ធម្មតា</h3>
+<table>
+<thead>
+<tr>
+<th>រោគសញ្ញា</th>
+<th>មូលហេតុទំនង</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Port already allocated</td>
+<td>Process/container ផ្សេងកំពុងប្រើ host port</td>
+</tr>
+<tr>
+<td>Connection refused to <code>db</code></td>
+<td>Network ខុស, hostname ខុស, db មិនទាន់ ready</td>
+</tr>
+<tr>
+<td>Permission denied on volume</td>
+<td>UID mismatch លើ bind mount</td>
+</tr>
+<tr>
+<td>Huge image</td>
+<td>Base ធំ, ឧបករណ៍ build នៅសល់, គ្មាន multi-stage</td>
+</tr>
+<tr>
+<td>Changes not appearing</td>
+<td>Image ចាស់នៅ cache; rebuild; ឬ mount ខុស</td>
+</tr>
+<tr>
+<td><code>localhost</code> ក្នុង browser ដំណើរការ តែ app មិនទៅដល់ db</td>
+<td>App ប្រើ <code>localhost</code> មិនមែនឈ្មោះ service</td>
+</tr>
+</tbody></table>
+<h3>ការប្រណាំង «Database not ready»</h3>
+<p><code>depends_on</code> រង់ចាំតែ <strong>start</strong> មិនមែន <strong>ready</strong>។ ដោះស្រាយដោយ៖</p>
+<ul>
+<li>Healthcheck + <code>depends_on: condition: service_healthy</code> (Compose)</li>
+<li>Retry/backoff ក្នុង app</li>
+<li>Init containers / wait scripts</li>
+</ul>
+<pre><code class="language-yaml">depends_on:
+  db:
+    condition: service_healthy
+</code></pre>
+<hr>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        <a class="pager-prev" href="./learn/13.km.html"><span>មុន</span>ទម្លាប់គិតបែប production</a>
+        <a class="pager-next" href="./learn/15.km.html"><span>បន្ទាប់</span>សុវត្ថិភាពសំខាន់ៗ</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

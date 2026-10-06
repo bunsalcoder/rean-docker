@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="km">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>Networks និង DNS — rean-docker</title>
+    <meta name="description" content="ចូលប្រើ services តាមឈ្មោះ container។" />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/lab/06-networks.km.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/lab/06-networks.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/lab/06-networks.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/lab/06-networks.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Networks និង DNS — rean-docker" />
+    <meta property="og:description" content="ចូលប្រើ services តាមឈ្មោះ container។" />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/lab/06-networks.km.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Networks និង DNS — rean-docker" />
+    <meta name="twitter:description" content="ចូលប្រើ services តាមឈ្មោះ container។" />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-lab"
+    data-static-locale="km"
+    data-static-twin="./06-networks.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">អនុវត្ត</p>
+      <h1>Networks និង DNS</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./lab.html?id=06-networks&amp;lang=km">បើកអ្នកអានអន្តរកម្ម</a>
+      </p>
+      <div class="md-body">
+<h2>កម្រិត</h2>
+<p><strong>ថ្នាក់កណ្តាល។</strong> User-defined networks និង DNS បន្ទាប់ពីមូលដ្ឋាន Compose (Lab 05)។</p>
+<h2>គោលដៅ</h2>
+<p>មើល Docker DNS៖ containers ទៅដល់គ្នាតាម <strong>ឈ្មោះ</strong> លើ user-defined network។</p>
+<h2>ជំហាន</h2>
+<p><strong>ជំនួយស្រេចចិត្ត:</strong> <code>./run.sh</code>។ <strong>Compose ស្រេចចិត្ត:</strong> <code>docker compose run --rm client</code> → <code>PONG</code>។</p>
+<pre><code class="language-bash">docker network create lab06-net
+
+docker run -d --name lab06-redis --network lab06-net redis:7-alpine
+
+# Ping Redis by hostname &quot;lab06-redis&quot;
+docker run --rm --network lab06-net redis:7-alpine \
+  redis-cli -h lab06-redis ping
+
+# This should FAIL (different/default network, name not resolved)
+docker run --rm redis:7-alpine redis-cli -h lab06-redis ping || true
+
+# Cleanup
+docker rm -f lab06-redis
+docker network rm lab06-net
+</code></pre>
+<h2>ការសាកល្បង</h2>
+<p>ភ្ជាប់ alias ទីពីរ៖</p>
+<pre><code class="language-bash">docker network create lab06-net
+docker run -d --name lab06-redis --network lab06-net --network-alias cache redis:7-alpine
+docker run --rm --network lab06-net redis:7-alpine redis-cli -h cache ping
+docker rm -f lab06-redis &amp;&amp; docker network rm lab06-net
+</code></pre>
+<h2>លក្ខខណ្ឌជោគជ័យ</h2>
+<ul>
+<li><input disabled="" type="checkbox"> <code>PONG</code> ពេលនៅលើ network ដូចគ្នា</li>
+<li><input disabled="" type="checkbox"> អ្នកអាចពន្យល់ហេតុអ្វី <code>localhost</code> លើ host ខុសសម្រាប់ containers បងប្អូន</li>
+</ul>
+<h2>បន្ទាប់</h2>
+<p>ទៅ <strong>Lab 07 — Volumes</strong> ហើយបង្ហាញថា named volumes នៅរស់បន្ទាប់ពី <code>docker rm</code>។</p>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        <a class="pager-prev" href="./lab/05-compose.km.html"><span>លំហាត់មុន</span>stack Compose</a>
+        <a class="pager-next" href="./lab/07-volumes.km.html"><span>លំហាត់បន្ទាប់</span>Volumes និង persistence</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

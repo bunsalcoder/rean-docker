@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>Volumes — keep data alive — rean-docker</title>
+    <meta name="description" content="Lab: labs/07 volumes Containers are ephemeral . Delete a container → its writable layer is gone. To persist data, use volumes or bind mounts . Three mount types…" />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/8.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/8.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/8.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/learn/8.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Volumes — keep data alive — rean-docker" />
+    <meta property="og:description" content="Lab: labs/07 volumes Containers are ephemeral . Delete a container → its writable layer is gone. To persist data, use volumes or bind mounts . Three mount types…" />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/8.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Volumes — keep data alive — rean-docker" />
+    <meta name="twitter:description" content="Lab: labs/07 volumes Containers are ephemeral . Delete a container → its writable layer is gone. To persist data, use volumes or bind mounts . Three mount types…" />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-chapter"
+    data-static-locale="en"
+    data-static-twin="./8.km.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">Curriculum</p>
+      <h1>Volumes — keep data alive</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./learn.html?c=8">Open interactive reader</a>
+      </p>
+      <div class="md-body">
+<h3>Lab: <code>labs/07-volumes</code></h3>
+<p>Containers are <strong>ephemeral</strong>. Delete a container → its writable layer is gone.</p>
+<p>To persist data, use <strong>volumes</strong> or <strong>bind mounts</strong>.</p>
+<h3>Three mount types</h3>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Use case</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Named volume</strong></td>
+<td>DB data, managed by Docker</td>
+<td><code>docker volume create pgdata</code></td>
+</tr>
+<tr>
+<td><strong>Bind mount</strong></td>
+<td>Live-edit host source code</td>
+<td><code>-v $(pwd):/app</code></td>
+</tr>
+<tr>
+<td><strong>tmpfs</strong></td>
+<td>Sensitive/temp in memory</td>
+<td><code>--tmpfs /tmp</code></td>
+</tr>
+</tbody></table>
+<h3>Named volume example (Postgres)</h3>
+<pre><code class="language-bash">docker volume create rean-pgdata
+
+docker run -d --name rean-pg \
+  -e POSTGRES_PASSWORD=secret \
+  -v rean-pgdata:/var/lib/postgresql/data \
+  -p 5432:5432 \
+  postgres:16-alpine
+</code></pre>
+<p><code>POSTGRES_PASSWORD=secret</code> here is <strong>demo-only</strong> shorthand for a short copy-paste. Prefer <code>.env</code> / <code>--env-file</code> (Labs 04/05 / Lab 07 Compose) when you care about the secrets habit.</p>
+<p>Stop/remove container — <strong>data remains</strong> in <code>rean-pgdata</code>.</p>
+<pre><code class="language-bash">docker volume ls
+docker volume inspect rean-pgdata
+</code></pre>
+<h3>Bind mount example (dev)</h3>
+<pre><code class="language-bash">docker run --rm -v &quot;$PWD&quot;:/app -w /app node:22-alpine node -e &quot;console.log(&#39;hi from bind mount&#39;)&quot;
+</code></pre>
+<h3>Volume vs bind: when to use which</h3>
+<ul>
+<li><strong>Volume:</strong> production data, databases, anything Docker should manage</li>
+<li><strong>Bind:</strong> local development, config files you edit on the host</li>
+</ul>
+<h3>Beware of permissions</h3>
+<p>Bind mounts inherit host UID/GID issues. Prefer matching user in Dockerfile (<code>USER</code>) or fix ownership carefully.</p>
+<hr>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        <a class="pager-prev" href="./learn/7.html"><span>Previous</span>Dockerfile — build your own images</a>
+        <a class="pager-next" href="./learn/9.html"><span>Next</span>Networks — how containers talk</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

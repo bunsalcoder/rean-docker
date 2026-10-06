@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="km">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>ប្រធានបទកម្រិតខ្ពស់ — rean-docker</title>
+    <meta name="description" content="លំហាត់បន្ថែមសម្រាប់ជំពូកនេះស្ថិតនៅ Lab 11 §5–§7 BuildKit cache + multi arch, Compose Watch, SBOM ។ Secrets mounts បានអនុវត្តរួចក្នុង Lab 11 §2។ Profiles បានបង្ហ…" />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/16.km.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/16.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/16.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/learn/16.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="ប្រធានបទកម្រិតខ្ពស់ — rean-docker" />
+    <meta property="og:description" content="លំហាត់បន្ថែមសម្រាប់ជំពូកនេះស្ថិតនៅ Lab 11 §5–§7 BuildKit cache + multi arch, Compose Watch, SBOM ។ Secrets mounts បានអនុវត្តរួចក្នុង Lab 11 §2។ Profiles បានបង្ហ…" />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/16.km.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="ប្រធានបទកម្រិតខ្ពស់ — rean-docker" />
+    <meta name="twitter:description" content="លំហាត់បន្ថែមសម្រាប់ជំពូកនេះស្ថិតនៅ Lab 11 §5–§7 BuildKit cache + multi arch, Compose Watch, SBOM ។ Secrets mounts បានអនុវត្តរួចក្នុង Lab 11 §2។ Profiles បានបង្ហ…" />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-chapter"
+    data-static-locale="km"
+    data-static-twin="./16.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">កម្មវិធីសិក្សា</p>
+      <h1>ប្រធានបទកម្រិតខ្ពស់</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./learn.html?c=16&amp;lang=km">បើកអ្នកអានអន្តរកម្ម</a>
+      </p>
+      <div class="md-body">
+<p>លំហាត់បន្ថែមសម្រាប់ជំពូកនេះស្ថិតនៅ <strong>Lab 11 §5–§7</strong> (BuildKit cache + multi-arch, Compose Watch, SBOM)។ Secrets mounts បានអនុវត្តរួចក្នុង Lab 11 §2។ Profiles បានបង្ហាញខ្លីក្នុងជំពូក 11 — ត្រឡប់មកវិញពេល service ស្រេចចិត្តធ្វើឱ្យ Compose រាលថ្ងៃរញ៉េរញ៉ៃ។</p>
+<h3>BuildKit (សំខាន់)</h3>
+<p>Builder ទំនើប (ធម្មតាជា default ឥឡូវ)៖</p>
+<pre><code class="language-bash">DOCKER_BUILDKIT=1 docker build -t myapp .
+</code></pre>
+<p>លក្ខណៈ៖ cache ល្អជាង, build ទន្ទឹមគ្នា, mount secrets ពេល build (មិនទុក secrets ក្នុង layers) និង cache mounts សម្រាប់ package managers។</p>
+<pre><code class="language-dockerfile"># syntax=docker/dockerfile:1
+RUN --mount=type=secret,id=npmrc \
+    npm ci
+
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --omit=dev
+</code></pre>
+<pre><code class="language-bash">docker build --secret id=npmrc,src=$HOME/.npmrc -t myapp .
+</code></pre>
+<h3>Build multi-arch (ប្រៀបធៀប)</h3>
+<pre><code class="language-bash">docker buildx create --use
+docker buildx build --platform linux/amd64,linux/arm64 -t you/app:1.0 --push .
+</code></pre>
+<p>មានប្រយោជន៍សម្រាប់ Apple Silicon + Linux servers។</p>
+<h3>Registries (ឃ្លាំង)</h3>
+<pre><code class="language-bash">docker login
+docker tag rean-hello:1.0 youruser/rean-hello:1.0
+docker push youruser/rean-hello:1.0
+docker pull youruser/rean-hello:1.0
+</code></pre>
+<p>ឧទាហរណ៍ GHCR tag: <code>ghcr.io/you/rean-hello:1.0</code></p>
+<h3>Compose Watch (iteration មូលដ្ឋាន)</h3>
+<p><code>docker compose up</code> rebuild ពេលអ្នកស្នើ។ <strong>Compose Watch</strong> rebuild ឬ sync ពេលឯកសារផ្លាស់ — មានប្រយោជន៍សម្រាប់ iteration បែប bind-mount ដោយមិនត្រូវ file watcher ផ្ទាល់ខ្លួន។</p>
+<pre><code class="language-yaml"># sketch — see labs/11-security/compose.watch.yaml
+services:
+  demo:
+    image: alpine:3.22
+    develop:
+      watch:
+        - action: sync
+          path: ./watch-demo
+          target: /data
+</code></pre>
+<pre><code class="language-bash">docker compose -f compose.watch.yaml up -d
+docker compose -f compose.watch.yaml watch
+</code></pre>
+<p>ប្រើ Watch សម្រាប់ <strong>feedback loop លើ laptop</strong>។ ទុក production Compose គ្មាន <code>develop:</code> — ship images មិនមែន laptop sync rules (ជំពូក 17)។</p>
+<h3>SBOM និង provenance</h3>
+<p><strong>SBOM</strong> (Software Bill of Materials) រាយអ្វីដែល image មាន ដើម្បីឱ្យ scanner និង auditor វិភាគ supply chain។ <strong>Provenance</strong> / attestations កត់ត្រា <em>របៀប</em> ដែលវាត្រូវបាន build (Dockerfile, git commit, builder)។</p>
+<p>វិធីមើលដោយមិនត្រូវដំឡើងឧបករណ៍បន្ថែម៖</p>
+<pre><code class="language-bash"># Trivy can emit SPDX (Lab 11 §7)
+docker run --rm aquasec/trivy:0.63.0 image --format spdx alpine:3.22 | head
+
+# BuildKit can attach SBOM + provenance when you build/push (needs a capable builder)
+docker buildx build --sbom=true --provenance=true -t you/app:1.0 --push .
+</code></pre>
+<p>មិនត្រូវចាំ SPDX។ ត្រូវមានទម្លាប់៖ <strong>បង្កើត ឬភ្ជាប់ SBOM មុនចាត់ image ថា «release candidate»។</strong></p>
+<h3>Signing images (ទិដ្ឋភាព)</h3>
+<p>Tags និង digests និយាយ <em>bits ណា</em>។ <strong>Signatures</strong> និយាយ <em>នរណាបោះផ្សាយ</em> (និងថាវាមិនត្រូវបានប្តូរ)។ ឧបករណ៍ដូច <a href="https://docs.sigstore.dev/cosign/system_config/installation/">Sigstore Cosign</a> verify signature ក្នុង CI ឬពេល deploy។</p>
+<pre><code class="language-bash"># Shape only — install cosign separately if you try this for real
+cosign sign ghcr.io/you/app@sha256:...
+cosign verify ghcr.io/you/app@sha256:...
+</code></pre>
+<p>Signing ផ្គូផ្គង digests (ជំពូក 15) និង registry push (ជំពូក 17)។ កុំ install Cosign នៅថ្ងៃទីមួយ; ដឹងថា «pull by digest + verify signature» គឺរឿង trust កម្រិត production។</p>
+<h3>Rootless Docker (ទិដ្ឋភាព)</h3>
+<p>តាមលំនាំដើម Docker daemon ច្រើនតែ run ជា root លើ host។ <strong>Rootless mode</strong> រត់ daemon ជា user របស់អ្នក ដើម្បីឱ្យ container ដែលត្រូវគេវាយប្រហារពិបាកជាងក្នុងការគ្រប់គ្រងម៉ាស៊ីន។ Trade-off: feature ខ្លះ (port ជាក់លាក់, storage driver, GPU) ត្រូវ setup បន្ថែម។</p>
+<pre><code class="language-bash"># After installing rootless extras (distro-specific — see Docker docs):
+dockerd-rootless-setuptool.sh install
+export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
+docker info
+</code></pre>
+<p>ចូលចិត្ត non-root <strong>ក្នុង</strong> images មុន (Lab 11 §1 / Lab 09)។ ទៅ rootless Engine ពេល harden laptop រួម ឬ CI runner។</p>
+<h3>Docker Swarm vs Kubernetes (ទិដ្ឋភាព)</h3>
+<table>
+<thead>
+<tr>
+<th>ឧបករណ៍</th>
+<th>តួនាទី</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Docker Compose</td>
+<td>Stack មូលដ្ឋាន / host តែមួយ</td>
+</tr>
+<tr>
+<td>Docker Swarm</td>
+<td>Clustering ក្នុង Docker (ប្រើតិចជាងសព្វថ្ងៃ)</td>
+</tr>
+<tr>
+<td>Kubernetes</td>
+<td>Orchestration ស្តង់ដារឧស្សាហកម្មនៅទំហំធំ</td>
+</tr>
+</tbody></table>
+<p>រៀន Compose ឱ្យជ្រៅមុន។ ទៅ K8s ពេលត្រូវការ scheduling ច្រើន node, rolling updates, service meshes ជាដើម។</p>
+<h3>Init process និង zombies</h3>
+<p>ប្រើ <code>tini</code> ឬ Docker <code>--init</code> ដើម្បីឱ្យ PID 1 ប្រមូល zombie processes និងបញ្ជូន signals៖</p>
+<pre><code class="language-bash">docker run --init ...
+</code></pre>
+<h3>Custom bridge និង aliases</h3>
+<pre><code class="language-bash">docker network create --subnet=172.28.0.0/16 rean-custom
+docker run -d --network rean-custom --network-alias cache redis:7-alpine
+</code></pre>
+<hr>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        <a class="pager-prev" href="./learn/15.km.html"><span>មុន</span>សុវត្ថិភាពសំខាន់ៗ</a>
+        <a class="pager-next" href="./learn/17.km.html"><span>បន្ទាប់</span>Deploy ជាមួយ Docker &amp; CI/CD</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

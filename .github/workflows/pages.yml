@@ -41,8 +41,11 @@ jobs:
             echo "::error::web/content/en drifted after sync. Run: make sync && commit the results."
             exit 1
           fi
-      - name: Generate sitemap, robots.txt, and search indexes
+      - name: Install site npm deps (marked for static pages)
+        run: cd web && npm ci --ignore-scripts
+      - name: Generate static pages, sitemap, robots.txt, and search indexes
         run: |
+          cd web && node ../scripts/generate_static_pages.mjs
           python3 ./scripts/generate_sitemap.py
           python3 ./scripts/generate_search_index.py
       - name: Verify generated site artifacts are committed
@@ -51,7 +54,9 @@ jobs:
             web/sitemap.xml \
             web/robots.txt \
             web/assets/search-index-en.json \
-            web/assets/search-index-km.json; then
+            web/assets/search-index-km.json \
+            web/learn \
+            web/lab; then
             echo "::error::Generated site artifacts drifted from git. Run: make sitemap && commit the results."
             exit 1
           fi

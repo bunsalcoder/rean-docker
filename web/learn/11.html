@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>Docker Compose — multi-container apps — rean-docker</title>
+    <meta name="description" content="Lab: labs/05 compose Manually docker run for app + db + redis gets painful. Compose describes the whole stack in YAML. Minimal compose.yaml Lab 05 keeps the pas…" />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/11.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/11.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/11.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/learn/11.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Docker Compose — multi-container apps — rean-docker" />
+    <meta property="og:description" content="Lab: labs/05 compose Manually docker run for app + db + redis gets painful. Compose describes the whole stack in YAML. Minimal compose.yaml Lab 05 keeps the pas…" />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/11.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Docker Compose — multi-container apps — rean-docker" />
+    <meta name="twitter:description" content="Lab: labs/05 compose Manually docker run for app + db + redis gets painful. Compose describes the whole stack in YAML. Minimal compose.yaml Lab 05 keeps the pas…" />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-chapter"
+    data-static-locale="en"
+    data-static-twin="./11.km.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">Curriculum</p>
+      <h1>Docker Compose — multi-container apps</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./learn.html?c=11">Open interactive reader</a>
+      </p>
+      <div class="md-body">
+<h3>Lab: <code>labs/05-compose</code></h3>
+<p>Manually <code>docker run</code> for app + db + redis gets painful. <strong>Compose</strong> describes the whole stack in YAML.</p>
+<h3>Minimal <code>compose.yaml</code></h3>
+<p>Lab 05 keeps the <strong>password in <code>.env</code></strong>, not in YAML (Lab 04). Compose interpolates <code>${POSTGRES_PASSWORD}</code> when the stack starts:</p>
+<pre><code class="language-yaml">services:
+  web:
+    build: .
+    ports:
+      # Lab 05 binds localhost so a forgotten stack is not open on the LAN.
+      - &quot;127.0.0.1:3000:3000&quot;
+    env_file: .env
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+    depends_on:
+      - db
+    networks:
+      - rean
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - rean
+
+volumes:
+  pgdata:
+
+networks:
+  rean:
+</code></pre>
+<p>Copy <code>.env.example</code> → <code>.env</code> before <code>docker compose up</code>. A value in the Compose file is visible in <code>docker compose config</code> on your machine — that is expected. The rule is: <strong>do not commit <code>.env</code> or bake secrets into the image</strong>. Use <code>3000:3000</code> (all interfaces) only when you intentionally need remote access.</p>
+<p><strong>URL passwords:</strong> <code>DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:…</code> breaks if the password contains <code>@</code>, <code>:</code>, <code>/</code>, or <code>#</code> (Compose interpolates before the URL parser runs). Lab passwords stay simple on purpose. In real apps, prefer discrete env vars into the process, or URL-encode the password before assembling the string.</p>
+<h3>Essential Compose commands</h3>
+<pre><code class="language-bash">docker compose up           # create &amp; start (foreground, logs)
+docker compose up -d        # detached
+docker compose ps           # status
+docker compose logs -f web  # follow one service
+docker compose exec web sh  # shell into service
+docker compose stop         # stop
+docker compose down         # stop + remove containers/networks
+docker compose down -v      # also delete named volumes (DATA LOSS)
+docker compose build        # build images
+docker compose up --build   # rebuild then start
+</code></pre>
+<h3>Key Compose concepts</h3>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>services</code></td>
+<td>Containers in your app</td>
+</tr>
+<tr>
+<td><code>build</code></td>
+<td>Build from Dockerfile</td>
+</tr>
+<tr>
+<td><code>image</code></td>
+<td>Use existing image</td>
+</tr>
+<tr>
+<td><code>depends_on</code></td>
+<td>Start order (not full readiness unless you add healthchecks)</td>
+</tr>
+<tr>
+<td><code>volumes</code></td>
+<td>Named volumes declared at bottom</td>
+</tr>
+<tr>
+<td><code>networks</code></td>
+<td>Isolated networks for the project</td>
+</tr>
+<tr>
+<td><code>env_file</code> / <code>.env</code></td>
+<td>Runtime config and secrets (not baked into the image)</td>
+</tr>
+</tbody></table>
+<h3>Service DNS</h3>
+<p>In Compose, service name = hostname. The web service connects to Postgres at host <code>db</code>, not <code>localhost</code>.</p>
+<p><strong><code>localhost</code> inside a container means that container itself</strong>, never the host or sibling services.</p>
+<h3>Profiles &amp; overrides (intermediate)</h3>
+<pre><code class="language-yaml"># compose.override.yaml is auto-merged for local dev
+services:
+  web:
+    volumes:
+      - ./:/app
+    command: npm run dev
+</code></pre>
+<pre><code class="language-yaml"># Use profiles for optional tools
+services:
+  adminer:
+    image: adminer
+    profiles: [&quot;tools&quot;]
+    ports: [&quot;8080:8080&quot;]
+</code></pre>
+<pre><code class="language-bash">docker compose --profile tools up -d
+</code></pre>
+<hr>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        <a class="pager-prev" href="./learn/10.html"><span>Previous</span>Environment, secrets, and config</a>
+        <a class="pager-next" href="./learn/12.html"><span>Next</span>Multi-stage builds &amp; image size</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

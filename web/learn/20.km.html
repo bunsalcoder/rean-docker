@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="km">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>តារាងតាមដានផ្លូវរៀន — rean-docker</title>
+    <meta name="description" content="ថ្នាក់ដើម ពន្យល់ containerization vs VMs vs Docker vs Kubernetes ពិពណ៌នា namespaces និង cgroups កម្រិតខ្ពស់ បញ្ចប់ labs/01 isolation basics ពន្យល់ image vs cont…" />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/20.km.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/20.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/20.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/learn/20.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="តារាងតាមដានផ្លូវរៀន — rean-docker" />
+    <meta property="og:description" content="ថ្នាក់ដើម ពន្យល់ containerization vs VMs vs Docker vs Kubernetes ពិពណ៌នា namespaces និង cgroups កម្រិតខ្ពស់ បញ្ចប់ labs/01 isolation basics ពន្យល់ image vs cont…" />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/20.km.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="តារាងតាមដានផ្លូវរៀន — rean-docker" />
+    <meta name="twitter:description" content="ថ្នាក់ដើម ពន្យល់ containerization vs VMs vs Docker vs Kubernetes ពិពណ៌នា namespaces និង cgroups កម្រិតខ្ពស់ បញ្ចប់ labs/01 isolation basics ពន្យល់ image vs cont…" />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-chapter"
+    data-static-locale="km"
+    data-static-twin="./20.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">កម្មវិធីសិក្សា</p>
+      <h1>តារាងតាមដានផ្លូវរៀន</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./learn.html?c=20&amp;lang=km">បើកអ្នកអានអន្តរកម្ម</a>
+      </p>
+      <div class="md-body">
+<h3>ថ្នាក់ដើម</h3>
+<ul>
+<li><input disabled="" type="checkbox"> ពន្យល់ containerization vs VMs vs Docker vs Kubernetes</li>
+<li><input disabled="" type="checkbox"> ពិពណ៌នា namespaces និង cgroups កម្រិតខ្ពស់</li>
+<li><input disabled="" type="checkbox"> បញ្ចប់ <code>labs/01-isolation-basics</code></li>
+<li><input disabled="" type="checkbox"> ពន្យល់ image vs container vs Dockerfile</li>
+<li><input disabled="" type="checkbox"> Run, stop, remove containers; publish ports</li>
+<li><input disabled="" type="checkbox"> អាន logs និង <code>exec</code> ចូល container</li>
+<li><input disabled="" type="checkbox"> សរសេរ Dockerfile សាមញ្ញ និង <code>docker build</code></li>
+<li><input disabled="" type="checkbox"> ប្រើ <code>.dockerignore</code></li>
+</ul>
+<h3>ថ្នាក់កណ្តាល</h3>
+<ul>
+<li><input disabled="" type="checkbox"> Named volumes + bind mounts</li>
+<li><input disabled="" type="checkbox"> User-defined networks + DNS តាមឈ្មោះ</li>
+<li><input disabled="" type="checkbox"> Env files និង config បែប 12-factor (<code>labs/04-env-secrets</code>)</li>
+<li><input disabled="" type="checkbox"> កម្មវិធី Compose ពហុសេវា</li>
+<li><input disabled="" type="checkbox"> ដោះស្រាយ «db not ready» ដោយ healthchecks</li>
+</ul>
+<h3>ថ្នាក់ខ្ពស់</h3>
+<ul>
+<li><input disabled="" type="checkbox"> Multi-stage builds; បង្រួម images</li>
+<li><input disabled="" type="checkbox"> User មិនមែន root, healthchecks, restart policies</li>
+<li><input disabled="" type="checkbox"> Debug ដោយ <code>inspect</code>, <code>logs</code>, <code>stats</code>, shell បណ្ដោះអាសន្ន (<code>labs/10-debugging</code>)</li>
+<li><input disabled="" type="checkbox"> ស្កេន images; BuildKit secrets; pin tags/digests (<code>labs/11-security</code>)</li>
+<li><input disabled="" type="checkbox"> (Stretch) Compose Watch, SBOM peek, ឬ multi-arch inspect (Lab 11 §5–§7 / ជំពូក 16)</li>
+<li><input disabled="" type="checkbox"> Push/pull ពី registry</li>
+<li><input disabled="" type="checkbox"> បញ្ចប់ checklist deploy ជំពូក 17; បញ្ចប់ <code>labs/12-ci-cd</code></li>
+<li><input disabled="" type="checkbox"> ពន្យល់ CI vs CD និងផ្លូវ build → registry → pull → up</li>
+<li><input disabled="" type="checkbox"> បញ្ចប់ capstone stack (<code>labs/13-capstone</code>)</li>
+</ul>
+<hr>
+<h2>ផែនការប្រចាំសប្តាហ៍ (ណែនាំ)</h2>
+<table>
+<thead>
+<tr>
+<th>ថ្ងៃ</th>
+<th>ផ្តោត</th>
+<th>Lab</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Isolation basics + hello workflow</td>
+<td><code>labs/01-isolation-basics</code>, <code>labs/02-hello</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Dockerfile + env/secrets</td>
+<td><code>labs/03-dockerfile</code>, <code>labs/04-env-secrets</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>Compose មូលដ្ឋាន</td>
+<td><code>labs/05-compose</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Networks និង volumes</td>
+<td><code>labs/06-networks</code>, <code>labs/07-volumes</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td>Multi-stage + ទម្លាប់ prod</td>
+<td><code>labs/08-multi-stage</code>, <code>labs/09-production</code></td>
+</tr>
+<tr>
+<td>6</td>
+<td>Debug + សុវត្ថិភាព</td>
+<td><code>labs/10-debugging</code>, <code>labs/11-security</code></td>
+</tr>
+<tr>
+<td>7</td>
+<td>Deploy + CI/CD (ពិសេស)</td>
+<td><code>labs/12-ci-cd</code></td>
+</tr>
+<tr>
+<td>8–9</td>
+<td>Capstone</td>
+<td><code>labs/13-capstone</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h2>វចនានុក្រម</h2>
+<table>
+<thead>
+<tr>
+<th>ពាក្យ</th>
+<th>និយមន័យ</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Containerization</td>
+<td>ការវេចខ្ចប់ app ជាមួយ deps ទៅជា unit ដាច់ដោយឡែកលើ kernel រួម</td>
+</tr>
+<tr>
+<td>OCI</td>
+<td>Open Container Initiative — ស្តង់ដារ images និង runtimes</td>
+</tr>
+<tr>
+<td>Daemon</td>
+<td>Docker engine ផ្ទៃខាងក្រោយ (<code>dockerd</code>)</td>
+</tr>
+<tr>
+<td>Layer</td>
+<td>ភាពខុសគ្នានៃ filesystem ដែលមិនប្តូរក្នុង image</td>
+</tr>
+<tr>
+<td>Tag</td>
+<td>ស្លាកដែលប្តូរបានសម្រាប់កំណែ image</td>
+</tr>
+<tr>
+<td>Digest</td>
+<td>Hash មាតិកាដែលមិនប្តូរនៃ image</td>
+</tr>
+<tr>
+<td>Context</td>
+<td>ឯកសារផ្ញើទៅ daemon ពេល <code>build</code></td>
+</tr>
+<tr>
+<td>Registry</td>
+<td>ឃ្លាំងពីចម្ងាយសម្រាប់ images</td>
+</tr>
+<tr>
+<td>Orchestrator</td>
+<td>ប្រព័ន្ធកំណត់ពេល containers លើម៉ាស៊ីនច្រើន</td>
+</tr>
+<tr>
+<td>Namespace</td>
+<td>Isolation ក្នុង Linux (pid, net, mnt, …)</td>
+</tr>
+<tr>
+<td>cgroups</td>
+<td>ដែនកំណត់ resource ក្នុង Linux (CPU, memory)</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>ជំហានបន្ទាប់បន្ទាប់ពីមគ្គុទ្ទេសក៍នេះ</h2>
+<ol>
+<li>អនុវត្ត labs តាមលំដាប់ក្រោម <code>labs/</code> (Lab 04 ជាមួយជំពូក 10; Lab 12 សម្រាប់ deploy/CI; Lab 13 សម្រាប់ capstone)។</li>
+<li>រត់ឧទាហរណ៍ isolation ជំពូក 2 ឡើងវិញរហូតមានអារម្មណ៍ច្បាស់។</li>
+<li>Containerize app ពិតដែលអ្នកស្គាល់ — រួចភ្ជាប់ pipeline ជំពូក 17។</li>
+<li>អានឯកសារផ្លូវការ: <a href="https://docs.docker.com/">https://docs.docker.com/</a></li>
+<li>រៀន Compose Watch / Dev Containers សម្រាប់ការអភិវឌ្ឍប្រចាំថ្ងៃ។</li>
+<li>រឹត CD: ស្កេន image ក្នុង CI, ការយល់ព្រម prod ដោយដៃ, រួច Kubernetes ច្រើន node (Pods, Deployments, Services)។</li>
+</ol>
+<hr>
+<p><em>បង្កើតសម្រាប់គម្រោងរៀន <code>rean-docker</code>។ ធ្វើតាមជំពូក; ចូលចិត្តការយល់ដឹងជាងការប្រញាប់ពាក្យបញ្ជា។</em></p>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        <a class="pager-prev" href="./learn/19.km.html"><span>មុន</span>សន្លឹកជំនួយ</a>
+        
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>Your first Dockerfile — rean-docker</title>
+    <meta name="description" content="Build and run a small Node API image." />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/lab/03-dockerfile.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/lab/03-dockerfile.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/lab/03-dockerfile.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/lab/03-dockerfile.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Your first Dockerfile — rean-docker" />
+    <meta property="og:description" content="Build and run a small Node API image." />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/lab/03-dockerfile.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Your first Dockerfile — rean-docker" />
+    <meta name="twitter:description" content="Build and run a small Node API image." />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-lab"
+    data-static-locale="en"
+    data-static-twin="./03-dockerfile.km.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">Hands-on</p>
+      <h1>Your first Dockerfile</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./lab.html?id=03-dockerfile">Open interactive reader</a>
+      </p>
+      <div class="md-body">
+<h2>Level</h2>
+<p><strong>Beginner.</strong> Write and build a simple Dockerfile for a Node API.<br>Later labs harden the same ideas — do not treat Lab 03 patterns as production-ready.</p>
+<h2>Goal</h2>
+<p>Build a custom image for a tiny Node/Express API and run it.</p>
+<p>This Dockerfile is intentionally <strong>simple</strong> (tag-based <code>FROM</code>, no digest pin, no healthcheck, npm stays in the image). Later labs harden the same ideas: Lab 08 multi-stage + non-root contrast, Lab 09 healthchecks / read-only / digest pins, Lab 11 secrets + scanning. Do not copy Lab 03 patterns into production work unchanged.</p>
+<p><strong>Optional helper:</strong> <code>./run.sh</code> builds, runs, and curls <code>/</code> + <code>/health</code>. Prefer typing the README commands yourself the first time.</p>
+<h2>Steps</h2>
+<pre><code class="language-bash">cd labs/03-dockerfile
+
+# Build (the trailing dot is the build context)
+docker build -t rean-hello:1.0 .
+
+# Run
+docker run --rm -p 3000:3000 --name lab03-api rean-hello:1.0
+</code></pre>
+<p>In another terminal:</p>
+<pre><code class="language-bash">curl http://127.0.0.1:3000/
+curl http://127.0.0.1:3000/health
+</code></pre>
+<p>Inspect layers:</p>
+<pre><code class="language-bash">docker history rean-hello:1.0
+</code></pre>
+<h2>Experiments</h2>
+<ol>
+<li>Change the message in <code>server.js</code>, rebuild, rerun — notice which layers rebuild.</li>
+<li>Reorder the Dockerfile to <code>COPY . .</code> <em>before</em> <code>npm ci</code> and rebuild twice after tiny code edits — feel the cache pain. (The real file uses <code>npm ci</code>, which needs <code>package-lock.json</code> and is what you should prefer over <code>npm install</code> in Dockerfiles.)</li>
+<li>Add an <code>ENV PORT=3000</code> instruction and confirm with <code>docker inspect</code>.</li>
+<li>Open <code>.dockerignore</code> in this folder. It keeps <code>node_modules</code>, <code>.env</code>, and <code>*.md</code> out of the build context. Briefly explain why shipping host <code>node_modules</code> into the image is a bad idea, then confirm those paths are not in the context:</li>
+</ol>
+<pre><code class="language-bash"># paths listed in .dockerignore should not appear
+docker build -t rean-hello:1.0 . 2&gt;&amp;1 | head -n 5
+# or: docker build --no-cache -t rean-hello:ctx . &amp;&amp; docker run --rm rean-hello:1.0 ls -la /app
+</code></pre>
+<h2>Success criteria</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Image builds without errors</li>
+<li><input disabled="" type="checkbox"> <code>/</code> returns JSON</li>
+<li><input disabled="" type="checkbox"> <code>/health</code> returns <code>{&quot;status&quot;:&quot;ok&quot;}</code></li>
+<li><input disabled="" type="checkbox"> You can explain why <code>package.json</code> / <code>package-lock.json</code> are copied before source</li>
+<li><input disabled="" type="checkbox"> You can explain why this lab ships a <code>.dockerignore</code> (what it keeps out of the context)</li>
+</ul>
+<h2>Next</h2>
+<p>Go to <strong>Lab 04 — Environment, secrets, and config</strong> before Compose. You will pass config at runtime and see why secrets must not live in image layers.</p>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        <a class="pager-prev" href="./lab/02-hello.html"><span>Previous lab</span>Hello containers</a>
+        <a class="pager-next" href="./lab/04-env-secrets.html"><span>Next lab</span>Env, secrets, and config</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

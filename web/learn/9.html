@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>Networks — how containers talk — rean-docker</title>
+    <meta name="description" content="Lab: labs/06 networks By default, containers on the same user defined bridge network can reach each other by container name DNS . Hostnames: From another contai…" />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/9.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/9.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/9.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/learn/9.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Networks — how containers talk — rean-docker" />
+    <meta property="og:description" content="Lab: labs/06 networks By default, containers on the same user defined bridge network can reach each other by container name DNS . Hostnames: From another contai…" />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/9.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Networks — how containers talk — rean-docker" />
+    <meta name="twitter:description" content="Lab: labs/06 networks By default, containers on the same user defined bridge network can reach each other by container name DNS . Hostnames: From another contai…" />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-chapter"
+    data-static-locale="en"
+    data-static-twin="./9.km.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">Curriculum</p>
+      <h1>Networks — how containers talk</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./learn.html?c=9">Open interactive reader</a>
+      </p>
+      <div class="md-body">
+<h3>Lab: <code>labs/06-networks</code></h3>
+<p>By default, containers on the same user-defined bridge network can reach each other <strong>by container name</strong> (DNS).</p>
+<pre><code class="language-bash">docker network create rean-net
+
+docker run -d --name rean-redis --network rean-net redis:7-alpine
+
+docker run --rm --network rean-net redis:7-alpine \
+  redis-cli -h rean-redis ping
+# → PONG
+</code></pre>
+<p>Hostnames:</p>
+<ul>
+<li>From another container on <code>rean-net</code>: <code>rean-redis</code></li>
+<li>From your host machine: usually via published ports (<code>localhost:6379</code>), not the internal name</li>
+</ul>
+<h3>Network types (simplified)</h3>
+<table>
+<thead>
+<tr>
+<th>Driver</th>
+<th>Typical use</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>bridge</code></td>
+<td>Default for single-host apps (most common)</td>
+</tr>
+<tr>
+<td><code>host</code></td>
+<td>Container shares host network stack (Linux)</td>
+</tr>
+<tr>
+<td><code>none</code></td>
+<td>No networking</td>
+</tr>
+<tr>
+<td><code>overlay</code></td>
+<td>Multi-host (Swarm)</td>
+</tr>
+</tbody></table>
+<h3>Port publishing again</h3>
+<p><code>-p HOST:CONTAINER</code> only affects access <strong>from the host / outside</strong>. Containers on the same Docker network talk on the <em>container</em> port without <code>-p</code>.</p>
+<p>Example: app connects to <code>postgres:5432</code> internally; you only publish <code>5432</code> if you want host tools (psql GUI) to connect.</p>
+<hr>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        <a class="pager-prev" href="./learn/8.html"><span>Previous</span>Volumes — keep data alive</a>
+        <a class="pager-next" href="./learn/10.html"><span>Next</span>Environment, secrets, and config</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

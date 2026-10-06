@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>How to use this guide — rean-docker</title>
+    <meta name="description" content="1. Read each chapter in order they build on each other . 2. Type the commands yourself — do not only read them. 3. After each beginner/intermediate chapter, com…" />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/how-to-use.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/how-to-use.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/how-to-use.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/learn/how-to-use.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="How to use this guide — rean-docker" />
+    <meta property="og:description" content="1. Read each chapter in order they build on each other . 2. Type the commands yourself — do not only read them. 3. After each beginner/intermediate chapter, com…" />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/how-to-use.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="How to use this guide — rean-docker" />
+    <meta name="twitter:description" content="1. Read each chapter in order they build on each other . 2. Type the commands yourself — do not only read them. 3. After each beginner/intermediate chapter, com…" />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-chapter"
+    data-static-locale="en"
+    data-static-twin="./how-to-use.km.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">Curriculum</p>
+      <h1>How to use this guide</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./learn.html?c=how-to-use">Open interactive reader</a>
+      </p>
+      <div class="md-body">
+<ol>
+<li>Read each chapter in order (they build on each other).</li>
+<li>Type the commands yourself — do not only read them.</li>
+<li>After each beginner/intermediate chapter, complete the matching lab under <code>labs/</code>.</li>
+<li>Keep a terminal open in this project root (wherever you cloned or downloaded the repo):</li>
+</ol>
+<pre><code class="language-bash">cd path/to/rean-docker
+</code></pre>
+<p><strong>Conventions used here</strong></p>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>$</code></td>
+<td>Run in your host terminal</td>
+</tr>
+<tr>
+<td><code>#</code></td>
+<td>Comment / explanation</td>
+</tr>
+<tr>
+<td><code>→</code></td>
+<td>Expected idea / outcome</td>
+</tr>
+</tbody></table>
+<h3>Prerequisites (before Lab 01)</h3>
+<ul>
+<li><strong>Docker Engine + Compose plugin</strong> — <code>docker compose version</code> should work. Chapter 4 walks through install and verify.</li>
+<li><strong><code>curl</code></strong> — several labs hit <code>/health</code> or API endpoints from your host.</li>
+<li><strong>A terminal</strong> — type the commands; reading alone will not stick.</li>
+<li><strong>Optional: Python 3</strong> — <code>make serve</code> for the learning site, and <code>python3 -m json.tool</code> to pretty-print JSON in a few labs (no <code>jq</code> required).</li>
+<li><strong>Windows:</strong> prefer <strong>WSL 2</strong> with Docker Desktop. Some bind-mount examples use <code>/tmp</code>; if that path is awkward, use a folder inside this repo instead.</li>
+</ul>
+<hr>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        
+        <a class="pager-next" href="./learn/1.html"><span>Next</span>What problem does Docker solve?</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

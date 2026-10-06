@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>Advanced topics — rean-docker</title>
+    <meta name="description" content="Hands on stretches for this chapter live in Lab 11 §5–§7 BuildKit cache + multi arch, Compose Watch, SBOM . Secrets mounts are already practiced in Lab 11 §2. P…" />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/16.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/16.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/16.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/learn/16.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Advanced topics — rean-docker" />
+    <meta property="og:description" content="Hands on stretches for this chapter live in Lab 11 §5–§7 BuildKit cache + multi arch, Compose Watch, SBOM . Secrets mounts are already practiced in Lab 11 §2. P…" />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/16.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Advanced topics — rean-docker" />
+    <meta name="twitter:description" content="Hands on stretches for this chapter live in Lab 11 §5–§7 BuildKit cache + multi arch, Compose Watch, SBOM . Secrets mounts are already practiced in Lab 11 §2. P…" />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-chapter"
+    data-static-locale="en"
+    data-static-twin="./16.km.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">Curriculum</p>
+      <h1>Advanced topics</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./learn.html?c=16">Open interactive reader</a>
+      </p>
+      <div class="md-body">
+<p>Hands-on stretches for this chapter live in <strong>Lab 11 §5–§7</strong> (BuildKit cache + multi-arch, Compose Watch, SBOM). Secrets mounts are already practiced in Lab 11 §2. Profiles showed up briefly in Chapter 11 — revisit them when optional services clutter your day-to-day Compose file.</p>
+<h3>BuildKit</h3>
+<p>Modern builder (usually default now):</p>
+<pre><code class="language-bash">DOCKER_BUILDKIT=1 docker build -t myapp .
+</code></pre>
+<p>Features: better cache, parallel builds, secrets mounts during build (without leaving secrets in layers), and cache mounts for package managers.</p>
+<pre><code class="language-dockerfile"># syntax=docker/dockerfile:1
+RUN --mount=type=secret,id=npmrc \
+    npm ci
+
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --omit=dev
+</code></pre>
+<pre><code class="language-bash">docker build --secret id=npmrc,src=$HOME/.npmrc -t myapp .
+</code></pre>
+<h3>Multi-arch builds</h3>
+<pre><code class="language-bash">docker buildx create --use
+docker buildx build --platform linux/amd64,linux/arm64 -t you/app:1.0 --push .
+</code></pre>
+<p>Useful for Apple Silicon + Linux servers.</p>
+<h3>Registries</h3>
+<pre><code class="language-bash">docker login
+docker tag rean-hello:1.0 youruser/rean-hello:1.0
+docker push youruser/rean-hello:1.0
+docker pull youruser/rean-hello:1.0
+</code></pre>
+<p>GHCR example tag: <code>ghcr.io/you/rean-hello:1.0</code></p>
+<h3>Compose Watch (local iterate)</h3>
+<p><code>docker compose up</code> rebuilds when you ask. <strong>Compose Watch</strong> rebuilds or syncs when files change — useful for bind-mount-style iteration without a custom file watcher.</p>
+<pre><code class="language-yaml"># sketch — see labs/11-security/compose.watch.yaml
+services:
+  demo:
+    image: alpine:3.22
+    develop:
+      watch:
+        - action: sync
+          path: ./watch-demo
+          target: /data
+</code></pre>
+<pre><code class="language-bash">docker compose -f compose.watch.yaml up -d
+docker compose -f compose.watch.yaml watch
+</code></pre>
+<p>Use Watch for <strong>local feedback loops</strong>. Keep production Compose free of <code>develop:</code> blocks — ship images, not laptop sync rules (Chapter 17).</p>
+<h3>SBOM &amp; provenance</h3>
+<p>An <strong>SBOM</strong> (Software Bill of Materials) lists what an image contains so scanners and auditors can reason about supply chain risk. <strong>Provenance</strong> / attestations record <em>how</em> it was built (Dockerfile, git commit, builder).</p>
+<p>Practical ways to see one without installing extra tools:</p>
+<pre><code class="language-bash"># Trivy can emit SPDX (Lab 11 §7)
+docker run --rm aquasec/trivy:0.63.0 image --format spdx alpine:3.22 | head
+
+# BuildKit can attach SBOM + provenance when you build/push (needs a capable builder)
+docker buildx build --sbom=true --provenance=true -t you/app:1.0 --push .
+</code></pre>
+<p>You do not need to memorize SPDX. You do need the habit: <strong>generate or attach an SBOM before you treat an image as “release candidate.”</strong></p>
+<h3>Signing images (orientation)</h3>
+<p>Tags and digests say <em>which bits</em>. <strong>Signatures</strong> say <em>who published them</em> (and that they were not swapped). Tools such as <a href="https://docs.sigstore.dev/cosign/system_config/installation/">Sigstore Cosign</a> verify signatures in CI or at deploy time.</p>
+<pre><code class="language-bash"># Shape only — install cosign separately if you try this for real
+cosign sign ghcr.io/you/app@sha256:...
+cosign verify ghcr.io/you/app@sha256:...
+</code></pre>
+<p>Signing pairs with digests (Chapter 15) and registry push (Chapter 17). Skip installing Cosign on day one; know that “pull by digest + verify signature” is the production-grade trust story.</p>
+<h3>Rootless Docker (orientation)</h3>
+<p>By default the Docker daemon often runs as root on the host. <strong>Rootless mode</strong> runs the daemon as your user so a compromised container has a harder path to owning the machine. Trade-offs: some features (certain ports, storage drivers, GPU) need extra setup.</p>
+<pre><code class="language-bash"># After installing rootless extras (distro-specific — see Docker docs):
+dockerd-rootless-setuptool.sh install
+export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
+docker info
+</code></pre>
+<p>Prefer non-root <strong>inside</strong> images first (Lab 11 §1 / Lab 09). Graduate to rootless Engine when hardening a shared laptop or CI runner.</p>
+<h3>Docker Swarm vs Kubernetes (orientation)</h3>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Docker Compose</td>
+<td>Local / simple single-host stacks</td>
+</tr>
+<tr>
+<td>Docker Swarm</td>
+<td>Built-in clustering (less common today)</td>
+</tr>
+<tr>
+<td>Kubernetes</td>
+<td>Industry standard orchestration at scale</td>
+</tr>
+</tbody></table>
+<p>Learn Compose thoroughly first. Move to K8s when you need multi-node scheduling, rolling updates, service meshes, etc.</p>
+<h3>Init process &amp; zombies</h3>
+<p>Use <code>tini</code> or Docker’s <code>--init</code> so PID 1 reaps zombie processes and forwards signals:</p>
+<pre><code class="language-bash">docker run --init ...
+</code></pre>
+<h3>Custom bridge &amp; aliases</h3>
+<pre><code class="language-bash">docker network create --subnet=172.28.0.0/16 rean-custom
+docker run -d --network rean-custom --network-alias cache redis:7-alpine
+</code></pre>
+<hr>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        <a class="pager-prev" href="./learn/15.html"><span>Previous</span>Security essentials</a>
+        <a class="pager-next" href="./learn/17.html"><span>Next</span>Deploy with Docker &amp; CI/CD</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="km">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>កែកំហុស — rean-docker</title>
+    <meta name="description" content="logs, inspect និង bug hostname Compose ដែលអ្នកកែ។" />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/lab/10-debugging.km.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/lab/10-debugging.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/lab/10-debugging.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/lab/10-debugging.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="កែកំហុស — rean-docker" />
+    <meta property="og:description" content="logs, inspect និង bug hostname Compose ដែលអ្នកកែ។" />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/lab/10-debugging.km.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="កែកំហុស — rean-docker" />
+    <meta name="twitter:description" content="logs, inspect និង bug hostname Compose ដែលអ្នកកែ។" />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-lab"
+    data-static-locale="km"
+    data-static-twin="./10-debugging.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">អនុវត្ត</p>
+      <h1>កែកំហុស</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./lab.html?id=10-debugging&amp;lang=km">បើកអ្នកអានអន្តរកម្ម</a>
+      </p>
+      <div class="md-body">
+<h2>កម្រិត</h2>
+<p><strong>ថ្នាក់ខ្ពស់។</strong> Debug ជាមួយ <code>logs</code>, <code>inspect</code> និង Compose file ដែល fail រហូតអ្នកកែ។</p>
+<h2>គោលដៅ</h2>
+<p>អនុវត្តពាក្យបញ្ជាដែលអ្នកចាប់ពេល container <strong>ចេញ</strong>, <strong>ភ្ជាប់មិនបាន</strong> ឬ <strong>ប្រើ hostname ខុស</strong>។ ផ្គូផ្គង handbook <strong>ជំពូក 14</strong>។</p>
+<p>អ្នកមិនត្រូវការ app ថ្មី — តែ <code>docker logs</code>, <code>docker inspect</code> និង Compose file ដែល <em>ត្រូវ</em> fail រហូតអ្នកកែ។</p>
+<h2>ជំហាន</h2>
+<p><strong>ជំនួយស្រេចចិត្ត:</strong> <code>./run.sh</code> សម្រាប់ crash/logs និង inspect។ Step 3 នៅដៃ — កែ <code>compose.yaml</code> (ឬមើល <code>compose.fixed.yaml</code>)។</p>
+<h3>1. Container ដែលមិននៅ up</h3>
+<pre><code class="language-bash">docker run --name lab10-crash alpine:3.22 sh -c &#39;echo boom &gt;&amp;2; exit 7&#39;
+docker ps -a --filter name=lab10-crash
+docker logs lab10-crash
+docker inspect -f &#39;{{.State.ExitCode}} {{.State.Error}}&#39; lab10-crash
+docker rm lab10-crash
+</code></pre>
+<p>Exit code <code>7</code> គឺ <code>exit 7</code> របស់ app។ <code>Error</code> ធម្មតាទទេសម្រាប់ exit មិនសូន្យស្អាត — <strong>logs</strong> គឺរឿង។</p>
+<h3>2. Debug shell បែប interactive</h3>
+<pre><code class="language-bash">docker run --rm -it --entrypoint sh alpine:3.22
+# inside: ps aux; ls /; exit
+</code></pre>
+<p>ប្រើពេល <code>CMD</code> លំនាំដើមខុស ហើយអ្នកចង់មើលជុំវិញ។</p>
+<h3>3. Hostname ខុស (<code>localhost</code> ក្នុង container)</h3>
+<pre><code class="language-bash">cd labs/10-debugging
+
+# This client talks to localhost — that is *itself*, not Redis
+docker compose run --rm client || true
+docker compose logs cache
+docker compose down
+</code></pre>
+<p>កែ <code>compose.yaml</code>: ប្ដូរ <code>-h localhost</code> ទៅ <code>-h cache</code>។ រត់ម្ដងទៀត៖</p>
+<pre><code class="language-bash">docker compose run --rm client
+# → PONG
+docker compose down
+</code></pre>
+<p>ជាប់? មើល <code>compose.fixed.yaml</code> (services ដូចគ្នា hostname ត្រឹមត្រូវរួច) — រួចកែ <code>compose.yaml</code> ដោយខ្លួនឯង។</p>
+<p><code>localhost</code> ពី browser អ្នកនៅតែអាចទៅដល់ port ដែល publish។ Containers បងប្អូនត្រូវប្រើ <strong>ឈ្មោះ service</strong>។</p>
+<h3>4. Inspect មួយវាល មិនមែនលិចក្នុង JSON</h3>
+<pre><code class="language-bash">docker run -d --name lab10-inspect alpine:3.22 sleep 30
+docker inspect -f &#39;{{.State.Status}} {{.HostConfig.NetworkMode}}&#39; lab10-inspect
+docker rm -f lab10-inspect
+</code></pre>
+<h2>ពិភាក្សា</h2>
+<ul>
+<li>ពេលណាអាន <code>logs</code> vs <code>inspect</code> vs <code>compose ps</code>?</li>
+<li>ហេតុអ្វី <code>depends_on</code> គ្មាន <code>condition: service_healthy</code> នៅតែប្រណាំង?</li>
+<li>នេះខុសពី Lab 06 (networks) យ៉ាងដូចម្ដេច ដែល bug hostname ដូចគ្នាគឺ <em>មេរៀន</em> មិនមែន failure ដែលអ្នក debug?</li>
+</ul>
+<h2>លក្ខខណ្ឌជោគជ័យ</h2>
+<ul>
+<li><input disabled="" type="checkbox"> អ្នករកឃើញ exit code និងបន្ទាត់ <code>boom</code> ពី logs</li>
+<li><input disabled="" type="checkbox"> Compose client បង្ហាញ <code>PONG</code> បន្ទាប់ពីប្ដូរ <code>localhost</code> → <code>cache</code></li>
+<li><input disabled="" type="checkbox"> អ្នកអាចឈ្មោះពាក្យបញ្ជាបីដែលនឹងរត់មុន rebuild «សាកមើល»</li>
+</ul>
+<h2>បន្ទាប់</h2>
+<p>ទៅ <strong>Lab 11 — សុវត្ថិភាពសំខាន់ៗ</strong> (non-root, scans, BuildKit secrets)។</p>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        <a class="pager-prev" href="./lab/09-production.km.html"><span>លំហាត់មុន</span>ទម្លាប់ production</a>
+        <a class="pager-next" href="./lab/11-security.km.html"><span>លំហាត់បន្ទាប់</span>សុវត្ថិភាពសំខាន់ៗ</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

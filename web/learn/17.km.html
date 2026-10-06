@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="km">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>Deploy ជាមួយ Docker &amp; CI/CD — rean-docker</title>
+    <meta name="description" content="ជំពូកពិសេស: នេះគឺផ្លូវ «ship it» — app ដែល containerize ចាកចេញពី laptop, ត្រូវ build ក្នុង CI, ចូល registry, រួច run លើ server។ បញ្ចប់ជំពូក 11–13 និង 15–16 បើអា…" />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/17.km.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/17.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/17.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/learn/17.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Deploy ជាមួយ Docker &amp; CI/CD — rean-docker" />
+    <meta property="og:description" content="ជំពូកពិសេស: នេះគឺផ្លូវ «ship it» — app ដែល containerize ចាកចេញពី laptop, ត្រូវ build ក្នុង CI, ចូល registry, រួច run លើ server។ បញ្ចប់ជំពូក 11–13 និង 15–16 បើអា…" />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/17.km.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Deploy ជាមួយ Docker &amp; CI/CD — rean-docker" />
+    <meta name="twitter:description" content="ជំពូកពិសេស: នេះគឺផ្លូវ «ship it» — app ដែល containerize ចាកចេញពី laptop, ត្រូវ build ក្នុង CI, ចូល registry, រួច run លើ server។ បញ្ចប់ជំពូក 11–13 និង 15–16 បើអា…" />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-chapter"
+    data-static-locale="km"
+    data-static-twin="./17.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">កម្មវិធីសិក្សា</p>
+      <h1>Deploy ជាមួយ Docker &amp; CI/CD</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./learn.html?c=17&amp;lang=km">បើកអ្នកអានអន្តរកម្ម</a>
+      </p>
+      <div class="md-body">
+<blockquote>
+<p><strong>ជំពូកពិសេស:</strong> នេះគឺផ្លូវ «ship it» — app ដែល containerize ចាកចេញពី laptop, ត្រូវ build ក្នុង CI, ចូល registry, រួច run លើ server។ បញ្ចប់ជំពូក 11–13 (និង 15–16 បើអាច) មុន។</p>
+</blockquote>
+<h3>Lab៖ <code>labs/12-ci-cd</code></h3>
+<p>Deploy មិនមែនពាក្យបញ្ជាតែមួយ។ វាជា <strong>pipeline</strong> នៃការសម្រេចចិត្ត៖</p>
+<pre><code>  Code → Build image → Test → Push to registry → Pull on server → Run (Compose) → Observe
+</code></pre>
+<p>បើជំហានណាមួយធ្វើដោយដៃ ហើយគ្មានឯកសារ deploys នឹងផុយ។ CI/CD ប្រែផ្នែកដែលធ្វើម្តងហើយម្តងទៀតទៅជាស្វ័យប្រវត្តិ។</p>
+<h3>«Deploy with Docker» មានន័យថាអ្វី</h3>
+<table>
+<thead>
+<tr>
+<th>ផ្នែក</th>
+<th>ការងារ</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Image</strong></td>
+<td>Artifact ដែលមិនប្តូរ (app + runtime) សម្គាល់ដោយ tag/digest</td>
+</tr>
+<tr>
+<td><strong>Registry</strong></td>
+<td>ផ្ទុក និងចែកចាយ images (Docker Hub, GHCR, ECR, …)</td>
+</tr>
+<tr>
+<td><strong>Runtime host</strong></td>
+<td>ម៉ាស៊ីនដែលមាន Docker Engine pull ហើយ run images</td>
+</tr>
+<tr>
+<td><strong>Compose (ឬ orchestrator)</strong></td>
+<td>ប្រកាស services, env, volumes, networks, restart, health</td>
+</tr>
+<tr>
+<td><strong>CI/CD</strong></td>
+<td>ស្វ័យប្រវត្តិ build/test/push (និងជាញឹកញាប់ deploy) រាល់ការផ្លាស់ប្តូរ</td>
+</tr>
+</tbody></table>
+<p>Docker Compose គ្រប់គ្រាន់សម្រាប់ production <strong>host តែមួយ</strong> (VPS, VM តូច)។ ពេលត្រូវការ scheduling ច្រើន node, rolling updates លើ cluster និង autoscaling កាន់តែសម្បូរ អ្នកទៅ Kubernetes (ជំពូក 16) — នៅតែប្រើ <strong>images ដូចគ្នា</strong>។</p>
+<h3>Environments: image ដូចគ្នា config ផ្សេង</h3>
+<p>តាមទម្លាប់ 12-factor ពីជំពូក 10៖</p>
+<table>
+<thead>
+<tr>
+<th>Environment</th>
+<th>ប្រភព config ធម្មតា</th>
+<th>Image</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Local / lab</td>
+<td><code>.env</code>, bind mounts, <code>compose.override.yaml</code></td>
+<td>Build លើម៉ាស៊ីនអ្នក</td>
+</tr>
+<tr>
+<td>Staging</td>
+<td>secrets លើ host / CI variables</td>
+<td>Image ដូច prod (ឬ release candidate)</td>
+</tr>
+<tr>
+<td>Production</td>
+<td>host env / secret manager; មិន bind-mount source</td>
+<td><strong>តែ</strong> images ពី registry</td>
+</tr>
+</tbody></table>
+<p>ច្បាប់ដែលការពារ deploy ភាគច្រើនកុំឱ្យខូច៖</p>
+<ol>
+<li><strong>Build ម្ដង រួច promote digest ដូចគ្នា</strong> (ឬ git SHA tag ដូចគ្នា) staging → prod។</li>
+<li><strong>កុំដុត secrets ចូល image។</strong></li>
+<li>ចូលចិត្ត <strong><code>IMAGE:git-sha</code></strong> (ឬ semver) ជាងពឹង <code>latest</code>។</li>
+<li>ទុក <strong>prod Compose</strong> ដែល pull images (<code>image:</code>) មិនមែន build លើ server (<code>build:</code>) នៅពេលអាច។</li>
+</ol>
+<h3>Compose សម្រាប់ production</h3>
+<p>ការបែងចែកជាក់ស្តែងក្នុង Lab 12៖</p>
+<p><strong><code>compose.yaml</code></strong> — local / CI smoke (អាចមាន <code>build:</code>)</p>
+<pre><code class="language-yaml">services:
+  api:
+    build: .
+    ports:
+      - &quot;127.0.0.1:3000:3000&quot;
+    environment:
+      NODE_ENV: production
+      PORT: &quot;3000&quot;
+    healthcheck:
+      test: [&quot;CMD&quot;, &quot;node&quot;, &quot;-e&quot;, &quot;fetch(&#39;http://127.0.0.1:3000/health&#39;).then(r=&gt;process.exit(r.ok?0:1)).catch(()=&gt;process.exit(1))&quot;]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+</code></pre>
+<p><strong><code>compose.prod.yaml</code></strong> — server (pull តែប៉ុណ្ណោះ)</p>
+<pre><code class="language-yaml">services:
+  api:
+    # IMAGE_REF is &quot;:sha-…&quot; (tag) or &quot;@sha256:…&quot; (digest)
+    image: ghcr.io/YOUR_USER/rean-deploy-api${IMAGE_REF:?set IMAGE_REF to :sha-… or @sha256:…}
+    ports:
+      - &quot;127.0.0.1:3000:3000&quot;
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: ${PORT:-3000}
+      APP_VERSION: ${APP_VERSION:-unknown}
+    restart: unless-stopped
+    init: true
+    read_only: true
+    tmpfs: [&quot;/tmp&quot;]
+    cap_drop: [&quot;ALL&quot;]
+    security_opt: [&quot;no-new-privileges:true&quot;]
+    logging:
+      driver: json-file
+      options:
+        max-size: &quot;10m&quot;
+        max-file: &quot;3&quot;
+    healthcheck:
+      test: [&quot;CMD&quot;, &quot;node&quot;, &quot;-e&quot;, &quot;fetch(&#39;http://127.0.0.1:3000/health&#39;).then(r=&gt;process.exit(r.ok?0:1)).catch(()=&gt;process.exit(1))&quot;]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: &quot;0.50&quot;
+          memory: 256M
+</code></pre>
+<p>នៅលើ server៖</p>
+<pre><code class="language-bash">export IMAGE_REF=:sha-abc1234   # or :1.2.3 — or @sha256:… for a digest pin
+docker compose -f compose.prod.yaml pull
+docker compose -f compose.prod.yaml up -d
+docker compose -f compose.prod.yaml ps
+</code></pre>
+<p>Validate files នៅណាក៏បាន (laptop ឬ CI)៖</p>
+<pre><code class="language-bash">docker compose -f compose.yaml config
+IMAGE_REF=:sha-deadbee docker compose -f compose.prod.yaml config
+</code></pre>
+<p><code>compose.prod.yaml</code> បដិសេធ interpolate បើ <code>IMAGE_REF</code> ខ្វះ — នេះចេតនា។ Prod ត្រូវ pin SHA tag ឬ digest (<code>:sha-…</code> / <code>@sha256:…</code>) មិនមែន <code>:latest</code>។</p>
+<h3>ទម្លាប់ Registry (build → tag → push → pull)</h3>
+<pre><code class="language-bash"># Authenticate (Docker Hub, GHCR, etc.)
+docker login ghcr.io
+
+# Build with an immutable-ish tag (git short SHA is a great default)
+GIT_SHA=$(git rev-parse --short HEAD)
+IMAGE=ghcr.io/YOUR_USER/rean-deploy-api
+
+docker build -t &quot;$IMAGE:sha-$GIT_SHA&quot; .
+docker push &quot;$IMAGE:sha-$GIT_SHA&quot;
+# កុំ tag :latest សម្រាប់ deploy — ឈ្មោះនោះផ្លាស់ទី។ មើល GHCR តាម SHA tag។
+</code></pre>
+<p>នៅលើ server អ្នក pull <strong>tag ដូចគ្នា</strong> ដែល CI បាន push៖</p>
+<pre><code class="language-bash">docker pull ghcr.io/YOUR_USER/rean-deploy-api:sha-$GIT_SHA
+</code></pre>
+<p><strong>គន្លឹះ GHCR:</strong> ក្នុង GitHub Actions <code>GITHUB_TOKEN</code> អាច push ទៅ <code>ghcr.io/&lt;owner&gt;/&lt;image&gt;</code> ពេល workflow មានសិទ្ធិ <code>packages: write</code>។ ភាពមើលឃើញនៃ package កំណត់នៅ GitHub → Packages។</p>
+<h3>Server bootstrap (checklist VPS តែមួយ)</h3>
+<p>ធ្វើម្ដងក្នុងមួយ host៖</p>
+<ol>
+<li>ដំឡើង Docker Engine + Compose plugin (ផ្លូវ Linux ក្នុងជំពូក 4)។</li>
+<li>បង្កើត user deploy ដែលមិនមែន root; បន្ថែមទៅក្រុម <code>docker</code> (ឬ rootless ក្រោយ)។</li>
+<li>រឹត SSH (keys តែប៉ុណ្ណោះ, មិន login ដោយ password)។</li>
+<li>Clone ឬ copy <strong>តែ</strong> ឯកសារ deploy (<code>compose.prod.yaml</code>, <code>.env</code>, ប្រហែល config reverse-proxy) — មិនចាំបាច់ source app ទាំងមូល។</li>
+<li>បង្កើត <code>.env</code> លើ server (កុំ commit តម្លៃពិត)។</li>
+<li>ណែនាំ៖ <strong>Caddy</strong> ឬ <strong>Nginx</strong> ជា reverse proxy សម្រាប់ TLS (<code>https://your.domain</code> → <code>127.0.0.1:3000</code>)។</li>
+</ol>
+<p>គំរូ TLS ខ្លី៖</p>
+<pre><code>Internet → :443 (Caddy/Nginx) → localhost:3000 (your container published port)
+</code></pre>
+<p>អ្នកអាច publish app តែនៅ <code>127.0.0.1:3000</code> ដើម្បីមិនបើកចំហទៅអ៊ីនធឺណិត៖</p>
+<pre><code class="language-yaml">ports:
+  - &quot;127.0.0.1:3000:3000&quot;
+</code></pre>
+<h3>Reverse proxy (ហេតុអ្វីនៅក្បែរ Docker)</h3>
+<p>Containers ល្អក្នុងការរត់ app។ Reverse proxy ទទួលខុសត្រូវ៖</p>
+<ul>
+<li>វិញ្ញាបនបត្រ HTTPS (Let’s Encrypt)</li>
+<li>Hostnames ច្រើនលើម៉ាស៊ីនតែមួយ</li>
+<li>Request logging / rate limits មូលដ្ឋាន</li>
+<li>លាក់ internal ports</li>
+</ul>
+<p>អ្នក <strong>មិន</strong> ត្រូវការ Kubernetes សម្រាប់ API + Postgres តែមួយលើ VPS មួយ។ Compose + proxy គឺ setup production ធម្មតា និងស្មោះត្រង់។</p>
+<p><strong>អនុវត្ត:</strong> Lab 12 §5 មាន <code>compose.proxy.yaml</code> + <code>Caddyfile</code> — demo HTTP មូលដ្ឋាននៃ hop ដូចគ្នា (<code>http://127.0.0.1:8080</code> → Caddy → <code>api:3000</code>)។ TLS ពិតនៅតែត្រូវការ DNS name; comments ក្នុង Caddyfile បង្ហាញរាង production។</p>
+<h3>Releases ដោយគ្មានរឿងរ៉ាវ</h3>
+<table>
+<thead>
+<tr>
+<th>ទម្លាប់</th>
+<th>ហេតុអ្វី</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Healthchecks + <code>restart: unless-stopped</code></td>
+<td>Container ខូច/unhealthy ងើបឡើងវិញ ឬនៅសម្គាល់ unhealthy</td>
+</tr>
+<tr>
+<td><code>docker compose up -d</code> បន្ទាប់ពី <code>pull</code></td>
+<td>បង្កើតសេវាដែលផ្លាស់ប្តូរឡើងវិញតែប៉ុណ្ណោះ</td>
+</tr>
+<tr>
+<td>ទុក tag/digest មុន</td>
+<td>Rollback ភ្លាម៖ កំណត់ <code>IMAGE_REF</code> ទៅ <code>:sha-…</code> ឬ <code>@sha256:…</code> ល្អចុងក្រោយ រួច <code>up -d</code> ម្ដងទៀត</td>
+</tr>
+<tr>
+<td>Database volumes</td>
+<td>Named volumes នៅរស់បន្ទាប់ពីបង្កើត container ឡើងវិញ (ជំពូក 8)</td>
+</tr>
+<tr>
+<td>Migrations</td>
+<td>ធ្វើជាជំហានច្បាស់ (one-off <code>compose run</code>) មុន/ក្រោយប្តូរ API — សរសេរលំដាប់</td>
+</tr>
+</tbody></table>
+<p>គំនូស rollback៖</p>
+<pre><code class="language-bash">export IMAGE_REF=:sha-OLDGOOD
+docker compose -f compose.prod.yaml pull api
+docker compose -f compose.prod.yaml up -d api
+</code></pre>
+<h3>CI/CD: ជំហាននីមួយៗគួរធ្វើអ្វី</h3>
+<p>គិតជា stages មិនមែន «script យក្សមួយ»៖</p>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>ការពិនិត្យធម្មតា</th>
+<th>Failure មានន័យ</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Validate</strong></td>
+<td><code>docker compose config</code>, មាន Dockerfile</td>
+<td>YAML ខុស / layout គម្រោងខូច</td>
+</tr>
+<tr>
+<td><strong>Test</strong></td>
+<td>Unit tests (host ឬក្នុង build stage)</td>
+<td>Logic app ខូច</td>
+</tr>
+<tr>
+<td><strong>Build</strong></td>
+<td><code>docker build</code> (BuildKit)</td>
+<td>Image មិន build</td>
+</tr>
+<tr>
+<td><strong>Smoke</strong></td>
+<td><code>compose up</code> + <code>curl /health</code> ក្នុង CI</td>
+<td>Container ចាប់ផ្ដើម តែ app ស្លាប់</td>
+</tr>
+<tr>
+<td><strong>Push</strong></td>
+<td><code>docker push</code> image ដែល tag</td>
+<td>Artifact មិនបានផ្សាយ</td>
+</tr>
+<tr>
+<td><strong>Deploy</strong></td>
+<td>SSH / API / platform «pull + up»</td>
+<td>Host runtime មិនបាន update</td>
+</tr>
+</tbody></table>
+<p><strong>Continuous Integration (CI)</strong> = validate + test + build (+ smoke) រាល់ PR/push។<br><strong>Continuous Delivery/Deployment (CD)</strong> = promote image ដែល build រួចទៅ environment ស្វ័យប្រវត្តិ ឬដោយចុចម្ដង។</p>
+<p>ចាប់ផ្ដើមដោយ CI ដែល <strong>build និង push</strong>។ បន្ថែម deploy ស្វ័យប្រវត្តិទៅ staging ពេលនោះនឹងស្ថិរភាព។ ទុក production deploy ឱ្យមានច្រក (ការយល់ព្រមដោយដៃ) រហូតទុកចិត្ត pipeline។</p>
+<h3>GitHub Actions — pattern ពេញ</h3>
+<p>Lab 12 មាន workflow ត្រៀម copy។ រូបរាងដូចនេះ៖</p>
+<pre><code class="language-yaml">name: CI — build, smoke, push
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  IMAGE: ghcr.io/${{ github.repository_owner }}/rean-deploy-api
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Validate Compose files
+        working-directory: labs/12-ci-cd
+        run: |
+          docker compose -f compose.yaml config &gt;/dev/null
+          REGISTRY_OWNER=example IMAGE_REF=:sha-deadbee \
+            docker compose -f compose.prod.yaml config &gt;/dev/null
+
+      - name: Build image
+        working-directory: labs/12-ci-cd
+        run: |
+          TAG=sha-$(git rev-parse --short HEAD)
+          docker build -t &quot;$IMAGE:$TAG&quot; .
+          echo &quot;TAG=$TAG&quot; &gt;&gt; &quot;$GITHUB_ENV&quot;
+
+      - name: Smoke test
+        working-directory: labs/12-ci-cd
+        run: |
+          docker compose up -d --build
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:3000/health; then exit 0; fi
+            sleep 1
+          done
+          docker compose logs
+          exit 1
+
+      - name: Teardown smoke stack
+        if: always()
+        working-directory: labs/12-ci-cd
+        run: docker compose down -v
+
+      - name: Login to GHCR
+        if: github.event_name == &#39;push&#39; &amp;&amp; github.ref == &#39;refs/heads/main&#39;
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push image
+        if: github.event_name == &#39;push&#39; &amp;&amp; github.ref == &#39;refs/heads/main&#39;
+        run: docker push &quot;$IMAGE:$TAG&quot;
+</code></pre>
+<p>កំណត់ចំណាំ៖</p>
+<ul>
+<li><strong>PRs build + smoke</strong> តែមិន push (ឱ្យ registry ស្អាត)។</li>
+<li><strong><code>main</code> pushes</strong> ផ្សាយ <strong>SHA tag</strong> (<code>sha-abc1234</code>) មិនមែន <code>:latest</code>។ ឈ្មោះនោះផ្លាស់ទី; rollback មិនបាន។</li>
+<li>ប្តូរឈ្មោះ image / working directory ពេលភ្ជាប់ទៅ app ផ្ទាល់ខ្លួន។</li>
+<li>សម្រាប់ deploy key ឯកជន ឬជំហាន SSH deploy ទុក secrets ក្នុង GitHub → Settings → Secrets (<code>SSH_HOST</code>, <code>SSH_KEY</code>, …) — កុំដាក់ក្នុង repo។</li>
+</ul>
+<h3>CD ស្រេចចិត្ត: deploy តាម SSH បន្ទាប់ពី push</h3>
+<p>បន្ទាប់ពី job push ជោគជ័យ (workflow ដូចគ្នា ឬ job <code>deploy</code> ទីពីរ)៖</p>
+<pre><code class="language-yaml">      - name: Deploy over SSH
+        uses: appleboy/ssh-action@823bd89e131d8d508129f9443cad5855e9ba96f0 # v1.2.4
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /opt/rean-deploy
+            export IMAGE_REF=:sha-$(echo ${{ github.sha }} | cut -c1-7)
+            docker compose -f compose.prod.yaml pull
+            docker compose -f compose.prod.yaml up -d
+</code></pre>
+<p>ឱ្យ script deploy <strong>idempotent</strong>: រត់ពីរដងនៅតែទុកប្រព័ន្ធឱ្យសុខភាពល្អ។</p>
+<h3>Secrets និង supply chain ក្នុង CI</h3>
+<ol>
+<li>ប្រើ <strong>masked secrets</strong> GitHub/GitLab សម្រាប់ពាក្យសម្ងាត់ registry, SSH keys, API tokens។</li>
+<li>ចូលចិត្ត <code>GITHUB_TOKEN</code> / OIDC cloud roles ជាង PAT រយៈពេលវែង នៅពេល platform គាំទ្រ។</li>
+<li>Pin Actions ភាគីទីបីទៅ <strong>commit SHA ពេញ</strong> (<code>owner/action@&lt;40-hex&gt;</code>) មិនមែន tag ផ្លាស់ទីដូច <code>@v4</code>។ Tag អាច force-push បាន; SHA មិនបាន។ Workflows ក្នុង repo នេះ និង template Lab 12 ធ្វើបែបនោះ — comment <code># v4.4.0</code> គឺស្លាកសម្រាប់មនុស្ស (Dependabot នៅតែ bump បាន)។</li>
+<li>ស្កេន images ក្នុង CI (<code>docker scout</code>, Trivy, Grype) ហើយ fail លើ critical CVEs ពេលអ្នកត្រៀម bar នោះ (ជំពូក 15)។</li>
+<li>ចាត់ Docker socket ក្នុង CI runners ជា infrastructure ដែលទុកចិត្ត — កុំបើកឱ្យ PR code ពី forks ដែលមិនទុកចិត្តដោយគ្មាន isolation។</li>
+</ol>
+<h3>ការសង្កេតបន្ទាប់ពី deploy</h3>
+<p>ភ្នែក production អប្បបរមា៖</p>
+<pre><code class="language-bash">docker compose -f compose.prod.yaml ps
+docker compose -f compose.prod.yaml logs -f --tail=200 api
+curl -fsS https://your.domain/health
+</code></pre>
+<p>បន្ទាប់ទៅ log shipping និង uptime checks។ CI build ពណ៌បៃតងមិនជំនួស <code>/health</code> ពិតពី URL សាធារណៈ។</p>
+<h3>Checklist ពីចុងដល់ចុង (បោះពុម្ពទុក)</h3>
+<ul>
+<li><input disabled="" type="checkbox"> App មាន <code>/health</code> ពិត (ឬសមភាគី) ប្រើដោយ Compose <strong>និង</strong> CI smoke tests</li>
+<li><input disabled="" type="checkbox"> <code>compose.prod.yaml</code> ប្រើ <code>image:</code> + tag variable (គ្មាន build ពីចម្ងាយដោយចៃដន្យ)</li>
+<li><input disabled="" type="checkbox"> <code>.env.example</code> រាយ variable គ្រប់គ្រាន់; <code>.env</code> ពិតត្រូវ gitignore</li>
+<li><input disabled="" type="checkbox"> CI validate Compose, build, smoke, រួច push លើ main</li>
+<li><input disabled="" type="checkbox"> Server មាន Docker Engine, ឯកសារ deploy និង secrets តែលើ host</li>
+<li><input disabled="" type="checkbox"> អ្នកដឹង rollback tag ពី deploy ល្អចុងក្រោយ</li>
+<li><input disabled="" type="checkbox"> TLS ចប់នៅ reverse proxy (ឬ platform edge) មិនមែនជាការគិតក្រោយ</li>
+<li><input disabled="" type="checkbox"> អ្នកអាចពន្យល់ build → registry → pull → up ដោយមិនមើលកំណត់ចំណាំ</li>
+</ul>
+<h3>របៀបដែលជំពូកនេះភ្ជាប់</h3>
+<table>
+<thead>
+<tr>
+<th>ជំពូកមុន</th>
+<th>អ្វីដែលអ្នកប្រើឡើងវិញ</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>7 / 12</td>
+<td>Dockerfile + multi-stage សម្រាប់ CI builds</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Env/secrets — CI secrets + <code>.env</code> លើ server</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Compose ជា unit deploy</td>
+</tr>
+<tr>
+<td>13 / 15</td>
+<td>Healthchecks, non-root, limits, scanning</td>
+</tr>
+<tr>
+<td>16</td>
+<td>BuildKit, registries, multi-arch, Watch, SBOM/signing orientation</td>
+</tr>
+</tbody></table>
+<p>បន្ទាប់៖ <strong>Lab 12</strong> ធ្វើឱ្យអ្នករត់ជំហាន CI លើម៉ាស៊ីនផ្ទាល់ រួច push បើចង់។ ក្រោយនោះ <strong>Capstone (ជំពូក 18)</strong> អាចមាន CI workflow ពិតជា stretch goal — អ្នកស្គាល់រូបរាងហើយ។</p>
+<hr>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        <a class="pager-prev" href="./learn/16.km.html"><span>មុន</span>ប្រធានបទកម្រិតខ្ពស់</a>
+        <a class="pager-next" href="./learn/18.km.html"><span>បន្ទាប់</span>គម្រោង capstone</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

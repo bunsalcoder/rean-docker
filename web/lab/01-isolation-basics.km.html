@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="km">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>មូលដ្ឋាន isolation — rean-docker</title>
+    <meta name="description" content="ថ្នាក់ដើម៖ មើល isolation ប្រភេទ process, file, network និង memory។" />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/lab/01-isolation-basics.km.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/lab/01-isolation-basics.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/lab/01-isolation-basics.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/lab/01-isolation-basics.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="មូលដ្ឋាន isolation — rean-docker" />
+    <meta property="og:description" content="ថ្នាក់ដើម៖ មើល isolation ប្រភេទ process, file, network និង memory។" />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/lab/01-isolation-basics.km.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="មូលដ្ឋាន isolation — rean-docker" />
+    <meta name="twitter:description" content="ថ្នាក់ដើម៖ មើល isolation ប្រភេទ process, file, network និង memory។" />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-lab"
+    data-static-locale="km"
+    data-static-twin="./01-isolation-basics.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">អនុវត្ត</p>
+      <h1>មូលដ្ឋាន isolation</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./lab.html?id=01-isolation-basics&amp;lang=km">បើកអ្នកអានអន្តរកម្ម</a>
+      </p>
+      <div class="md-body">
+<h2>កម្រិត</h2>
+<p><strong>ថ្នាក់ដើម។</strong> អ្នកត្រូវការតែ <code>docker run</code>, <code>docker exec</code> និង <code>docker rm</code>។<br>អ្នក <strong>មិន</strong> ត្រូវស្ទាត់ kernel internals, OCI ឬ Kubernetes ទេ។</p>
+<h2>គោលដៅ</h2>
+<p>មើលដោយភ្នែកផ្ទាល់ថា container មួយ <strong>ដាច់ដោយឡែក</strong> ពី host និងពី container ផ្សេង៖</p>
+<ul>
+<li>processes</li>
+<li>files</li>
+<li>network ports</li>
+<li>memory limits</li>
+</ul>
+<p>អាន <strong>ជំពូក 2</strong> សម្រាប់ «ហេតុអ្វី»។ Lab នេះគឺការអនុវត្តឱ្យ <strong>មានអារម្មណ៍</strong> តែប៉ុណ្ណោះ។</p>
+<h2>របៀបដែល lab នេះសមនឹងផ្លូវរៀន</h2>
+<table>
+<thead>
+<tr>
+<th>Lab</th>
+<th>អ្វីដែលអ្នករៀន</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>01 (lab នេះ)</strong></td>
+<td>isolation មើលទៅដូចម្ដេច</td>
+</tr>
+<tr>
+<td><strong>02 Hello containers</strong></td>
+<td>workflow ប្រចាំថ្ងៃ៖ run, ports, logs, clean up</td>
+</tr>
+<tr>
+<td><strong>03+</strong></td>
+<td>Build images, env, Compose, volumes, production</td>
+</tr>
+</tbody></table>
+<p>ធ្វើ <strong>01 → 02</strong> តាមលំដាប់។ ការស្ទួនគ្នាគឺចេតនា៖ ពាក្យបញ្ជាងាយដូចគ្នា ប៉ុន្តែផ្ដោតផ្សេងគ្នា។</p>
+<h2>តម្រូវការមុន</h2>
+<p>Docker បានដំឡើង និងដំណើរការ (ជំពូក 4)៖</p>
+<pre><code class="language-bash">docker --version
+docker run --rm hello-world
+</code></pre>
+<p>នៅ Windows ចូលចិត្ត <strong>WSL2</strong> ឬ Git Bash។ ឧទាហរណ៍ bind-mount ប្រើ <code>/tmp/...</code>។ បើ path នោះពិបាកលើ OS របស់អ្នក សូមបង្កើតថតក្នុង repo នេះហើយប្រើថតនោះជំនួស។</p>
+<h2>ជំហាន</h2>
+<p><strong>ជំនួយស្រេចចិត្ត:</strong> បន្ទាប់ពីយល់គំនិត រត់ <code>./run.sh</code> ក្នុងថតនេះ (bind mount ប្រើ <code>.share/</code> ជំនួស <code>/tmp</code>)។ ចូលចិត្តវាយពាក្យបញ្ជាពី README ដោយខ្លួនឯងលើកដំបូង។</p>
+<h3>1. Process isolation</h3>
+<p>ក្នុង container អ្នកឃើញតែ processes <em>របស់វា</em> — មិនមែន apps លើ host។</p>
+<pre><code class="language-bash">docker run -d --name lab01-ps alpine:3.22 sleep 3600
+
+# Small list inside (sleep is usually PID 1)
+docker exec lab01-ps ps aux
+
+# Much larger list on the host
+ps aux | head
+
+docker rm -f lab01-ps
+</code></pre>
+<h3>2. Filesystem isolation</h3>
+<p>ឯកសារដែលបង្កើតក្នុង container នៅក្នុង container នោះ លុះត្រាតែអ្នកចែករំលែក folder ដោយចេតនា។</p>
+<pre><code class="language-bash"># This file lives only inside the container (gone when the container exits)
+docker run --rm alpine:3.22 sh -c &#39;echo hello-from-container &gt; /tmp/note.txt; cat /tmp/note.txt; ls /&#39;
+
+# Sharing is opt-in (bind mount) — isolation is the default
+mkdir -p /tmp/lab01-share
+echo &#39;from-host&#39; &gt; /tmp/lab01-share/msg.txt
+docker run --rm -v /tmp/lab01-share:/data alpine:3.22 cat /data/msg.txt
+# → from-host
+# On Windows without WSL, use a folder inside this lab (e.g. .share/) instead of /tmp.
+</code></pre>
+<h3>3. Network isolation</h3>
+<p>Container នីមួយអាចប្រើ «port 80» ក្នុងខ្លួន។ លើ host អ្នក publish ports ផ្សេងគ្នា។</p>
+<pre><code class="language-bash">docker run -d --name lab01-web-a -p 18080:80 nginx:1.28-alpine
+docker run -d --name lab01-web-b -p 18081:80 nginx:1.28-alpine
+
+curl -s -o /dev/null -w &quot;%{http_code}\n&quot; http://127.0.0.1:18080/
+curl -s -o /dev/null -w &quot;%{http_code}\n&quot; http://127.0.0.1:18081/
+
+docker rm -f lab01-web-a lab01-web-b
+</code></pre>
+<h3>4. Memory limits</h3>
+<p>Docker អាចកំណត់ RAM ដែល container អាចប្រើ។</p>
+<pre><code class="language-bash">docker run -d --name lab01-limited -m 256m alpine:3.22 sleep 60
+docker inspect -f &#39;{{.HostConfig.Memory}}&#39; lab01-limited
+# → 268435456 (bytes = 256 MiB)
+
+docker rm -f lab01-limited
+</code></pre>
+<h3>5. Image មួយ containers ច្រើន</h3>
+<p>Image ដូចគ្នា → containers ដាច់ដោយឡែកច្រើន (នេះហើយជាហេតុ containers មានប្រសិទ្ធភាព)។</p>
+<pre><code class="language-bash">docker pull redis:7-alpine
+docker run -d --name lab01-r1 redis:7-alpine
+docker run -d --name lab01-r2 redis:7-alpine
+docker run -d --name lab01-r3 redis:7-alpine
+
+docker ps --filter name=lab01-r
+docker rm -f lab01-r1 lab01-r2 lab01-r3
+</code></pre>
+<h2>អ្វីដែលគួរយកទៅ</h2>
+<table>
+<thead>
+<tr>
+<th>Demo</th>
+<th>គំនិតភាសាសាមញ្ញ</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ps</code> ក្នុង vs host</td>
+<td>Container មិនឃើញ host processes</td>
+</tr>
+<tr>
+<td><code>/tmp/note.txt</code></td>
+<td>Container មាន filesystem ផ្ទាល់ខ្លួន</td>
+</tr>
+<tr>
+<td>nginx ពីរលើ port 80</td>
+<td>នីមួយមាន network ផ្ទាល់; host map ports</td>
+</tr>
+<tr>
+<td><code>-m 256m</code></td>
+<td>អ្នកអាចកំណត់ resources</td>
+</tr>
+<tr>
+<td>Redis បី</td>
+<td>Image មួយ instances ដាច់ដោយឡែកច្រើន</td>
+</tr>
+</tbody></table>
+<p><em>(ឈ្មោះស្រេចចិត្តសម្រាប់ក្រោយ: namespaces, cgroups, layers — ជំពូក 2។ រំលងពេលនេះបើធ្ងន់។)</em></p>
+<h2>លក្ខខណ្ឌជោគជ័យ</h2>
+<ul>
+<li><input disabled="" type="checkbox"> បញ្ជី process ខ្លីក្នុង container; បញ្ជីវែងលើ host</li>
+<li><input disabled="" type="checkbox"> Bind mount បង្ហាញការចែករំលែក; គ្មាន mount ឯកសារនៅដាច់ដោយឡែក</li>
+<li><input disabled="" type="checkbox"> URL nginx ទាំងពីរត្រឡប់ HTTP 200</li>
+<li><input disabled="" type="checkbox"> Inspect បង្ហាញដែនកំណត់ memory 256 MiB</li>
+<li><input disabled="" type="checkbox"> Redis containers បីបានរត់ រួចអ្នកសម្អាត</li>
+</ul>
+<h2>បន្ទាប់</h2>
+<p>ទៅ <strong>Lab 02 — Hello containers</strong> សម្រាប់ workflow <code>run</code> / logs / clean-up ប្រចាំថ្ងៃ។</p>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        
+        <a class="pager-next" href="./lab/02-hello.km.html"><span>លំហាត់បន្ទាប់</span>សួស្តី containers</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

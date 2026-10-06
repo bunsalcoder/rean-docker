@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="km">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>stack Compose — rean-docker</title>
+    <meta name="description" content="API + Postgres + Redis ជាមួយ healthcheck និង config ពី .env។" />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/lab/05-compose.km.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/lab/05-compose.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/lab/05-compose.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/lab/05-compose.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="stack Compose — rean-docker" />
+    <meta property="og:description" content="API + Postgres + Redis ជាមួយ healthcheck និង config ពី .env។" />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/lab/05-compose.km.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="stack Compose — rean-docker" />
+    <meta name="twitter:description" content="API + Postgres + Redis ជាមួយ healthcheck និង config ពី .env។" />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-lab"
+    data-static-locale="km"
+    data-static-twin="./05-compose.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">អនុវត្ត</p>
+      <h1>stack Compose</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./lab.html?id=05-compose&amp;lang=km">បើកអ្នកអានអន្តរកម្ម</a>
+      </p>
+      <div class="md-body">
+<h2>កម្រិត</h2>
+<p><strong>ថ្នាក់កណ្តាល។</strong> Compose ពហុសេវាបន្ទាប់ពី env files (Lab 04)។<br>អ្នកគួរស្គាល់ការបង្កើត image សេវាតែមួយរួច (Lab 03)។</p>
+<h2>គោលដៅ</h2>
+<p>Run កម្មវិធីពហុ container ជាមួយ service DNS, volumes, healthchecks និង config ពី <code>.env</code> (Lab 04)។</p>
+<p><strong>ជំនួយស្រេចចិត្ត:</strong> <code>./run.sh</code> បើក stack ហើយ curl <code>/health</code>។ ចូលចិត្តវាយពាក្យបញ្ជាពី README ដោយខ្លួនឯងលើកដំបូង។</p>
+<h2>ជំហាន</h2>
+<pre><code class="language-bash">cd labs/05-compose
+
+cp .env.example .env
+# edit POSTGRES_PASSWORD if you want — never commit .env
+
+docker compose up --build
+# or detached:
+# docker compose up -d --build
+</code></pre>
+<p>សាកល្បង៖</p>
+<pre><code class="language-bash">curl http://127.0.0.1:3000/
+curl http://127.0.0.1:3000/health
+# hit / a few times — &quot;hits&quot; should increase (Redis)
+</code></pre>
+<p>ពាក្យបញ្ជាមានប្រយោជន៍៖</p>
+<pre><code class="language-bash">docker compose ps
+docker compose logs -f api
+docker compose exec db psql -U rean -d rean -c &#39;\dt&#39;
+docker compose down        # keep volume
+docker compose down -v     # DELETE database volume
+</code></pre>
+<p>បើអ្នកប្ដូរ <code>POSTGRES_USER</code> / <code>POSTGRES_DB</code> ក្នុង <code>.env</code> សូមប្រើឈ្មោះនោះក្នុង <code>psql</code> ជំនួស <code>rean</code>។</p>
+<h2>គំនិតសំខាន់ដែលត្រូវសង្កេត</h2>
+<ol>
+<li>Hostname <code>db</code> និង <code>redis</code> ដំណើរការ <strong>នៅក្នុង</strong> Compose network។</li>
+<li><code>depends_on</code> + <code>service_healthy</code> រង់ចាំរហូត Postgres <strong>និង</strong> Redis ទទួល connections។</li>
+<li>Named volume <code>pgdata</code> នៅរស់បន្ទាប់ពី <code>docker compose down</code> (លុះត្រាតែ <code>-v</code>)។</li>
+<li>Password ស្ថិតក្នុង <code>.env</code> មិនមែនជាតួអក្សរក្នុង <code>compose.yaml</code>។ Compose interpolate <code>${POSTGRES_PASSWORD}</code> ពេលចាប់ផ្ដើម។</li>
+<li><code>DATABASE_URL</code> នៅតែត្រូវផ្គុំពី variables ទាំងនោះ។ រត់ <code>docker compose config</code> អ្នកនឹងឃើញ URL រួម password។ នោះហើយជាហេតុ production ចូលចិត្ត Docker secrets ឬ vault មិនមែន connection string នៅក្នុងលទ្ធផល Compose។ <strong>Pitfall:</strong> password មាន <code>@</code>, <code>:</code>, <code>/</code>, ឬ <code>#</code> បំបែក URL interpolation — រក្សា lab password សាមញ្ញ ឬ URL-encode / ផ្ញើ <code>POSTGRES_*</code> ដាច់ដោយឡែក ជំនួស URL មួយ។</li>
+<li>API publish ជា <code>127.0.0.1:${PORT}:3000</code> — curl បានលើម៉ាស៊ីននេះ មិនផ្សព្វផ្សាយលើគ្រប់ host interface។</li>
+<li>API <code>Dockerfile</code> pin <code>FROM node:22-alpine@sha256:…</code> ដើម្បីឱ្យ CRITICAL scan ក្នុង CI reproducible។ <code>postgres:16-alpine</code> / <code>redis:7-alpine</code> នៅតែ <strong>floating series tags</strong> ក្នុង Compose ដើម្បីឱ្យ file ងាយចូល។ Lab 13 (និងជំពូក 15) pin digests ទាំងនោះសម្រាប់ supply-chain — កុំយក Compose file នេះធ្វើ production template។</li>
+</ol>
+<h2>លក្ខខណ្ឌជោគជ័យ</h2>
+<ul>
+<li><input disabled="" type="checkbox"> អ្នក copy <code>.env.example</code> → <code>.env</code> មុន <code>up</code></li>
+<li><input disabled="" type="checkbox"> Services ទាំងបី up</li>
+<li><input disabled="" type="checkbox"> <code>/</code> បង្ហាញ <code>hits</code> និង <code>dbTime</code></li>
+<li><input disabled="" type="checkbox"> បន្ទាប់ពី <code>down</code> + <code>up</code> អ្នកយល់ថាទិន្នន័យកើតអ្វីជាមួយ/គ្មាន <code>-v</code></li>
+</ul>
+<h2>បន្ទាប់</h2>
+<p>ទៅ <strong>Lab 06 — Networks</strong> ដើម្បីមើល DNS តាមឈ្មោះដោយគ្មាន Compose រួច <strong>Lab 07 — Volumes</strong> សម្រាប់ persistence ដាច់ដោយឡែក។</p>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        <a class="pager-prev" href="./lab/04-env-secrets.km.html"><span>លំហាត់មុន</span>Env, secrets និង config</a>
+        <a class="pager-next" href="./lab/06-networks.km.html"><span>លំហាត់បន្ទាប់</span>Networks និង DNS</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>
