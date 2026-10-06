@@ -39,7 +39,7 @@ Localized lesson Markdown lives under:
 
 If a Khmer file is missing, the site falls back to English for that page.
 
-> The Learn and Lab pages load Markdown over HTTP, so open them via a local server (not as `file://`). Chapter and lab bodies are rendered client-side; without JavaScript, those pages link to the raw Markdown under `web/content/`.
+> The Learn and Lab SPA pages load Markdown over HTTP, so open them via a local server (not as `file://`). Crawlable static copies live under `web/learn/` and `web/lab/` (EN + `.km.html`); regenerate with `make sitemap` after content edits.
 
 ## Handbook (Markdown)
 
@@ -52,7 +52,7 @@ English site copies must match the handbook and lab READMEs. After editing eithe
 ```bash
 make sync    # copy sources → web/content/en/
 make check   # fail if anything drifted
-make ci-local    # check-all + sitemap + search index (CI content gate)
+make ci-local    # check-all + static pages + sitemap + search index (CI content gate)
 make smoke          # optional: compose smoke for labs 04, 05, 09, 12, 13
 make smoke-concept  # optional: run.sh helpers for labs 01, 02, 06, 07, 08, 10, 11
 ```

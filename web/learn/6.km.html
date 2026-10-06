@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="km">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>ពន្យល់ images ឱ្យជ្រៅ — rean-docker</title>
+    <meta name="description" content="List និង inspect history បង្ហាញ layers និងទំហំប្រហែល — មានប្រយោជន៍ខ្លាំងសម្រាប់មើលថាតើ image ធំហួសហេតុនៅណា។ Tags រូបភាព nginx:alpine មានន័យថា: Repository/name:…" />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/6.km.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/6.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/6.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/learn/6.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="ពន្យល់ images ឱ្យជ្រៅ — rean-docker" />
+    <meta property="og:description" content="List និង inspect history បង្ហាញ layers និងទំហំប្រហែល — មានប្រយោជន៍ខ្លាំងសម្រាប់មើលថាតើ image ធំហួសហេតុនៅណា។ Tags រូបភាព nginx:alpine មានន័យថា: Repository/name:…" />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/6.km.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="ពន្យល់ images ឱ្យជ្រៅ — rean-docker" />
+    <meta name="twitter:description" content="List និង inspect history បង្ហាញ layers និងទំហំប្រហែល — មានប្រយោជន៍ខ្លាំងសម្រាប់មើលថាតើ image ធំហួសហេតុនៅណា។ Tags រូបភាព nginx:alpine មានន័យថា: Repository/name:…" />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-chapter"
+    data-static-locale="km"
+    data-static-twin="./6.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">កម្មវិធីសិក្សា</p>
+      <h1>ពន្យល់ images ឱ្យជ្រៅ</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./learn.html?c=6&amp;lang=km">បើកអ្នកអានអន្តរកម្ម</a>
+      </p>
+      <div class="md-body">
+<h3>List និង inspect</h3>
+<pre><code class="language-bash">docker images
+# or
+docker image ls
+
+docker pull redis:7-alpine
+docker image inspect redis:7-alpine
+docker history redis:7-alpine
+</code></pre>
+<p><code>history</code> បង្ហាញ layers និងទំហំប្រហែល — មានប្រយោជន៍ខ្លាំងសម្រាប់មើលថាតើ image ធំហួសហេតុនៅណា។</p>
+<h3>Tags (រូបភាព)</h3>
+<p><code>nginx:alpine</code> មានន័យថា:</p>
+<ul>
+<li>Repository/name: <code>nginx</code></li>
+<li>Tag: <code>alpine</code> (variant ផ្អែកលើ Alpine Linux)</li>
+</ul>
+<p>Tag ពិសេស: <code>latest</code> — <strong>កុំពឹងផ្អែកលើវាក្នុង production</strong>។ គួរប្រើ version ច្បាស់៖ <code>nginx:1.28-alpine</code>។ Labs ក្នុង repo នេះ pin tag បែបនោះសម្រាប់ commands ដែលអ្នក run។ <code>nginx:alpine</code> នៅតែជា tag ពិត; វាផ្លាស់ទីពេល publisher ផ្សាយឡើងវិញ។</p>
+<h3>Image ផ្លូវការ និងផ្ទាល់ខ្លួន</h3>
+<ul>
+<li><strong>Official images</strong> នៅ Docker Hub ត្រូវបាន curate (postgres, redis, python…)។</li>
+<li><strong>Images របស់អ្នក</strong> ត្រូវបាន build ពី Dockerfile ហើយ push ទៅ registry។</li>
+</ul>
+<h3>Image ID និងឈ្មោះ</h3>
+<p>Image មាន content digest / ID។ ឈ្មោះគឺស្លាកសម្រាប់មនុស្សដែលចង្អុលទៅ ID។ Retag មិនចម្លង layers ទេ — វាបន្ថែមឈ្មោះមួយទៀត។</p>
+<pre><code class="language-bash">docker tag nginx:1.28-alpine my-nginx:dev
+docker images | grep nginx
+</code></pre>
+<hr>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        <a class="pager-prev" href="./learn/5.km.html"><span>មុន</span>Container ដំបូងរបស់អ្នក</a>
+        <a class="pager-next" href="./learn/7.km.html"><span>បន្ទាប់</span>Dockerfile — បង្កើត image ផ្ទាល់ខ្លួន</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

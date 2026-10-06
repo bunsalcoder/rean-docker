@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>Environment, secrets, and config — rean-docker</title>
+    <meta name="description" content="Lab: labs/04 env secrets Do this after Lab 03 you already write Dockerfiles and before Lab 05. You will pass config at runtime , then watch a password baked int…" />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/10.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/10.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/10.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/learn/10.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Environment, secrets, and config — rean-docker" />
+    <meta property="og:description" content="Lab: labs/04 env secrets Do this after Lab 03 you already write Dockerfiles and before Lab 05. You will pass config at runtime , then watch a password baked int…" />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/10.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Environment, secrets, and config — rean-docker" />
+    <meta name="twitter:description" content="Lab: labs/04 env secrets Do this after Lab 03 you already write Dockerfiles and before Lab 05. You will pass config at runtime , then watch a password baked int…" />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-chapter"
+    data-static-locale="en"
+    data-static-twin="./10.km.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">Curriculum</p>
+      <h1>Environment, secrets, and config</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./learn.html?c=10">Open interactive reader</a>
+      </p>
+      <div class="md-body">
+<h3>Lab: <code>labs/04-env-secrets</code></h3>
+<p>Do this after Lab 03 (you already write Dockerfiles) and before Lab 05. You will pass config at <strong>runtime</strong>, then watch a password baked into an image show up in <code>docker history</code>.</p>
+<h3>Pass env vars</h3>
+<pre><code class="language-bash">docker run --rm -e GREETING=Hello alpine printenv GREETING
+
+docker run --rm --env-file .env alpine printenv
+</code></pre>
+<h3>Inside Dockerfile</h3>
+<pre><code class="language-dockerfile">ENV NODE_ENV=production
+</code></pre>
+<h3>Rules of thumb</h3>
+<ol>
+<li><strong>Config</strong> (non-secret): env vars, Compose <code>environment</code>, config files.</li>
+<li><strong>Secrets</strong> (passwords, API keys): never bake into image layers; use env at runtime, Docker secrets, or a vault — and keep <code>.env</code> out of git.</li>
+<li>Prefer <strong>12-factor</strong> style: same image, different env per environment (dev/stage/prod).</li>
+</ol>
+<h3>Example <code>.env</code> (do not commit secrets)</h3>
+<pre><code class="language-env">POSTGRES_USER=rean
+POSTGRES_PASSWORD=change-me
+POSTGRES_DB=rean
+</code></pre>
+<p>Add <code>.env</code> to <code>.gitignore</code>.</p>
+<hr>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        <a class="pager-prev" href="./learn/9.html"><span>Previous</span>Networks — how containers talk</a>
+        <a class="pager-next" href="./learn/11.html"><span>Next</span>Docker Compose — multi-container apps</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

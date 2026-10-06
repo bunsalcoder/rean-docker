@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="km">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>Multi-stage builds — rean-docker</title>
+    <meta name="description" content="image production មានទំហំធំ និង slim។" />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/lab/08-multi-stage.km.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/lab/08-multi-stage.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/lab/08-multi-stage.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/lab/08-multi-stage.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Multi-stage builds — rean-docker" />
+    <meta property="og:description" content="image production មានទំហំធំ និង slim។" />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/lab/08-multi-stage.km.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Multi-stage builds — rean-docker" />
+    <meta name="twitter:description" content="image production មានទំហំធំ និង slim។" />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-lab"
+    data-static-locale="km"
+    data-static-twin="./08-multi-stage.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">អនុវត្ត</p>
+      <h1>Multi-stage builds</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./lab.html?id=08-multi-stage&amp;lang=km">បើកអ្នកអានអន្តរកម្ម</a>
+      </p>
+      <div class="md-body">
+<h2>កម្រិត</h2>
+<p><strong>ថ្នាក់ខ្ពស់។</strong> Multi-stage builds និងប្រៀបធៀបទំហំ image។<br>ស្គាល់ការសរសេរ Dockerfiles (Lab 03+) ជួយ។</p>
+<h2>គោលដៅ</h2>
+<p>ប្រៀបធៀប image single-stage ធំ (compiler + source + app) ជាមួយ multi-stage image ដែលដឹកតែ JavaScript ដែល compile រួច និង production dependencies។</p>
+<p>Lab នេះ compile TypeScript ដោយចេតនា ដើម្បីឱ្យគម្លាតទំហំច្បាស់។ <code>typescript</code> គឺ <strong>devDependency</strong> — slim image មិនត្រូវមាន <code>tsc</code>។</p>
+<p><strong>ជំនួយស្រេចចិត្ត:</strong> <code>./run.sh</code> build <code>:fat</code> និង <code>:slim</code>, assert size/USER, រួច curl slim image។ ចូលចិត្តវាយពាក្យបញ្ជាពី README ដោយខ្លួនឯងលើកដំបូង។</p>
+<h2>ជំហាន</h2>
+<pre><code class="language-bash">cd labs/08-multi-stage
+
+docker build -t rean-multi:fat -f Dockerfile.fat .
+docker build -t rean-multi:slim .
+
+docker images &#39;rean-multi*&#39;
+docker history rean-multi:slim
+docker history rean-multi:fat
+
+docker run --rm -p 3001:3000 rean-multi:slim
+# curl http://127.0.0.1:3001/
+</code></pre>
+<p><code>:fat</code> គួរធំជាងច្បាស់ (រាប់សិប MB)។ ទម្ងន់បន្ថែមនោះគឺ TypeScript compiler និង type packages នៅក្នុង image ចុងក្រោយ។</p>
+<h2>អ្វីដែលត្រូវសង្កេត</h2>
+<ul>
+<li><code>COPY --from=build</code> យកតែ <code>dist/</code> មិនមែន <code>server.ts</code> ឬ <code>tsc</code>។</li>
+<li>Runtime stage install <strong>production</strong> deps តែប៉ុណ្ណោះ (<code>--omit=dev</code>)។</li>
+<li><code>RUN --mount=type=cache,target=/root/.npm</code> រក្សា cache download npm រវាង builds ដោយមិន copy វាចូល layer (BuildKit; ជំពូក 16)។</li>
+<li>Image size និង layer history ខុសគ្នារវាង <code>:fat</code> និង <code>:slim</code>។</li>
+<li><code>:slim</code> run ជា <code>USER node</code>។ <code>:fat</code> នៅតែ run ជា root — តូចជាងមិនមែនជាជ័យជម្នះតែមួយ។</li>
+<li>Slim <code>Dockerfile</code> pin <code>FROM …@sha256:…</code> ដើម្បីឱ្យ image CRITICAL-gated reproducible; <code>Dockerfile.fat</code> នៅប្រើ floating tag ដោយចេតនា។ Lab 09 បន្ថែម healthchecks, limits និង read-only rootfs — slim + non-root នៅតែជាជ័យជម្នះដែលត្រូវកត់សម្គាល់នៅទីនេះ។</li>
+</ul>
+<pre><code class="language-bash">docker run --rm --entrypoint whoami rean-multi:slim
+docker run --rm --entrypoint whoami rean-multi:fat
+</code></pre>
+<h2>លក្ខខណ្ឌជោគជ័យ</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Images ទាំងពីរ build ហើយ slim image serve <code>/</code></li>
+<li><input disabled="" type="checkbox"> <code>docker images</code> បង្ហាញ <code>:fat</code> ធំជាង <code>:slim</code> គួរឱ្យកត់សម្គាល់</li>
+<li><input disabled="" type="checkbox"> អ្នកអាចពន្យល់ហេតុអ្វី multi-stage បង្កើន security និងបន្ថយ size</li>
+</ul>
+<h2>បន្ទាប់</h2>
+<p>ទៅ <strong>Lab 09 — Container តាមទម្លាប់ production</strong> សម្រាប់ healthchecks, limits, read-only rootfs និងទម្លាប់ Compose បែប production។</p>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        <a class="pager-prev" href="./lab/07-volumes.km.html"><span>លំហាត់មុន</span>Volumes និង persistence</a>
+        <a class="pager-next" href="./lab/09-production.km.html"><span>លំហាត់បន្ទាប់</span>ទម្លាប់ production</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

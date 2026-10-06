@@ -105,6 +105,10 @@ def main() -> int:
             "/assets/search-index-km.json",
             "/content/en/guide.md",
             "/content/km/guide.md",
+            "/learn/1.html",
+            "/learn/1.km.html",
+            f"/lab/{labs[0]}.html",
+            f"/lab/{labs[0]}.km.html",
         ]
         for path in checks:
             code, body = fetch(f"{base}{path}")
@@ -113,6 +117,31 @@ def main() -> int:
                 fail = 1
             else:
                 print(f"OK:    GET {path} → {code}")
+
+        # Crawlable pages must ship real content (not the SPA "Loading…" shell).
+        static_checks = [
+            ("/learn/1.html", "What problem does Docker solve?"),
+            ("/learn/1.km.html", "Docker"),
+            (f"/lab/{labs[0]}.html", "Isolation"),
+        ]
+        for path, needle in static_checks:
+            code, body = fetch(f"{base}{path}")
+            if code != 200 or "Loading…" in body or needle not in body:
+                print(f"FAIL: static page {path} missing expected content ({needle!r})")
+                fail = 1
+            else:
+                print(f"OK:    static page {path} has content")
+
+        # Expected file counts: chapters + labs, each in EN + KM.
+        learn_html = list((WEB / "learn").glob("*.html")) if (WEB / "learn").is_dir() else []
+        lab_html = list((WEB / "lab").glob("*.html")) if (WEB / "lab").is_dir() else []
+        expected = (len(chapters) + len(labs)) * 2
+        actual = len(learn_html) + len(lab_html)
+        if actual != expected:
+            print(f"FAIL: static HTML count {actual} ≠ {expected} (chapters+labs × 2 locales)")
+            fail = 1
+        else:
+            print(f"OK:    static HTML count {actual}")
 
         code, body = fetch(f"{base}/definitely-missing-page")
         if code != 404 or "404" not in body:

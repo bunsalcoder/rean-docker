@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="km">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>Dockerfile ដំបូងរបស់អ្នក — rean-docker</title>
+    <meta name="description" content="Build និង run image Node API តូច។" />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/lab/03-dockerfile.km.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/lab/03-dockerfile.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/lab/03-dockerfile.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/lab/03-dockerfile.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Dockerfile ដំបូងរបស់អ្នក — rean-docker" />
+    <meta property="og:description" content="Build និង run image Node API តូច។" />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/lab/03-dockerfile.km.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Dockerfile ដំបូងរបស់អ្នក — rean-docker" />
+    <meta name="twitter:description" content="Build និង run image Node API តូច។" />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-lab"
+    data-static-locale="km"
+    data-static-twin="./03-dockerfile.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">អនុវត្ត</p>
+      <h1>Dockerfile ដំបូងរបស់អ្នក</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./lab.html?id=03-dockerfile&amp;lang=km">បើកអ្នកអានអន្តរកម្ម</a>
+      </p>
+      <div class="md-body">
+<h2>កម្រិត</h2>
+<p><strong>ថ្នាក់ដើម។</strong> សរសេរ និង build Dockerfile សាមញ្ញសម្រាប់ Node API។<br>Labs ក្រោយនឹង harden គំនិតដូចគ្នា — កុំចាត់លំនាំ Lab 03 ថាជា production-ready។</p>
+<h2>គោលដៅ</h2>
+<p>Build image ផ្ទាល់ខ្លួនសម្រាប់ Node/Express API តូចមួយ ហើយ run វា។</p>
+<p>Dockerfile នេះ <strong>សាមញ្ញ</strong> ដោយចេតនា (<code>FROM</code> តាម tag, គ្មាន digest pin, គ្មាន healthcheck, npm នៅក្នុង image)។ Labs ក្រោយរឹតគំនិតដូចគ្នា៖ Lab 08 multi-stage + non-root, Lab 09 healthchecks / read-only / digest pins, Lab 11 secrets + scanning។ កុំ copy pattern Lab 03 ទៅ production ដោយមិនកែ។</p>
+<p><strong>ជំនួយស្រេចចិត្ត:</strong> <code>./run.sh</code> build, run និង curl <code>/</code> + <code>/health</code>។ ចូលចិត្តវាយពាក្យបញ្ជាពី README ដោយខ្លួនឯងលើកដំបូង។</p>
+<h2>ជំហាន</h2>
+<pre><code class="language-bash">cd labs/03-dockerfile
+
+# Build (the trailing dot is the build context)
+docker build -t rean-hello:1.0 .
+
+# Run
+docker run --rm -p 3000:3000 --name lab03-api rean-hello:1.0
+</code></pre>
+<p>នៅ terminal មួយទៀត៖</p>
+<pre><code class="language-bash">curl http://127.0.0.1:3000/
+curl http://127.0.0.1:3000/health
+</code></pre>
+<p>ពិនិត្យ layers៖</p>
+<pre><code class="language-bash">docker history rean-hello:1.0
+</code></pre>
+<h2>ការសាកល្បង</h2>
+<ol>
+<li>ប្ដូរសារក្នុង <code>server.js</code>, rebuild, rerun — សង្កេតថា layers ណាខ្លះ rebuild។</li>
+<li>រៀប Dockerfile ឡើងវិញឱ្យ <code>COPY . .</code> <em>មុន</em> <code>npm ci</code> ហើយ rebuild ពីរដងបន្ទាប់ពីកែ code តិច — មានអារម្មណ៍ «cache pain»។ (ឯកសារពិតប្រើ <code>npm ci</code> ដែលត្រូវការ <code>package-lock.json</code> ហើយគួរប្រើជាង <code>npm install</code> ក្នុង Dockerfiles។)</li>
+<li>បន្ថែម instruction <code>ENV PORT=3000</code> ហើយបញ្ជាក់ដោយ <code>docker inspect</code>។</li>
+<li>បើក <code>.dockerignore</code> ក្នុងថតនេះ។ វារក្សា <code>node_modules</code>, <code>.env</code> និង <code>*.md</code> ចេញពី build context។ ពន្យល់ខ្លីថាហេតុអ្វីមិនគួរដឹក host <code>node_modules</code> ចូល image រួចបញ្ជាក់ថា paths ទាំងនោះមិននៅក្នុង context៖</li>
+</ol>
+<pre><code class="language-bash"># paths listed in .dockerignore should not appear
+docker build -t rean-hello:1.0 . 2&gt;&amp;1 | head -n 5
+# or: docker build --no-cache -t rean-hello:ctx . &amp;&amp; docker run --rm rean-hello:1.0 ls -la /app
+</code></pre>
+<h2>លក្ខខណ្ឌជោគជ័យ</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Image build ដោយគ្មាន error</li>
+<li><input disabled="" type="checkbox"> <code>/</code> ត្រឡប់ JSON</li>
+<li><input disabled="" type="checkbox"> <code>/health</code> ត្រឡប់ <code>{&quot;status&quot;:&quot;ok&quot;}</code></li>
+<li><input disabled="" type="checkbox"> អ្នកអាចពន្យល់ហេតុអ្វី <code>package.json</code> / <code>package-lock.json</code> ត្រូវ copy មុន source</li>
+<li><input disabled="" type="checkbox"> អ្នកអាចពន្យល់ហេតុអ្វី lab នេះមាន <code>.dockerignore</code> (អ្វីដែលវារក្សាចេញពី context)</li>
+</ul>
+<h2>បន្ទាប់</h2>
+<p>ទៅ <strong>Lab 04 — Environment, secrets និង config</strong> មុន Compose។ អ្នកនឹងផ្ទេរ config ពេល run ហើយមើលថាហេតុអ្វី secrets មិនត្រូវនៅក្នុង image layers។</p>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        <a class="pager-prev" href="./lab/02-hello.km.html"><span>លំហាត់មុន</span>សួស្តី containers</a>
+        <a class="pager-next" href="./lab/04-env-secrets.km.html"><span>លំហាត់បន្ទាប់</span>Env, secrets និង config</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

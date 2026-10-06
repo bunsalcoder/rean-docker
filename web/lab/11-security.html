@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>Security essentials — rean-docker</title>
+    <meta name="description" content="Non-root, BuildKit secrets, and image scanning." />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/lab/11-security.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/lab/11-security.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/lab/11-security.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/lab/11-security.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Security essentials — rean-docker" />
+    <meta property="og:description" content="Non-root, BuildKit secrets, and image scanning." />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/lab/11-security.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Security essentials — rean-docker" />
+    <meta name="twitter:description" content="Non-root, BuildKit secrets, and image scanning." />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-lab"
+    data-static-locale="en"
+    data-static-twin="./11-security.km.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">Hands-on</p>
+      <h1>Security essentials</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./lab.html?id=11-security">Open interactive reader</a>
+      </p>
+      <div class="md-body">
+<h2>Level</h2>
+<p><strong>Advanced.</strong> Non-root, BuildKit secrets, and image scanning (handbook Chapter 15).</p>
+<h2>Goal</h2>
+<p>See three habits from handbook <strong>Chapter 15</strong>: don’t run as root when you can avoid it, don’t bake secrets into layers, and look at what an image scan reports.</p>
+<p>Pair with Lab 04 (leaky <code>ENV</code>) and Lab 08/09 (non-root + slim images). Stretches §5–§7 pair with <strong>Chapter 16</strong> (BuildKit cache, Compose Watch, SBOM).</p>
+<p><strong>Optional helper:</strong> <code>./run.sh</code> covers whoami, the BuildKit secret check, digest inspect, <code>compose.watch.yaml</code> config, the BuildKit cache-mount stretch, and an SPDX peek (interactive Compose Watch stays manual). Prefer typing the commands yourself the first time.</p>
+<h2>Steps</h2>
+<h3>1. Who is PID 1?</h3>
+<p>Build the Lab 03 image if you don’t still have it, then:</p>
+<pre><code class="language-bash">docker run --rm --entrypoint whoami rean-hello:1.0
+# → node  (USER node in that Dockerfile)
+
+docker run --rm --entrypoint whoami alpine:3.22
+# → root
+</code></pre>
+<p>Root in a container is still a problem if someone escapes the app. Prefer a non-root <code>USER</code> in production images.</p>
+<h3>2. BuildKit secret (the good path)</h3>
+<p>The secret file is <strong>mounted for one <code>RUN</code></strong>. It must not appear in <code>docker history</code>.</p>
+<pre><code class="language-bash">cd labs/11-security
+
+echo &#39;super-secret-token&#39; &gt; /tmp/rean-demo.secret
+
+docker build \
+  --secret id=demo,src=/tmp/rean-demo.secret \
+  -t rean-secret:lab11 \
+  -f Dockerfile.secret \
+  .
+
+docker history rean-secret:lab11
+docker run --rm rean-secret:lab11
+</code></pre>
+<p>You should see the build succeed and the runtime message. You should <strong>not</strong> see <code>super-secret-token</code> in <code>docker history</code>. Contrast with Lab 04’s <code>Dockerfile.leaky</code>.</p>
+<p>Cleanup:</p>
+<pre><code class="language-bash">rm -f /tmp/rean-demo.secret
+docker rmi rean-secret:lab11
+</code></pre>
+<h3>3. Scan an image (optional)</h3>
+<p>If you have network access, run Trivy in a container (no extra install):</p>
+<pre><code class="language-bash"># Prefer a digest pin in CI (this repo pins aquasec/trivy:0.63.0@sha256:…).
+docker run --rm aquasec/trivy:0.63.0 image alpine:3.22
+</code></pre>
+<p>Read the report; don’t panic at every “LOW”. The point is: <strong>know how to scan</strong> before you promote an image. Alternatives: Docker Scout (<code>docker scout</code> on Docker Desktop, or the Scout CLI where available), Grype, or any scanner your org already runs — this curriculum standardizes on <strong>Trivy</strong> in CI so the gate is reproducible without Desktop.</p>
+<p>This repo’s CI scans teaching builds with Trivy: <strong>HIGH</strong> is reported, and <strong>unfixed CRITICAL</strong> fails the job for Labs <strong>05, 08 (slim), 09, 12, and 13</strong>. Builds that are <strong>intentionally weak or early</strong> (Lab 03, Lab 08 fat image, Lab 04 leaky <code>ENV</code>, Lab 11 secret demo) are still compiled in CI but are <strong>not</strong> on the CRITICAL gate — do not treat a green pipeline as “every Dockerfile is production-clean.” Runtime Dockerfiles drop the base image’s <code>npm</code>/<code>corepack</code> after <code>npm ci</code> so the gate focuses on what the app ships — not every CVE in the Node distribution’s package manager (Lab 09 discuss).</p>
+<h3>4. Digest vs tag</h3>
+<pre><code class="language-bash">docker pull alpine:3.22
+# Refresh today&#39;s digest (tags move — do not copy an old sha from a blog forever):
+DIGEST=$(docker image inspect alpine:3.22 --format &#39;{{index .RepoDigests 0}}&#39;)
+echo &quot;$DIGEST&quot;
+# Example shape: alpine@sha256:14358309a308569c32bdc37e2e0e9694be33a9d99e68afb0f5ff33cc1f695dce
+docker pull &quot;$DIGEST&quot;
+</code></pre>
+<p>Tags move. A digest (<code>alpine@sha256:…</code>) is the bits you actually pulled. Pin digests when supply-chain control matters (CI, production). Labs 05, 08 (slim), 09, 12, and 13 pin <code>FROM node:22-alpine@sha256:…</code>; Lab 13 also pins Postgres/Redis in Compose. Digests go stale on purpose — refresh Dockerfiles via Dependabot, and Lab 13 Compose pins with <code>make refresh-digests</code> (a weekly CI workflow runs that target and opens a PR against <code>develop</code> when pins drift; optionally run <code>make refresh-digests-check</code> locally to fail if Hub moved).</p>
+<h3>5. Stretch — BuildKit cache + multi-arch (Chapter 16)</h3>
+<p>Optional. Pair with handbook <strong>Chapter 16</strong>. No new images required beyond Alpine.</p>
+<pre><code class="language-bash"># Cache mount (BuildKit) — second build should reuse the apk cache layer faster
+docker buildx version
+
+cat &gt; /tmp/rean-lab11-cache.Dockerfile &lt;&lt;&#39;EOF&#39;
+# syntax=docker/dockerfile:1
+FROM alpine:3.22
+RUN --mount=type=cache,target=/var/cache/apk \
+    apk add --no-cache curl
+EOF
+
+docker build -t rean-cache:lab11 -f /tmp/rean-lab11-cache.Dockerfile /tmp
+docker build -t rean-cache:lab11 -f /tmp/rean-lab11-cache.Dockerfile /tmp
+
+# Multi-platform *inspect* (pushing multi-arch needs a registry; skip --push here)
+docker buildx imagetools inspect alpine:3.22 | head -n 40
+
+rm -f /tmp/rean-lab11-cache.Dockerfile
+docker rmi rean-cache:lab11 &gt;/dev/null 2&gt;&amp;1 || true
+</code></pre>
+<p>Notice: cache mounts speed package installs without baking the cache into the image; <code>imagetools inspect</code> shows amd64/arm64 manifests behind a single tag.</p>
+<h3>6. Stretch — Compose Watch (Chapter 16)</h3>
+<p>Optional. Validate the teaching file, then try Watch if you want the live loop:</p>
+<pre><code class="language-bash">cd labs/11-security
+docker compose -f compose.watch.yaml config &gt;/dev/null
+
+# Interactive (Ctrl+C when done):
+docker compose -f compose.watch.yaml up -d
+docker compose -f compose.watch.yaml watch
+# In another terminal, edit watch-demo/hello.txt and watch the container pick it up.
+docker compose -f compose.watch.yaml down
+</code></pre>
+<p><code>develop.watch</code> is for <strong>laptop iteration</strong>. Keep it out of production Compose (Chapter 17).</p>
+<h3>7. Stretch — SBOM peek (Chapter 16)</h3>
+<p>Optional. Same Trivy image as §3, different output format — a tiny SPDX bill of materials:</p>
+<pre><code class="language-bash">docker run --rm aquasec/trivy:0.63.0 image --format spdx alpine:3.22 | head -n 40
+</code></pre>
+<p>You should see package identity lines (SPDX). Signing with Cosign is orientation-only in the handbook — no install required for this lab.</p>
+<h2>Discuss</h2>
+<ul>
+<li>Why is mounting <code>/var/run/docker.sock</code> into an app container almost the same as giving it root on the host?</li>
+<li>When is <code>ENV NODE_ENV=production</code> fine, and when is <code>ENV</code> a secret leak (Lab 04)?</li>
+<li>What would you fail CI on: critical CVEs in <em>your</em> app deps, or every CVE in the base image?</li>
+<li>Predict: if <code>develop.watch</code> shipped in <code>compose.prod.yaml</code>, what breaks for a teammate who only pulls images?</li>
+</ul>
+<h2>Success criteria</h2>
+<ul>
+<li><input disabled="" type="checkbox"> <code>whoami</code> showed <code>node</code> on <code>rean-hello:1.0</code> and <code>root</code> on Alpine</li>
+<li><input disabled="" type="checkbox"> BuildKit <code>--secret</code> built; <code>docker history</code> did not print the token</li>
+<li><input disabled="" type="checkbox"> You can explain tag vs digest in one sentence</li>
+<li><input disabled="" type="checkbox"> (Stretch) You ran a BuildKit cache-mount build or inspected a multi-arch manifest</li>
+<li><input disabled="" type="checkbox"> (Stretch) You validated <code>compose.watch.yaml</code> or ran <code>docker compose watch</code></li>
+<li><input disabled="" type="checkbox"> (Stretch) You peeked at an SPDX SBOM (or can explain why one matters)</li>
+</ul>
+<h2>Next</h2>
+<p>Go to <strong>Lab 12 — Deploy &amp; CI/CD</strong> and run the pipeline steps locally.</p>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        <a class="pager-prev" href="./lab/10-debugging.html"><span>Previous lab</span>Debugging</a>
+        <a class="pager-next" href="./lab/12-ci-cd.html"><span>Next lab</span>Deploy &amp; CI/CD</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>Multi-stage builds — rean-docker</title>
+    <meta name="description" content="Compare fat vs slim production images." />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/lab/08-multi-stage.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/lab/08-multi-stage.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/lab/08-multi-stage.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/lab/08-multi-stage.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Multi-stage builds — rean-docker" />
+    <meta property="og:description" content="Compare fat vs slim production images." />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/lab/08-multi-stage.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Multi-stage builds — rean-docker" />
+    <meta name="twitter:description" content="Compare fat vs slim production images." />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-lab"
+    data-static-locale="en"
+    data-static-twin="./08-multi-stage.km.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">Hands-on</p>
+      <h1>Multi-stage builds</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./lab.html?id=08-multi-stage">Open interactive reader</a>
+      </p>
+      <div class="md-body">
+<h2>Level</h2>
+<p><strong>Advanced.</strong> Multi-stage builds and image size contrast.<br>Comfortable writing Dockerfiles (Lab 03+) helps.</p>
+<h2>Goal</h2>
+<p>Compare a fat single-stage image (compiler + source + app) with a multi-stage image that ships only compiled JavaScript and production dependencies.</p>
+<p>This lab compiles TypeScript on purpose so the size gap is obvious. <code>typescript</code> is a <strong>devDependency</strong> — the slim image must not contain <code>tsc</code>.</p>
+<p><strong>Optional helper:</strong> <code>./run.sh</code> builds <code>:fat</code> and <code>:slim</code>, asserts the size/USER contrast, and curls the slim image. Prefer typing the commands yourself the first time.</p>
+<h2>Steps</h2>
+<pre><code class="language-bash">cd labs/08-multi-stage
+
+docker build -t rean-multi:fat -f Dockerfile.fat .
+docker build -t rean-multi:slim .
+
+docker images &#39;rean-multi*&#39;
+docker history rean-multi:slim
+docker history rean-multi:fat
+
+docker run --rm -p 3001:3000 rean-multi:slim
+# curl http://127.0.0.1:3001/
+</code></pre>
+<p><code>:fat</code> should be clearly larger (tens of MB). That extra weight is the TypeScript compiler and type packages left in the final image.</p>
+<h2>What to observe</h2>
+<ul>
+<li><code>COPY --from=build</code> brings only <code>dist/</code>, not <code>server.ts</code> or <code>tsc</code>.</li>
+<li>Runtime stage installs <strong>production</strong> deps only (<code>--omit=dev</code>).</li>
+<li><code>RUN --mount=type=cache,target=/root/.npm</code> keeps the npm download cache between builds without copying it into a layer (BuildKit; Chapter 16).</li>
+<li>Image size and layer history differ between <code>:fat</code> and <code>:slim</code>.</li>
+<li><code>:slim</code> runs as <code>USER node</code>. <code>:fat</code> still runs as root — smaller is not the only win.</li>
+<li>The slim <code>Dockerfile</code> pins <code>FROM …@sha256:…</code> so the CRITICAL-gated image is reproducible; <code>Dockerfile.fat</code> still uses a floating tag on purpose. Lab 09 adds healthchecks, limits, and a read-only rootfs — slim + non-root is still the win to notice here.</li>
+</ul>
+<pre><code class="language-bash">docker run --rm --entrypoint whoami rean-multi:slim
+docker run --rm --entrypoint whoami rean-multi:fat
+</code></pre>
+<h2>Success criteria</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Both images build and the slim image serves <code>/</code></li>
+<li><input disabled="" type="checkbox"> <code>docker images</code> shows <code>:fat</code> substantially larger than <code>:slim</code></li>
+<li><input disabled="" type="checkbox"> You can explain why multi-stage improves security and size</li>
+</ul>
+<h2>Next</h2>
+<p>Go to <strong>Lab 09 — Production-minded container</strong> for healthchecks, limits, a read-only rootfs, and production Compose habits.</p>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        <a class="pager-prev" href="./lab/07-volumes.html"><span>Previous lab</span>Volumes &amp; persistence</a>
+        <a class="pager-next" href="./lab/09-production.html"><span>Next lab</span>Production practices</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

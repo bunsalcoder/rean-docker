@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="km">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>របៀបប្រើមគ្គុទ្ទេសក៍នេះ — rean-docker</title>
+    <meta name="description" content="1. អាន chapter នីមួយៗតាមលំដាប់ ពួកវាតភ្ជាប់គ្នា ។ 2. វាយ commands ដោយខ្លួនឯង — កុំអានតែប៉ុណ្ណោះ។ 3. បន្ទាប់ពី chapter beginner/intermediate នីមួយ បញ្ចប់ lab ដែល…" />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/how-to-use.km.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/how-to-use.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/how-to-use.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/learn/how-to-use.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="របៀបប្រើមគ្គុទ្ទេសក៍នេះ — rean-docker" />
+    <meta property="og:description" content="1. អាន chapter នីមួយៗតាមលំដាប់ ពួកវាតភ្ជាប់គ្នា ។ 2. វាយ commands ដោយខ្លួនឯង — កុំអានតែប៉ុណ្ណោះ។ 3. បន្ទាប់ពី chapter beginner/intermediate នីមួយ បញ្ចប់ lab ដែល…" />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/how-to-use.km.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="របៀបប្រើមគ្គុទ្ទេសក៍នេះ — rean-docker" />
+    <meta name="twitter:description" content="1. អាន chapter នីមួយៗតាមលំដាប់ ពួកវាតភ្ជាប់គ្នា ។ 2. វាយ commands ដោយខ្លួនឯង — កុំអានតែប៉ុណ្ណោះ។ 3. បន្ទាប់ពី chapter beginner/intermediate នីមួយ បញ្ចប់ lab ដែល…" />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-chapter"
+    data-static-locale="km"
+    data-static-twin="./how-to-use.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">កម្មវិធីសិក្សា</p>
+      <h1>របៀបប្រើមគ្គុទ្ទេសក៍នេះ</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./learn.html?c=how-to-use&amp;lang=km">បើកអ្នកអានអន្តរកម្ម</a>
+      </p>
+      <div class="md-body">
+<ol>
+<li>អាន chapter នីមួយៗតាមលំដាប់ (ពួកវាតភ្ជាប់គ្នា)។</li>
+<li>វាយ commands ដោយខ្លួនឯង — កុំអានតែប៉ុណ្ណោះ។</li>
+<li>បន្ទាប់ពី chapter beginner/intermediate នីមួយ បញ្ចប់ lab ដែលផ្គូផ្គងក្រោម <code>labs/</code>។</li>
+<li>បើក terminal នៅ root គម្រោងនេះ (ទីកន្លែងដែលអ្នក clone ឬ download repo):</li>
+</ol>
+<pre><code class="language-bash">cd path/to/rean-docker
+</code></pre>
+<p><strong>ទម្លាប់ប្រើនៅទីនេះ</strong></p>
+<table>
+<thead>
+<tr>
+<th>សញ្ញា</th>
+<th>អត្ថន័យ</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>$</code></td>
+<td>Run នៅ terminal host របស់អ្នក</td>
+</tr>
+<tr>
+<td><code>#</code></td>
+<td>Comment / ការពន្យល់</td>
+</tr>
+<tr>
+<td><code>→</code></td>
+<td>គំនិត / លទ្ធផលដែលរំពឹង</td>
+</tr>
+</tbody></table>
+<h3>តម្រូវការមុន (មុន Lab 01)</h3>
+<ul>
+<li><strong>Docker Engine + Compose plugin</strong> — <code>docker compose version</code> ត្រូវដំណើរការ។ ជំពូក 4 ណែនាំដំឡើង និងផ្ទៀងផ្ទាត់។</li>
+<li><strong><code>curl</code></strong> — lab ជាច្រើន hit <code>/health</code> ឬ API endpoints ពី host របស់អ្នក។</li>
+<li><strong>Terminal</strong> — វាយ commands ដោយខ្លួនឯង; អានតែប៉ុណ្ណោះមិនជាប់ទេ។</li>
+<li><strong>ជម្រើស: Python 3</strong> — <code>make serve</code> សម្រាប់គេហទំព័ររៀន និង <code>python3 -m json.tool</code> ដើម្បី pretty-print JSON ក្នុង lab មួយចំនួន (មិនត្រូវការ <code>jq</code>)។</li>
+<li><strong>Windows:</strong> ចូលចិត្ត <strong>WSL 2</strong> ជាមួយ Docker Desktop។ ឧទាហរណ៍ bind mount ខ្លះប្រើ <code>/tmp</code>; បើ path នោះពិបាក ប្រើ folder ក្នុង repo នេះជំនួស។</li>
+</ul>
+<hr>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        
+        <a class="pager-next" href="./learn/1.km.html"><span>បន្ទាប់</span>តើ Docker ដោះស្រាយបញ្ហាអ្វី?</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

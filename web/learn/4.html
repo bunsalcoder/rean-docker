@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>Install &amp; verify — rean-docker</title>
+    <meta name="description" content="You need Docker on your computer before the labs will work. Most learners install Docker Desktop Windows, macOS, or Linux . On Linux servers you can install Doc…" />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/4.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/4.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/4.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/learn/4.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Install &amp; verify — rean-docker" />
+    <meta property="og:description" content="You need Docker on your computer before the labs will work. Most learners install Docker Desktop Windows, macOS, or Linux . On Linux servers you can install Doc…" />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/4.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Install &amp; verify — rean-docker" />
+    <meta name="twitter:description" content="You need Docker on your computer before the labs will work. Most learners install Docker Desktop Windows, macOS, or Linux . On Linux servers you can install Doc…" />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-chapter"
+    data-static-locale="en"
+    data-static-twin="./4.km.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">Curriculum</p>
+      <h1>Install &amp; verify</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./learn.html?c=4">Open interactive reader</a>
+      </p>
+      <div class="md-body">
+<p>You need Docker on <strong>your</strong> computer before the labs will work. Most learners install <strong>Docker Desktop</strong> (Windows, macOS, or Linux). On Linux servers you can install <strong>Docker Engine</strong> instead.</p>
+<p>Official downloads and docs: <a href="https://docs.docker.com/get-started/get-docker/">https://docs.docker.com/get-started/get-docker/</a></p>
+<p>Pick your operating system below, then finish with the shared <strong>Verify</strong> steps.</p>
+<h3>Windows</h3>
+<p><strong>Recommended:</strong> Docker Desktop with the <strong>WSL 2</strong> backend.</p>
+<ol>
+<li><p><strong>Check requirements</strong></p>
+<ul>
+<li>64-bit Windows 10 (version 22H2+) or Windows 11</li>
+<li>Virtualization enabled in BIOS/UEFI (often labeled <em>Intel VT-x</em>, <em>AMD-V</em>, or <em>SVM</em>)</li>
+<li>About 4 GB RAM free (8 GB+ recommended)</li>
+</ul>
+</li>
+<li><p><strong>Install WSL 2</strong> (required for the recommended setup)</p>
+<ul>
+<li>Open <strong>PowerShell as Administrator</strong> and run:</li>
+</ul>
+</li>
+</ol>
+<pre><code class="language-powershell">wsl --install
+</code></pre>
+<ul>
+<li>Restart when Windows asks you to.</li>
+<li>After reboot, finish any Ubuntu (or other distro) first-time setup if a terminal opens.</li>
+<li>Confirm WSL is ready:</li>
+</ul>
+<pre><code class="language-powershell">wsl --status
+</code></pre>
+<ol start="3">
+<li><p><strong>Download Docker Desktop for Windows</strong></p>
+<ul>
+<li>Go to <a href="https://docs.docker.com/desktop/setup/install/windows-install/">Docker Desktop for Windows</a></li>
+<li>Download the installer for your CPU (AMD64 for most PCs, ARM64 for Snapdragon/ARM devices)</li>
+</ul>
+</li>
+<li><p><strong>Run the installer</strong></p>
+<ul>
+<li>Double-click <code>Docker Desktop Installer.exe</code></li>
+<li>Prefer the default options</li>
+<li>Ensure <strong>Use WSL 2 instead of Hyper-V</strong> is selected when offered</li>
+<li>Finish the wizard and start Docker Desktop when prompted</li>
+</ul>
+</li>
+<li><p><strong>Accept the terms and wait for the engine</strong></p>
+<ul>
+<li>Open Docker Desktop from the Start menu if it is not already running</li>
+<li>Accept the Docker Subscription Service Agreement (personal / learning use is allowed under Docker’s terms)</li>
+<li>Wait until the whale icon in the system tray shows Docker is <strong>running</strong> (not “starting”)</li>
+</ul>
+</li>
+<li><p><strong>Verify in a terminal</strong></p>
+<ul>
+<li>Open <strong>PowerShell</strong>, <strong>Windows Terminal</strong>, or a <strong>WSL</strong> shell and continue with the Verify section below</li>
+</ul>
+</li>
+</ol>
+<p><strong>If something fails on Windows</strong></p>
+<ul>
+<li>Restart the PC after installing WSL, then start Docker Desktop again</li>
+<li>In Docker Desktop → Settings → General, confirm WSL 2 is selected</li>
+<li>In Docker Desktop → Settings → Resources → WSL Integration, enable your installed distro</li>
+<li>Run <code>wsl --update</code> in an elevated PowerShell if WSL is outdated</li>
+</ul>
+<h3>macOS</h3>
+<p><strong>Recommended:</strong> Docker Desktop for Mac.</p>
+<ol>
+<li><p><strong>Check requirements</strong></p>
+<ul>
+<li>A supported macOS version (current release and the two previous majors are typically supported)</li>
+<li>Apple Silicon (M1/M2/M3/M4…) <strong>or</strong> Intel Mac</li>
+<li>About 4 GB RAM free (8 GB+ recommended)</li>
+</ul>
+</li>
+<li><p><strong>Download the correct installer</strong></p>
+<ul>
+<li>Go to <a href="https://docs.docker.com/desktop/setup/install/mac-install/">Docker Desktop for Mac</a></li>
+<li>Choose <strong>Apple Silicon</strong> or <strong>Intel Chip</strong> to match your Mac</li>
+<li>Tip: Apple menu → About This Mac shows the chip type</li>
+</ul>
+</li>
+<li><p><strong>Install Docker Desktop</strong></p>
+<ul>
+<li>Open the downloaded <code>Docker.dmg</code></li>
+<li>Drag the Docker icon into <strong>Applications</strong></li>
+<li>Eject the disk image when finished</li>
+</ul>
+</li>
+<li><p><strong>Start Docker for the first time</strong></p>
+<ul>
+<li>Open <strong>Applications → Docker</strong></li>
+<li>Approve macOS security / privacy prompts (Password or Touch ID may be required)</li>
+<li>Accept the Docker Subscription Service Agreement</li>
+<li>Wait until the menu-bar whale icon shows Docker is <strong>running</strong></li>
+</ul>
+</li>
+<li><p><strong>Verify in Terminal</strong></p>
+<ul>
+<li>Open <strong>Terminal</strong> (or iTerm) and continue with the Verify section below</li>
+</ul>
+</li>
+</ol>
+<p><strong>If something fails on macOS</strong></p>
+<ul>
+<li>System Settings → Privacy &amp; Security: allow Docker if macOS blocked it</li>
+<li>Quit Docker completely (whale menu → Quit), then reopen it</li>
+<li>Confirm you installed the Apple Silicon build on an M-series Mac (Intel builds will not run well there)</li>
+</ul>
+<h3>Linux</h3>
+<p>You have two common choices:</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Best when</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Docker Desktop for Linux</strong></td>
+<td>You want a GUI and an easy all-in-one setup</td>
+</tr>
+<tr>
+<td><strong>Docker Engine</strong> (daemon + CLI)</td>
+<td>You prefer a lighter install on Ubuntu/Debian/Fedora/etc.</td>
+</tr>
+</tbody></table>
+<h4>Option A — Docker Desktop for Linux</h4>
+<ol>
+<li>Confirm your distro is supported (Ubuntu, Debian, and Fedora are common choices): <a href="https://docs.docker.com/desktop/setup/install/linux/">Desktop for Linux</a></li>
+<li>Install the package for your distro (<code>.deb</code> or <code>.rpm</code>) from the official page</li>
+<li>Launch Docker Desktop from your app menu</li>
+<li>Accept the agreement and wait until the engine shows as running</li>
+<li>Continue with Verify below</li>
+</ol>
+<h4>Option B — Docker Engine (CLI) on Ubuntu/Debian-family</h4>
+<p>These steps are the usual path for many Linux learners. For other distros, follow Docker’s Engine docs for your family (<a href="https://docs.docker.com/engine/install/">Install Docker Engine</a>).</p>
+<ol>
+<li><strong>Update packages and install prerequisites</strong></li>
+</ol>
+<pre><code class="language-bash">sudo apt-get update
+sudo apt-get install ca-certificates curl
+</code></pre>
+<ol start="2">
+<li><strong>Add Docker’s official GPG key and apt repository</strong></li>
+</ol>
+<pre><code class="language-bash">sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+echo \
+  &quot;deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] \
+  https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release &amp;&amp; echo &quot;${UBUNTU_CODENAME:-$VERSION_CODENAME}&quot;) stable&quot; | \
+  sudo tee /etc/apt/sources.list.d/docker.list &gt; /dev/null
+
+sudo apt-get update
+</code></pre>
+<blockquote>
+<p>On Debian, use Docker’s Debian instructions (<code>download.docker.com/linux/debian</code>) instead of the Ubuntu URL above.</p>
+</blockquote>
+<ol start="3">
+<li><strong>Install Engine, CLI, Compose plugin, and helpers</strong></li>
+</ol>
+<pre><code class="language-bash">sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+</code></pre>
+<ol start="4">
+<li><strong>Start Docker and enable it on boot</strong></li>
+</ol>
+<pre><code class="language-bash">sudo systemctl enable --now docker
+sudo systemctl status docker
+</code></pre>
+<p>You want <code>active (running)</code>.</p>
+<ol start="5">
+<li><strong>(Recommended) Use Docker without typing <code>sudo</code> every time</strong></li>
+</ol>
+<pre><code class="language-bash">sudo usermod -aG docker $USER
+</code></pre>
+<p>Then <strong>log out and log back in</strong> (or reboot) so the group membership applies. Until you do, keep using <code>sudo docker …</code>.</p>
+<h3>Verify (all platforms)</h3>
+<p>After Docker is installed and running, open a terminal and run:</p>
+<pre><code class="language-bash">docker --version
+docker compose version
+docker info
+docker run --rm hello-world
+</code></pre>
+<p><strong>What you should see</strong></p>
+<ul>
+<li>A Docker version (Engine / Desktop)</li>
+<li>Compose version (plugin: <code>docker compose</code>, not only the old <code>docker-compose</code> binary)</li>
+<li><code>docker info</code> shows server details (storage driver, CPUs, memory)</li>
+<li><code>hello-world</code> downloads a tiny image and prints a success message</li>
+</ul>
+<p>If <code>docker info</code> or <code>hello-world</code> fails, Docker is not fully running yet — start Docker Desktop (or <code>sudo systemctl start docker</code> on Linux Engine) and try again.</p>
+<h3>Important Linux note: permissions</h3>
+<p>If you get <code>permission denied</code> talking to the Docker socket:</p>
+<pre><code class="language-bash"># Option A (common): add your user to the docker group, then log out/in
+sudo usermod -aG docker $USER
+
+# Option B: prefix with sudo (works, less convenient)
+sudo docker ps
+</code></pre>
+<h3>Daemon vs client</h3>
+<ul>
+<li><strong>Client:</strong> the <code>docker</code> CLI you type</li>
+<li><strong>Daemon:</strong> <code>dockerd</code> background service that actually creates containers</li>
+</ul>
+<pre><code class="language-bash"># Is the daemon running? (Linux Engine / many distros)
+sudo systemctl status docker
+</code></pre>
+<p>On Windows and macOS with Docker Desktop, the daemon runs inside Desktop’s Linux VM — keep the Desktop app running while you work.</p>
+<hr>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        <a class="pager-prev" href="./learn/3.html"><span>Previous</span>Core mental model</a>
+        <a class="pager-next" href="./learn/5.html"><span>Next</span>Your first containers</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

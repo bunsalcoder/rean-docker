@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>Hello containers — rean-docker</title>
+    <meta name="description" content="Run, publish ports, read logs, clean up." />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/lab/02-hello.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/lab/02-hello.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/lab/02-hello.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/lab/02-hello.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Hello containers — rean-docker" />
+    <meta property="og:description" content="Run, publish ports, read logs, clean up." />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/lab/02-hello.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Hello containers — rean-docker" />
+    <meta name="twitter:description" content="Run, publish ports, read logs, clean up." />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-lab"
+    data-static-locale="en"
+    data-static-twin="./02-hello.km.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">Hands-on</p>
+      <h1>Hello containers</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./lab.html?id=02-hello">Open interactive reader</a>
+      </p>
+      <div class="md-body">
+<h2>Level</h2>
+<p><strong>Beginner.</strong> Everyday Docker workflow.</p>
+<h2>Goal</h2>
+<p>Practice the commands you will use constantly: run a container, publish a port, read logs, <code>exec</code> inside, and clean up.</p>
+<p><strong>Already done Lab 01?</strong> Good — that showed <em>isolation</em>. This lab is the <em>daily workflow</em> (not more theory).</p>
+<h2>Steps</h2>
+<p><strong>Optional helper:</strong> <code>./run.sh</code> covers hello-world + nginx (cleanup included). Still do the interactive Ubuntu and <code>docker exec -it</code> steps below by hand.</p>
+<h3>1. Hello World</h3>
+<pre><code class="language-bash">docker run --rm hello-world
+</code></pre>
+<h3>2. Interactive Ubuntu</h3>
+<pre><code class="language-bash">docker run -it --rm ubuntu:24.04 bash
+# inside:
+cat /etc/os-release
+exit
+</code></pre>
+<h3>3. Nginx in the background</h3>
+<pre><code class="language-bash">docker run -d --name lab02-nginx -p 8080:80 nginx:1.28-alpine
+curl -I http://127.0.0.1:8080
+docker logs lab02-nginx
+docker exec -it lab02-nginx sh
+# inside: ls /usr/share/nginx/html &amp;&amp; exit
+docker stop lab02-nginx
+docker rm lab02-nginx
+</code></pre>
+<h2>Success criteria</h2>
+<ul>
+<li><input disabled="" type="checkbox"> You saw the hello-world success message</li>
+<li><input disabled="" type="checkbox"> Nginx returned HTTP 200 on port 8080</li>
+<li><input disabled="" type="checkbox"> You listed files inside the container with <code>docker exec</code></li>
+<li><input disabled="" type="checkbox"> The container is removed (<code>docker ps -a</code> shows no <code>lab02-nginx</code>)</li>
+</ul>
+<h2>Next</h2>
+<p>Go to <strong>Lab 03 — Your first Dockerfile</strong> and build an image of your own.</p>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        <a class="pager-prev" href="./lab/01-isolation-basics.html"><span>Previous lab</span>Isolation basics</a>
+        <a class="pager-next" href="./lab/03-dockerfile.html"><span>Next lab</span>Your first Dockerfile</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

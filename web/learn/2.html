@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>Containerization foundations — rean-docker</title>
+    <meta name="description" content="Containerization is the idea . Docker is the tool most people use to practice that idea . This chapter is beginner foundations , not an advanced systems course.…" />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/2.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/2.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/2.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/learn/2.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Containerization foundations — rean-docker" />
+    <meta property="og:description" content="Containerization is the idea . Docker is the tool most people use to practice that idea . This chapter is beginner foundations , not an advanced systems course.…" />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/2.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Containerization foundations — rean-docker" />
+    <meta name="twitter:description" content="Containerization is the idea . Docker is the tool most people use to practice that idea . This chapter is beginner foundations , not an advanced systems course.…" />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-chapter"
+    data-static-locale="en"
+    data-static-twin="./2.km.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">Curriculum</p>
+      <h1>Containerization foundations</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./learn.html?c=2">Open interactive reader</a>
+      </p>
+      <div class="md-body">
+<p>Containerization is the <strong>idea</strong>. Docker is the <strong>tool most people use to practice that idea</strong>.</p>
+<p><strong>This chapter is beginner foundations</strong>, not an advanced systems course. Skim the deep parts (namespaces, OCI, <code>runc</code>) on a first read if you want — the matching lab only needs simple <code>docker</code> commands.</p>
+<p><strong>Lab pairing:</strong> after (or while) reading this chapter, do <strong><code>labs/01-isolation-basics</code></strong> (Lab 01 — Isolation basics). Then continue to Lab 02 for everyday workflow.</p>
+<p>This chapter explains containerization in general, then in enough detail that Docker’s later commands feel inevitable — not magical.</p>
+<h3>In one sentence</h3>
+<p><strong>Containerization</strong> packages an application together with everything it needs to run (runtime, libraries, config) into an isolated unit that shares the host’s OS kernel but has its own view of processes, files, and network.</p>
+<p>That unit is a <strong>container</strong>.</p>
+<h3>The general picture (start here)</h3>
+<p>Think of three layers of “how do I run software?”:</p>
+<table>
+<thead>
+<tr>
+<th>Approach</th>
+<th>What you ship</th>
+<th>Isolation</th>
+<th>Typical size / start</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Bare metal / host install</td>
+<td>App + hope the machine matches</td>
+<td>Almost none</td>
+<td>Fast, fragile</td>
+</tr>
+<tr>
+<td>Virtual machine</td>
+<td>App + full guest OS</td>
+<td>Strong (separate kernel)</td>
+<td>Heavy, slow to start</td>
+</tr>
+<tr>
+<td>Container</td>
+<td>App + userland deps (no full guest OS)</td>
+<td>Process-level (shared kernel)</td>
+<td>Light, starts in seconds</td>
+</tr>
+</tbody></table>
+<p><strong>Containerization’s bet:</strong> most apps do not need a whole second operating system. They need a <strong>consistent filesystem and libraries</strong>, plus <strong>enough isolation</strong> so one app doesn’t break another.</p>
+<h4>Everyday analogy</h4>
+<ul>
+<li>A <strong>VM</strong> is renting a whole house (foundation, plumbing, electrical panel = guest OS).</li>
+<li>A <strong>container</strong> is an apartment: private rooms (your files, processes, ports), shared building systems (the host kernel).</li>
+<li>An <strong>image</strong> is the furnished apartment blueprint; a <strong>container</strong> is a rented unit started from that blueprint.</li>
+</ul>
+<h4>What problem it solves (beyond “Docker”)</h4>
+<ol>
+<li><strong>Reproducibility</strong> — same bits run on laptop, CI, and server.</li>
+<li><strong>Density</strong> — many apps per machine without a VM per app.</li>
+<li><strong>Speed</strong> — start/stop in seconds for deploys and tests.</li>
+<li><strong>Portability</strong> — move the unit between environments without reinstalling the world.</li>
+<li><strong>Clear boundaries</strong> — dependencies live <em>inside</em> the unit, not “somewhere on the host.”</li>
+</ol>
+<h4>Containerization vs Docker vs Kubernetes</h4>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Containerization</strong></td>
+<td>The <em>concept</em>: isolate + package + run with a shared kernel</td>
+</tr>
+<tr>
+<td><strong>Docker</strong></td>
+<td>A popular <em>platform</em> to build, ship, and run containers</td>
+</tr>
+<tr>
+<td><strong>OCI</strong></td>
+<td>Open standards for images and runtimes (so tools can interoperate)</td>
+</tr>
+<tr>
+<td><strong>Kubernetes</strong></td>
+<td>An <em>orchestrator</em>: schedules many containers across many machines</td>
+</tr>
+</tbody></table>
+<p>You can containerize without Docker (Podman, containerd, nerdctl, etc.). You usually learn Docker first because the workflow is clear and the ecosystem is huge.</p>
+<pre><code>  Concept: containerization
+       │
+       ▼
+  Standards: OCI image + runtime
+       │
+       ▼
+  Engines/tools: Docker, containerd, Podman, …
+       │
+       ▼
+  Orchestration (optional): Kubernetes, Swarm, Nomad, …
+</code></pre>
+<h3>A short history (why this exists)</h3>
+<ol>
+<li><strong>chroot</strong> (Unix) — change the apparent root filesystem for a process (filesystem jail; weak alone).</li>
+<li><strong>Linux namespaces + cgroups</strong> — the kernel features that make real containers possible (isolate identity; limit CPU/RAM).</li>
+<li><strong>LXC</strong> and others — early “Linux containers” using those features.</li>
+<li><strong>Docker (2013+)</strong> — made the <em>developer experience</em> mainstream: Dockerfile, images, Hub, simple CLI.</li>
+<li><strong>OCI</strong> — standardized image/runtime formats so the ecosystem isn’t locked to one vendor forever.</li>
+</ol>
+<p>You do not need to memorize history. Remember: <strong>containers are a Linux kernel feature set + a packaging format + a nice UX</strong>.</p>
+<h3>Detailed model: what is actually isolated?</h3>
+<p>On Linux, a container is mostly <strong>normal processes</strong> with extra kernel controls.</p>
+<h4>Namespaces — “what do I see?”</h4>
+<p>Namespaces give a process its own view of system resources:</p>
+<table>
+<thead>
+<tr>
+<th>Namespace</th>
+<th>Isolates</th>
+<th>Why it matters</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>pid</strong></td>
+<td>Process IDs</td>
+<td>Inside the container, your app can be PID 1</td>
+</tr>
+<tr>
+<td><strong>mnt</strong></td>
+<td>Mounts / filesystem tree</td>
+<td>Container has its own <code>/</code>, not the host’s</td>
+</tr>
+<tr>
+<td><strong>net</strong></td>
+<td>Network stack</td>
+<td>Own interfaces, IPs, ports, routing</td>
+</tr>
+<tr>
+<td><strong>uts</strong></td>
+<td>Hostname</td>
+<td>Container hostname ≠ host hostname</td>
+</tr>
+<tr>
+<td><strong>ipc</strong></td>
+<td>Shared memory / IPC</td>
+<td>Apps don’t collide on IPC objects</td>
+</tr>
+<tr>
+<td><strong>user</strong></td>
+<td>User IDs (optional)</td>
+<td>Map container root to unprivileged host user</td>
+</tr>
+</tbody></table>
+<p><strong>Example idea:</strong> two containers can each listen on port <code>80</code> <em>inside</em> their own network namespace. On the host you publish different ports (<code>-p 8080:80</code> and <code>-p 8081:80</code>).</p>
+<h4>cgroups — “how much may I use?”</h4>
+<p><strong>Control groups (cgroups)</strong> limit and account for resources:</p>
+<ul>
+<li>CPU time</li>
+<li>Memory</li>
+<li>PIDs / process count</li>
+<li>Block I/O (sometimes)</li>
+</ul>
+<p>Without cgroups, one runaway container could starve the host. With them, you can say “this API gets at most 512MB RAM.”</p>
+<h4>Union filesystem / layers — “how is the disk built?”</h4>
+<p>Images are stacked <strong>layers</strong> (read-only). When a container runs, Docker adds a thin <strong>writable layer</strong> on top:</p>
+<pre><code>[ writable container layer ]  ← changes while running (unless volumes)
+[ image layer: your app ]
+[ image layer: npm deps ]
+[ image layer: base OS userland ]
+</code></pre>
+<p>That is why:</p>
+<ul>
+<li>Images share layers on disk (efficient).</li>
+<li>Rebuilds can be fast (cache unchanged layers).</li>
+<li>Deleting a container throws away the writable layer (unless you used volumes).</li>
+</ul>
+<h4>Shared kernel — the important tradeoff</h4>
+<p>Containers <strong>share the host kernel</strong>. That means:</p>
+<ul>
+<li>They are lighter than VMs.</li>
+<li>A kernel bug or misconfigured privileged container is a bigger deal than in a well-isolated VM.</li>
+<li>You cannot run a Windows container kernel on a Linux kernel (or vice versa) without virtualization underneath (Docker Desktop uses a small VM on Mac/Windows for this reason).</li>
+</ul>
+<h3>Detailed model: image vs container (lifecycle)</h3>
+<pre><code>Build time                         Run time
+─────────                          ────────
+Dockerfile  ──build──►  Image  ──run──►  Container (running)
+                          │                 │
+                          │                 ├─ stop  → stopped container
+                          │                 ├─ start → running again
+                          │                 └─ rm    → gone (writable layer lost)
+                          │
+                     push/pull
+                          │
+                       Registry
+</code></pre>
+<ul>
+<li><strong>Image</strong> = immutable template (usually).</li>
+<li><strong>Container</strong> = instance with state (running or stopped).</li>
+<li><strong>Registry</strong> = remote shelf for images (Docker Hub, GHCR, …).</li>
+</ul>
+<p>One image → many containers (like one class → many objects).</p>
+<h3>How Docker implements containerization (simplified stack)</h3>
+<p>You type <code>docker …</code>. Roughly:</p>
+<pre><code>docker CLI  →  dockerd (Docker daemon)  →  containerd  →  runc  →  Linux namespaces/cgroups
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Piece</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>CLI</strong></td>
+<td>Human interface (<code>docker run</code>, <code>build</code>, …)</td>
+</tr>
+<tr>
+<td><strong>dockerd</strong></td>
+<td>Docker’s API/orchestrator on one machine</td>
+</tr>
+<tr>
+<td><strong>containerd</strong></td>
+<td>Manages container lifecycle / images</td>
+</tr>
+<tr>
+<td><strong>runc</strong></td>
+<td>Actually creates the container via OCI runtime + kernel features</td>
+</tr>
+</tbody></table>
+<p>On Docker Desktop (Mac/Windows), this stack runs inside a <strong>lightweight Linux VM</strong>, because the Mac/Windows kernel is not the Linux kernel containers expect.</p>
+<p>You rarely touch <code>runc</code> directly. Understanding the stack explains error messages and “where” things run.</p>
+<h3>Lab: <code>labs/01-isolation-basics</code> (beginner)</h3>
+<p><strong>Preferred path:</strong> complete Lab 01 (Isolation basics). It is the same ideas as the demos below, with a checklist and clear “what to notice.”</p>
+<p>You do <strong>not</strong> need advanced knowledge — only <code>docker run</code>, <code>exec</code>, and <code>rm</code>.</p>
+<h3>Worked examples (optional reference)</h3>
+<p>Same demos as Lab 01, kept here for the handbook. They assume Docker is installed (Chapter 4). If you are reading ahead, skim now and re-run after install — or just do the lab.</p>
+<h4>Example A — Isolation of processes (pid namespace)</h4>
+<pre><code class="language-bash"># Start a quiet container
+docker run -d --name rean-ps alpine:3.22 sleep 3600
+
+# Processes *inside* the container (small list; sleep is typically PID 1)
+docker exec rean-ps ps aux
+
+# Processes on the host (huge list) — different pid namespace
+ps aux | head
+
+docker rm -f rean-ps
+</code></pre>
+<p>→ Inside the container you do <strong>not</strong> see your host’s Chrome/Slack processes. That is pid isolation.</p>
+<h4>Example B — Isolation of filesystem (mnt namespace)</h4>
+<pre><code class="language-bash">docker run --rm -it alpine:3.22 sh -c &#39;echo hello-from-container &gt; /tmp/note.txt; cat /tmp/note.txt; ls /&#39;
+</code></pre>
+<p>→ The container has its own <code>/tmp</code> and <code>/</code>. Creating <code>/tmp/note.txt</code> inside does not create that file on your host desktop.</p>
+<p>Compare with a <strong>bind mount</strong> (intentionally shared folder — you will use this later for live coding):</p>
+<pre><code class="language-bash">mkdir -p /tmp/rean-share
+echo &#39;from-host&#39; &gt; /tmp/rean-share/msg.txt
+docker run --rm -v /tmp/rean-share:/data alpine:3.22 cat /data/msg.txt
+# → from-host
+</code></pre>
+<p>Isolation is the default; sharing is opt-in.</p>
+<h4>Example C — Isolation of network (net namespace)</h4>
+<pre><code class="language-bash"># Two containers, each with nginx on container-port 80
+docker run -d --name rean-web-a -p 18080:80 nginx:1.28-alpine
+docker run -d --name rean-web-b -p 18081:80 nginx:1.28-alpine
+
+curl -s -o /dev/null -w &quot;%{http_code}\n&quot; http://127.0.0.1:18080/
+curl -s -o /dev/null -w &quot;%{http_code}\n&quot; http://127.0.0.1:18081/
+
+docker rm -f rean-web-a rean-web-b
+</code></pre>
+<p>→ Each container thinks it owns port <code>80</code>. The host maps different published ports. That is network namespacing plus port publishing.</p>
+<h4>Example D — Resource limits (cgroups)</h4>
+<pre><code class="language-bash"># Limit memory; watch Docker enforce it
+docker run --rm -m 128m --memory-swap 128m alpine:3.22 \
+  sh -c &#39;echo &quot;cgroup memory limit applied&quot;; cat /sys/fs/cgroup/memory.max 2&gt;/dev/null || cat /sys/fs/cgroup/memory/memory.limit_in_bytes 2&gt;/dev/null || echo &quot;(limit visible via docker inspect)&quot;&#39;
+</code></pre>
+<p>Inspect from the outside:</p>
+<pre><code class="language-bash">docker run -d --name rean-limited -m 256m alpine:3.22 sleep 60
+docker inspect -f &#39;{{.HostConfig.Memory}}&#39; rean-limited
+# → 268435456 (bytes)
+docker rm -f rean-limited
+</code></pre>
+<p>→ Containerization is not only isolation of <em>identity</em>; it is also <strong>controlled consumption</strong>.</p>
+<h4>Example E — Same image, many containers (density)</h4>
+<pre><code class="language-bash">docker pull redis:7-alpine
+docker run -d --name rean-r1 redis:7-alpine
+docker run -d --name rean-r2 redis:7-alpine
+docker run -d --name rean-r3 redis:7-alpine
+docker ps --filter name=rean-r
+docker rm -f rean-r1 rean-r2 rean-r3
+</code></pre>
+<p>→ One image, three isolated Redis processes. That is the density win versus three VMs.</p>
+<h4>Example F — “Works the same” packaging (portable unit)</h4>
+<pre><code class="language-bash"># Official image already packages Redis + its defaults
+docker run --rm -p 6379:6379 redis:7-alpine
+# In another terminal: docker run --rm -it redis:7-alpine redis-cli -h host.docker.internal ping
+# (On Linux you may use --network host or the container IP instead)
+</code></pre>
+<p>Later chapters teach you to <strong>build your own</strong> portable unit with a Dockerfile. The idea is the same: ship the environment with the app.</p>
+<h3>What is <em>inside</em> a typical container image?</h3>
+<p>Usually:</p>
+<ul>
+<li>A minimal <strong>userland</strong> (Alpine, Debian slim, distroless, …) — <em>not</em> a second kernel</li>
+<li>Language runtime (Node, Python, JVM, …) if needed</li>
+<li>Your application files</li>
+<li>Default command (<code>CMD</code> / <code>ENTRYPOINT</code>)</li>
+<li>Metadata (ports, env defaults, labels)</li>
+</ul>
+<p>Usually <strong>not</strong>:</p>
+<ul>
+<li>A hypervisor</li>
+<li>Your host’s <code>/home</code> (unless you mount it)</li>
+<li>Other containers’ filesystems</li>
+<li>A full desktop environment</li>
+</ul>
+<h3>What containerization does <em>not</em> mean</h3>
+<table>
+<thead>
+<tr>
+<th>Myth</th>
+<th>Reality</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>“Containers are VMs”</td>
+<td>No — shared kernel, process-level isolation</td>
+</tr>
+<tr>
+<td>“Containers are automatically secure”</td>
+<td>Defaults help, but you still harden (users, scans, least privilege)</td>
+</tr>
+<tr>
+<td>“One container = one VM-sized machine”</td>
+<td>Prefer <strong>one main concern per container</strong> (API, DB, worker), composed together</td>
+</tr>
+<tr>
+<td>“Docker is the only way”</td>
+<td>Docker popularized it; OCI-compatible tools also run containers</td>
+</tr>
+<tr>
+<td>“If it runs in Docker, production is solved”</td>
+<td>You still need config, secrets, networking, observability, and often an orchestrator</td>
+</tr>
+</tbody></table>
+<h3>When to containerize (and when not to)</h3>
+<p><strong>Good fits</strong></p>
+<ul>
+<li>Web APIs, workers, job runners</li>
+<li>Sidecars (proxy, log shipper)</li>
+<li>Databases in <em>dev/test</em> (prod DB often managed separately — team choice)</li>
+<li>CI tasks that need a clean, repeatable environment</li>
+<li>Shipping the same artifact from laptop → staging → prod</li>
+</ul>
+<p><strong>Weaker fits / be careful</strong></p>
+<ul>
+<li>GUI desktop apps (possible, often awkward)</li>
+<li>Apps that need full host device / kernel module access</li>
+<li>Ultra-low-latency kernel-specific workloads where VM or bare metal is mandated</li>
+<li>“Lift and shift” a giant messy monolith <em>without</em> fixing config — containers package chaos too</li>
+</ul>
+<h3>Mental checklist before every container you run</h3>
+<ol>
+<li><strong>What image</strong> am I starting from? (trust + tag/digest)</li>
+<li><strong>What is isolated</strong> vs <strong>what am I sharing</strong>? (ports, volumes, env)</li>
+<li><strong>What resources</strong> may it use? (memory/CPU limits in prod)</li>
+<li><strong>What happens to data</strong> when the container is removed? (volumes!)</li>
+<li><strong>Who can reach it</strong>? (published ports, networks)</li>
+</ol>
+<h3>Bridge to the rest of this guide</h3>
+<table>
+<thead>
+<tr>
+<th>Next topic</th>
+<th>How it connects to containerization</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Core mental model (Ch.3)</td>
+<td>Image / container / Dockerfile / registry vocabulary</td>
+</tr>
+<tr>
+<td>Isolation basics (Lab 01)</td>
+<td>Feel isolation with simple <code>docker</code> commands</td>
+</tr>
+<tr>
+<td>First containers (Ch.5 / Lab 02)</td>
+<td>Everyday workflow: run, logs, clean up</td>
+</tr>
+<tr>
+<td>Images &amp; Dockerfiles</td>
+<td>How you <em>build</em> the portable unit</td>
+</tr>
+<tr>
+<td>Volumes &amp; networks</td>
+<td>Controlled exceptions to isolation</td>
+</tr>
+<tr>
+<td>Compose</td>
+<td>Many containers cooperating as one app</td>
+</tr>
+<tr>
+<td>Production &amp; security</td>
+<td>Harden the shared-kernel world</td>
+</tr>
+</tbody></table>
+<p><strong>Takeaway:</strong> Containerization = <strong>package + isolate + limit + ship</strong> on a shared kernel. Docker is how you will practice that for the rest of <code>rean-docker</code>.</p>
+<hr>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        <a class="pager-prev" href="./learn/1.html"><span>Previous</span>What problem does Docker solve?</a>
+        <a class="pager-next" href="./learn/3.html"><span>Next</span>Core mental model</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>Deploy with Docker &amp; CI/CD — rean-docker</title>
+    <meta name="description" content="Special chapter: this is the “ship it” path — how a containerized app leaves your laptop, gets built in CI, lands in a registry, and runs on a server. Complete…" />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/17.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/17.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/17.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/learn/17.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Deploy with Docker &amp; CI/CD — rean-docker" />
+    <meta property="og:description" content="Special chapter: this is the “ship it” path — how a containerized app leaves your laptop, gets built in CI, lands in a registry, and runs on a server. Complete…" />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/17.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Deploy with Docker &amp; CI/CD — rean-docker" />
+    <meta name="twitter:description" content="Special chapter: this is the “ship it” path — how a containerized app leaves your laptop, gets built in CI, lands in a registry, and runs on a server. Complete…" />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-chapter"
+    data-static-locale="en"
+    data-static-twin="./17.km.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">Curriculum</p>
+      <h1>Deploy with Docker &amp; CI/CD</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./learn.html?c=17">Open interactive reader</a>
+      </p>
+      <div class="md-body">
+<blockquote>
+<p><strong>Special chapter:</strong> this is the “ship it” path — how a containerized app leaves your laptop, gets built in CI, lands in a registry, and runs on a server. Complete Chapters 11–13 (and ideally 15–16) first.</p>
+</blockquote>
+<h3>Lab: <code>labs/12-ci-cd</code></h3>
+<p>Deployment is not one command. It is a <strong>pipeline</strong> of decisions:</p>
+<pre><code>  Code → Build image → Test → Push to registry → Pull on server → Run (Compose) → Observe
+</code></pre>
+<p>If any step is manual and undocumented, deploys become fragile. CI/CD turns the repeatable parts into automation.</p>
+<h3>What “deploy with Docker” means</h3>
+<table>
+<thead>
+<tr>
+<th>Piece</th>
+<th>Job</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Image</strong></td>
+<td>Immutable artifact (app + runtime) identified by tag/digest</td>
+</tr>
+<tr>
+<td><strong>Registry</strong></td>
+<td>Store and distribute images (Docker Hub, GHCR, ECR, …)</td>
+</tr>
+<tr>
+<td><strong>Runtime host</strong></td>
+<td>Machine(s) with Docker Engine that pull and run images</td>
+</tr>
+<tr>
+<td><strong>Compose (or orchestrator)</strong></td>
+<td>Declares services, env, volumes, networks, restart, health</td>
+</tr>
+<tr>
+<td><strong>CI/CD</strong></td>
+<td>Automates build/test/push (and often deploy) on every change</td>
+</tr>
+</tbody></table>
+<p>Docker Compose is enough for <strong>single-host</strong> production (a VPS, a small VM). When you need multi-node scheduling, rolling updates across a cluster, and richer autoscaling, you graduate to Kubernetes (Chapter 16 orientation) — still using the <strong>same images</strong>.</p>
+<h3>Environments: same image, different config</h3>
+<p>Follow 12-factor habits from Chapter 10:</p>
+<table>
+<thead>
+<tr>
+<th>Environment</th>
+<th>Typical source of config</th>
+<th>Image</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Local / lab</td>
+<td><code>.env</code>, bind mounts, <code>compose.override.yaml</code></td>
+<td>Built on your machine</td>
+</tr>
+<tr>
+<td>Staging</td>
+<td>secrets on the host / CI variables</td>
+<td>Same image as prod (or release candidate)</td>
+</tr>
+<tr>
+<td>Production</td>
+<td>host env / secret manager; no bind-mounted source</td>
+<td><strong>Only</strong> images from the registry</td>
+</tr>
+</tbody></table>
+<p>Rules that prevent most deploy disasters:</p>
+<ol>
+<li><strong>Build once, promote the same digest</strong> (or the same git SHA tag) through staging → prod.</li>
+<li><strong>Never bake secrets into the image.</strong></li>
+<li>Prefer <strong><code>IMAGE:git-sha</code></strong> (or semver) over relying on <code>latest</code>.</li>
+<li>Keep a <strong>prod Compose file</strong> that pulls images (<code>image:</code>) instead of building on the server (<code>build:</code>) when possible.</li>
+</ol>
+<h3>Production Compose layout</h3>
+<p>A practical split used in Lab 12:</p>
+<p><strong><code>compose.yaml</code></strong> — local / CI smoke (may <code>build:</code>)</p>
+<pre><code class="language-yaml">services:
+  api:
+    build: .
+    ports:
+      - &quot;127.0.0.1:3000:3000&quot;
+    environment:
+      NODE_ENV: production
+      PORT: &quot;3000&quot;
+    healthcheck:
+      test: [&quot;CMD&quot;, &quot;node&quot;, &quot;-e&quot;, &quot;fetch(&#39;http://127.0.0.1:3000/health&#39;).then(r=&gt;process.exit(r.ok?0:1)).catch(()=&gt;process.exit(1))&quot;]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+</code></pre>
+<p><strong><code>compose.prod.yaml</code></strong> — server (pull-only)</p>
+<pre><code class="language-yaml">services:
+  api:
+    # IMAGE_REF is &quot;:sha-…&quot; (tag) or &quot;@sha256:…&quot; (digest)
+    image: ghcr.io/YOUR_USER/rean-deploy-api${IMAGE_REF:?set IMAGE_REF to :sha-… or @sha256:…}
+    ports:
+      - &quot;127.0.0.1:3000:3000&quot;
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: ${PORT:-3000}
+      APP_VERSION: ${APP_VERSION:-unknown}
+    restart: unless-stopped
+    init: true
+    read_only: true
+    tmpfs: [&quot;/tmp&quot;]
+    cap_drop: [&quot;ALL&quot;]
+    security_opt: [&quot;no-new-privileges:true&quot;]
+    logging:
+      driver: json-file
+      options:
+        max-size: &quot;10m&quot;
+        max-file: &quot;3&quot;
+    healthcheck:
+      test: [&quot;CMD&quot;, &quot;node&quot;, &quot;-e&quot;, &quot;fetch(&#39;http://127.0.0.1:3000/health&#39;).then(r=&gt;process.exit(r.ok?0:1)).catch(()=&gt;process.exit(1))&quot;]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: &quot;0.50&quot;
+          memory: 256M
+</code></pre>
+<p>On the server:</p>
+<pre><code class="language-bash">export IMAGE_REF=:sha-abc1234   # or :1.2.3 — or @sha256:… for a digest pin
+docker compose -f compose.prod.yaml pull
+docker compose -f compose.prod.yaml up -d
+docker compose -f compose.prod.yaml ps
+</code></pre>
+<p>Validate files anywhere (laptop or CI) with:</p>
+<pre><code class="language-bash">docker compose -f compose.yaml config
+IMAGE_REF=:sha-deadbee docker compose -f compose.prod.yaml config
+</code></pre>
+<p><code>compose.prod.yaml</code> refuses to interpolate if <code>IMAGE_REF</code> is missing — that is intentional. Prod must pin a SHA tag or digest (<code>:sha-…</code> / <code>@sha256:…</code>), not <code>:latest</code>.</p>
+<h3>Registry workflow (build → tag → push → pull)</h3>
+<pre><code class="language-bash"># Authenticate (Docker Hub, GHCR, etc.)
+docker login ghcr.io
+
+# Build with an immutable-ish tag (git short SHA is a great default)
+GIT_SHA=$(git rev-parse --short HEAD)
+IMAGE=ghcr.io/YOUR_USER/rean-deploy-api
+
+docker build -t &quot;$IMAGE:sha-$GIT_SHA&quot; .
+docker push &quot;$IMAGE:sha-$GIT_SHA&quot;
+# Do not also tag :latest for deploys — that name moves. Browse GHCR by SHA tag.
+</code></pre>
+<p>On the server you pull the <strong>same</strong> tag CI pushed:</p>
+<pre><code class="language-bash">docker pull ghcr.io/YOUR_USER/rean-deploy-api:sha-$GIT_SHA
+</code></pre>
+<p><strong>GHCR tip:</strong> for GitHub Actions, <code>GITHUB_TOKEN</code> can push to <code>ghcr.io/&lt;owner&gt;/&lt;image&gt;</code> when the workflow has <code>packages: write</code> permission. Package visibility (public/private) is configured in GitHub → Packages.</p>
+<h3>Server bootstrap (single VPS checklist)</h3>
+<p>Do this once per host:</p>
+<ol>
+<li>Install Docker Engine + Compose plugin (Chapter 4 Linux path).</li>
+<li>Create a non-root deploy user; add them to the <code>docker</code> group (or use rootless later).</li>
+<li>Harden SSH (keys only, no password login).</li>
+<li>Clone or copy <strong>only</strong> deploy files (<code>compose.prod.yaml</code>, <code>.env</code>, maybe a reverse-proxy config) — not necessarily the whole app source.</li>
+<li>Create <code>.env</code> on the server (never commit real values).</li>
+<li>Optional but recommended: <strong>Caddy</strong> or <strong>Nginx</strong> as reverse proxy for TLS (<code>https://your.domain</code> → <code>127.0.0.1:3000</code>).</li>
+</ol>
+<p>Minimal mental model for TLS:</p>
+<pre><code>Internet → :443 (Caddy/Nginx) → localhost:3000 (your container published port)
+</code></pre>
+<p>You can publish the app only on <code>127.0.0.1:3000</code> so it is not exposed raw to the internet:</p>
+<pre><code class="language-yaml">ports:
+  - &quot;127.0.0.1:3000:3000&quot;
+</code></pre>
+<h3>Reverse proxy (why it belongs next to Docker)</h3>
+<p>Containers are great at running the app. A reverse proxy handles:</p>
+<ul>
+<li>HTTPS certificates (Let’s Encrypt)</li>
+<li>Multiple hostnames on one machine</li>
+<li>Request logging / basic rate limits</li>
+<li>Hiding internal ports</li>
+</ul>
+<p>You do <strong>not</strong> need Kubernetes for a single API + Postgres on one VPS. Compose + proxy is a common, honest production setup.</p>
+<p><strong>Hands-on:</strong> Lab 12 §5 ships <code>compose.proxy.yaml</code> + <code>Caddyfile</code> — a local HTTP demo of the same hop (<code>http://127.0.0.1:8080</code> → Caddy → <code>api:3000</code>). Real TLS still needs a DNS name; the Caddyfile comments show the production shape.</p>
+<h3>Releases without drama</h3>
+<table>
+<thead>
+<tr>
+<th>Practice</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Healthchecks + <code>restart: unless-stopped</code></td>
+<td>Unhealthy/crashed containers recover or stay marked unhealthy</td>
+</tr>
+<tr>
+<td><code>docker compose up -d</code> after <code>pull</code></td>
+<td>Recreates only changed services</td>
+</tr>
+<tr>
+<td>Keep previous tag/digest noted</td>
+<td>Instant rollback: set <code>IMAGE_REF</code> to last good <code>:sha-…</code> or <code>@sha256:…</code> and <code>up -d</code> again</td>
+</tr>
+<tr>
+<td>Database volumes</td>
+<td>Named volumes survive container recreation (Chapter 8)</td>
+</tr>
+<tr>
+<td>Migrations</td>
+<td>Run as an explicit step (one-off <code>compose run</code>) before/after switching the API — document the order</td>
+</tr>
+</tbody></table>
+<p>Rollback sketch:</p>
+<pre><code class="language-bash">export IMAGE_REF=:sha-OLDGOOD
+docker compose -f compose.prod.yaml pull api
+docker compose -f compose.prod.yaml up -d api
+</code></pre>
+<h3>CI/CD: what each stage should do</h3>
+<p>Think in stages, not “one giant script”:</p>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Typical checks</th>
+<th>Failure means</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Validate</strong></td>
+<td><code>docker compose config</code>, Dockerfile present</td>
+<td>Bad YAML / broken project layout</td>
+</tr>
+<tr>
+<td><strong>Test</strong></td>
+<td>Unit tests (host or in a build stage)</td>
+<td>App logic broken</td>
+</tr>
+<tr>
+<td><strong>Build</strong></td>
+<td><code>docker build</code> (BuildKit)</td>
+<td>Image won’t build</td>
+</tr>
+<tr>
+<td><strong>Smoke</strong></td>
+<td><code>compose up</code> + <code>curl /health</code> in CI</td>
+<td>Container starts but app is dead</td>
+</tr>
+<tr>
+<td><strong>Push</strong></td>
+<td><code>docker push</code> tagged image</td>
+<td>Artifact not published</td>
+</tr>
+<tr>
+<td><strong>Deploy</strong></td>
+<td>SSH / API / platform “pull + up”</td>
+<td>Runtime host not updated</td>
+</tr>
+</tbody></table>
+<p><strong>Continuous Integration (CI)</strong> = validate + test + build (+ smoke) on every PR/push.<br><strong>Continuous Delivery/Deployment (CD)</strong> = promote a built image to an environment automatically or with one click.</p>
+<p>Start with CI that <strong>builds and pushes</strong>. Add automatic deploy to staging when that is stable. Keep production deploy gated (manual approval) until you trust the pipeline.</p>
+<h3>GitHub Actions — complete pattern</h3>
+<p>Lab 12 includes a ready-to-copy workflow. The shape looks like this:</p>
+<pre><code class="language-yaml">name: CI — build, smoke, push
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  IMAGE: ghcr.io/${{ github.repository_owner }}/rean-deploy-api
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Validate Compose files
+        working-directory: labs/12-ci-cd
+        run: |
+          docker compose -f compose.yaml config &gt;/dev/null
+          REGISTRY_OWNER=example IMAGE_REF=:sha-deadbee \
+            docker compose -f compose.prod.yaml config &gt;/dev/null
+
+      - name: Build image
+        working-directory: labs/12-ci-cd
+        run: |
+          TAG=sha-$(git rev-parse --short HEAD)
+          docker build -t &quot;$IMAGE:$TAG&quot; .
+          echo &quot;TAG=$TAG&quot; &gt;&gt; &quot;$GITHUB_ENV&quot;
+
+      - name: Smoke test
+        working-directory: labs/12-ci-cd
+        run: |
+          docker compose up -d --build
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:3000/health; then exit 0; fi
+            sleep 1
+          done
+          docker compose logs
+          exit 1
+
+      - name: Teardown smoke stack
+        if: always()
+        working-directory: labs/12-ci-cd
+        run: docker compose down -v
+
+      - name: Login to GHCR
+        if: github.event_name == &#39;push&#39; &amp;&amp; github.ref == &#39;refs/heads/main&#39;
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push image
+        if: github.event_name == &#39;push&#39; &amp;&amp; github.ref == &#39;refs/heads/main&#39;
+        run: docker push &quot;$IMAGE:$TAG&quot;
+</code></pre>
+<p>Notes:</p>
+<ul>
+<li><strong>PRs build + smoke</strong> but do not push (keeps the registry clean).</li>
+<li><strong><code>main</code> pushes</strong> publish the <strong>SHA tag</strong> (<code>sha-abc1234</code>), not <code>:latest</code>. That name moves; you cannot roll it back.</li>
+<li>Replace the image name / working directory when you wire this to your own app.</li>
+<li>For a private deploy key or SSH deploy step, store secrets in GitHub → Settings → Secrets (<code>SSH_HOST</code>, <code>SSH_KEY</code>, …) — never in the repo.</li>
+</ul>
+<h3>Optional CD: deploy over SSH after push</h3>
+<p>After a successful push job (same workflow or a second <code>deploy</code> job):</p>
+<pre><code class="language-yaml">      - name: Deploy over SSH
+        uses: appleboy/ssh-action@823bd89e131d8d508129f9443cad5855e9ba96f0 # v1.2.4
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /opt/rean-deploy
+            export IMAGE_REF=:sha-$(echo ${{ github.sha }} | cut -c1-7)
+            docker compose -f compose.prod.yaml pull
+            docker compose -f compose.prod.yaml up -d
+</code></pre>
+<p>Keep deploy scripts <strong>idempotent</strong>: running them twice should leave the system healthy.</p>
+<h3>Secrets &amp; supply chain in CI</h3>
+<ol>
+<li>Use GitHub/GitLab <strong>masked secrets</strong> for registry passwords, SSH keys, API tokens.</li>
+<li>Prefer <code>GITHUB_TOKEN</code> / OIDC cloud roles over long-lived PATs when the platform supports it.</li>
+<li>Pin third-party Actions to <strong>full commit SHAs</strong> (<code>owner/action@&lt;40-hex&gt;</code>), not moving tags like <code>@v4</code>. A tag can be force-pushed; a SHA cannot. This repo’s workflows and Lab 12’s template do that — the <code># v4.4.0</code> comment is only a human label (Dependabot can still bump it).</li>
+<li>Scan images in CI (<code>docker scout</code>, Trivy, Grype) and fail on critical CVEs when you are ready for that bar (Chapter 15).</li>
+<li>Treat the Docker socket in CI runners as trusted infrastructure — do not expose it to untrusted PR code from forks without isolation.</li>
+</ol>
+<h3>Observability after deploy</h3>
+<p>Minimum viable production eyes:</p>
+<pre><code class="language-bash">docker compose -f compose.prod.yaml ps
+docker compose -f compose.prod.yaml logs -f --tail=200 api
+curl -fsS https://your.domain/health
+</code></pre>
+<p>Then graduate to log shipping and uptime checks. A green CI build is not a substitute for a live <code>/health</code> from the public URL.</p>
+<h3>End-to-end checklist (print this)</h3>
+<ul>
+<li><input disabled="" type="checkbox"> App has a real <code>/health</code> (or equivalent) used by Compose <strong>and</strong> CI smoke tests</li>
+<li><input disabled="" type="checkbox"> <code>compose.prod.yaml</code> uses <code>image:</code> + <code>IMAGE_REF</code> (<code>:sha-…</code> or <code>@sha256:…</code>; no surprise remote builds)</li>
+<li><input disabled="" type="checkbox"> <code>.env.example</code> documents every required variable; real <code>.env</code> is gitignored</li>
+<li><input disabled="" type="checkbox"> CI validates Compose, builds, smokes, then pushes on the main branch</li>
+<li><input disabled="" type="checkbox"> Server has Docker Engine, deploy files, and secrets only on the host</li>
+<li><input disabled="" type="checkbox"> You know the rollback tag from the last good deploy</li>
+<li><input disabled="" type="checkbox"> TLS terminates at a reverse proxy (or platform edge), not as an afterthought</li>
+<li><input disabled="" type="checkbox"> You can explain build → registry → pull → up without looking it up</li>
+</ul>
+<h3>How this chapter connects</h3>
+<table>
+<thead>
+<tr>
+<th>Earlier chapter</th>
+<th>What you reuse here</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>7 / 12</td>
+<td>Dockerfile + multi-stage for CI builds</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Env/secrets — CI secrets + server <code>.env</code></td>
+</tr>
+<tr>
+<td>11</td>
+<td>Compose as the deploy unit</td>
+</tr>
+<tr>
+<td>13 / 15</td>
+<td>Healthchecks, non-root, limits, scanning</td>
+</tr>
+<tr>
+<td>16</td>
+<td>BuildKit, registries, multi-arch, Watch, SBOM/signing orientation</td>
+</tr>
+</tbody></table>
+<p>Next: <strong>Lab 12</strong> makes you run the CI steps locally, then optionally push. After that, the <strong>Capstone (Chapter 18)</strong> can include a real CI workflow as a stretch goal — you will already know the shape.</p>
+<hr>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        <a class="pager-prev" href="./learn/16.html"><span>Previous</span>Advanced topics</a>
+        <a class="pager-next" href="./learn/18.html"><span>Next</span>Capstone project</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>Learning path checklist — rean-docker</title>
+    <meta name="description" content="Beginner Explain containerization vs VMs vs Docker vs Kubernetes Describe namespaces and cgroups at a high level Complete labs/01 isolation basics Explain image…" />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/20.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/20.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/20.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/learn/20.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Learning path checklist — rean-docker" />
+    <meta property="og:description" content="Beginner Explain containerization vs VMs vs Docker vs Kubernetes Describe namespaces and cgroups at a high level Complete labs/01 isolation basics Explain image…" />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/20.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Learning path checklist — rean-docker" />
+    <meta name="twitter:description" content="Beginner Explain containerization vs VMs vs Docker vs Kubernetes Describe namespaces and cgroups at a high level Complete labs/01 isolation basics Explain image…" />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-chapter"
+    data-static-locale="en"
+    data-static-twin="./20.km.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">Curriculum</p>
+      <h1>Learning path checklist</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./learn.html?c=20">Open interactive reader</a>
+      </p>
+      <div class="md-body">
+<h3>Beginner</h3>
+<ul>
+<li><input disabled="" type="checkbox"> Explain containerization vs VMs vs Docker vs Kubernetes</li>
+<li><input disabled="" type="checkbox"> Describe namespaces and cgroups at a high level</li>
+<li><input disabled="" type="checkbox"> Complete <code>labs/01-isolation-basics</code></li>
+<li><input disabled="" type="checkbox"> Explain image vs container vs Dockerfile</li>
+<li><input disabled="" type="checkbox"> Run, stop, remove containers; publish ports</li>
+<li><input disabled="" type="checkbox"> Read logs and <code>exec</code> into a container</li>
+<li><input disabled="" type="checkbox"> Write a simple Dockerfile and <code>docker build</code></li>
+<li><input disabled="" type="checkbox"> Use <code>.dockerignore</code></li>
+</ul>
+<h3>Intermediate</h3>
+<ul>
+<li><input disabled="" type="checkbox"> Named volumes + bind mounts</li>
+<li><input disabled="" type="checkbox"> User-defined networks + DNS by name</li>
+<li><input disabled="" type="checkbox"> Env files and 12-factor config (<code>labs/04-env-secrets</code>)</li>
+<li><input disabled="" type="checkbox"> Compose multi-service app</li>
+<li><input disabled="" type="checkbox"> Fix “db not ready” with healthchecks</li>
+</ul>
+<h3>Advanced</h3>
+<ul>
+<li><input disabled="" type="checkbox"> Multi-stage builds; shrink images</li>
+<li><input disabled="" type="checkbox"> Non-root user, healthchecks, restart policies</li>
+<li><input disabled="" type="checkbox"> Debug with <code>inspect</code>, <code>logs</code>, <code>stats</code>, ephemeral shells (<code>labs/10-debugging</code>)</li>
+<li><input disabled="" type="checkbox"> Scan images; BuildKit secrets; pin tags/digests (<code>labs/11-security</code>)</li>
+<li><input disabled="" type="checkbox"> (Stretch) Compose Watch, SBOM peek, or multi-arch inspect (Lab 11 §5–§7 / Chapter 16)</li>
+<li><input disabled="" type="checkbox"> Push/pull from a registry</li>
+<li><input disabled="" type="checkbox"> Complete Chapter 17 deploy checklist; finish <code>labs/12-ci-cd</code></li>
+<li><input disabled="" type="checkbox"> Explain CI vs CD and a build → registry → pull → up path</li>
+<li><input disabled="" type="checkbox"> Complete the capstone stack (<code>labs/13-capstone</code>)</li>
+</ul>
+<hr>
+<h2>Suggested weekly plan</h2>
+<table>
+<thead>
+<tr>
+<th>Day</th>
+<th>Focus</th>
+<th>Lab</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Isolation basics + hello workflow</td>
+<td><code>labs/01-isolation-basics</code>, <code>labs/02-hello</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Dockerfile + env/secrets</td>
+<td><code>labs/03-dockerfile</code>, <code>labs/04-env-secrets</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>Compose basics</td>
+<td><code>labs/05-compose</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Networks &amp; volumes</td>
+<td><code>labs/06-networks</code>, <code>labs/07-volumes</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td>Multi-stage + prod habits</td>
+<td><code>labs/08-multi-stage</code>, <code>labs/09-production</code></td>
+</tr>
+<tr>
+<td>6</td>
+<td>Debug + security</td>
+<td><code>labs/10-debugging</code>, <code>labs/11-security</code></td>
+</tr>
+<tr>
+<td>7</td>
+<td>Deploy + CI/CD (special)</td>
+<td><code>labs/12-ci-cd</code></td>
+</tr>
+<tr>
+<td>8–9</td>
+<td>Capstone</td>
+<td><code>labs/13-capstone</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Glossary</h2>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Definition</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Containerization</td>
+<td>Packaging an app with its deps into an isolated unit on a shared kernel</td>
+</tr>
+<tr>
+<td>OCI</td>
+<td>Open Container Initiative — standards for images and runtimes</td>
+</tr>
+<tr>
+<td>Daemon</td>
+<td>Background Docker engine (<code>dockerd</code>)</td>
+</tr>
+<tr>
+<td>Layer</td>
+<td>Immutable filesystem diff in an image</td>
+</tr>
+<tr>
+<td>Tag</td>
+<td>Mutable label for an image version</td>
+</tr>
+<tr>
+<td>Digest</td>
+<td>Immutable content hash of an image</td>
+</tr>
+<tr>
+<td>Context</td>
+<td>Files sent to daemon during <code>build</code></td>
+</tr>
+<tr>
+<td>Registry</td>
+<td>Remote store for images</td>
+</tr>
+<tr>
+<td>Orchestrator</td>
+<td>System that schedules containers across machines</td>
+</tr>
+<tr>
+<td>Namespace</td>
+<td>Linux isolation (pid, net, mnt, …)</td>
+</tr>
+<tr>
+<td>cgroups</td>
+<td>Linux resource limits (CPU, memory)</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Next steps after this guide</h2>
+<ol>
+<li>Practice labs in order under <code>labs/</code> (Lab 04 with Chapter 10; Lab 12 for deploy/CI; Lab 13 for the capstone).</li>
+<li>Re-run the Chapter 2 isolation examples until they feel obvious.</li>
+<li>Containerize a real app you already know — then wire Chapter 17’s pipeline to it.</li>
+<li>Read official docs: <a href="https://docs.docker.com/">https://docs.docker.com/</a></li>
+<li>Learn Compose Watch / Dev Containers for daily development.</li>
+<li>Harden CD: image scanning in CI, manual prod approvals, then multi-node Kubernetes (Pods, Deployments, Services).</li>
+</ol>
+<hr>
+<p><em>Created for the <code>rean-docker</code> learning project. Work chapter by chapter; prefer understanding over rushing commands.</em></p>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        <a class="pager-prev" href="./learn/19.html"><span>Previous</span>Cheat sheet</a>
+        
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

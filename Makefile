@@ -1,7 +1,7 @@
 # Common local tasks for rean-docker
 PORT ?= 5501
 
-.PHONY: help serve sync check check-km check-km-parity check-km-headings check-lab-invariants check-all check-links check-vendor-sri check-vendor-versions check-routes sync-routes check-site-smoke sitemap sync-km-i18n sync-prod-dockerfiles bump-node-deps vendor-site smoke smoke-concept ci-local refresh-digests refresh-digests-check
+.PHONY: help serve sync check check-km check-km-parity check-km-headings check-lab-invariants check-all check-links check-vendor-sri check-vendor-versions check-routes sync-routes check-site-smoke static-pages sitemap sync-km-i18n sync-prod-dockerfiles bump-node-deps vendor-site smoke smoke-concept ci-local refresh-digests refresh-digests-check
 
 help:
 	@echo "rean-docker make targets:"
@@ -19,7 +19,8 @@ help:
 	@echo "  make check-vendor-versions  # fail if package.json ≠ vendor README versions"
 	@echo "  make check-site-smoke  # HTTP smoke for pages, routes, indexes, 404"
 	@echo "  make check-all     # content + routes + links + vendor + site smoke checks"
-	@echo "  make sitemap       # regenerate sitemap, robots.txt, and search indexes"
+	@echo "  make static-pages  # regenerate crawlable chapter/lab HTML under web/learn|lab"
+	@echo "  make sitemap       # static pages + sitemap, robots.txt, and search indexes"
 	@echo "  make sync-km-i18n  # refresh Khmer chapter titles in i18n-km.js from km guide"
 	@echo "  make sync-prod-dockerfiles  # copy Lab 09 Dockerfile → Labs 12 and 13"
 	@echo "  make bump-node-deps PKG=express@^4.21.2  # bump a shared dep across Node labs + locks"
@@ -77,7 +78,11 @@ check-vendor-versions:
 check-site-smoke:
 	python3 ./scripts/check_site_smoke.py
 
-sitemap:
+static-pages:
+	cd web && npm ci --ignore-scripts
+	cd web && node ../scripts/generate_static_pages.mjs
+
+sitemap: static-pages
 	python3 ./scripts/generate_sitemap.py
 	python3 ./scripts/generate_search_index.py
 
@@ -108,7 +113,9 @@ ci-local: check-all sitemap
 		web/robots.txt \
 		web/assets/search-index-en.json \
 		web/assets/search-index-km.json \
+		web/learn \
+		web/lab \
 		|| (echo "Generated site artifacts drifted. Commit make sitemap output." && exit 1)
 	@echo ""
-	@echo "ci-local passed (content + sitemap + search index)."
+	@echo "ci-local passed (content + sitemap + search index + static pages)."
 	@echo "Optional with Docker:  make smoke && make smoke-concept"

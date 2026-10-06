@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="km">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>ដំឡើង និងផ្ទៀងផ្ទាត់ — rean-docker</title>
+    <meta name="description" content="ត្រូវការ Docker computer អ្នក មុន labs។ Learners ភាគច្រើន install Docker Desktop Windows, macOS, Linux ។ Linux servers Docker Engine ។ Official: https://docs.do…" />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/4.km.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/4.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/4.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/learn/4.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="ដំឡើង និងផ្ទៀងផ្ទាត់ — rean-docker" />
+    <meta property="og:description" content="ត្រូវការ Docker computer អ្នក មុន labs។ Learners ភាគច្រើន install Docker Desktop Windows, macOS, Linux ។ Linux servers Docker Engine ។ Official: https://docs.do…" />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/4.km.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="ដំឡើង និងផ្ទៀងផ្ទាត់ — rean-docker" />
+    <meta name="twitter:description" content="ត្រូវការ Docker computer អ្នក មុន labs។ Learners ភាគច្រើន install Docker Desktop Windows, macOS, Linux ។ Linux servers Docker Engine ។ Official: https://docs.do…" />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-chapter"
+    data-static-locale="km"
+    data-static-twin="./4.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">កម្មវិធីសិក្សា</p>
+      <h1>ដំឡើង និងផ្ទៀងផ្ទាត់</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./learn.html?c=4&amp;lang=km">បើកអ្នកអានអន្តរកម្ម</a>
+      </p>
+      <div class="md-body">
+<p>ត្រូវការ Docker <strong>computer អ្នក</strong> មុន labs។ Learners ភាគច្រើន install <strong>Docker Desktop</strong> (Windows, macOS, Linux)។ Linux servers <strong>Docker Engine</strong>។</p>
+<p>Official: <a href="https://docs.docker.com/get-started/get-docker/">https://docs.docker.com/get-started/get-docker/</a></p>
+<p>Pick OS ខាងក្រោម រួច <strong>Verify</strong> shared។</p>
+<h3>Windows (ប្រព័ន្ធ)</h3>
+<p><strong>Recommended:</strong> Docker Desktop <strong>WSL 2</strong> backend។</p>
+<ol>
+<li><p><strong>Check requirements</strong></p>
+<ul>
+<li>64-bit Windows 10 (22H2+) or Windows 11</li>
+<li>Virtualization BIOS/UEFI (<em>Intel VT-x</em>, <em>AMD-V</em>, <em>SVM</em>)</li>
+<li>~4 GB RAM free (8 GB+ recommended)</li>
+</ul>
+</li>
+<li><p><strong>Install WSL 2</strong> (required)</p>
+<ul>
+<li><strong>PowerShell as Administrator</strong>:</li>
+</ul>
+</li>
+</ol>
+<pre><code class="language-powershell">wsl --install
+</code></pre>
+<ul>
+<li>Restart when asked។</li>
+<li>After reboot finish Ubuntu first-time setup។</li>
+<li>Confirm WSL:</li>
+</ul>
+<pre><code class="language-powershell">wsl --status
+</code></pre>
+<ol start="3">
+<li><p><strong>Download Docker Desktop for Windows</strong></p>
+<ul>
+<li><a href="https://docs.docker.com/desktop/setup/install/windows-install/">Docker Desktop for Windows</a></li>
+<li>AMD64 (most PCs) or ARM64 (Snapdragon/ARM)</li>
+</ul>
+</li>
+<li><p><strong>Run installer</strong></p>
+<ul>
+<li><code>Docker Desktop Installer.exe</code></li>
+<li>Default options</li>
+<li><strong>Use WSL 2 instead of Hyper-V</strong> when offered</li>
+<li>Finish wizard start Docker Desktop</li>
+</ul>
+</li>
+<li><p><strong>Accept terms wait engine</strong></p>
+<ul>
+<li>Start menu Docker Desktop</li>
+<li>Accept Docker Subscription Service Agreement (personal/learning allowed)</li>
+<li>Whale icon <strong>running</strong> (not «starting»)</li>
+</ul>
+</li>
+<li><p><strong>Verify terminal</strong></p>
+<ul>
+<li><strong>PowerShell</strong>, <strong>Windows Terminal</strong>, or <strong>WSL</strong> → Verify below</li>
+</ul>
+</li>
+</ol>
+<p><strong>Windows fails</strong></p>
+<ul>
+<li>Restart PC after WSL start Docker Desktop</li>
+<li>Docker Desktop → Settings → General WSL 2</li>
+<li>Settings → Resources → WSL Integration enable distro</li>
+<li><code>wsl --update</code> elevated PowerShell</li>
+</ul>
+<h3>macOS (ប្រព័ន្ធ)</h3>
+<p><strong>Recommended:</strong> Docker Desktop for Mac។</p>
+<ol>
+<li><p><strong>Check requirements</strong></p>
+<ul>
+<li>Supported macOS (current + two previous majors)</li>
+<li>Apple Silicon (M1/M2/M3/M4…) <strong>or</strong> Intel Mac</li>
+<li>~4 GB RAM free (8 GB+ recommended)</li>
+</ul>
+</li>
+<li><p><strong>Download installer</strong></p>
+<ul>
+<li><a href="https://docs.docker.com/desktop/setup/install/mac-install/">Docker Desktop for Mac</a></li>
+<li><strong>Apple Silicon</strong> or <strong>Intel Chip</strong></li>
+<li>Apple menu → About This Mac chip type</li>
+</ul>
+</li>
+<li><p><strong>Install Docker Desktop</strong></p>
+<ul>
+<li>Open <code>Docker.dmg</code></li>
+<li>Drag Docker → <strong>Applications</strong></li>
+<li>Eject disk image</li>
+</ul>
+</li>
+<li><p><strong>Start first time</strong></p>
+<ul>
+<li><strong>Applications → Docker</strong></li>
+<li>Approve security/privacy prompts</li>
+<li>Accept agreement</li>
+<li>Menu-bar whale <strong>running</strong></li>
+</ul>
+</li>
+<li><p><strong>Verify Terminal</strong></p>
+<ul>
+<li><strong>Terminal</strong> (or iTerm) → Verify below</li>
+</ul>
+</li>
+</ol>
+<p><strong>macOS fails</strong></p>
+<ul>
+<li>System Settings → Privacy &amp; Security allow Docker</li>
+<li>Quit Docker (whale → Quit) reopen</li>
+<li>Apple Silicon build on M-series (Intel builds poor)</li>
+</ul>
+<h3>Linux (ប្រព័ន្ធ)</h3>
+<p>Two choices:</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Best when</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Docker Desktop for Linux</strong></td>
+<td>GUI easy all-in-one</td>
+</tr>
+<tr>
+<td><strong>Docker Engine</strong> (daemon + CLI)</td>
+<td>Lighter Ubuntu/Debian/Fedora</td>
+</tr>
+</tbody></table>
+<h4>ជម្រើស A — Docker Desktop សម្រាប់ Linux</h4>
+<ol>
+<li>Distro supported (Ubuntu, Debian, Fedora): <a href="https://docs.docker.com/desktop/setup/install/linux/">Desktop for Linux</a></li>
+<li>Install <code>.deb</code> or <code>.rpm</code> official</li>
+<li>Launch app menu</li>
+<li>Accept agreement engine running</li>
+<li>Verify below</li>
+</ol>
+<h4>ជម្រើស B — Docker Engine (CLI) Ubuntu/Debian-family</h4>
+<p>Steps usual Linux learners។ Other distros: <a href="https://docs.docker.com/engine/install/">Install Docker Engine</a>។</p>
+<ol>
+<li><strong>Update packages prerequisites</strong></li>
+</ol>
+<pre><code class="language-bash">sudo apt-get update
+sudo apt-get install ca-certificates curl
+</code></pre>
+<ol start="2">
+<li><strong>Add Docker GPG key apt repository</strong></li>
+</ol>
+<pre><code class="language-bash">sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+echo \
+  &quot;deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] \
+  https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release &amp;&amp; echo &quot;${UBUNTU_CODENAME:-$VERSION_CODENAME}&quot;) stable&quot; | \
+  sudo tee /etc/apt/sources.list.d/docker.list &gt; /dev/null
+
+sudo apt-get update
+</code></pre>
+<blockquote>
+<p>Debian: use Debian instructions (<code>download.docker.com/linux/debian</code>) not Ubuntu URL។</p>
+</blockquote>
+<ol start="3">
+<li><strong>Install Engine, CLI, Compose plugin, helpers</strong></li>
+</ol>
+<pre><code class="language-bash">sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+</code></pre>
+<ol start="4">
+<li><strong>Start Docker enable boot</strong></li>
+</ol>
+<pre><code class="language-bash">sudo systemctl enable --now docker
+sudo systemctl status docker
+</code></pre>
+<p>Want <code>active (running)</code>។</p>
+<ol start="5">
+<li><strong>(Recommended) Docker without <code>sudo</code> every time</strong></li>
+</ol>
+<pre><code class="language-bash">sudo usermod -aG docker $USER
+</code></pre>
+<p><strong>Log out log back in</strong> (or reboot) group applies។ Until then <code>sudo docker …</code>។</p>
+<h3>ផ្ទៀងផ្ទាត់ (គ្រប់ platform)</h3>
+<p>Docker installed running terminal:</p>
+<pre><code class="language-bash">docker --version
+docker compose version
+docker info
+docker run --rm hello-world
+</code></pre>
+<p><strong>Should see</strong></p>
+<ul>
+<li>Docker version (Engine / Desktop)</li>
+<li>Compose version (plugin <code>docker compose</code>, not only old <code>docker-compose</code>)</li>
+<li><code>docker info</code> server details</li>
+<li><code>hello-world</code> tiny image success message</li>
+</ul>
+<p><code>docker info</code> or <code>hello-world</code> fails → Docker not fully running — start Docker Desktop (<code>sudo systemctl start docker</code> Linux Engine) retry។</p>
+<h3>ចំណាំ Linux សំខាន់៖ permissions</h3>
+<p><code>permission denied</code> Docker socket:</p>
+<pre><code class="language-bash"># Option A (common): add user docker group, log out/in
+sudo usermod -aG docker $USER
+
+# Option B: prefix sudo (works, less convenient)
+sudo docker ps
+</code></pre>
+<h3>Daemon vs client (ប្រៀបធៀប)</h3>
+<ul>
+<li><strong>Client:</strong> <code>docker</code> CLI you type</li>
+<li><strong>Daemon:</strong> <code>dockerd</code> background creates containers</li>
+</ul>
+<pre><code class="language-bash"># Is the daemon running? (Linux Engine / many distros)
+sudo systemctl status docker
+</code></pre>
+<p>Windows/macOS Docker Desktop daemon inside Desktop Linux VM — keep Desktop running while work។</p>
+<hr>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        <a class="pager-prev" href="./learn/3.km.html"><span>មុន</span>គំរូគំនិតស្នូល</a>
+        <a class="pager-next" href="./learn/5.km.html"><span>បន្ទាប់</span>Container ដំបូងរបស់អ្នក</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

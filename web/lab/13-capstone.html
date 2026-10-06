@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>Capstone — rean-docker</title>
+    <meta name="description" content="Build your own API + Postgres + Redis stack." />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/lab/13-capstone.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/lab/13-capstone.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/lab/13-capstone.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/lab/13-capstone.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Capstone — rean-docker" />
+    <meta property="og:description" content="Build your own API + Postgres + Redis stack." />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/lab/13-capstone.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Capstone — rean-docker" />
+    <meta name="twitter:description" content="Build your own API + Postgres + Redis stack." />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-lab"
+    data-static-locale="en"
+    data-static-twin="./13-capstone.km.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">Hands-on</p>
+      <h1>Capstone</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./lab.html?id=13-capstone">Open interactive reader</a>
+      </p>
+      <div class="md-body">
+<h2>Level</h2>
+<p><strong>Special.</strong> Own an API + Postgres + Redis stack end to end (handbook Chapter 18).</p>
+<h2>Goal</h2>
+<p>Build a small <strong>API + Postgres + Redis</strong> stack that you could show a teammate. Pair with handbook <strong>Chapter 18</strong>.</p>
+<p>This folder ships a <strong>day-one runnable baseline</strong> (Compose + Node API) so CI and newcomers can <code>up</code> immediately. That baseline is <strong>not</strong> the finish line — Capstone means you <strong>own</strong> the stack (marker: <code>CAPSTONE_OWN</code>).</p>
+<p><strong>Baseline vs prod:</strong> <code>compose.yaml</code> is intentionally soft (easy first <code>up</code>). Prod habits — <code>read_only</code>, <code>cap_drop</code>, <code>no-new-privileges</code>, log limits, <code>IMAGE_REF</code> — live in <code>compose.prod.yaml</code> (Lab 09 / 12 pattern). Finishing Capstone means ownership <strong>and</strong> knowing that gap, not stopping after the soft stack.</p>
+<p>Work in this folder (<code>labs/13-capstone</code>) so your capstone stays separate from the teaching labs.</p>
+<p><strong>Optional helper:</strong> <code>./run.sh</code> validates Compose and smoke-tests the <strong>baseline</strong> stack only. Capstone ownership (<code>CAPSTONE_OWN</code>) stays manual.</p>
+<h2>Requirements</h2>
+<ol>
+<li><code>Dockerfile</code> for the API (baseline pins Node by digest — Chapter 15; multi-stage if you compile/build).</li>
+<li><code>compose.yaml</code> with <code>api</code>, <code>db</code>, <code>redis</code> (baseline pins Postgres/Redis by digest — Chapter 15).</li>
+<li>Named volume for Postgres.</li>
+<li><code>.env.example</code> documenting required variables (no real secrets).</li>
+<li>Healthchecks on the API and Postgres.</li>
+<li>API connects using service hostnames <code>db</code> and <code>redis</code> — not <code>localhost</code>.</li>
+<li>This README (or a section you add) explains <code>up</code>, any migrate step, and <code>down</code>.</li>
+</ol>
+<h2>Own it (<code>CAPSTONE_OWN</code>)</h2>
+<p>Running the baseline unchanged does <strong>not</strong> complete this lab. Change the product so a teammate can tell it is yours. Do <strong>at least two</strong> of these (stretch goals below count):</p>
+<ol>
+<li>Add a new API route (see <code>// CAPSTONE_OWN:</code> in <code>server.js</code>) and document it in this README.</li>
+<li>Rename services or the Compose project and update healthchecks / env docs to match.</li>
+<li>Turn the API image into a <strong>multi-stage</strong> build (Lab 08) while keeping digests / non-root habits.</li>
+<li>Ship a reverse proxy (Nginx or Caddy) in front of the API — no reference file on purpose.</li>
+<li>Customize <code>compose.prod.yaml</code> and/or <code>workflows/ci.yml</code> beyond copy-paste (limits, scan, your image name) — or fold at least one API hardening habit from <code>compose.prod.yaml</code> into the stack you ship.</li>
+</ol>
+<p>Optional clean-room restart from Lab 05 if you prefer writing Compose from scratch:</p>
+<pre><code class="language-bash">cp -R ../05-compose/. .
+# then restore this README and re-apply digests + your ideas
+</code></pre>
+<h2>Stretch goals</h2>
+<ul>
+<li>Separate <code>compose.prod.yaml</code> with restart policy and resource limits (Chapter 17 / Lab 12)</li>
+<li>Harden <code>db</code> / <code>redis</code> in prod Compose the way the API already is (<code>cap_drop</code>, Redis AUTH, internal-only networks) — see comments in <code>compose.prod.yaml</code></li>
+<li>Nginx or Caddy reverse proxy in front of the API (Lab 12 ships <code>compose.proxy.yaml</code> + <code>Caddyfile</code> as a local demo — prefer writing your own first)</li>
+<li>CI job: <code>docker compose config</code> + build + smoke + push (pattern: Lab 12’s <code>workflows/ci.yml</code>)</li>
+<li>Image scan in CI (Lab 11)</li>
+</ul>
+<p><strong>Optional references</strong> (prefer writing your own first): this folder includes baseline <code>compose.prod.yaml</code> and <code>workflows/ci.yml</code> patterned on Lab 12. For the TLS hop, see Lab 12’s <code>compose.proxy.yaml</code>. Validate prod config with:</p>
+<pre><code class="language-bash">REGISTRY_OWNER=example IMAGE_REF=:sha-deadbee \
+  docker compose -f compose.prod.yaml config
+</code></pre>
+<h2>Suggested start</h2>
+<pre><code class="language-bash">cd labs/13-capstone
+cp .env.example .env
+docker compose up --build
+curl -s http://localhost:3000/health
+curl -s http://localhost:3000/ | python3 -m json.tool
+docker compose down
+</code></pre>
+<p><strong>Pitfall:</strong> baseline Compose assembles <code>DATABASE_URL</code> from <code>POSTGRES_USER</code> / <code>POSTGRES_PASSWORD</code>. Keep lab passwords simple, or URL-encode characters like <code>@</code>, <code>:</code>, <code>/</code>, and <code>#</code> (same lesson as Lab 05).</p>
+<p>Then apply your <code>CAPSTONE_OWN</code> changes and re-run the curls (plus any new route). Before you call the lab done, also validate prod Compose (or apply hardening from it):</p>
+<pre><code class="language-bash">REGISTRY_OWNER=example IMAGE_REF=:sha-deadbee \
+  docker compose -f compose.prod.yaml config
+</code></pre>
+<h2>Run / tear down</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>docker compose up --build</code></td>
+<td>Build the API image and start <code>api</code>, <code>db</code>, <code>redis</code></td>
+</tr>
+<tr>
+<td><code>curl http://localhost:3000/health</code></td>
+<td>Confirm dependencies are reachable</td>
+</tr>
+<tr>
+<td><code>docker compose down</code></td>
+<td>Stop containers; <strong>keep</strong> the named volume</td>
+</tr>
+<tr>
+<td><code>docker compose down -v</code></td>
+<td>Stop containers and <strong>delete</strong> <code>pgdata</code></td>
+</tr>
+</tbody></table>
+<h2>Success criteria</h2>
+<ul>
+<li><input disabled="" type="checkbox"> <code>docker compose up --build</code> starts all services</li>
+<li><input disabled="" type="checkbox"> <code>/health</code> is green and the API talks to both <code>db</code> and <code>redis</code></li>
+<li><input disabled="" type="checkbox"> <code>.env</code> is gitignored; <code>.env.example</code> is committed</li>
+<li><input disabled="" type="checkbox"> You can tear down with <code>docker compose down</code> and explain what <code>-v</code> would delete</li>
+<li><input disabled="" type="checkbox"> You validated <code>compose.prod.yaml</code> with <code>IMAGE_REF</code> set (or folded at least one hardening habit from it into your owned stack)</li>
+<li><input disabled="" type="checkbox"> <code>CAPSTONE_OWN</code>: at least two ownership changes from the list above are done and noted in this README</li>
+</ul>
+<p>You are done with the guided path. Next steps: containerize an app you already know, then wire Chapter 17’s pipeline to it.</p>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        <a class="pager-prev" href="./lab/12-ci-cd.html"><span>Previous lab</span>Deploy &amp; CI/CD</a>
+        
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>Compose stack — rean-docker</title>
+    <meta name="description" content="API + Postgres + Redis with healthchecks and .env config." />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/lab/05-compose.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/lab/05-compose.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/lab/05-compose.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/lab/05-compose.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Compose stack — rean-docker" />
+    <meta property="og:description" content="API + Postgres + Redis with healthchecks and .env config." />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/lab/05-compose.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Compose stack — rean-docker" />
+    <meta name="twitter:description" content="API + Postgres + Redis with healthchecks and .env config." />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-lab"
+    data-static-locale="en"
+    data-static-twin="./05-compose.km.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">Hands-on</p>
+      <h1>Compose stack</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./lab.html?id=05-compose">Open interactive reader</a>
+      </p>
+      <div class="md-body">
+<h2>Level</h2>
+<p><strong>Intermediate.</strong> Multi-service Compose after Lab 04 env files.<br>You should already be comfortable building a single-service image (Lab 03).</p>
+<h2>Goal</h2>
+<p>Run a multi-container app with service DNS, volumes, healthchecks, and config from <code>.env</code> (Lab 04).</p>
+<p><strong>Optional helper:</strong> <code>./run.sh</code> brings the stack up and curls <code>/health</code>. Prefer typing the README commands yourself the first time.</p>
+<h2>Steps</h2>
+<pre><code class="language-bash">cd labs/05-compose
+
+cp .env.example .env
+# edit POSTGRES_PASSWORD if you want — never commit .env
+
+docker compose up --build
+# or detached:
+# docker compose up -d --build
+</code></pre>
+<p>Test:</p>
+<pre><code class="language-bash">curl http://127.0.0.1:3000/
+curl http://127.0.0.1:3000/health
+# hit / a few times — &quot;hits&quot; should increase (Redis)
+</code></pre>
+<p>Useful commands:</p>
+<pre><code class="language-bash">docker compose ps
+docker compose logs -f api
+docker compose exec db psql -U rean -d rean -c &#39;\dt&#39;
+docker compose down        # keep volume
+docker compose down -v     # DELETE database volume
+</code></pre>
+<p>If you changed <code>POSTGRES_USER</code> / <code>POSTGRES_DB</code> in <code>.env</code>, use those names in <code>psql</code> instead of <code>rean</code>.</p>
+<h2>Key ideas to notice</h2>
+<ol>
+<li>Hostname <code>db</code> and <code>redis</code> work <strong>inside</strong> the Compose network.</li>
+<li><code>depends_on</code> + <code>service_healthy</code> waits until Postgres <strong>and</strong> Redis accept connections.</li>
+<li>Named volume <code>pgdata</code> survives <code>docker compose down</code> (unless <code>-v</code>).</li>
+<li>The password lives in <code>.env</code>, not as a literal in <code>compose.yaml</code>. Compose interpolates <code>${POSTGRES_PASSWORD}</code> at start time.</li>
+<li><code>DATABASE_URL</code> is still assembled from those variables. Run <code>docker compose config</code> and you will see the interpolated URL — including the password. That is why production setups prefer Docker secrets or a vault, not a connection string sitting in Compose output. <strong>Pitfall:</strong> passwords with <code>@</code>, <code>:</code>, <code>/</code>, or <code>#</code> break URL interpolation — keep the lab password simple, or URL-encode / pass discrete <code>POSTGRES_*</code> vars into the app instead of one URL.</li>
+<li>The API publishes as <code>127.0.0.1:${PORT}:3000</code> — reachable via curl on this machine, not advertised on every host interface.</li>
+<li>The API <code>Dockerfile</code> pins <code>FROM node:22-alpine@sha256:…</code> so CI’s CRITICAL scan stays reproducible. <code>postgres:16-alpine</code> / <code>redis:7-alpine</code> stay <strong>floating series tags</strong> in Compose so the file stays approachable. Lab 13 (and Chapter 15) pin those digests for supply-chain control — do not treat this Compose file as a production template.</li>
+</ol>
+<h2>Success criteria</h2>
+<ul>
+<li><input disabled="" type="checkbox"> You copied <code>.env.example</code> → <code>.env</code> before <code>up</code></li>
+<li><input disabled="" type="checkbox"> All three services are up</li>
+<li><input disabled="" type="checkbox"> <code>/</code> shows <code>hits</code> and <code>dbTime</code></li>
+<li><input disabled="" type="checkbox"> After <code>down</code> + <code>up</code>, you understand what happens to data with/without <code>-v</code></li>
+</ul>
+<h2>Next</h2>
+<p>Go to <strong>Lab 06 — Networks</strong> to see DNS by name without Compose, then <strong>Lab 07 — Volumes</strong> for persistence in isolation.</p>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        <a class="pager-prev" href="./lab/04-env-secrets.html"><span>Previous lab</span>Env, secrets, and config</a>
+        <a class="pager-next" href="./lab/06-networks.html"><span>Next lab</span>Networks &amp; DNS</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="km">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>Multi-stage builds និងទំហំ image — rean-docker</title>
+    <meta name="description" content="Lab៖ labs/08 multi stage Problem: build tools compilers, TypeScript/ tsc , npm all deps, Go toolchain bloat production images increase attack surface។ Multi sta…" />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/12.km.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/12.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/12.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/learn/12.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Multi-stage builds និងទំហំ image — rean-docker" />
+    <meta property="og:description" content="Lab៖ labs/08 multi stage Problem: build tools compilers, TypeScript/ tsc , npm all deps, Go toolchain bloat production images increase attack surface។ Multi sta…" />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/12.km.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Multi-stage builds និងទំហំ image — rean-docker" />
+    <meta name="twitter:description" content="Lab៖ labs/08 multi stage Problem: build tools compilers, TypeScript/ tsc , npm all deps, Go toolchain bloat production images increase attack surface។ Multi sta…" />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-chapter"
+    data-static-locale="km"
+    data-static-twin="./12.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">កម្មវិធីសិក្សា</p>
+      <h1>Multi-stage builds និងទំហំ image</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./learn.html?c=12&amp;lang=km">បើកអ្នកអានអន្តរកម្ម</a>
+      </p>
+      <div class="md-body">
+<h3>Lab៖ <code>labs/08-multi-stage</code></h3>
+<p>Problem: build tools (compilers, TypeScript/<code>tsc</code>, npm all deps, Go toolchain) bloat production images increase attack surface។</p>
+<p><strong>Multi-stage builds</strong> use multiple <code>FROM</code> copy only artifacts forward។</p>
+<p>Lab 08 compile TypeScript ក្នុង build stage ដូច្នេះ <code>:fat</code> (compiler នៅក្នុង image) ធំជាង <code>:slim</code> (JS ដែល compile រួច + production deps តែប៉ុណ្ណោះ) ច្បាស់។</p>
+<pre><code class="language-dockerfile"># syntax=docker/dockerfile:1
+# ---- build stage ----
+FROM node:22-alpine AS build
+WORKDIR /app
+COPY package*.json ./
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci
+COPY . .
+RUN npm run build
+
+# ---- runtime stage ----
+FROM node:22-alpine AS runtime
+WORKDIR /app
+ENV NODE_ENV=production
+COPY package*.json ./
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --omit=dev
+COPY --from=build /app/dist ./dist
+USER node
+EXPOSE 3000
+CMD [&quot;node&quot;, &quot;dist/server.js&quot;]
+</code></pre>
+<p>Benefits:</p>
+<ul>
+<li>Final image no compilers / unused build deps</li>
+<li>Smaller attack surface</li>
+<li>Often much smaller downloads</li>
+</ul>
+<p>បន្ទាត់ <code># syntax=docker/dockerfile:1</code> (Lab 08) បើកលក្ខណៈ BuildKit ដូច cache mounts។ <code>RUN --mount=type=cache,target=/root/.npm</code> រក្សា cache download npm រវាង builds <strong>ដោយមិន</strong> copy វាចូល image layer។</p>
+<h3>Alpine vs distroless vs slim (ប្រៀបធៀប)</h3>
+<table>
+<thead>
+<tr>
+<th>Base</th>
+<th>Pros</th>
+<th>Cons</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>*-alpine</code></td>
+<td>Small</td>
+<td>musl quirks, fewer packages</td>
+</tr>
+<tr>
+<td><code>*-slim</code></td>
+<td>Debian-based, smaller than full</td>
+<td>Still larger than Alpine</td>
+</tr>
+<tr>
+<td>Distroless</td>
+<td>Minimal, very secure</td>
+<td>Harder to debug (no shell)</td>
+</tr>
+</tbody></table>
+<p>Choose based on app needs; consistency across services helps ops។</p>
+<h3>ទម្លាប់ ពិនិត្យ ទំហំ</h3>
+<pre><code class="language-bash">docker images rean-hello
+docker history rean-hello:1.0
+dive rean-hello:1.0   # if you install dive — visual layer explorer
+</code></pre>
+<hr>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        <a class="pager-prev" href="./learn/11.km.html"><span>មុន</span>Docker Compose — កម្មវិធីពហុ container</a>
+        <a class="pager-next" href="./learn/13.km.html"><span>បន្ទាប់</span>ទម្លាប់គិតបែប production</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

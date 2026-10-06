@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>Dockerfile — build your own images — rean-docker</title>
+    <meta name="description" content="Lab: labs/03 dockerfile A Dockerfile is a script of instructions. Example Node static ish app : Instruction cheat sheet | Instruction | Purpose | | | | | FROM |…" />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/7.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/7.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/7.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/learn/7.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Dockerfile — build your own images — rean-docker" />
+    <meta property="og:description" content="Lab: labs/03 dockerfile A Dockerfile is a script of instructions. Example Node static ish app : Instruction cheat sheet | Instruction | Purpose | | | | | FROM |…" />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/7.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Dockerfile — build your own images — rean-docker" />
+    <meta name="twitter:description" content="Lab: labs/03 dockerfile A Dockerfile is a script of instructions. Example Node static ish app : Instruction cheat sheet | Instruction | Purpose | | | | | FROM |…" />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-chapter"
+    data-static-locale="en"
+    data-static-twin="./7.km.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">Curriculum</p>
+      <h1>Dockerfile — build your own images</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./learn.html?c=7">Open interactive reader</a>
+      </p>
+      <div class="md-body">
+<h3>Lab: <code>labs/03-dockerfile</code></h3>
+<p>A Dockerfile is a script of instructions. Example (Node static-ish app):</p>
+<pre><code class="language-dockerfile"># Start from a small official base
+FROM node:22-alpine
+
+# Metadata (optional but good)
+LABEL maintainer=&quot;you@example.com&quot;
+
+# Working directory inside the image
+WORKDIR /app
+
+# Copy dependency manifests first (better cache)
+COPY package.json package-lock.json ./
+
+# Install exact dependency versions from the lockfile
+RUN npm ci --omit=dev
+
+# Copy application source
+COPY . .
+
+# Document the port the app listens on (does NOT publish it)
+EXPOSE 3000
+
+# Default command when container starts
+CMD [&quot;node&quot;, &quot;server.js&quot;]
+</code></pre>
+<h3>Instruction cheat sheet</h3>
+<table>
+<thead>
+<tr>
+<th>Instruction</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>FROM</code></td>
+<td>Base image (required first, except ARG before FROM)</td>
+</tr>
+<tr>
+<td><code>WORKDIR</code></td>
+<td>Set working directory (creates if missing)</td>
+</tr>
+<tr>
+<td><code>COPY</code> / <code>ADD</code></td>
+<td>Copy files into image (<code>COPY</code> preferred; <code>ADD</code> has extra magic)</td>
+</tr>
+<tr>
+<td><code>RUN</code></td>
+<td>Execute build-time commands (install packages, etc.)</td>
+</tr>
+<tr>
+<td><code>ENV</code></td>
+<td>Set environment variables</td>
+</tr>
+<tr>
+<td><code>EXPOSE</code></td>
+<td>Document ports (documentation + tooling hint)</td>
+</tr>
+<tr>
+<td><code>CMD</code></td>
+<td>Default command (easily overridden)</td>
+</tr>
+<tr>
+<td><code>ENTRYPOINT</code></td>
+<td>Fixed main executable (args often appended)</td>
+</tr>
+<tr>
+<td><code>USER</code></td>
+<td>Switch to non-root user</td>
+</tr>
+<tr>
+<td><code>VOLUME</code></td>
+<td>Declare mount points</td>
+</tr>
+<tr>
+<td><code>HEALTHCHECK</code></td>
+<td>How Docker probes container health</td>
+</tr>
+<tr>
+<td><code>ARG</code></td>
+<td>Build-time variables</td>
+</tr>
+</tbody></table>
+<h3>CMD vs ENTRYPOINT</h3>
+<pre><code class="language-dockerfile">ENTRYPOINT [&quot;nginx&quot;]
+CMD [&quot;-g&quot;, &quot;daemon off;&quot;]
+</code></pre>
+<ul>
+<li><code>docker run img</code> → runs <code>nginx -g &#39;daemon off;&#39;</code></li>
+<li><code>docker run img -t</code> → runs <code>nginx -t</code> (CMD replaced, ENTRYPOINT kept)</li>
+</ul>
+<p>Prefer <strong>exec form</strong> (JSON array), not shell form, so signals (SIGTERM) reach your process correctly:</p>
+<pre><code class="language-dockerfile"># Good
+CMD [&quot;node&quot;, &quot;server.js&quot;]
+
+# Avoid for main process (PID 1 signal issues)
+CMD node server.js
+</code></pre>
+<h3>Build and run</h3>
+<p>From <code>labs/03-dockerfile</code>:</p>
+<pre><code class="language-bash">cd labs/03-dockerfile
+docker build -t rean-hello:1.0 .
+docker run --rm -p 3000:3000 rean-hello:1.0
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Part</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>build</code></td>
+<td>Build image from Dockerfile</td>
+</tr>
+<tr>
+<td><code>-t rean-hello:1.0</code></td>
+<td>Name:tag</td>
+</tr>
+<tr>
+<td><code>.</code></td>
+<td>Build context (files sent to daemon)</td>
+</tr>
+</tbody></table>
+<h3>Build context &amp; <code>.dockerignore</code></h3>
+<p>Everything in the context directory can be sent to Docker. Exclude junk:</p>
+<pre><code class="language-gitignore">node_modules
+.git
+*.md
+.env
+npm-debug.log
+</code></pre>
+<p><strong>Why it matters:</strong> Smaller context = faster builds. Never copy secrets into images accidentally.</p>
+<h3>Layer caching strategy (critical skill)</h3>
+<p><strong>Bad order</strong> (any code change busts <code>npm install</code> cache):</p>
+<pre><code class="language-dockerfile">COPY . .
+RUN npm install
+</code></pre>
+<p><strong>Good order</strong>:</p>
+<pre><code class="language-dockerfile">COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
+COPY . .
+</code></pre>
+<p>Rule: <strong>put rarely changing, expensive steps early; put frequently changing source late.</strong></p>
+<hr>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        <a class="pager-prev" href="./learn/6.html"><span>Previous</span>Images deeply explained</a>
+        <a class="pager-next" href="./learn/8.html"><span>Next</span>Volumes — keep data alive</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

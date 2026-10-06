@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="km">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>Capstone — rean-docker</title>
+    <meta name="description" content="បង្កើត stack API + Postgres + Redis ផ្ទាល់ខ្លួន។" />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/lab/13-capstone.km.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/lab/13-capstone.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/lab/13-capstone.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/lab/13-capstone.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Capstone — rean-docker" />
+    <meta property="og:description" content="បង្កើត stack API + Postgres + Redis ផ្ទាល់ខ្លួន។" />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/lab/13-capstone.km.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Capstone — rean-docker" />
+    <meta name="twitter:description" content="បង្កើត stack API + Postgres + Redis ផ្ទាល់ខ្លួន។" />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-lab"
+    data-static-locale="km"
+    data-static-twin="./13-capstone.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">អនុវត្ត</p>
+      <h1>Capstone</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./lab.html?id=13-capstone&amp;lang=km">បើកអ្នកអានអន្តរកម្ម</a>
+      </p>
+      <div class="md-body">
+<h2>កម្រិត</h2>
+<p><strong>ពិសេស។</strong> គ្រប់គ្រង stack API + Postgres + Redis ពីដើមដល់ចប់ (handbook ជំពូក 18)។</p>
+<h2>គោលដៅ</h2>
+<p>បង្កើត stack <strong>API + Postgres + Redis</strong> តូចមួយដែលអ្នកអាចបង្ហាញមិត្តរួមការ។ ផ្គូផ្គង handbook <strong>ជំពូក 18</strong>។</p>
+<p>ថតនេះមាន <strong>day-one runnable baseline</strong> (Compose + Node API) ដើម្បីឱ្យ CI និងអ្នកថ្មី <code>up</code> បានភ្លាម។ Baseline នោះ <strong>មិនមែន</strong> ជាចុងបញ្ចប់ — Capstone មានន័យថាអ្នក <strong>own</strong> stack (marker: <code>CAPSTONE_OWN</code>)។</p>
+<p><strong>Baseline vs prod:</strong> <code>compose.yaml</code> ទន់ដោយចេតនា (ងាយ <code>up</code> ដំបូង)។ ទម្លាប់ prod — <code>read_only</code>, <code>cap_drop</code>, <code>no-new-privileges</code>, log limits, <code>IMAGE_REF</code> — ស្ថិតក្នុង <code>compose.prod.yaml</code> (pattern Lab 09 / 12)។ បញ្ចប់ Capstone មានន័យ ownership <strong>និង</strong> យល់ពីគម្លាតនោះ មិនមែនឈប់បន្ទាប់ពី soft stack។</p>
+<p>ធ្វើការក្នុងថតនេះ (<code>labs/13-capstone</code>) ដើម្បីឱ្យ capstone ដាច់ពី labs បង្រៀន។</p>
+<p><strong>ជំនួយស្រេចចិត្ត:</strong> <code>./run.sh</code> validate Compose និង smoke-test <strong>baseline</strong> stack តែប៉ុណ្ណោះ។ Capstone ownership (<code>CAPSTONE_OWN</code>) នៅដៃ។</p>
+<h2>តម្រូវការ</h2>
+<ol>
+<li><code>Dockerfile</code> សម្រាប់ API (baseline pin Node តាម digest — ជំពូក 15; multi-stage បើ compile/build)។</li>
+<li><code>compose.yaml</code> មាន <code>api</code>, <code>db</code>, <code>redis</code> (baseline pin Postgres/Redis តាម digest — ជំពូក 15)។</li>
+<li>Named volume សម្រាប់ Postgres។</li>
+<li><code>.env.example</code> រាយ variables ដែលត្រូវការ (គ្មាន secrets ពិត)។</li>
+<li>Healthchecks លើ API និង Postgres។</li>
+<li>API ភ្ជាប់តាម hostname <code>db</code> និង <code>redis</code> — មិនមែន <code>localhost</code>។</li>
+<li>README នេះ (ឬផ្នែកដែលអ្នកបន្ថែម) ពន្យល់ <code>up</code>, ជំហាន migrate បើមាន និង <code>down</code>។</li>
+</ol>
+<h2>Own it (<code>CAPSTONE_OWN</code>)</h2>
+<p>Run baseline ដោយមិនកែ <strong>មិន</strong> បញ្ចប់ lab នេះ។ កែផលិតផលឱ្យមិត្តរួមការដឹងថាជារបស់អ្នក។ ធ្វើ <strong>យ៉ាងហោចណាស់ពីរ</strong> ពីបញ្ជីនេះ (stretch goals ខាងក្រោមរាប់)៖</p>
+<ol>
+<li>បន្ថែម API route ថ្មី (មើល <code>// CAPSTONE_OWN:</code> ក្នុង <code>server.js</code>) ហើយ document ក្នុង README នេះ។</li>
+<li>ប្តូរឈ្មោះ services ឬ Compose project ហើយ update healthchecks / env docs ឱ្យត្រូវ។</li>
+<li>ប្តូរ API image ទៅ <strong>multi-stage</strong> (Lab 08) ខណៈរក្សា digests / non-root។</li>
+<li>បន្ថែម reverse proxy (Nginx ឬ Caddy) មុខ API — គ្មានឯកសារ reference ដោយចេតនា។</li>
+<li>Customize <code>compose.prod.yaml</code> និង/ឬ <code>workflows/ci.yml</code> ហួសពី copy-paste (limits, scan, ឈ្មោះ image របស់អ្នក) — ឬយក hardening យ៉ាងហោចមួយពី <code>compose.prod.yaml</code> ដាក់ចូល stack ដែលអ្នកផ្ញើ។</li>
+</ol>
+<p>ចាប់ផ្ដើមស្អាតស្រេចចិត្តពី Lab 05 បើចង់សរសេរ Compose ពីដើម៖</p>
+<pre><code class="language-bash">cp -R ../05-compose/. .
+# then restore this README and re-apply digests + your ideas
+</code></pre>
+<h2>គោលដៅលំហាត់បន្ថែម</h2>
+<ul>
+<li><code>compose.prod.yaml</code> ដាច់ដោយឡែក ជាមួយ restart policy និង resource limits (ជំពូក 17 / Lab 12)</li>
+<li>រឹត <code>db</code> / <code>redis</code> ក្នុង prod Compose ដូច API រួច (<code>cap_drop</code>, Redis AUTH, network ខាងក្នុង) — មើល comments ក្នុង <code>compose.prod.yaml</code></li>
+<li>Nginx ឬ Caddy reverse proxy មុខ API (Lab 12 មាន <code>compose.proxy.yaml</code> + <code>Caddyfile</code> ជា demo មូលដ្ឋាន — ចូលចិត្តសរសេរផ្ទាល់មុន)</li>
+<li>CI job: <code>docker compose config</code> + build + smoke + push (pattern: <code>workflows/ci.yml</code> ពី Lab 12)</li>
+<li>ស្កេន image ក្នុង CI (Lab 11)</li>
+</ul>
+<p><strong>ឯកសារយោងស្រេចចិត្ត</strong> (ចូលចិត្តសរសេរដោយខ្លួនឯងមុន)៖ ថតនេះមាន baseline <code>compose.prod.yaml</code> និង <code>workflows/ci.yml</code> តាម Lab 12។ សម្រាប់ TLS hop មើល <code>compose.proxy.yaml</code> របស់ Lab 12។ Validate prod config ដោយ៖</p>
+<pre><code class="language-bash">REGISTRY_OWNER=example IMAGE_REF=:sha-deadbee \
+  docker compose -f compose.prod.yaml config
+</code></pre>
+<h2>ចាប់ផ្ដើមណែនាំ</h2>
+<pre><code class="language-bash">cd labs/13-capstone
+cp .env.example .env
+docker compose up --build
+curl -s http://localhost:3000/health
+curl -s http://localhost:3000/ | python3 -m json.tool
+docker compose down
+</code></pre>
+<p><strong>អន្ទាក់:</strong> baseline Compose បង្កើត <code>DATABASE_URL</code> ពី <code>POSTGRES_USER</code> / <code>POSTGRES_PASSWORD</code>។ រក្សា password lab ឱ្យសាមញ្ញ ឬ URL-encode តួអក្សរ <code>@</code>, <code>:</code>, <code>/</code>, និង <code>#</code> (មេរៀនដូច Lab 05)។</p>
+<p>រួចអនុវត្តការផ្លាស់ប្តូរ <code>CAPSTONE_OWN</code> របស់អ្នក ហើយ curl ម្ដងទៀត (បូក route ថ្មីបើមាន)។ មុនហៅថា lab រួច ផ្ទៀងផ្ទាត់ផងដែរ prod Compose (ឬអនុវត្ត hardening ពីវា)៖</p>
+<pre><code class="language-bash">REGISTRY_OWNER=example IMAGE_REF=:sha-deadbee \
+  docker compose -f compose.prod.yaml config
+</code></pre>
+<h2>រត់ / បិទ</h2>
+<table>
+<thead>
+<tr>
+<th>ពាក្យបញ្ជា</th>
+<th>អ្វីដែលវាធ្វើ</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>docker compose up --build</code></td>
+<td>Build image API ហើយចាប់ផ្ដើម <code>api</code>, <code>db</code>, <code>redis</code></td>
+</tr>
+<tr>
+<td><code>curl http://localhost:3000/health</code></td>
+<td>ផ្ទៀងផ្ទាត់ dependencies</td>
+</tr>
+<tr>
+<td><code>docker compose down</code></td>
+<td>ឈប់ containers; <strong>រក្សា</strong> named volume</td>
+</tr>
+<tr>
+<td><code>docker compose down -v</code></td>
+<td>ឈប់ containers ហើយ <strong>លុប</strong> <code>pgdata</code></td>
+</tr>
+</tbody></table>
+<h2>លក្ខខណ្ឌជោគជ័យ</h2>
+<ul>
+<li><input disabled="" type="checkbox"> <code>docker compose up --build</code> ចាប់ផ្ដើម services ទាំងអស់</li>
+<li><input disabled="" type="checkbox"> <code>/health</code> បៃតង ហើយ API និយាយជាមួយ <code>db</code> និង <code>redis</code></li>
+<li><input disabled="" type="checkbox"> <code>.env</code> ត្រូវ gitignore; <code>.env.example</code> ត្រូវ commit</li>
+<li><input disabled="" type="checkbox"> អ្នកអាច <code>docker compose down</code> ហើយពន្យល់ថា <code>-v</code> នឹងលុបអ្វី</li>
+<li><input disabled="" type="checkbox"> អ្នក validate <code>compose.prod.yaml</code> ដោយកំណត់ <code>IMAGE_REF</code> (ឬយក hardening យ៉ាងហោចមួយពីវាដាក់ចូល stack ដែលអ្នក own)</li>
+<li><input disabled="" type="checkbox"> <code>CAPSTONE_OWN</code>: ការផ្លាស់ប្តូរ ownership យ៉ាងហោចពីរពីបញ្ជីខាងលើរួច ហើយកត់ក្នុង README នេះ</li>
+</ul>
+<p>អ្នកបញ្ចប់ផ្លូវណែនាំហើយ។ ជំហានបន្ទាប់៖ containerize app ដែលអ្នកស្គាល់ រួចភ្ជាប់ pipeline ជំពូក 17។</p>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        <a class="pager-prev" href="./lab/12-ci-cd.km.html"><span>លំហាត់មុន</span>Deploy និង CI/CD</a>
+        
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

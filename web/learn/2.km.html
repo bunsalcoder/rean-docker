@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="km">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>មូលដ្ឋាន containerization — rean-docker</title>
+    <meta name="description" content="Containerization គឺ គំនិត ។ Docker គឺ tool ដែលមនុស្សភាគច្រើនប្រើអនុវត្តគំនិតនោះ។ Chapter នេះគឺមូលដ្ឋាន beginner មិនមែន course systems កម្រិតខ្ពស់ទេ។ Skim ផ្នែកជ…" />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/2.km.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/2.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/2.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/learn/2.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="មូលដ្ឋាន containerization — rean-docker" />
+    <meta property="og:description" content="Containerization គឺ គំនិត ។ Docker គឺ tool ដែលមនុស្សភាគច្រើនប្រើអនុវត្តគំនិតនោះ។ Chapter នេះគឺមូលដ្ឋាន beginner មិនមែន course systems កម្រិតខ្ពស់ទេ។ Skim ផ្នែកជ…" />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/2.km.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="មូលដ្ឋាន containerization — rean-docker" />
+    <meta name="twitter:description" content="Containerization គឺ គំនិត ។ Docker គឺ tool ដែលមនុស្សភាគច្រើនប្រើអនុវត្តគំនិតនោះ។ Chapter នេះគឺមូលដ្ឋាន beginner មិនមែន course systems កម្រិតខ្ពស់ទេ។ Skim ផ្នែកជ…" />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-chapter"
+    data-static-locale="km"
+    data-static-twin="./2.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">កម្មវិធីសិក្សា</p>
+      <h1>មូលដ្ឋាន containerization</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./learn.html?c=2&amp;lang=km">បើកអ្នកអានអន្តរកម្ម</a>
+      </p>
+      <div class="md-body">
+<p>Containerization គឺ <strong>គំនិត</strong>។ Docker គឺ <strong>tool</strong> ដែលមនុស្សភាគច្រើនប្រើអនុវត្តគំនិតនោះ។</p>
+<p><strong>Chapter នេះគឺមូលដ្ឋាន beginner</strong> មិនមែន course systems កម្រិតខ្ពស់ទេ។ Skim ផ្នែកជ្រៅ (namespaces, OCI, <code>runc</code>) ក្នុងការអានដំបូងបើចង់ — lab ដែលផ្គូផ្គងត្រូវការតែ commands <code>docker</code> សាមញ្ញ។</p>
+<p><strong>Lab pairing:</strong> បន្ទាប់ (ឬកំឡុង) អាន chapter នេះ ធ្វើ <strong><code>labs/01-isolation-basics</code></strong> (Lab 01 — Isolation basics)។ រួចបន្ត Lab 02 សម្រាប់ workflow ប្រចាំថ្ងៃ។</p>
+<p>Chapter នេះពន្យល់ containerization ទូទៅ រួចឱ្យជ្រាលដូច្នេះ commands Docker ពេលក្រោយមានហេតុផល — មិនវេទម្ម។</p>
+<h3>មួយប្រយោគ</h3>
+<p><strong>Containerization</strong> package application ជាមួយអ្វីដែលវាត្រូវការដើម្បី run (runtime, libraries, config) ទៅក្នុង unit ដែល isolated ដែល share OS kernel របស់ host ប៉ុន្តែមានទស្សនៈផ្ទាល់របស់ processes, files និង network។</p>
+<p>Unit នោះគឺ <strong>container</strong>។</p>
+<h3>រូបភាពទូទៅ (ចាប់ផ្តើមទីនេះ)</h3>
+<p>គិតពីបីស strata «run software យ៉ាងដូចម្តេច?»៖</p>
+<table>
+<thead>
+<tr>
+<th>វិធី</th>
+<th>អ្វីដែលអ្នក ship</th>
+<th>Isolation</th>
+<th>ទំហំ / start ធម្មតា</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Bare metal / host install</td>
+<td>App + សង្ឃឹម machine ផ្គូផ្គង</td>
+<td>ជិតគ្មាន</td>
+<td>លឿន ប៉ុន្តែ fragile</td>
+</tr>
+<tr>
+<td>Virtual machine</td>
+<td>App + guest OS ពេញ</td>
+<td>រឹង (kernel ដាច់)</td>
+<td>ធ្ងន់ start យឺត</td>
+</tr>
+<tr>
+<td>Container</td>
+<td>App + userland deps (គ្មាន guest OS ពេញ)</td>
+<td>Process-level (share kernel)</td>
+<td>ស្រាល start ក្នុងវិនាទី</td>
+</tr>
+</tbody></table>
+<p><strong>Containerization bet:</strong> apps ភាគច្រើនមិនត្រូវការ OS ទីពីរពេញទេ។ ពួកវាត្រូវការ <strong>filesystem និង libraries ស្ថិតស្ថេរប្រាកដ</strong> រួម <strong>isolation គ្រប់គ្រាន់</strong> ដើម្បី app មួយមិនធ្វើឱ្យ app ផ្សេងខូច។</p>
+<h4>រូបភាពប្រចាំថ្ងៃ</h4>
+<ul>
+<li><strong>VM</strong> គឺជួលផ្ទះពេញ (foundation, plumbing, electrical panel = guest OS)។</li>
+<li><strong>Container</strong> គឺបន្ទប់ក្នុងអគារ៖ បន្ទប់ឯកជន (files, processes, ports) share ប្រព័ន្ធ building (host kernel)។</li>
+<li><strong>Image</strong> គឺ blueprint បន្ទប់ដែលមាន furniture; <strong>container</strong> គឺ unit ដែល rent ហើយ start ពី blueprint នោះ។</li>
+</ul>
+<h4>Containerization ដោះស្រាយបញ្ហាអ្វី (លើស «Docker»)</h4>
+<ol>
+<li><strong>Reproducibility</strong> — bits ដូចគ្នា run នៅ laptop, CI និង server។</li>
+<li><strong>Density</strong> — apps ច្រើន per machine ដោយមិនចាំបាច់ VM មួយ per app។</li>
+<li><strong>Speed</strong> — start/stop ក្នុងវិនាទីសម្រាប់ deploy និង tests។</li>
+<li><strong>Portability</strong> — ផ្ទេរ unit រវាង environments ដោយមិន reinstall ពិភពលូត។</li>
+<li><strong>Clear boundaries</strong> — dependencies នៅ <em>ក្នុង</em> unit មិនមែន «នៅណាមួយនៅ host»។</li>
+</ol>
+<h4>Containerization vs Docker vs Kubernetes (ប្រៀបធៀប)</h4>
+<table>
+<thead>
+<tr>
+<th>ពាក្យ</th>
+<th>គឺអ្វី</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Containerization</strong></td>
+<td><em>Concept</em>៖ isolate + package + run ជាមួយ shared kernel</td>
+</tr>
+<tr>
+<td><strong>Docker</strong></td>
+<td><em>Platform</em> ពេញនិយម build, ship និង run containers</td>
+</tr>
+<tr>
+<td><strong>OCI</strong></td>
+<td>Open standards សម្រាប់ images និង runtimes (tools interoperate)</td>
+</tr>
+<tr>
+<td><strong>Kubernetes</strong></td>
+<td><em>Orchestrator</em>៖ schedule containers ច្រើន across machines</td>
+</tr>
+</tbody></table>
+<p>អ្នកអាច containerize ដោយមិនប្រើ Docker (Podman, containerd, nerdctl ជាដើម)។ ជាធរមានរៀន Docker មុន ពី workflow ច្បាស់ និង ecosystem ធំ។</p>
+<pre><code>  Concept: containerization
+       │
+       ▼
+  Standards: OCI image + runtime
+       │
+       ▼
+  Engines/tools: Docker, containerd, Podman, …
+       │
+       ▼
+  Orchestration (optional): Kubernetes, Swarm, Nomad, …
+</code></pre>
+<h3>ប្រវត្តិសង្ខេប (ហេតុអ្វីមាន)</h3>
+<ol>
+<li><strong>chroot</strong> (Unix) — ផ្លាស់ប្តូរ root filesystem ដែល process ឃើញ (filesystem jail; ខ្សោយពីរបួស)។</li>
+<li><strong>Linux namespaces + cgroups</strong> — kernel features ធ្វើ containers ពិតបាន (isolate identity; limit CPU/RAM)។</li>
+<li><strong>LXC</strong> និងផ្សេងៗ — «Linux containers» ដំបូងៗ។</li>
+<li><strong>Docker (2013+)</strong> — ធ្វើ <em>developer experience</em> mainstream៖ Dockerfile, images, Hub, CLI សាមញ្ញ។</li>
+<li><strong>OCI</strong> — standardize image/runtime formats ដើម្បី ecosystem មិន lock ទៅ vendor មួយជារៀងរហូត។</li>
+</ol>
+<p>មិនចាំបាច់ memorize ប្រវត្តិ។ ចងចាំ៖ <strong>containers = Linux kernel feature set + packaging format + UX ល្អ</strong>។</p>
+<h3>Model លម្អិត៖ អ្វី isolated ពិត?</h3>
+<p>នៅ Linux container ជារឿយៗ <strong>processes ធម្មតា</strong> ជាមួយ kernel controls បន្ថែម។</p>
+<h4>Namespaces — «ខ្ញុំឃើញអ្វី?»</h4>
+<p>Namespaces ផ្តល់ process ទស្សនៈផ្ទាល់របស់ system resources៖</p>
+<table>
+<thead>
+<tr>
+<th>Namespace</th>
+<th>Isolates</th>
+<th>ហេតុសំខាន់</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>pid</strong></td>
+<td>Process IDs</td>
+<td>ក្នុង container app អាច PID 1</td>
+</tr>
+<tr>
+<td><strong>mnt</strong></td>
+<td>Mounts / filesystem tree</td>
+<td>Container មាន <code>/</code> ផ្ទាល់ មិនមែន host</td>
+</tr>
+<tr>
+<td><strong>net</strong></td>
+<td>Network stack</td>
+<td>Interfaces, IPs, ports, routing ផ្ទាល់</td>
+</tr>
+<tr>
+<td><strong>uts</strong></td>
+<td>Hostname</td>
+<td>Container hostname ≠ host hostname</td>
+</tr>
+<tr>
+<td><strong>ipc</strong></td>
+<td>Shared memory / IPC</td>
+<td>Apps មិន collide IPC objects</td>
+</tr>
+<tr>
+<td><strong>user</strong></td>
+<td>User IDs (ជម្រើស)</td>
+<td>Map container root → unprivileged host user</td>
+</tr>
+</tbody></table>
+<p><strong>គំនិតឧទាហរណ៍:</strong> containers ពីរអាច listen port <code>80</code> <em>ក្នុង</em> network namespace ផ្ទាល់។ នៅ host publish ports ខុសគ្នា (<code>-p 8080:80</code> និង <code>-p 8081:80</code>)។</p>
+<h4>cgroups — «ខ្ញុំប្រើបានប៉ុន្មាន?»</h4>
+<p><strong>Control groups (cgroups)</strong> limit និង account resources៖</p>
+<ul>
+<li>CPU time</li>
+<li>Memory</li>
+<li>PIDs / process count</li>
+<li>Block I/O (ពេលខ្លះ)</li>
+</ul>
+<p>គ្មាន cgroups container runaway អាច starve host។ មានពួកវា អ្នកអាចនិយាយ «API នេះយ៉ាងច្រើន 512MB RAM»។</p>
+<h4>Union filesystem / layers — «disk build យ៉ាងដូចម្តេច?»</h4>
+<p>Images ជា <strong>layers</strong> stacked (read-only)។ Container run នោះ Docker បន្ថែម <strong>writable layer</strong> តូចពីលើ៖</p>
+<pre><code>[ writable container layer ]  ← changes while running (unless volumes)
+[ image layer: your app ]
+[ image layer: npm deps ]
+[ image layer: base OS userland ]
+</code></pre>
+<p>ហេតុនេះ៖</p>
+<ul>
+<li>Images share layers នៅ disk (មានប្រសិទ្ធភាព)។</li>
+<li>Rebuilds លឿន (cache layers មិនផ្លាស់)។</li>
+<li>Delete container បោះ writable layer (unless volumes)។</li>
+</ul>
+<h4>Shared kernel — tradeoff សំខាន់</h4>
+<p>Containers <strong>share host kernel</strong>។ នោះមានន័យ៖</p>
+<ul>
+<li>ស្រាលជាង VMs។</li>
+<li>Kernel bug ឬ privileged container misconfigured ធ្ងន់ជាង VM isolated ល្អ។</li>
+<li>Run Windows container kernel លើ Linux kernel (ឬផ្ទុយ) មិនបានដោយគ្មាន virtualization (Docker Desktop ប្រើ VM តូច Mac/Windows)។</li>
+</ul>
+<h3>Model លម្អិត៖ image vs container (lifecycle)</h3>
+<pre><code>Build time                         Run time
+─────────                          ────────
+Dockerfile  ──build──►  Image  ──run──►  Container (running)
+                          │                 │
+                          │                 ├─ stop  → stopped container
+                          │                 ├─ start → running again
+                          │                 └─ rm    → gone (writable layer lost)
+                          │
+                     push/pull
+                          │
+                       Registry
+</code></pre>
+<ul>
+<li><strong>Image</strong> = immutable template (ជាធរមាន)។</li>
+<li><strong>Container</strong> = instance មាន state (running ឬ stopped)។</li>
+<li><strong>Registry</strong> = shelf remote សម្រាប់ images (Docker Hub, GHCR, …)។</li>
+</ul>
+<p>Image មួយ → containers ច្រើន (ដូច class → objects)។</p>
+<h3>Docker implement containerization (stack សាមញ្ញ)</h3>
+<p>អ្នកវាយ <code>docker …</code>។ ជារួម៖</p>
+<pre><code>docker CLI  →  dockerd (Docker daemon)  →  containerd  →  runc  →  Linux namespaces/cgroups
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>ផ្នែក</th>
+<th>តួនាទី</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>CLI</strong></td>
+<td>Human interface (<code>docker run</code>, <code>build</code>, …)</td>
+</tr>
+<tr>
+<td><strong>dockerd</strong></td>
+<td>Docker API/orchestrator នៅ machine មួយ</td>
+</tr>
+<tr>
+<td><strong>containerd</strong></td>
+<td>Manage container lifecycle / images</td>
+</tr>
+<tr>
+<td><strong>runc</strong></td>
+<td>Create container តាម OCI runtime + kernel features</td>
+</tr>
+</tbody></table>
+<p>Docker Desktop (Mac/Windows) stack run <strong>ក្នុង Linux VM ស្រាល</strong> ពី host kernel Mac/Windows មិនមែន Linux kernel containers រំពឹង។</p>
+<p>កម្ម rare ប៉ះ <code>runc</code>។ យល់ stack ពន្យល់ error messages និង «ទីកន្លែង» run។</p>
+<h3>Lab៖ <code>labs/01-isolation-basics</code> (beginner)</h3>
+<p><strong>Path ពេញចិត្ត:</strong> បញ្ចប់ Lab 01 (Isolation basics)។ គំនិតដូច demos ខាងក្រោម ជាមួយ checklist និង «what to notice»។</p>
+<p><strong>មិន</strong>ត្រូវការចំណេះដឹងកម្រិតខ្ពស់ — តែ <code>docker run</code>, <code>exec</code>, <code>rm</code>។</p>
+<h3>Worked examples (reference ជម្រើស)</h3>
+<p>Demos ដូច Lab 01 ទុកនៅ handbook។ សន្មត Docker installed (Chapter 4)។ Skim ឥឡូវ read ahead រួច re-run បន្ទាប់ install — ឬធ្វើ lab។</p>
+<h4>ឧទាហរណ៍ A — Isolation process (pid namespace)</h4>
+<pre><code class="language-bash"># Start a quiet container
+docker run -d --name rean-ps alpine:3.22 sleep 3600
+
+# Processes *inside* the container (small list; sleep is typically PID 1)
+docker exec rean-ps ps aux
+
+# Processes on the host (huge list) — different pid namespace
+ps aux | head
+
+docker rm -f rean-ps
+</code></pre>
+<p>→ ក្នុង container <strong>មិន</strong>ឃើញ Chrome/Slack processes host។ នោះគឺ pid isolation។</p>
+<h4>ឧទាហរណ៍ B — Isolation filesystem (mnt namespace)</h4>
+<pre><code class="language-bash">docker run --rm -it alpine:3.22 sh -c &#39;echo hello-from-container &gt; /tmp/note.txt; cat /tmp/note.txt; ls /&#39;
+</code></pre>
+<p>→ Container មាន <code>/tmp</code> និង <code>/</code> ផ្ទាល់។ Create <code>/tmp/note.txt</code> ក្នុងមិន create file នៅ desktop host។</p>
+<p>Compare <strong>bind mount</strong> (folder share intentionally — live coding ពេលក្រោយ)៖</p>
+<pre><code class="language-bash">mkdir -p /tmp/rean-share
+echo &#39;from-host&#39; &gt; /tmp/rean-share/msg.txt
+docker run --rm -v /tmp/rean-share:/data alpine:3.22 cat /data/msg.txt
+# → from-host
+</code></pre>
+<p>Isolation default; sharing opt-in។</p>
+<h4>ឧទាហរណ៍ C — Isolation network (net namespace)</h4>
+<pre><code class="language-bash"># Two containers, each with nginx on container-port 80
+docker run -d --name rean-web-a -p 18080:80 nginx:1.28-alpine
+docker run -d --name rean-web-b -p 18081:80 nginx:1.28-alpine
+
+curl -s -o /dev/null -w &quot;%{http_code}\n&quot; http://127.0.0.1:18080/
+curl -s -o /dev/null -w &quot;%{http_code}\n&quot; http://127.0.0.1:18081/
+
+docker rm -f rean-web-a rean-web-b
+</code></pre>
+<p>→ Container នីមួយៗគិតថាមាន port <code>80</code>។ Host map published ports ខុសគ្នា។ Network namespacing + port publishing។</p>
+<h4>ឧទាហរណ៍ D — Resource limits (cgroups)</h4>
+<pre><code class="language-bash"># Limit memory; watch Docker enforce it
+docker run --rm -m 128m --memory-swap 128m alpine:3.22 \
+  sh -c &#39;echo &quot;cgroup memory limit applied&quot;; cat /sys/fs/cgroup/memory.max 2&gt;/dev/null || cat /sys/fs/cgroup/memory/memory.limit_in_bytes 2&gt;/dev/null || echo &quot;(limit visible via docker inspect)&quot;&#39;
+</code></pre>
+<p>Inspect ពីខាងក្រៅ៖</p>
+<pre><code class="language-bash">docker run -d --name rean-limited -m 256m alpine:3.22 sleep 60
+docker inspect -f &#39;{{.HostConfig.Memory}}&#39; rean-limited
+# → 268435456 (bytes)
+docker rm -f rean-limited
+</code></pre>
+<p>→ Containerization មិនតែ isolate <em>identity</em>; គឺ <strong>controlled consumption</strong>។</p>
+<h4>Example E — Image ដូចគ្នា containers ច្រើន (density)</h4>
+<pre><code class="language-bash">docker pull redis:7-alpine
+docker run -d --name rean-r1 redis:7-alpine
+docker run -d --name rean-r2 redis:7-alpine
+docker run -d --name rean-r3 redis:7-alpine
+docker ps --filter name=rean-r
+docker rm -f rean-r1 rean-r2 rean-r3
+</code></pre>
+<p>→ Image មួយ Redis processes isolated បី។ Density win ធៀប VMs បី។</p>
+<h4>ឧទាហរណ៍ F — Packaging «works the same» (portable unit)</h4>
+<pre><code class="language-bash"># Official image already packages Redis + its defaults
+docker run --rm -p 6379:6379 redis:7-alpine
+# In another terminal: docker run --rm -it redis:7-alpine redis-cli -h host.docker.internal ping
+# (On Linux you may use --network host or the container IP instead)
+</code></pre>
+<p>Chapters ក្រោយ <strong>build portable unit</strong> ផ្ទាល់ Dockerfile។ គំនិតដូចគ្នា៖ ship environment ជាមួយ app។</p>
+<h3><em>Inside</em> image container ធម្មតា?</h3>
+<p>ជាធរមាន៖</p>
+<ul>
+<li><strong>Userland</strong> minimal (Alpine, Debian slim, distroless, …) — <em>មិន</em> kernel ទីពីរ</li>
+<li>Language runtime (Node, Python, JVM, …) បើត្រូវការ</li>
+<li>Application files</li>
+<li>Default command (<code>CMD</code> / <code>ENTRYPOINT</code>)</li>
+<li>Metadata (ports, env defaults, labels)</li>
+</ul>
+<p><strong>ជាធរមានមិនមាន</strong>៖</p>
+<ul>
+<li>Hypervisor</li>
+<li><code>/home</code> host (unless mount)</li>
+<li>Filesystems containers ផ្សេង</li>
+<li>Desktop environment ពេញ</li>
+</ul>
+<h3>Containerization <em>មិន</em>មានន័យ</h3>
+<table>
+<thead>
+<tr>
+<th>Myth</th>
+<th>Reality</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>«Containers = VMs»</td>
+<td>ទេ — shared kernel, process-level isolation</td>
+</tr>
+<tr>
+<td>«Containers secure automatically»</td>
+<td>Defaults ជួយ ប៉ុន្តែ harden (users, scans, least privilege)</td>
+</tr>
+<tr>
+<td>«Container មួយ = machine VM-sized»</td>
+<td>Prefer <strong>concern មួយ per container</strong> (API, DB, worker) compose រួម</td>
+</tr>
+<tr>
+<td>«Docker តែវិធី»</td>
+<td>Docker popularize; OCI-compatible tools run containers</td>
+</tr>
+<tr>
+<td>«Run Docker = production solved»</td>
+<td>Config, secrets, networking, observability orchestrator</td>
+</tr>
+</tbody></table>
+<h3>ពេល containerize (និងពេលមិន)</h3>
+<p><strong>Fit ល្អ</strong></p>
+<ul>
+<li>Web APIs, workers, job runners</li>
+<li>Sidecars (proxy, log shipper)</li>
+<li>Databases <em>dev/test</em> (prod DB managed separately — team choice)</li>
+<li>CI tasks environment clean repeatable</li>
+<li>Ship artifact ដូចគ្នា laptop → staging → prod</li>
+</ul>
+<p><strong>Fit ខ្សោយ / careful</strong></p>
+<ul>
+<li>GUI desktop apps (possible ប៉ុន្តែ awkward)</li>
+<li>Apps ត្រូវការ host device / kernel module access</li>
+<li>Ultra-low-latency kernel workloads VM/bare metal mandated</li>
+<li>«Lift and shift» monolith messy <em>without</em> fix config — containers package chaos too</li>
+</ul>
+<h3>Mental checklist មុន run container</h3>
+<ol>
+<li><strong>Image</strong> អ្វី? (trust + tag/digest)</li>
+<li><strong>Isolated</strong> vs <strong>sharing</strong>? (ports, volumes, env)</li>
+<li><strong>Resources</strong> ប៉ុន្មាន? (memory/CPU limits prod)</li>
+<li><strong>Data</strong> ពេល remove container? (volumes!)</li>
+<li><strong>Who reach</strong>? (published ports, networks)</li>
+</ol>
+<h3>Bridge ទៅ guide នេះ</h3>
+<table>
+<thead>
+<tr>
+<th>Topic បន្ទាប់</th>
+<th>តភ្ជាប់ containerization</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Core mental model (Ch.3)</td>
+<td>Image / container / Dockerfile / registry vocabulary</td>
+</tr>
+<tr>
+<td>Isolation basics (Lab 01)</td>
+<td>Feel isolation commands <code>docker</code></td>
+</tr>
+<tr>
+<td>First containers (Ch.5 / Lab 02)</td>
+<td>Workflow run, logs, clean up</td>
+</tr>
+<tr>
+<td>Images &amp; Dockerfiles</td>
+<td><em>Build</em> portable unit</td>
+</tr>
+<tr>
+<td>Volumes &amp; networks</td>
+<td>Controlled exceptions isolation</td>
+</tr>
+<tr>
+<td>Compose</td>
+<td>Containers ច្រើន cooperate app</td>
+</tr>
+<tr>
+<td>Production &amp; security</td>
+<td>Harden shared-kernel world</td>
+</tr>
+</tbody></table>
+<p><strong>Takeaway:</strong> Containerization = <strong>package + isolate + limit + ship</strong> shared kernel។ Docker practice នៅ <code>rean-docker</code>។</p>
+<hr>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        <a class="pager-prev" href="./learn/1.km.html"><span>មុន</span>តើ Docker ដោះស្រាយបញ្ហាអ្វី?</a>
+        <a class="pager-next" href="./learn/3.km.html"><span>បន្ទាប់</span>គំរូគំនិតស្នូល</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

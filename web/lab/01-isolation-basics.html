@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>Isolation basics — rean-docker</title>
+    <meta name="description" content="Beginner: see process, file, network, and memory isolation." />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/lab/01-isolation-basics.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/lab/01-isolation-basics.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/lab/01-isolation-basics.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/lab/01-isolation-basics.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Isolation basics — rean-docker" />
+    <meta property="og:description" content="Beginner: see process, file, network, and memory isolation." />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/lab/01-isolation-basics.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Isolation basics — rean-docker" />
+    <meta name="twitter:description" content="Beginner: see process, file, network, and memory isolation." />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-lab"
+    data-static-locale="en"
+    data-static-twin="./01-isolation-basics.km.html"
+  >
+    <a class="skip-link" href="#main">Skip to content</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+      <p class="eyebrow">Hands-on</p>
+      <h1>Isolation basics</h1>
+      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+        <a class="btn btn-primary" href="./lab.html?id=01-isolation-basics">Open interactive reader</a>
+      </p>
+      <div class="md-body">
+<h2>Level</h2>
+<p><strong>Beginner.</strong> You only need <code>docker run</code>, <code>docker exec</code>, and <code>docker rm</code>.<br>You do <strong>not</strong> need to master kernel internals, OCI, or Kubernetes.</p>
+<h2>Goal</h2>
+<p>See, with your own eyes, that a container is <strong>isolated</strong> from the host and from other containers:</p>
+<ul>
+<li>processes</li>
+<li>files</li>
+<li>network ports</li>
+<li>memory limits</li>
+</ul>
+<p>Read <strong>Chapter 2</strong> for the “why.” This lab is only the <strong>feel it</strong> practice.</p>
+<h2>How this fits the path</h2>
+<table>
+<thead>
+<tr>
+<th>Lab</th>
+<th>What you learn</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>01 (this one)</strong></td>
+<td>What isolation <em>looks like</em></td>
+</tr>
+<tr>
+<td><strong>02 Hello containers</strong></td>
+<td>Everyday workflow: run, ports, logs, clean up</td>
+</tr>
+<tr>
+<td><strong>03+</strong></td>
+<td>Build images, env, Compose, volumes, production</td>
+</tr>
+</tbody></table>
+<p>Do <strong>01 → 02</strong> in order. Overlap is intentional: same simple commands, different focus.</p>
+<h2>Prerequisites</h2>
+<p>Docker installed and working (Chapter 4):</p>
+<pre><code class="language-bash">docker --version
+docker run --rm hello-world
+</code></pre>
+<p>On Windows, prefer <strong>WSL2</strong> or Git Bash. Bind-mount examples use <code>/tmp/...</code>; if that path is awkward on your OS, create a folder inside this repo and use that instead.</p>
+<h2>Steps</h2>
+<p><strong>Optional helper:</strong> after you understand the idea, <code>./run.sh</code> in this folder replays the non-interactive demos (uses <code>labs/01-isolation-basics/.share</code> for the bind mount instead of <code>/tmp</code>). Prefer typing the commands yourself the first time.</p>
+<h3>1. Process isolation</h3>
+<p>Inside a container you see only <em>its</em> processes — not your host’s apps.</p>
+<pre><code class="language-bash">docker run -d --name lab01-ps alpine:3.22 sleep 3600
+
+# Small list inside (sleep is usually PID 1)
+docker exec lab01-ps ps aux
+
+# Much larger list on the host
+ps aux | head
+
+docker rm -f lab01-ps
+</code></pre>
+<h3>2. Filesystem isolation</h3>
+<p>Files created in a container stay in that container unless you deliberately share a folder.</p>
+<pre><code class="language-bash"># This file lives only inside the container (gone when the container exits)
+docker run --rm alpine:3.22 sh -c &#39;echo hello-from-container &gt; /tmp/note.txt; cat /tmp/note.txt; ls /&#39;
+
+# Sharing is opt-in (bind mount) — isolation is the default
+mkdir -p /tmp/lab01-share
+echo &#39;from-host&#39; &gt; /tmp/lab01-share/msg.txt
+docker run --rm -v /tmp/lab01-share:/data alpine:3.22 cat /data/msg.txt
+# → from-host
+# On Windows without WSL, use a folder inside this lab (e.g. .share/) instead of /tmp.
+</code></pre>
+<h3>3. Network isolation</h3>
+<p>Each container can use “port 80” inside. On the host you publish different ports.</p>
+<pre><code class="language-bash">docker run -d --name lab01-web-a -p 18080:80 nginx:1.28-alpine
+docker run -d --name lab01-web-b -p 18081:80 nginx:1.28-alpine
+
+curl -s -o /dev/null -w &quot;%{http_code}\n&quot; http://127.0.0.1:18080/
+curl -s -o /dev/null -w &quot;%{http_code}\n&quot; http://127.0.0.1:18081/
+
+docker rm -f lab01-web-a lab01-web-b
+</code></pre>
+<h3>4. Memory limits</h3>
+<p>Docker can cap how much RAM a container may use.</p>
+<pre><code class="language-bash">docker run -d --name lab01-limited -m 256m alpine:3.22 sleep 60
+docker inspect -f &#39;{{.HostConfig.Memory}}&#39; lab01-limited
+# → 268435456 (bytes = 256 MiB)
+
+docker rm -f lab01-limited
+</code></pre>
+<h3>5. One image, many containers</h3>
+<p>Same image → several isolated containers (this is why containers are efficient).</p>
+<pre><code class="language-bash">docker pull redis:7-alpine
+docker run -d --name lab01-r1 redis:7-alpine
+docker run -d --name lab01-r2 redis:7-alpine
+docker run -d --name lab01-r3 redis:7-alpine
+
+docker ps --filter name=lab01-r
+docker rm -f lab01-r1 lab01-r2 lab01-r3
+</code></pre>
+<h2>What you should take away</h2>
+<table>
+<thead>
+<tr>
+<th>Demo</th>
+<th>Plain-English idea</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ps</code> inside vs host</td>
+<td>Container doesn’t see host processes</td>
+</tr>
+<tr>
+<td><code>/tmp/note.txt</code></td>
+<td>Container has its own filesystem</td>
+</tr>
+<tr>
+<td>Two nginx on port 80</td>
+<td>Each has its own network; host maps ports</td>
+</tr>
+<tr>
+<td><code>-m 256m</code></td>
+<td>You can limit resources</td>
+</tr>
+<tr>
+<td>Three Redis</td>
+<td>One image, many isolated instances</td>
+</tr>
+</tbody></table>
+<p><em>(Optional names for later: namespaces, cgroups, layers — Chapter 2. Skip them for now if they feel heavy.)</em></p>
+<h2>Success criteria</h2>
+<ul>
+<li><input disabled="" type="checkbox"> Short process list inside the container; long list on the host</li>
+<li><input disabled="" type="checkbox"> Bind mount showed sharing; without a mount, files stay isolated</li>
+<li><input disabled="" type="checkbox"> Both nginx URLs returned HTTP 200</li>
+<li><input disabled="" type="checkbox"> Inspect showed a 256 MiB memory limit</li>
+<li><input disabled="" type="checkbox"> Three Redis containers ran, then you cleaned them up</li>
+</ul>
+<h2>Next</h2>
+<p>Go to <strong>Lab 02 — Hello containers</strong> for the everyday <code>run</code> / logs / clean-up workflow.</p>
+
+      </div>
+      <nav class="pager" style="margin-top: 2rem">
+        
+        <a class="pager-next" href="./lab/02-hello.html"><span>Next lab</span>Hello containers</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>
