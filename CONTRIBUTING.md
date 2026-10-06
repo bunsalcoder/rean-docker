@@ -38,11 +38,11 @@ make check   # fail if anything drifted
 
 ## Khmer
 
-Files under `web/content/km/` are **hand-translated**. Keep the same numbered chapter headings (`## 1.` … `## 20.`) and the intro / table-of-contents titles so the reader can split the guide.
+Files under `web/content/km/` are **hand-translated**. Keep the same numbered chapter headings (`## 1.` … `## 20.`) and the intro / table-of-contents titles so the reader can split the guide. Prefer Khmer (or Khmer + technical English) for `###` / `####` subsection titles too — `make check-km-headings` fails on Latin-only subsection headings in the Khmer handbook.
 
 When you add a chapter or lab:
 
-1. Translate the matching Khmer file (same `## N.` headings).
+1. Translate the matching Khmer file (same `## N.` headings; translate subsection titles as well).
 2. If you add a lab folder, add `web/content/km/labs/<folder>.md`.
 3. Update lab strings in `web/assets/js/i18n.js` and `web/assets/js/i18n-km.js`.
 4. Run:
@@ -50,6 +50,7 @@ When you add a chapter or lab:
 ```bash
 make check-km    # structure only (not a byte-for-byte translation check)
 make check-km-parity  # checklist/code-fence counts + teaching invariants (IMAGE_REF, run.sh hints, etc.)
+make check-km-headings  # fail if Khmer handbook ###/#### titles are Latin-only
 make check-links # HTML/CSS/MD local link targets + labs/<id> mentions
 make check-all   # English copies + Khmer structure + parity + links
 ```
@@ -65,7 +66,7 @@ make bump-node-deps PKG=express@^4.21.2
 make check-lab-invariants
 ```
 
-Or merge the Dependabot PRs for each directory in one sitting. Do not assume a change in one lab propagates.
+Or merge the Dependabot PRs for **all six** lab directories in one sitting (partial merges fail `check-lab-invariants`). Prefer `make bump-node-deps` for a single coordinated PR. Do not assume a change in one lab propagates.
 
 | Lab | App shape | Hardening notes |
 |-----|-----------|-----------------|
@@ -112,13 +113,15 @@ Sitemap `lastmod` is derived from content file mtimes (or `SOURCE_DATE_EPOCH`), 
 
 ## Site vendor libraries (marked / DOMPurify)
 
-Self-hosted under `web/assets/js/vendor/` (no CDN). Versions are tracked in `web/package.json` for Dependabot. After a bump:
+Self-hosted under `web/assets/js/vendor/` (no CDN). Versions are tracked in `web/package.json` for Dependabot. **Before merging** a `/web` Dependabot PR (or any `web/package.json` bump), re-vendor so HTML integrity hashes stay in sync:
 
 ```bash
 make vendor-site            # copy UMD builds + refresh SRI on learn.html / lab.html
 make check-vendor-sri
 make check-vendor-versions  # package.json must match vendor README versions
 ```
+
+Merging `package.json` alone without `make vendor-site` fails CI (`check-vendor-sri` / `check-vendor-versions`).
 
 ## `.dockerignore` baseline (Node labs)
 
