@@ -44,7 +44,8 @@ jobs:
         run: cd web && npm ci --ignore-scripts
       - name: Regenerate static pages, sitemap, robots.txt, and search indexes
         run: |
-          cd web && node ../scripts/generate_static_pages.mjs
+          # Subshell so cwd stays repo root for the Python generators.
+          (cd web && node ../scripts/generate_static_pages.mjs)
           python3 ./scripts/generate_sitemap.py
           python3 ./scripts/generate_search_index.py
       - name: Verify generated site artifacts are committed
