@@ -1520,6 +1520,20 @@ body > main.section > .wrap {
     transform var(--dur-med) var(--ease-chapter);
 }
 
+.side-nav-index {
+  display: block;
+  opacity: 0.55;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.side-nav-meta {
+  opacity: 0.6;
+  font-weight: 500;
+  font-size: 0.8rem;
+}
+
 .side-nav a::before {
   content: "";
   position: absolute;
@@ -1820,6 +1834,83 @@ body > main.section > .wrap {
   padding: 0.15rem 0 0.15rem 1rem;
   border-left: 3px solid var(--ocean);
   color: var(--ink-soft);
+}
+
+.md-body .md-callout {
+  margin: 1.1rem 0 1.35rem;
+  padding: 0.75rem 0.9rem 0.85rem;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  border-left-width: 3px;
+  background: var(--surface);
+  color: var(--ink-soft);
+}
+
+.md-body .md-callout-hint {
+  border-left-color: var(--ocean);
+  background: color-mix(in srgb, var(--ocean-soft) 55%, var(--surface));
+}
+
+.md-body .md-callout-expected {
+  border-left-color: var(--ocean-deep);
+}
+
+.md-body .md-callout-error,
+.md-body .md-callout-pitfall {
+  border-left-color: #c45c26;
+  background: color-mix(in srgb, #c45c26 8%, var(--surface));
+}
+
+.md-body .md-callout-title {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+}
+
+.md-body details.md-callout > summary.md-callout-title {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.md-body details.md-callout > summary.md-callout-title::-webkit-details-marker {
+  display: none;
+}
+
+.md-body details.md-callout > summary.md-callout-title::before {
+  content: "";
+  width: 0.45rem;
+  height: 0.45rem;
+  border-right: 1.5px solid var(--muted);
+  border-bottom: 1.5px solid var(--muted);
+  transform: rotate(-45deg);
+  transition: transform var(--dur-fast) var(--ease);
+  flex-shrink: 0;
+}
+
+.md-body details.md-callout[open] > summary.md-callout-title::before {
+  transform: rotate(45deg);
+}
+
+.md-body .md-callout-body {
+  margin-top: 0.45rem;
+}
+
+.md-body .md-callout-body > :first-child {
+  margin-top: 0;
+}
+
+.md-body .md-callout-body > :last-child {
+  margin-bottom: 0;
+}
+
+.md-body aside.md-callout .md-callout-body > .md-callout-title {
+  margin-bottom: 0.35rem;
 }
 
 .md-body pre {

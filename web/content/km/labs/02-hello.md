@@ -20,6 +20,8 @@
 docker run --rm hello-world
 ```
 
+> **លទ្ធផលដែលរំពឹងទុក:** សារខ្លី Hello from Docker ដែលបញ្ចប់ដោយ “This message shows that your installation appears to be working correctly.”
+
 ### 2. Ubuntu បែប interactive
 
 ```bash
@@ -40,6 +42,8 @@ docker exec -it lab02-nginx sh
 docker stop lab02-nginx
 docker rm lab02-nginx
 ```
+
+> **កំហុសទូទៅ:** `Bind for 0.0.0.0:8080 failed: port is already allocated` — process ផ្សេង (ឬ `lab02-nginx` ចាស់) កំពុងប្រើ 8080។ រត់ `docker rm -f lab02-nginx` និង/ឬជ្រើស host port ទំនេរ (`-p 8081:80`)។
 
 ## លក្ខខណ្ឌជោគជ័យ
 

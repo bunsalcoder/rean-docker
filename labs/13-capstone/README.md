@@ -69,7 +69,9 @@ curl -s http://localhost:3000/ | python3 -m json.tool
 docker compose down
 ```
 
-**Pitfall:** baseline Compose assembles `DATABASE_URL` from `POSTGRES_USER` / `POSTGRES_PASSWORD`. Keep lab passwords simple, or URL-encode characters like `@`, `:`, `/`, and `#` (same lesson as Lab 05).
+> **Pitfall:** baseline Compose assembles `DATABASE_URL` from `POSTGRES_USER` / `POSTGRES_PASSWORD`. Keep lab passwords simple, or URL-encode characters like `@`, `:`, `/`, and `#` (same lesson as Lab 05).
+
+> **Tip:** A solid ownership path: (1) get baseline `/health` green, (2) add one new route and document it, (3) change something visible in Compose (service name, project, or prod hardening), (4) re-run curls + `compose.prod.yaml config`.
 
 Then apply your `CAPSTONE_OWN` changes and re-run the curls (plus any new route). Before you call the lab done, also validate prod Compose (or apply hardening from it):
 

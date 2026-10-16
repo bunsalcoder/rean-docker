@@ -1,7 +1,7 @@
 # Common local tasks for rean-docker
 PORT ?= 5501
 
-.PHONY: help serve sync check check-km check-km-parity check-km-headings check-lab-invariants check-all check-links check-vendor-sri check-vendor-versions check-routes sync-routes check-site-smoke static-pages sitemap sync-km-i18n sync-prod-dockerfiles bump-node-deps vendor-site smoke smoke-concept ci-local refresh-digests refresh-digests-check
+.PHONY: help serve sync check check-km check-km-parity check-km-headings check-lab-invariants check-all check-links check-vendor-sri check-vendor-versions check-routes sync-routes check-site-smoke check-frontend-logic static-pages sitemap sync-km-i18n sync-prod-dockerfiles bump-node-deps vendor-site smoke smoke-concept ci-local refresh-digests refresh-digests-check
 
 help:
 	@echo "rean-docker make targets:"
@@ -18,7 +18,8 @@ help:
 	@echo "  make check-vendor-sri  # fail if marked/DOMPurify SRI hashes drifted"
 	@echo "  make check-vendor-versions  # fail if package.json ≠ vendor README versions"
 	@echo "  make check-site-smoke  # HTTP smoke for pages, routes, indexes, 404"
-	@echo "  make check-all     # content + routes + links + vendor + site smoke checks"
+	@echo "  make check-frontend-logic  # Node tests for guide split + checklist keys"
+	@echo "  make check-all     # content + routes + links + vendor + site smoke + frontend logic"
 	@echo "  make static-pages  # regenerate crawlable chapter/lab HTML under web/learn|lab"
 	@echo "  make sitemap       # static pages + sitemap, robots.txt, and search indexes"
 	@echo "  make sync-km-i18n  # refresh Khmer chapter titles in i18n-km.js from km guide"
@@ -52,7 +53,7 @@ check:
 check-km:
 	./scripts/check_km_content.sh
 
-check-all: check check-km check-km-parity check-km-headings check-lab-invariants check-routes check-links check-vendor-sri check-vendor-versions check-site-smoke
+check-all: check check-km check-km-parity check-km-headings check-lab-invariants check-routes check-links check-vendor-sri check-vendor-versions check-site-smoke check-frontend-logic
 
 check-km-parity:
 	./scripts/check_km_parity.sh
@@ -77,6 +78,9 @@ check-vendor-versions:
 
 check-site-smoke:
 	python3 ./scripts/check_site_smoke.py
+
+check-frontend-logic:
+	node ./scripts/check_frontend_logic.mjs
 
 static-pages:
 	cd web && npm ci --ignore-scripts

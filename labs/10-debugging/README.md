@@ -54,7 +54,7 @@ docker compose run --rm client
 docker compose down
 ```
 
-Stuck? Peek at `compose.fixed.yaml` (same services, hostname already correct), then still edit `compose.yaml` so *you* make the fix.
+> **Hint:** Peek at `compose.fixed.yaml` (same services, hostname already correct), then still edit `compose.yaml` so *you* make the fix.
 
 `localhost` from your browser can still reach a published port. Sibling containers must use the **service name**.
 

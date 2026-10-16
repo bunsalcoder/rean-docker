@@ -20,6 +20,8 @@ Practice the commands you will use constantly: run a container, publish a port, 
 docker run --rm hello-world
 ```
 
+> **Expected output:** A short Hello from Docker message ending with “This message shows that your installation appears to be working correctly.”
+
 ### 2. Interactive Ubuntu
 
 ```bash
@@ -40,6 +42,8 @@ docker exec -it lab02-nginx sh
 docker stop lab02-nginx
 docker rm lab02-nginx
 ```
+
+> **Common error:** `Bind for 0.0.0.0:8080 failed: port is already allocated` — another process (or an old `lab02-nginx`) is using 8080. Run `docker rm -f lab02-nginx` and/or pick a free host port (`-p 8081:80`).
 
 ## Success criteria
 

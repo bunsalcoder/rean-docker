@@ -32,6 +32,10 @@ curl http://127.0.0.1:3000/
 curl http://127.0.0.1:3000/health
 ```
 
+> **Expected output:** `/` returns JSON (a greeting). `/health` returns `{"status":"ok"}`.
+
+> **Common error:** `failed to solve: failed to read dockerfile` — you are not in `labs/03-dockerfile`, or you omitted the trailing `.` build context. `cd` into the lab folder and run `docker build -t rean-hello:1.0 .` again.
+
 Inspect layers:
 
 ```bash
