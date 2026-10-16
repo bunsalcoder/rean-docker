@@ -145,6 +145,14 @@ const searchJs = readFileSync(join(ROOT, "web/assets/js/search.js"), "utf8");
 assert(searchJs.includes('role="combobox"'), "search input uses combobox pattern");
 assert(searchJs.includes("aria-activedescendant"), "search tracks aria-activedescendant");
 
+const i18nJs = readFileSync(join(ROOT, "web/assets/js/i18n.js"), "utf8");
+assert(i18nJs.includes("stashUiForReload") && i18nJs.includes("takeUiRestore"), "locale reload UI restore helpers");
+assert(searchJs.includes("restoreAfterLocale") || searchJs.includes("takeUiRestore"), "search restores after locale");
+const learnJs = readFileSync(join(ROOT, "web/assets/js/learn.js"), "utf8");
+assert(learnJs.includes("GUIDE_CACHE") || learnJs.includes("guide-cache"), "learn caches guide.md");
+const genStatic = readFileSync(join(ROOT, "scripts/generate_static_pages.mjs"), "utf8");
+assert(genStatic.includes("skipLabel") && genStatic.includes("a11y.skip"), "static pages bake skip-link locale");
+
 if (fail) {
   console.error("Frontend logic checks failed.");
   process.exit(1);

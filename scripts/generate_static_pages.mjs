@@ -132,6 +132,7 @@ function renderPage({
   ctaLabel,
   prevLabel,
   nextLabel,
+  skipLabel,
 }) {
   const file = staticName(id, locale);
   const dir = kind === "chapter" ? "learn" : "lab";
@@ -190,7 +191,7 @@ function renderPage({
     data-static-locale="${escapeAttr(locale)}"
     data-static-twin="${escapeAttr(twinHref)}"
   >
-    <a class="skip-link" href="#main">Skip to content</a>
+    <a class="skip-link" href="#main" data-i18n="a11y.skip">${escapeHtml(skipLabel || "Skip to content")}</a>
     <rean-header class="site-header" role="banner"></rean-header>
 
     <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
@@ -293,6 +294,7 @@ function main() {
           locale === "km" ? "បើកអ្នកអានអន្តរកម្ម" : "Open interactive reader",
         prevLabel: strings["learn.prev"] || "Previous",
         nextLabel: strings["learn.next"] || "Next",
+        skipLabel: strings["a11y.skip"] || "Skip to content",
       });
       fs.writeFileSync(path.join(learnDir, file), html, "utf8");
       written += 1;
@@ -341,6 +343,7 @@ function main() {
           locale === "km" ? "បើកអ្នកអានអន្តរកម្ម" : "Open interactive reader",
         prevLabel: strings["lab.prev"] || "Previous lab",
         nextLabel: strings["lab.next"] || "Next lab",
+        skipLabel: strings["a11y.skip"] || "Skip to content",
       });
       fs.writeFileSync(path.join(labDir, file), html, "utf8");
       written += 1;
