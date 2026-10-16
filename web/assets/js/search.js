@@ -154,23 +154,36 @@
     return indexPromise;
   };
 
-  const scoreDoc = (doc, terms) => {
+  const flattenAlts = (termGroups) => termGroups.flat();
+
+  const scoreDoc = (doc, termGroups) => {
     const hay = `${doc.title} ${doc.text}`.toLowerCase();
+    const title = doc.title.toLowerCase();
     let score = 0;
-    for (const term of terms) {
-      if (!hay.includes(term)) return 0;
-      if (doc.title.toLowerCase().includes(term)) score += 8;
-      const hits = hay.split(term).length - 1;
-      score += Math.min(hits, 6);
+    for (const alts of termGroups) {
+      let best = 0;
+      let matched = false;
+      for (const alt of alts) {
+        if (alt.length < 2 || !hay.includes(alt)) continue;
+        matched = true;
+        let local = 0;
+        if (title.includes(alt)) local += 8;
+        local += Math.min(hay.split(alt).length - 1, 6);
+        // Prefer more specific aliases (e.g. "docker compose" over "compose").
+        local += Math.min(alt.length, 12) * 0.05;
+        best = Math.max(best, local);
+      }
+      if (!matched) return 0;
+      score += best;
     }
     return score;
   };
 
-  const snippetFor = (doc, terms) => {
+  const snippetFor = (doc, termGroups) => {
     const lower = doc.text.toLowerCase();
     let at = -1;
-    for (const term of terms) {
-      const i = lower.indexOf(term);
+    for (const alt of flattenAlts(termGroups)) {
+      const i = lower.indexOf(alt);
       if (i !== -1 && (at === -1 || i < at)) at = i;
     }
     if (at < 0) return doc.text.slice(0, 140);
@@ -190,9 +203,11 @@
 
   const escapeAttr = escapeHtml;
 
-  const highlight = (text, terms) => {
+  const highlight = (text, termGroups) => {
     let out = escapeHtml(text);
-    terms.forEach((term) => {
+    // Longer alts first so “docker compose” marks before “compose”.
+    const alts = flattenAlts(termGroups).sort((a, b) => b.length - a.length);
+    alts.forEach((term) => {
       if (term.length < 2) return;
       const re = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi");
       out = out.replace(re, "<mark>$1</mark>");
@@ -200,27 +215,46 @@
     return out;
   };
 
+  const expandTerms = (query) =>
+    window.ReanGuide?.expandSearchTerms
+      ? window.ReanGuide.expandSearchTerms(query)
+      : String(query || "")
+          .toLowerCase()
+          .split(/\s+/)
+          .map((s) => s.trim())
+          .filter((s) => s.length >= 2)
+          .map((s) => [s]);
+
   const search = (docs, query) => {
-    const terms = String(query || "")
-      .toLowerCase()
-      .split(/\s+/)
-      .map((s) => s.trim())
-      .filter((s) => s.length >= 2);
-    if (!terms.length) return [];
+    const termGroups = expandTerms(query);
+    if (!termGroups.length) return [];
     return docs
-      .map((doc) => ({ doc, score: scoreDoc(doc, terms), terms }))
+      .map((doc) => ({ doc, score: scoreDoc(doc, termGroups), termGroups }))
       .filter((row) => row.score > 0)
       .sort((a, b) => b.score - a.score || a.doc.title.localeCompare(b.doc.title))
       .slice(0, 12);
   };
 
-  const setActive = (index) => {
-    const items = resultsEl?.querySelectorAll("[data-search-item]") || [];
-    activeIndex = index;
+  const syncCombobox = () => {
+    if (!input || !resultsEl) return;
+    const items = resultsEl.querySelectorAll("[data-search-item]");
+    const open = items.length > 0;
+    input.setAttribute("aria-expanded", open ? "true" : "false");
     items.forEach((el, i) => {
-      el.classList.toggle("is-active", i === activeIndex);
-      if (i === activeIndex) el.scrollIntoView({ block: "nearest" });
+      const selected = i === activeIndex;
+      el.classList.toggle("is-active", selected);
+      el.setAttribute("aria-selected", selected ? "true" : "false");
+      if (selected) {
+        input.setAttribute("aria-activedescendant", el.id);
+        el.scrollIntoView({ block: "nearest" });
+      }
     });
+    if (activeIndex < 0) input.removeAttribute("aria-activedescendant");
+  };
+
+  const setActive = (index) => {
+    activeIndex = index;
+    syncCombobox();
   };
 
   const renderResults = (rows, query) => {
@@ -229,29 +263,33 @@
     if (!query.trim()) {
       resultsEl.innerHTML = "";
       statusEl.textContent = t("search.hint");
+      syncCombobox();
       return;
     }
     if (!rows.length) {
       resultsEl.innerHTML = "";
       statusEl.textContent = t("search.empty");
+      syncCombobox();
       return;
     }
     statusEl.textContent = t("search.count", { n: rows.length });
     resultsEl.innerHTML = rows
-      .map(({ doc, terms }, i) => {
+      .map(({ doc, termGroups }, i) => {
         const kind = escapeHtml(
           doc.type === "lab" ? t("search.kindLab") : t("search.kindChapter")
         );
-        const snip = highlight(snippetFor(doc, terms), terms);
-        return `<li>
-          <a href="${escapeAttr(doc.href)}" data-search-item data-index="${i}">
+        const snip = highlight(snippetFor(doc, termGroups), termGroups);
+        const optionId = `rean-search-opt-${i}`;
+        return `<li role="presentation">
+          <a href="${escapeAttr(doc.href)}" id="${optionId}" role="option" aria-selected="false" data-search-item data-index="${i}">
             <span class="search-kind">${kind}</span>
-            <span class="search-title">${highlight(doc.title, terms)}</span>
+            <span class="search-title">${highlight(doc.title, termGroups)}</span>
             <span class="search-snippet">${snip}</span>
           </a>
         </li>`;
       })
       .join("");
+    syncCombobox();
   };
 
   const runQuery = async () => {
@@ -296,10 +334,20 @@
         </div>
         <label class="search-field">
           <span class="visually-hidden" data-search-title-sr></span>
-          <input type="search" data-search-input autocomplete="off" spellcheck="false" placeholder="" />
+          <input
+            type="search"
+            data-search-input
+            role="combobox"
+            aria-autocomplete="list"
+            aria-expanded="false"
+            aria-controls="rean-search-listbox"
+            autocomplete="off"
+            spellcheck="false"
+            placeholder=""
+          />
         </label>
-        <p class="search-status" data-search-status></p>
-        <ul class="search-results" data-search-results role="listbox"></ul>
+        <p class="search-status" data-search-status id="rean-search-status" role="status" aria-live="polite"></p>
+        <ul class="search-results" data-search-results id="rean-search-listbox" role="listbox" aria-labelledby="rean-search-title"></ul>
         <p class="search-kbd"><kbd>/</kbd> <span data-search-open-hint></span></p>
       </div>`;
     document.body.appendChild(dialog);
@@ -313,7 +361,10 @@
     if (titleSr) titleSr.textContent = t("search.title");
     const closeBtn = dialog.querySelector("[data-search-close]");
     if (closeBtn) closeBtn.setAttribute("aria-label", t("search.close"));
-    if (input) input.placeholder = t("search.placeholder");
+    if (input) {
+      input.placeholder = t("search.placeholder");
+      input.setAttribute("aria-describedby", "rean-search-status");
+    }
     if (statusEl) statusEl.textContent = t("search.hint");
     const openHint = dialog.querySelector("[data-search-open-hint]");
     if (openHint) openHint.textContent = t("search.openHint");

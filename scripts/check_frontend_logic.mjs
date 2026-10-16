@@ -123,6 +123,28 @@ const guideSrc = readFileSync(GUIDE_JS, "utf8");
 assert(/Expected output|លទ្ធផលដែលរំពឹងទុក/.test(guideSrc), "callout labels include Expected output (EN/KM)");
 assert(/Common error|កំហុសទូទៅ/.test(guideSrc), "callout labels include Common error (EN/KM)");
 
+assert(typeof Guide.expandSearchTerms === "function", "expandSearchTerms exported");
+const composeTerms = Guide.expandSearchTerms("compose");
+assert(
+  composeTerms.length === 1 && composeTerms[0].includes("docker compose"),
+  "compose expands to docker compose alias"
+);
+const phraseTerms = Guide.expandSearchTerms("docker compose volume");
+assert(
+  phraseTerms.some((g) => g.includes("compose")) && phraseTerms.some((g) => g.includes("volume")),
+  "phrase docker compose collapses then ANDs with volume"
+);
+const emptyTerms = Guide.expandSearchTerms("  the and  ");
+assert(emptyTerms.length === 0, "stopwords alone yield no terms");
+const ciTerms = Guide.expandSearchTerms("ci");
+assert(ciTerms.length === 1 && ciTerms[0].includes("github actions"), "ci expands via synonym group");
+
+const home = readFileSync(join(ROOT, "web/index.html"), "utf8");
+assert(home.includes("home.startTitle") && home.includes("start-steps"), "home has first-30-minutes onboarding");
+const searchJs = readFileSync(join(ROOT, "web/assets/js/search.js"), "utf8");
+assert(searchJs.includes('role="combobox"'), "search input uses combobox pattern");
+assert(searchJs.includes("aria-activedescendant"), "search tracks aria-activedescendant");
+
 if (fail) {
   console.error("Frontend logic checks failed.");
   process.exit(1);
