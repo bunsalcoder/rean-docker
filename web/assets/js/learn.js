@@ -105,12 +105,43 @@ function enhanceCodeBlocks(root) {
   });
 }
 
-async function loadText(url, { fallbackUrl } = {}) {
+const GUIDE_CACHE_PREFIX = "rean-docker:guide-cache:";
+const GUIDE_CACHE_TTL_MS = 30 * 60 * 1000;
+
+async function loadText(url, { fallbackUrl, cache = false } = {}) {
+  if (cache) {
+    try {
+      const raw = sessionStorage.getItem(GUIDE_CACHE_PREFIX + url);
+      const hit = raw ? JSON.parse(raw) : null;
+      if (
+        hit?.text &&
+        Number.isFinite(hit.at) &&
+        Date.now() - hit.at < GUIDE_CACHE_TTL_MS
+      ) {
+        return hit.text;
+      }
+    } catch {
+      /* private mode / corrupt */
+    }
+  }
+
   const res = await fetch(url);
-  if (res.ok) return res.text();
+  if (res.ok) {
+    const text = await res.text();
+    if (cache) {
+      try {
+        sessionStorage.setItem(
+          GUIDE_CACHE_PREFIX + url,
+          JSON.stringify({ text, at: Date.now() })
+        );
+      } catch {
+        /* quota / private mode */
+      }
+    }
+    return text;
+  }
   if (fallbackUrl && fallbackUrl !== url) {
-    const fallback = await fetch(fallbackUrl);
-    if (fallback.ok) return fallback.text();
+    return loadText(fallbackUrl, { cache });
   }
   throw new Error(`Could not load ${url}`);
 }
@@ -269,6 +300,12 @@ function setupSidebarToggle() {
   sidebar.addEventListener("click", (event) => {
     if (event.target.closest("a")) close();
   });
+
+  // Restore drawer after EN↔KM reload (narrow viewports).
+  const restore = window.ReanI18n?.takeUiRestore?.();
+  if (restore?.sidebarOpen && window.matchMedia("(max-width: 900px)").matches) {
+    open();
+  }
 }
 
 async function initLearnPage() {
@@ -283,7 +320,10 @@ async function initLearnPage() {
 
   try {
     const guideUrl = localizedContentUrl("guide.md");
-    const raw = await loadText(guideUrl.primary, { fallbackUrl: guideUrl.fallback });
+    const raw = await loadText(guideUrl.primary, {
+      fallbackUrl: guideUrl.fallback,
+      cache: true,
+    });
     // Strip TOC-only section noise at top but keep intro via how-to-use
     const chapters = splitGuide(raw);
     if (!chapters.length) throw new Error("No chapters found");

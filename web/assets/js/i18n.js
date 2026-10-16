@@ -359,6 +359,41 @@
     syncLangSwitch();
   };
 
+  const UI_RESTORE_KEY = "rean-docker:ui-restore";
+
+  /** Snapshot ephemeral UI before a language reload (search, sidebar). */
+  const stashUiForReload = () => {
+    try {
+      const dialog = document.querySelector("dialog.search-dialog");
+      const searchOpen = Boolean(
+        dialog && (dialog.open || dialog.hasAttribute("open"))
+      );
+      const searchQuery = document.querySelector("[data-search-input]")?.value || "";
+      const sidebarOpen = Boolean(document.querySelector("[data-sidebar].is-open"));
+      sessionStorage.setItem(
+        UI_RESTORE_KEY,
+        JSON.stringify({ searchOpen, searchQuery, sidebarOpen })
+      );
+    } catch {
+      /* private mode / quota */
+    }
+  };
+
+  // One snapshot per page load — search + learn/lab can both read it.
+  let uiRestoreOnce = undefined;
+  const takeUiRestore = () => {
+    if (uiRestoreOnce !== undefined) return uiRestoreOnce;
+    try {
+      const raw = sessionStorage.getItem(UI_RESTORE_KEY);
+      if (raw) sessionStorage.removeItem(UI_RESTORE_KEY);
+      const data = raw ? JSON.parse(raw) : null;
+      uiRestoreOnce = data && typeof data === "object" ? data : null;
+    } catch {
+      uiRestoreOnce = null;
+    }
+    return uiRestoreOnce;
+  };
+
   const setLocale = (next, { reload = true } = {}) => {
     const locale = normalize(next) || DEFAULT_LOCALE;
     currentLocale = locale;
@@ -370,6 +405,7 @@
     syncLocaleUrl(locale);
     announceLocale(locale);
     if (reload) {
+      stashUiForReload();
       const switches = document.querySelectorAll(".lang-switch");
       switches.forEach((group) => {
         group.setAttribute("data-pending", locale);
@@ -414,6 +450,8 @@
     localeHref,
     apply,
     setLocale,
+    stashUiForReload,
+    takeUiRestore,
     initLangSwitch,
   };
 

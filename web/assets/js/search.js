@@ -409,6 +409,19 @@
     runQuery();
   };
 
+  const restoreAfterLocale = () => {
+    const data = window.ReanI18n?.takeUiRestore?.();
+    if (!data) return;
+    if (data.searchQuery && input) input.value = data.searchQuery;
+    if (data.searchOpen) {
+      // Defer so focus lands after other DOMContentLoaded listeners.
+      window.setTimeout(() => open(), 0);
+    } else if (data.searchQuery) {
+      ensureIndex();
+      runQuery();
+    }
+  };
+
   const init = () => {
     mountDialog();
     document.querySelectorAll("[data-search-open]").forEach((btn) => {
@@ -431,6 +444,8 @@
         open();
       }
     });
+
+    restoreAfterLocale();
   };
 
   window.ReanSearch = { open, close, refreshLabels };

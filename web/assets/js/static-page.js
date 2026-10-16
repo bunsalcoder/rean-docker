@@ -32,6 +32,7 @@
           } catch {
             /* private mode */
           }
+          window.ReanI18n?.stashUiForReload?.();
           location.href = twin;
         },
         true

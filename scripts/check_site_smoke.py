@@ -169,6 +169,20 @@ def main() -> int:
             else:
                 print(f"OK:    static page {path} has content")
 
+        # Skip-link text is baked per locale (no English flash on KM static pages).
+        code, km_body = fetch(f"{base}/learn/1.km.html")
+        if code != 200 or "រំលងទៅមាតិកា" not in km_body:
+            print("FAIL: /learn/1.km.html missing Khmer skip-link text")
+            fail = 1
+        else:
+            print("OK:    /learn/1.km.html has locale-baked skip link")
+        code, en_body = fetch(f"{base}/learn/1.html")
+        if code != 200 or "Skip to content" not in en_body:
+            print("FAIL: /learn/1.html missing English skip-link text")
+            fail = 1
+        else:
+            print("OK:    /learn/1.html has locale-baked skip link")
+
         # Expected file counts: chapters + labs, each in EN + KM.
         learn_html = list((WEB / "learn").glob("*.html")) if (WEB / "learn").is_dir() else []
         lab_html = list((WEB / "lab").glob("*.html")) if (WEB / "lab").is_dir() else []
