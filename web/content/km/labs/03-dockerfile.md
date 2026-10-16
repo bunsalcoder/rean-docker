@@ -32,6 +32,10 @@ curl http://127.0.0.1:3000/
 curl http://127.0.0.1:3000/health
 ```
 
+> **លទ្ធផលដែលរំពឹងទុក:** `/` ត្រឡប់ JSON (សារសួស្តី)។ `/health` ត្រឡប់ `{"status":"ok"}`។
+
+> **កំហុសទូទៅ:** `failed to solve: failed to read dockerfile` — អ្នកមិននៅក្នុង `labs/03-dockerfile` ឬភ្លេច `.` នៅចុង build context។ `cd` ចូលថត lab រួចរត់ `docker build -t rean-hello:1.0 .` ម្ដងទៀត។
+
 ពិនិត្យ layers៖
 
 ```bash

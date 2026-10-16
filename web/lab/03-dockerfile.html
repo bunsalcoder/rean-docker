@@ -66,6 +66,12 @@ docker run --rm -p 3000:3000 --name lab03-api rean-hello:1.0
 <pre><code class="language-bash">curl http://127.0.0.1:3000/
 curl http://127.0.0.1:3000/health
 </code></pre>
+<blockquote>
+<p><strong>Expected output:</strong> <code>/</code> returns JSON (a greeting). <code>/health</code> returns <code>{&quot;status&quot;:&quot;ok&quot;}</code>.</p>
+</blockquote>
+<blockquote>
+<p><strong>Common error:</strong> <code>failed to solve: failed to read dockerfile</code> — you are not in <code>labs/03-dockerfile</code>, or you omitted the trailing <code>.</code> build context. <code>cd</code> into the lab folder and run <code>docker build -t rean-hello:1.0 .</code> again.</p>
+</blockquote>
 <p>Inspect layers:</p>
 <pre><code class="language-bash">docker history rean-hello:1.0
 </code></pre>

@@ -98,7 +98,12 @@ curl -s http://localhost:3000/health
 curl -s http://localhost:3000/ | python3 -m json.tool
 docker compose down
 </code></pre>
+<blockquote>
 <p><strong>អន្ទាក់:</strong> baseline Compose បង្កើត <code>DATABASE_URL</code> ពី <code>POSTGRES_USER</code> / <code>POSTGRES_PASSWORD</code>។ រក្សា password lab ឱ្យសាមញ្ញ ឬ URL-encode តួអក្សរ <code>@</code>, <code>:</code>, <code>/</code>, និង <code>#</code> (មេរៀនដូច Lab 05)។</p>
+</blockquote>
+<blockquote>
+<p><strong>គន្លឹះ:</strong> ផ្លូវ ownership ល្អ៖ (1) ឱ្យ baseline <code>/health</code> បៃតង, (2) បន្ថែម route ថ្មីមួយ ហើយកត់ក្នុង README, (3) ប្ដូរអ្វីដែលមើលឃើញក្នុង Compose (ឈ្មោះ service, project, ឬ prod hardening), (4) curl ម្ដងទៀត + <code>compose.prod.yaml config</code>។</p>
+</blockquote>
 <p>រួចអនុវត្តការផ្លាស់ប្តូរ <code>CAPSTONE_OWN</code> របស់អ្នក ហើយ curl ម្ដងទៀត (បូក route ថ្មីបើមាន)។ មុនហៅថា lab រួច ផ្ទៀងផ្ទាត់ផងដែរ prod Compose (ឬអនុវត្ត hardening ពីវា)៖</p>
 <pre><code class="language-bash">REGISTRY_OWNER=example IMAGE_REF=:sha-deadbee \
   docker compose -f compose.prod.yaml config

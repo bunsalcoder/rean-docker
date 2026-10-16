@@ -32,6 +32,17 @@ REQUIRED_SCRIPTS = (
     "assets/js/routes.js",
     "assets/js/i18n.js",
 )
+# SPA + search pages need the shared guide helper for chapter split / search fallback.
+GUIDE_SCRIPT_PAGES = ("index.html", "learn.html", "labs.html", "lab.html", "404.html")
+# Skip link is in page HTML; search/lang controls are injected by boot.js <rean-header>.
+PAGE_A11Y_MARKERS = (
+    ('class="skip-link"', "skip link"),
+    ('href="#main"', "skip link target #main"),
+)
+BOOT_A11Y_MARKERS = (
+    ("data-search-open", "search open control"),
+    ("data-set-lang", "language switcher"),
+)
 CSP_RE = re.compile(
     r'<meta\s+http-equiv="Content-Security-Policy"\s+content="[^"]+"\s*/?>',
     re.I,
@@ -65,6 +76,32 @@ def main() -> int:
             if script not in text:
                 print(f"FAIL: {page} missing {script}")
                 fail = 1
+        if page in GUIDE_SCRIPT_PAGES:
+            if "assets/js/guide.js" not in text:
+                print(f"FAIL: {page} missing assets/js/guide.js")
+                fail = 1
+            else:
+                print(f"OK:    {page} loads guide.js")
+        a11y_ok = True
+        for needle, label in PAGE_A11Y_MARKERS:
+            if needle not in text:
+                print(f"FAIL: {page} missing {label} ({needle})")
+                fail = 1
+                a11y_ok = False
+        if 'href="#main"' in text and 'id="main"' not in text:
+            print(f"FAIL: {page} has skip link but no id=main")
+            fail = 1
+            a11y_ok = False
+        if a11y_ok:
+            print(f"OK:    {page} skip-link → #main")
+
+    boot_js = (WEB / "assets" / "js" / "boot.js").read_text(encoding="utf-8")
+    for needle, label in BOOT_A11Y_MARKERS:
+        if needle not in boot_js:
+            print(f"FAIL: boot.js missing {label} ({needle})")
+            fail = 1
+        else:
+            print(f"OK:    boot.js has {label}")
 
     for locale in ("en", "km"):
         index_path = WEB / "assets" / f"search-index-{locale}.json"

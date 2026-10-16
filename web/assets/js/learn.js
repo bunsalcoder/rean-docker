@@ -59,36 +59,17 @@ function setEditSource(kind, id) {
 }
 
 function splitGuide(markdown) {
-  const lines = markdown.split("\n");
-  const starts = [];
-
-  lines.forEach((line, index) => {
-    CHAPTERS.forEach((ch, ci) => {
-      if (ch.match.test(line)) {
-        starts.push({ ci, index, title: ch.title, id: ch.id });
-      }
-    });
-  });
-
-  starts.sort((a, b) => a.index - b.index);
-
-  return starts.map((s, i) => {
-    let end = i + 1 < starts.length ? starts[i + 1].index : lines.length;
-    // Keep intro short: stop before the markdown TOC block
-    if (CHAPTERS[s.ci].id === "how-to-use") {
-      const tocAt = lines.findIndex(
-        (line, idx) =>
-          idx > s.index &&
-          (/^## Table of contents$/m.test(line) || line.trim() === "## តារាងខ្លឹមសារ")
-      );
-      if (tocAt !== -1) end = tocAt;
-    }
-    let body = lines.slice(s.index, end).join("\n").trim();
-    // Avoid duplicate title (page already shows H1)
-    body = body.replace(/^##\s.+\n+/, "");
-    const id = CHAPTERS[s.ci].id;
-    return { id, title: chapterTitle(id), body };
-  });
+  if (!window.ReanGuide?.splitSections) {
+    throw new Error("ReanGuide.splitSections unavailable — load guide.js before learn.js");
+  }
+  return window.ReanGuide.splitSections(markdown, CHAPTERS, {
+    clipIntroAtToc: true,
+    stripLeadingHeading: true,
+  }).map((s) => ({
+    id: s.id,
+    title: chapterTitle(s.id),
+    body: s.body,
+  }));
 }
 
 function enhanceCodeBlocks(root) {
@@ -104,16 +85,20 @@ function enhanceCodeBlocks(root) {
     btn.type = "button";
     btn.className = "copy-btn";
     btn.textContent = t("copy");
+    btn.setAttribute("aria-label", t("copy"));
     btn.addEventListener("click", async () => {
       const text = pre.querySelector("code")?.textContent || pre.textContent;
       try {
         await navigator.clipboard.writeText(text);
         btn.textContent = t("copied");
+        btn.setAttribute("aria-label", t("copied"));
         setTimeout(() => {
           btn.textContent = t("copy");
+          btn.setAttribute("aria-label", t("copy"));
         }, 1400);
       } catch {
         btn.textContent = t("copyFailed");
+        btn.setAttribute("aria-label", t("copyFailed"));
       }
     });
     wrap.appendChild(btn);
@@ -140,11 +125,6 @@ function checklistStorageKey(scope) {
   return `rean-docker:checklist:${scope}`;
 }
 
-function checklistItemKey(li, index) {
-  const text = (li?.textContent || "").replace(/\s+/g, " ").trim().toLowerCase();
-  return text || `item-${index}`;
-}
-
 function syncChecklistProgress(scope, boxes) {
   const total = boxes.length;
   let done = 0;
@@ -158,12 +138,36 @@ function enhanceChecklists(root, scope) {
   const boxes = root.querySelectorAll('li > input[type="checkbox"]');
   if (!boxes.length) return;
 
-  let saved = {};
+  let rawSaved = {};
   try {
-    saved = JSON.parse(localStorage.getItem(checklistStorageKey(scope)) || "{}");
+    rawSaved = JSON.parse(localStorage.getItem(checklistStorageKey(scope)) || "{}");
   } catch {
-    saved = {};
+    rawSaved = {};
   }
+
+  const guide = window.ReanGuide;
+  const saved = guide?.normalizeChecklistSaved
+    ? guide.normalizeChecklistSaved(rawSaved, boxes.length)
+    : rawSaved;
+
+  const persistIndexOnly = () => {
+    const indexOnly = {};
+    boxes.forEach((input, index) => {
+      const key = guide?.checklistIndexKey
+        ? guide.checklistIndexKey(index)
+        : `i:${index}`;
+      indexOnly[key] = Boolean(input.checked);
+      saved[key] = indexOnly[key];
+    });
+    Object.keys(saved).forEach((k) => {
+      if (!/^i:\d+$/.test(k)) delete saved[k];
+    });
+    try {
+      localStorage.setItem(checklistStorageKey(scope), JSON.stringify(indexOnly));
+    } catch {
+      /* ignore quota / private mode */
+    }
+  };
 
   boxes.forEach((input, index) => {
     const li = input.closest("li");
@@ -186,32 +190,36 @@ function enhanceChecklists(root, scope) {
       li.appendChild(label);
     }
 
-    const key = checklistItemKey(li, index);
-    if (Object.prototype.hasOwnProperty.call(saved, key)) {
-      input.checked = Boolean(saved[key]);
-    }
+    // Index keys survive EN↔KM; legacy text keys still resolve same-locale.
+    const key = guide?.checklistIndexKey
+      ? guide.checklistIndexKey(index)
+      : `i:${index}`;
+    input.checked = guide?.resolveChecklistChecked
+      ? guide.resolveChecklistChecked(saved, li, index)
+      : Boolean(saved[key]);
     li.classList.toggle("is-done", input.checked);
+    saved[key] = input.checked;
 
     input.addEventListener("change", () => {
       saved[key] = input.checked;
+      persistIndexOnly();
       li.classList.toggle("is-done", input.checked);
-      try {
-        localStorage.setItem(checklistStorageKey(scope), JSON.stringify(saved));
-      } catch {
-        /* ignore quota / private mode */
-      }
       syncChecklistProgress(scope, boxes);
     });
   });
 
+  // Rewrite any legacy text-key blob to stable index keys on first load.
+  persistIndexOnly();
   syncChecklistProgress(scope, boxes);
 }
 
 function sanitizeHtml(html) {
   if (window.DOMPurify) {
     // Keep GFM task-list checkboxes so enhanceChecklists can wire them up.
+    // details/summary are used for Expected output / Common error callouts.
     return DOMPurify.sanitize(html, {
-      ADD_ATTR: ["checked", "disabled"],
+      ADD_ATTR: ["checked", "disabled", "open"],
+      ADD_TAGS: ["details", "summary"],
     });
   }
   // Fail closed: never inject unsanitized Markdown HTML if DOMPurify is missing.
@@ -230,6 +238,7 @@ function renderMarkdown(target, md, { checklistScope } = {}) {
     target.innerHTML = `<pre>${md.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]))}</pre>`;
   }
   enhanceCodeBlocks(target);
+  window.ReanGuide?.enhanceCallouts?.(target);
   if (checklistScope) enhanceChecklists(target, checklistScope);
 }
 
@@ -384,7 +393,7 @@ async function initLearnPage() {
     navEl.innerHTML = chapters
       .map((c, i) => {
         const n = String(i + 1).padStart(2, "0");
-        return `<li><a href="${chapterHref(c.id)}" data-chapter-id="${c.id}"><small style="display:block;opacity:.55;font-size:.72rem;font-weight:700;letter-spacing:.06em">${n}</small>${c.title}</a></li>`;
+        return `<li><a href="${chapterHref(c.id)}" data-chapter-id="${c.id}"><small class="side-nav-index">${n}</small>${c.title}</a></li>`;
       })
       .join("");
 
@@ -557,7 +566,7 @@ async function initLabPage() {
 
   navEl.innerHTML = LABS.map(
     (l) =>
-      `<li><a href="${labHref(l.id)}" data-lab-id="${l.id}">${l.title}<br><span style="opacity:.6;font-weight:500;font-size:.8rem">${l.level}</span></a></li>`
+      `<li><a href="${labHref(l.id)}" data-lab-id="${l.id}">${l.title}<br><span class="side-nav-meta">${l.level}</span></a></li>`
   ).join("");
 
   window.ReanProgress?.decorateLabNav?.(navEl);

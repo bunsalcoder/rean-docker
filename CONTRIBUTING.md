@@ -52,8 +52,10 @@ make check-km    # structure only (not a byte-for-byte translation check)
 make check-km-parity  # checklist/code-fence counts + teaching invariants (IMAGE_REF, run.sh hints, etc.)
 make check-km-headings  # fail if Khmer handbook ###/#### titles are Latin-only
 make check-links # HTML/CSS/MD local link targets + labs/<id> mentions
-make check-all   # English copies + Khmer structure + parity + links
+make check-all   # English copies + Khmer structure + parity + links + frontend logic
 ```
+
+Lab callouts (optional): use a labeled blockquote so the reader turns it into a styled widget — `> **Expected output:** …`, `> **Common error:** …`, `> **Hint:**` / `> **Tip:**`, `> **Pitfall:**` (Khmer: `លទ្ធផលដែលរំពឹងទុក`, `កំហុសទូទៅ`, `គន្លឹះ`, `អន្ទាក់`).
 
 Optional: `make sync-km-i18n` (or `python3 scripts/sync_km_i18n.py`) refreshes Khmer chapter titles in `i18n-km.js` from the Khmer handbook.
 
@@ -142,4 +144,4 @@ Add lab-specific extras as needed (`dist` for Lab 08, `watch-demo` for Lab 11, `
 
 ## Pull requests
 
-Open PRs against **`develop`** (not `main`). GitHub fills the PR body from [`.github/PULL_REQUEST_TEMPLATE.md`](.github/PULL_REQUEST_TEMPLATE.md) — use that checklist (including `make ci-local` and sitemap when content changes). CI runs `make check-all` (English sync, Khmer structure/parity, shared lab hardening invariants, routes.json sync, local site link checks, vendor SRI/versions, and a static-site HTTP smoke), builds the lab Dockerfiles, smoke-tests labs 04, 05, 09, 12, and 13 via their `run.sh` helpers (`make smoke`), runs concept-lab helpers including Lab 03 (`make smoke-concept`), and fails on unfixed CRITICAL findings from Trivy for Labs **05, 08 (slim), 09, 12, and 13**. Early or intentional anti-pattern images (03, 08-fat, leaky, secret demo) are built but not CRITICAL-gated. The Pages workflow deploys from `main` **only after CI succeeds**; PRs dry-run the site build. Keep secrets out of git (`.env` is ignored; commit `.env.example` only). After content that affects SEO/search, run `make sitemap` and commit the generated files so CI’s dirty-tree check stays green.
+Open PRs against **`develop`** (not `main`). GitHub fills the PR body from [`.github/PULL_REQUEST_TEMPLATE.md`](.github/PULL_REQUEST_TEMPLATE.md) — use that checklist (including `make ci-local` and sitemap when content changes). CI runs `make check-all` (English sync, Khmer structure/parity, shared lab hardening invariants, routes.json sync, local site link checks, vendor SRI/versions, static-site HTTP smoke, and frontend guide/checklist logic), builds the lab Dockerfiles, smoke-tests labs 04, 05, 09, 12, and 13 via their `run.sh` helpers (`make smoke`), runs concept-lab helpers including Lab 03 (`make smoke-concept`), and fails on unfixed CRITICAL findings from Trivy for Labs **05, 08 (slim), 09, 12, and 13**. Early or intentional anti-pattern images (03, 08-fat, leaky, secret demo) are built but not CRITICAL-gated. The Pages workflow deploys from `main` **only after CI succeeds**; PRs dry-run the site build. Keep secrets out of git (`.env` is ignored; commit `.env.example` only). After content that affects SEO/search, run `make sitemap` and commit the generated files so CI’s dirty-tree check stays green.

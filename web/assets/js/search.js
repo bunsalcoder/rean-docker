@@ -42,26 +42,18 @@
       .trim();
 
   const splitGuide = (markdown) => {
-    const lines = markdown.split("\n");
-    const starts = [];
-    lines.forEach((line, index) => {
-      CHAPTER_MATCHERS.forEach((ch) => {
-        if (ch.match.test(line)) starts.push({ id: ch.id, index, heading: line.replace(/^##\s+/, "") });
-      });
-    });
-    starts.sort((a, b) => a.index - b.index);
-    return starts.map((s, i) => {
-      const end = i + 1 < starts.length ? starts[i + 1].index : lines.length;
-      const body = lines.slice(s.index, end).join("\n");
-      return {
-        type: "chapter",
-        id: s.id,
-        title: t(`chapter.${s.id}`),
-        href: window.ReanI18n?.localeHref?.(`./learn.html?c=${encodeURIComponent(s.id)}`) ??
-          `./learn.html?c=${encodeURIComponent(s.id)}`,
-        text: stripMd(body),
-      };
-    });
+    const sections = window.ReanGuide?.splitSections
+      ? window.ReanGuide.splitSections(markdown, CHAPTER_MATCHERS)
+      : [];
+    return sections.map((s) => ({
+      type: "chapter",
+      id: s.id,
+      title: t(`chapter.${s.id}`),
+      href:
+        window.ReanI18n?.localeHref?.(`./learn.html?c=${encodeURIComponent(s.id)}`) ??
+        `./learn.html?c=${encodeURIComponent(s.id)}`,
+      text: stripMd(s.body),
+    }));
   };
 
   const hydrateDoc = (raw) => {

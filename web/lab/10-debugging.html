@@ -80,7 +80,9 @@ docker compose down
 # → PONG
 docker compose down
 </code></pre>
-<p>Stuck? Peek at <code>compose.fixed.yaml</code> (same services, hostname already correct), then still edit <code>compose.yaml</code> so <em>you</em> make the fix.</p>
+<blockquote>
+<p><strong>Hint:</strong> Peek at <code>compose.fixed.yaml</code> (same services, hostname already correct), then still edit <code>compose.yaml</code> so <em>you</em> make the fix.</p>
+</blockquote>
 <p><code>localhost</code> from your browser can still reach a published port. Sibling containers must use the <strong>service name</strong>.</p>
 <h3>4. Inspect one field instead of drowning in JSON</h3>
 <pre><code class="language-bash">docker run -d --name lab10-inspect alpine:3.22 sleep 30
