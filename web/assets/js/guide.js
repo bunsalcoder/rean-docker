@@ -171,6 +171,95 @@
     });
   }
 
+  /**
+   * Expand a search query into terms, applying Docker synonym groups so
+   * “compose” also hits “docker compose” / “docker-compose”, etc.
+   * @returns {string[][]} each inner array is OR-alternatives for one AND-term
+   */
+  function expandSearchTerms(query) {
+    const STOP = new Set([
+      "a",
+      "an",
+      "the",
+      "and",
+      "or",
+      "to",
+      "of",
+      "in",
+      "on",
+      "for",
+      "with",
+      "from",
+      "your",
+      "how",
+      "what",
+      "why",
+    ]);
+
+    // Longer phrases first. Canon is the group id used for synonym lookup.
+    const PHRASES = [
+      ["docker-compose", "compose"],
+      ["docker compose", "compose"],
+      ["multi-stage", "multistage"],
+      ["multi stage", "multistage"],
+      ["bind-mount", "volume"],
+      ["bind mount", "volume"],
+      ["health check", "healthcheck"],
+      ["github actions", "cicd"],
+      ["ci/cd", "cicd"],
+    ];
+
+    const GROUPS = {
+      compose: ["compose", "docker compose", "docker-compose"],
+      volume: ["volume", "volumes", "bind mount", "bind-mount", "named volume"],
+      network: ["network", "networks", "bridge network", "service name"],
+      dockerfile: ["dockerfile", "docker file"],
+      healthcheck: ["healthcheck", "health check", "/health"],
+      secret: ["secret", "secrets", "buildkit"],
+      multistage: ["multi-stage", "multistage", "multi stage", "slim image"],
+      cicd: ["ci", "cd", "ci/cd", "github actions", "pipeline", "workflow"],
+      wsl: ["wsl", "wsl2", "windows"],
+      image: ["image", "images", "from scratch", "digest"],
+      container: ["container", "containers"],
+    };
+
+    let q = String(query || "")
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, " ");
+    if (!q) return [];
+
+    for (const [phrase, canon] of PHRASES) {
+      if (q.includes(phrase)) {
+        q = q.split(phrase).join(` ${canon} `);
+      }
+    }
+
+    const rawTerms = q
+      .split(/\s+/)
+      .map((s) => s.trim())
+      .filter((s) => s.length >= 2 && !STOP.has(s));
+
+    const altsFor = (term) => {
+      if (GROUPS[term]) return GROUPS[term];
+      for (const group of Object.values(GROUPS)) {
+        if (group.includes(term)) return group;
+      }
+      return [term];
+    };
+
+    const groups = [];
+    const seen = new Set();
+    for (const term of rawTerms) {
+      const alts = altsFor(term);
+      const key = alts[0];
+      if (seen.has(key)) continue;
+      seen.add(key);
+      groups.push([...new Set(alts.map((a) => a.toLowerCase()))]);
+    }
+    return groups;
+  }
+
   window.ReanGuide = {
     splitSections,
     checklistIndexKey,
@@ -178,5 +267,6 @@
     normalizeChecklistSaved,
     resolveChecklistChecked,
     enhanceCallouts,
+    expandSearchTerms,
   };
 })();
