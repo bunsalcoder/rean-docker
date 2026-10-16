@@ -57,9 +57,12 @@
 <h3>1. Hello World</h3>
 <pre><code class="language-bash">docker run --rm hello-world
 </code></pre>
-<blockquote>
-<p><strong>លទ្ធផលដែលរំពឹងទុក:</strong> សារខ្លី Hello from Docker ដែលបញ្ចប់ដោយ “This message shows that your installation appears to be working correctly.”</p>
-</blockquote>
+<details class="md-callout md-callout-expected">
+<summary class="md-callout-title">លទ្ធផលដែលរំពឹងទុក</summary>
+<div class="md-callout-body">
+<p>សារខ្លី Hello from Docker ដែលបញ្ចប់ដោយ “This message shows that your installation appears to be working correctly.”</p>
+</div>
+</details>
 <h3>2. Ubuntu បែប interactive</h3>
 <pre><code class="language-bash">docker run -it --rm ubuntu:24.04 bash
 # inside:
@@ -75,9 +78,12 @@ docker exec -it lab02-nginx sh
 docker stop lab02-nginx
 docker rm lab02-nginx
 </code></pre>
-<blockquote>
-<p><strong>កំហុសទូទៅ:</strong> <code>Bind for 0.0.0.0:8080 failed: port is already allocated</code> — process ផ្សេង (ឬ <code>lab02-nginx</code> ចាស់) កំពុងប្រើ 8080។ រត់ <code>docker rm -f lab02-nginx</code> និង/ឬជ្រើស host port ទំនេរ (<code>-p 8081:80</code>)។</p>
-</blockquote>
+<details class="md-callout md-callout-error">
+<summary class="md-callout-title">កំហុសទូទៅ</summary>
+<div class="md-callout-body">
+<p><code>Bind for 0.0.0.0:8080 failed: port is already allocated</code> — process ផ្សេង (ឬ <code>lab02-nginx</code> ចាស់) កំពុងប្រើ 8080។ រត់ <code>docker rm -f lab02-nginx</code> និង/ឬជ្រើស host port ទំនេរ (<code>-p 8081:80</code>)។</p>
+</div>
+</details>
 <h2>លក្ខខណ្ឌជោគជ័យ</h2>
 <ul>
 <li><input disabled="" type="checkbox"> អ្នកឃើញសារជោគជ័យ hello-world</li>

@@ -57,9 +57,12 @@
 <h3>1. Hello World</h3>
 <pre><code class="language-bash">docker run --rm hello-world
 </code></pre>
-<blockquote>
-<p><strong>Expected output:</strong> A short Hello from Docker message ending with “This message shows that your installation appears to be working correctly.”</p>
-</blockquote>
+<details class="md-callout md-callout-expected">
+<summary class="md-callout-title">Expected output</summary>
+<div class="md-callout-body">
+<p>A short Hello from Docker message ending with “This message shows that your installation appears to be working correctly.”</p>
+</div>
+</details>
 <h3>2. Interactive Ubuntu</h3>
 <pre><code class="language-bash">docker run -it --rm ubuntu:24.04 bash
 # inside:
@@ -75,9 +78,12 @@ docker exec -it lab02-nginx sh
 docker stop lab02-nginx
 docker rm lab02-nginx
 </code></pre>
-<blockquote>
-<p><strong>Common error:</strong> <code>Bind for 0.0.0.0:8080 failed: port is already allocated</code> — another process (or an old <code>lab02-nginx</code>) is using 8080. Run <code>docker rm -f lab02-nginx</code> and/or pick a free host port (<code>-p 8081:80</code>).</p>
-</blockquote>
+<details class="md-callout md-callout-error">
+<summary class="md-callout-title">Common error</summary>
+<div class="md-callout-body">
+<p><code>Bind for 0.0.0.0:8080 failed: port is already allocated</code> — another process (or an old <code>lab02-nginx</code>) is using 8080. Run <code>docker rm -f lab02-nginx</code> and/or pick a free host port (<code>-p 8081:80</code>).</p>
+</div>
+</details>
 <h2>Success criteria</h2>
 <ul>
 <li><input disabled="" type="checkbox"> You saw the hello-world success message</li>

@@ -66,12 +66,18 @@ docker run --rm -p 3000:3000 --name lab03-api rean-hello:1.0
 <pre><code class="language-bash">curl http://127.0.0.1:3000/
 curl http://127.0.0.1:3000/health
 </code></pre>
-<blockquote>
-<p><strong>លទ្ធផលដែលរំពឹងទុក:</strong> <code>/</code> ត្រឡប់ JSON (សារសួស្តី)។ <code>/health</code> ត្រឡប់ <code>{&quot;status&quot;:&quot;ok&quot;}</code>។</p>
-</blockquote>
-<blockquote>
-<p><strong>កំហុសទូទៅ:</strong> <code>failed to solve: failed to read dockerfile</code> — អ្នកមិននៅក្នុង <code>labs/03-dockerfile</code> ឬភ្លេច <code>.</code> នៅចុង build context។ <code>cd</code> ចូលថត lab រួចរត់ <code>docker build -t rean-hello:1.0 .</code> ម្ដងទៀត។</p>
-</blockquote>
+<details class="md-callout md-callout-expected">
+<summary class="md-callout-title">លទ្ធផលដែលរំពឹងទុក</summary>
+<div class="md-callout-body">
+<p><code>/</code> ត្រឡប់ JSON (សារសួស្តី)។ <code>/health</code> ត្រឡប់ <code>{&quot;status&quot;:&quot;ok&quot;}</code>។</p>
+</div>
+</details>
+<details class="md-callout md-callout-error">
+<summary class="md-callout-title">កំហុសទូទៅ</summary>
+<div class="md-callout-body">
+<p><code>failed to solve: failed to read dockerfile</code> — អ្នកមិននៅក្នុង <code>labs/03-dockerfile</code> ឬភ្លេច <code>.</code> នៅចុង build context។ <code>cd</code> ចូលថត lab រួចរត់ <code>docker build -t rean-hello:1.0 .</code> ម្ដងទៀត។</p>
+</div>
+</details>
 <p>ពិនិត្យ layers៖</p>
 <pre><code class="language-bash">docker history rean-hello:1.0
 </code></pre>

@@ -7,6 +7,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
+import { enhanceCalloutsHtml } from "./enhance_callouts_html.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
@@ -115,6 +116,10 @@ function firstParagraph(md) {
   if (!text) return "";
   const cut = text.slice(0, 160);
   return cut.length < text.length ? `${cut.trim()}…` : cut;
+}
+
+function renderMarkdownBody(md) {
+  return enhanceCalloutsHtml(marked.parse(md));
 }
 
 function renderPage({
@@ -280,7 +285,7 @@ function main() {
         locale,
         title: ch.title,
         description,
-        bodyHtml: marked.parse(ch.body),
+        bodyHtml: renderMarkdownBody(ch.body),
         spaHref: spa,
         twinHref: twin,
         prev: prev
@@ -329,7 +334,7 @@ function main() {
         locale,
         title: lab.title,
         description: lab.description,
-        bodyHtml: marked.parse(lab.body),
+        bodyHtml: renderMarkdownBody(lab.body),
         spaHref: spa,
         twinHref: twin,
         prev: prev

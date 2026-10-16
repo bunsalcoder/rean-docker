@@ -29,6 +29,8 @@ docker run --rm --env-file .env alpine:3.22 \
 
 You should see the values from `.env`. They live on the host, not in an image layer.
 
+> **Expected output:** `GREETING` and `DB_PASSWORD` print the values from your `.env` (defaults from `.env.example` if you did not edit).
+
 ### 2. Compose `env_file`
 
 ```bash
@@ -47,6 +49,8 @@ docker history rean-leaky:lab04
 ```
 
 `docker history` still shows `ENV DB_PASSWORD=super-secret-do-not-copy`. Anyone with the image can read it. Deleting the line later does **not** erase older layers.
+
+> **Tip:** Treat `docker history` as the “did this secret ever touch a layer?” check — if it shows up here, it is already too late for that image tag.
 
 Cleanup:
 

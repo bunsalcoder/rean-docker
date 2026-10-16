@@ -44,6 +44,8 @@ window.REAN_I18N_KM = {
   "home.howEyebrow": "របៀបដំណើរការ",
   "home.howLeadAfter": " នៅក្នុង repo។ ប្រើគេហទំព័រនេះជាអ្នកណែនាំ ហើយ terminal របស់អ្នកជាកន្លែងហ្វឹកហាត់។",
   "home.howLeadBefore": "មេរៀននីមួយៗត្រូវនឹងឯកសារក្រោម ",
+  "home.howPrint":
+    "ត្រូវការ PDF? បើកជំពូក ឬលំហាត់ណាមួយ រួចប្រើ បោះពុម្ព (ឬ Print → Save as PDF ក្នុង browser)។",
   "home.howTitle": "វាយពាក្យបញ្ជា។ កុំអានតែប៉ុណ្ណោះ។",
   "home.lead": "រៀន Docker តាមរយៈការអនុវត្ត ពី container ដំបូងដល់ production — ជំពូក ពាក្យបញ្ជា និងលំហាត់ដែលអ្នកធ្វើដោយខ្លួនឯង។",
   "home.meta.advancedLab09": "ថ្នាក់ខ្ពស់ · លំហាត់ 09",

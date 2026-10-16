@@ -68,6 +68,18 @@ docker inspect --format=&#39;Memory={{.HostConfig.Memory}} NanoCPUs={{.HostConfi
 
 docker compose down
 </code></pre>
+<details class="md-callout md-callout-expected">
+<summary class="md-callout-title">Expected output</summary>
+<div class="md-callout-body">
+<p><code>docker compose ps</code> shows the API as healthy, <code>/health</code> returns OK, and <code>HostConfig.Memory</code> prints <code>268435456</code> (256MiB).</p>
+</div>
+</details>
+<aside class="md-callout md-callout-hint" role="note">
+<div class="md-callout-body">
+<p class="md-callout-title">Tip</p>
+<p>If STATUS stays starting, wait a few seconds and re-run <code>ps</code> — the healthcheck needs a successful <code>/health</code> before Compose marks healthy.</p>
+</div>
+</aside>
 <h2>Discuss</h2>
 <ul>
 <li>Why <code>read_only: true</code> + <code>tmpfs: /tmp</code>?</li>

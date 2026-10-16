@@ -29,6 +29,10 @@ docker inspect --format='Memory={{.HostConfig.Memory}} NanoCPUs={{.HostConfig.Na
 docker compose down
 ```
 
+> **លទ្ធផលដែលរំពឹងទុក:** `docker compose ps` បង្ហាញ API ថា healthy, `/health` OK, និង `HostConfig.Memory` បង្ហាញ `268435456` (256MiB)។
+
+> **គន្លឹះ:** បើ STATUS នៅ starting រង់ចាំពីរបីវិនាទី រួច `ps` ម្ដងទៀត — healthcheck ត្រូវ `/health` ជោគជ័យមុន Compose សម្គាល់ healthy។
+
 ## ពិភាក្សា
 
 - ហេតុអ្វី `read_only: true` + `tmpfs: /tmp`?

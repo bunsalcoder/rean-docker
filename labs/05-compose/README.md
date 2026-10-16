@@ -32,6 +32,10 @@ curl http://127.0.0.1:3000/health
 # hit / a few times — "hits" should increase (Redis)
 ```
 
+> **Expected output:** `/health` is green once Postgres and Redis are healthy. `/` JSON includes `hits` (Redis) and `dbTime` (Postgres); `hits` climbs as you refresh.
+
+> **Common error:** `error while interpolating … POSTGRES_PASSWORD` or empty env — you forgot `cp .env.example .env` (or the file is empty). Compose will not invent those values.
+
 Useful commands:
 
 ```bash
@@ -50,9 +54,11 @@ If you changed `POSTGRES_USER` / `POSTGRES_DB` in `.env`, use those names in `ps
 2. `depends_on` + `service_healthy` waits until Postgres **and** Redis accept connections.
 3. Named volume `pgdata` survives `docker compose down` (unless `-v`).
 4. The password lives in `.env`, not as a literal in `compose.yaml`. Compose interpolates `${POSTGRES_PASSWORD}` at start time.
-5. `DATABASE_URL` is still assembled from those variables. Run `docker compose config` and you will see the interpolated URL — including the password. That is why production setups prefer Docker secrets or a vault, not a connection string sitting in Compose output. **Pitfall:** passwords with `@`, `:`, `/`, or `#` break URL interpolation — keep the lab password simple, or URL-encode / pass discrete `POSTGRES_*` vars into the app instead of one URL.
+5. `DATABASE_URL` is still assembled from those variables. Run `docker compose config` and you will see the interpolated URL — including the password. That is why production setups prefer Docker secrets or a vault, not a connection string sitting in Compose output.
 6. The API publishes as `127.0.0.1:${PORT}:3000` — reachable via curl on this machine, not advertised on every host interface.
 7. The API `Dockerfile` pins `FROM node:22-alpine@sha256:…` so CI’s CRITICAL scan stays reproducible. `postgres:16-alpine` / `redis:7-alpine` stay **floating series tags** in Compose so the file stays approachable. Lab 13 (and Chapter 15) pin those digests for supply-chain control — do not treat this Compose file as a production template.
+
+> **Pitfall:** passwords with `@`, `:`, `/`, or `#` break `DATABASE_URL` interpolation — keep the lab password simple, or URL-encode / pass discrete `POSTGRES_*` vars into the app instead of one URL.
 
 ## Success criteria
 
