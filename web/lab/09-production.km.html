@@ -68,6 +68,18 @@ docker inspect --format=&#39;Memory={{.HostConfig.Memory}} NanoCPUs={{.HostConfi
 
 docker compose down
 </code></pre>
+<details class="md-callout md-callout-expected">
+<summary class="md-callout-title">លទ្ធផលដែលរំពឹងទុក</summary>
+<div class="md-callout-body">
+<p><code>docker compose ps</code> បង្ហាញ API ថា healthy, <code>/health</code> OK, និង <code>HostConfig.Memory</code> បង្ហាញ <code>268435456</code> (256MiB)។</p>
+</div>
+</details>
+<aside class="md-callout md-callout-hint" role="note">
+<div class="md-callout-body">
+<p class="md-callout-title">គន្លឹះ</p>
+<p>បើ STATUS នៅ starting រង់ចាំពីរបីវិនាទី រួច <code>ps</code> ម្ដងទៀត — healthcheck ត្រូវ <code>/health</code> ជោគជ័យមុន Compose សម្គាល់ healthy។</p>
+</div>
+</aside>
 <h2>ពិភាក្សា</h2>
 <ul>
 <li>ហេតុអ្វី <code>read_only: true</code> + <code>tmpfs: /tmp</code>?</li>

@@ -1298,6 +1298,15 @@ body > main.section > .wrap {
   line-height: 1.55;
 }
 
+.how-print {
+  margin: 0.85rem 0 0;
+  color: var(--muted);
+  font-family: var(--font-ui);
+  font-size: 0.92rem;
+  line-height: 1.5;
+  max-width: 36rem;
+}
+
 .path-list {
   list-style: none;
   margin: 0;

@@ -32,6 +32,10 @@ curl http://127.0.0.1:3000/health
 # hit / a few times — "hits" should increase (Redis)
 ```
 
+> **លទ្ធផលដែលរំពឹងទុក:** `/health` បៃតងពេល Postgres និង Redis healthy។ `/` JSON មាន `hits` (Redis) និង `dbTime` (Postgres); `hits` កើនពេល refresh។
+
+> **កំហុសទូទៅ:** `error while interpolating … POSTGRES_PASSWORD` ឬ env ទទេ — ភ្លេច `cp .env.example .env` (ឬឯកសារទទេ)។ Compose មិនបង្កើតតម្លៃទាំងនោះឱ្យអ្នកទេ។
+
 ពាក្យបញ្ជាមានប្រយោជន៍៖
 
 ```bash
@@ -50,9 +54,11 @@ docker compose down -v     # DELETE database volume
 2. `depends_on` + `service_healthy` រង់ចាំរហូត Postgres **និង** Redis ទទួល connections។
 3. Named volume `pgdata` នៅរស់បន្ទាប់ពី `docker compose down` (លុះត្រាតែ `-v`)។
 4. Password ស្ថិតក្នុង `.env` មិនមែនជាតួអក្សរក្នុង `compose.yaml`។ Compose interpolate `${POSTGRES_PASSWORD}` ពេលចាប់ផ្ដើម។
-5. `DATABASE_URL` នៅតែត្រូវផ្គុំពី variables ទាំងនោះ។ រត់ `docker compose config` អ្នកនឹងឃើញ URL រួម password។ នោះហើយជាហេតុ production ចូលចិត្ត Docker secrets ឬ vault មិនមែន connection string នៅក្នុងលទ្ធផល Compose។ **Pitfall:** password មាន `@`, `:`, `/`, ឬ `#` បំបែក URL interpolation — រក្សា lab password សាមញ្ញ ឬ URL-encode / ផ្ញើ `POSTGRES_*` ដាច់ដោយឡែក ជំនួស URL មួយ។
+5. `DATABASE_URL` នៅតែត្រូវផ្គុំពី variables ទាំងនោះ។ រត់ `docker compose config` អ្នកនឹងឃើញ URL រួម password។ នោះហើយជាហេតុ production ចូលចិត្ត Docker secrets ឬ vault មិនមែន connection string នៅក្នុងលទ្ធផល Compose។
 6. API publish ជា `127.0.0.1:${PORT}:3000` — curl បានលើម៉ាស៊ីននេះ មិនផ្សព្វផ្សាយលើគ្រប់ host interface។
 7. API `Dockerfile` pin `FROM node:22-alpine@sha256:…` ដើម្បីឱ្យ CRITICAL scan ក្នុង CI reproducible។ `postgres:16-alpine` / `redis:7-alpine` នៅតែ **floating series tags** ក្នុង Compose ដើម្បីឱ្យ file ងាយចូល។ Lab 13 (និងជំពូក 15) pin digests ទាំងនោះសម្រាប់ supply-chain — កុំយក Compose file នេះធ្វើ production template។
+
+> **អន្ទាក់:** password មាន `@`, `:`, `/`, ឬ `#` បំបែក `DATABASE_URL` interpolation — រក្សា lab password សាមញ្ញ ឬ URL-encode / ផ្ញើ `POSTGRES_*` ដាច់ដោយឡែក ជំនួស URL មួយ។
 
 ## លក្ខខណ្ឌជោគជ័យ
 

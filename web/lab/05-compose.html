@@ -67,6 +67,18 @@ docker compose up --build
 curl http://127.0.0.1:3000/health
 # hit / a few times — &quot;hits&quot; should increase (Redis)
 </code></pre>
+<details class="md-callout md-callout-expected">
+<summary class="md-callout-title">Expected output</summary>
+<div class="md-callout-body">
+<p><code>/health</code> is green once Postgres and Redis are healthy. <code>/</code> JSON includes <code>hits</code> (Redis) and <code>dbTime</code> (Postgres); <code>hits</code> climbs as you refresh.</p>
+</div>
+</details>
+<details class="md-callout md-callout-error">
+<summary class="md-callout-title">Common error</summary>
+<div class="md-callout-body">
+<p><code>error while interpolating … POSTGRES_PASSWORD</code> or empty env — you forgot <code>cp .env.example .env</code> (or the file is empty). Compose will not invent those values.</p>
+</div>
+</details>
 <p>Useful commands:</p>
 <pre><code class="language-bash">docker compose ps
 docker compose logs -f api
@@ -81,10 +93,16 @@ docker compose down -v     # DELETE database volume
 <li><code>depends_on</code> + <code>service_healthy</code> waits until Postgres <strong>and</strong> Redis accept connections.</li>
 <li>Named volume <code>pgdata</code> survives <code>docker compose down</code> (unless <code>-v</code>).</li>
 <li>The password lives in <code>.env</code>, not as a literal in <code>compose.yaml</code>. Compose interpolates <code>${POSTGRES_PASSWORD}</code> at start time.</li>
-<li><code>DATABASE_URL</code> is still assembled from those variables. Run <code>docker compose config</code> and you will see the interpolated URL — including the password. That is why production setups prefer Docker secrets or a vault, not a connection string sitting in Compose output. <strong>Pitfall:</strong> passwords with <code>@</code>, <code>:</code>, <code>/</code>, or <code>#</code> break URL interpolation — keep the lab password simple, or URL-encode / pass discrete <code>POSTGRES_*</code> vars into the app instead of one URL.</li>
+<li><code>DATABASE_URL</code> is still assembled from those variables. Run <code>docker compose config</code> and you will see the interpolated URL — including the password. That is why production setups prefer Docker secrets or a vault, not a connection string sitting in Compose output.</li>
 <li>The API publishes as <code>127.0.0.1:${PORT}:3000</code> — reachable via curl on this machine, not advertised on every host interface.</li>
 <li>The API <code>Dockerfile</code> pins <code>FROM node:22-alpine@sha256:…</code> so CI’s CRITICAL scan stays reproducible. <code>postgres:16-alpine</code> / <code>redis:7-alpine</code> stay <strong>floating series tags</strong> in Compose so the file stays approachable. Lab 13 (and Chapter 15) pin those digests for supply-chain control — do not treat this Compose file as a production template.</li>
 </ol>
+<aside class="md-callout md-callout-pitfall" role="note">
+<div class="md-callout-body">
+<p class="md-callout-title">Pitfall</p>
+<p>passwords with <code>@</code>, <code>:</code>, <code>/</code>, or <code>#</code> break <code>DATABASE_URL</code> interpolation — keep the lab password simple, or URL-encode / pass discrete <code>POSTGRES_*</code> vars into the app instead of one URL.</p>
+</div>
+</aside>
 <h2>Success criteria</h2>
 <ul>
 <li><input disabled="" type="checkbox"> You copied <code>.env.example</code> → <code>.env</code> before <code>up</code></li>

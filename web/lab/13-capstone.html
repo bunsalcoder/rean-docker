@@ -98,12 +98,18 @@ curl -s http://localhost:3000/health
 curl -s http://localhost:3000/ | python3 -m json.tool
 docker compose down
 </code></pre>
-<blockquote>
-<p><strong>Pitfall:</strong> baseline Compose assembles <code>DATABASE_URL</code> from <code>POSTGRES_USER</code> / <code>POSTGRES_PASSWORD</code>. Keep lab passwords simple, or URL-encode characters like <code>@</code>, <code>:</code>, <code>/</code>, and <code>#</code> (same lesson as Lab 05).</p>
-</blockquote>
-<blockquote>
-<p><strong>Tip:</strong> A solid ownership path: (1) get baseline <code>/health</code> green, (2) add one new route and document it, (3) change something visible in Compose (service name, project, or prod hardening), (4) re-run curls + <code>compose.prod.yaml config</code>.</p>
-</blockquote>
+<aside class="md-callout md-callout-pitfall" role="note">
+<div class="md-callout-body">
+<p class="md-callout-title">Pitfall</p>
+<p>baseline Compose assembles <code>DATABASE_URL</code> from <code>POSTGRES_USER</code> / <code>POSTGRES_PASSWORD</code>. Keep lab passwords simple, or URL-encode characters like <code>@</code>, <code>:</code>, <code>/</code>, and <code>#</code> (same lesson as Lab 05).</p>
+</div>
+</aside>
+<aside class="md-callout md-callout-hint" role="note">
+<div class="md-callout-body">
+<p class="md-callout-title">Tip</p>
+<p>A solid ownership path: (1) get baseline <code>/health</code> green, (2) add one new route and document it, (3) change something visible in Compose (service name, project, or prod hardening), (4) re-run curls + <code>compose.prod.yaml config</code>.</p>
+</div>
+</aside>
 <p>Then apply your <code>CAPSTONE_OWN</code> changes and re-run the curls (plus any new route). Before you call the lab done, also validate prod Compose (or apply hardening from it):</p>
 <pre><code class="language-bash">REGISTRY_OWNER=example IMAGE_REF=:sha-deadbee \
   docker compose -f compose.prod.yaml config

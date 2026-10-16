@@ -61,6 +61,8 @@
     "home.howLeadBefore": "Each lesson maps to files under ",
     "home.howLeadAfter":
       " in the repo. Use this site as your guide, and your terminal as the workout room.",
+    "home.howPrint":
+      "Need a PDF? Open any chapter or lab and use Print (or your browser’s Print → Save as PDF).",
     "home.howCta": "Browse labs",
     "home.footer": "Learn Docker · phone, tablet, and desktop",
     "labs.title": "Labs — rean-docker",

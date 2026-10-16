@@ -5,7 +5,7 @@
  */
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import vm from "node:vm";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -152,6 +152,22 @@ const learnJs = readFileSync(join(ROOT, "web/assets/js/learn.js"), "utf8");
 assert(learnJs.includes("GUIDE_CACHE") || learnJs.includes("guide-cache"), "learn caches guide.md");
 const genStatic = readFileSync(join(ROOT, "scripts/generate_static_pages.mjs"), "utf8");
 assert(genStatic.includes("skipLabel") && genStatic.includes("a11y.skip"), "static pages bake skip-link locale");
+assert(genStatic.includes("enhanceCalloutsHtml"), "static pages enhance callouts");
+
+const { enhanceCalloutsHtml } = await import(
+  pathToFileURL(join(ROOT, "scripts/enhance_callouts_html.mjs")).href
+);
+const sampleCallout = enhanceCalloutsHtml(
+  "<blockquote><p><strong>Expected output:</strong> hello</p></blockquote>"
+);
+assert(sampleCallout.includes("<details") && sampleCallout.includes("md-callout-expected"), "HTML callout → details");
+const tipCallout = enhanceCalloutsHtml(
+  "<blockquote><p><strong>Tip:</strong> try again</p></blockquote>"
+);
+assert(tipCallout.includes("<aside") && tipCallout.includes("md-callout-hint"), "HTML tip → aside");
+
+const homeHtml = readFileSync(join(ROOT, "web/index.html"), "utf8");
+assert(homeHtml.includes("home.howPrint"), "home mentions print/PDF path");
 
 if (fail) {
   console.error("Frontend logic checks failed.");

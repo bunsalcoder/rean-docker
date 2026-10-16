@@ -29,6 +29,8 @@ docker run --rm --env-file .env alpine:3.22 \
 
 អ្នកគួរឃើញតម្លៃពី `.env`។ វាស្ថិតនៅលើ host មិនមែនក្នុង image layer។
 
+> **លទ្ធផលដែលរំពឹងទុក:** `GREETING` និង `DB_PASSWORD` បង្ហាញតម្លៃពី `.env` របស់អ្នក (default ពី `.env.example` បើមិនបានកែ)។
+
 ### 2. Compose `env_file`
 
 ```bash
@@ -47,6 +49,8 @@ docker history rean-leaky:lab04
 ```
 
 `docker history` នៅតែបង្ហាញ `ENV DB_PASSWORD=super-secret-do-not-copy`។ អ្នកណាមាន image អាចអានបាន។ លុបបន្ទាត់នោះក្រោយមិនលុប layer ចាស់។
+
+> **គន្លឹះ:** ចាត់ `docker history` ជាការពិនិត្យ «secret នេះធ្លាប់ប៉ះ layer ឬនៅ?» — បើឃើញនៅទីនេះ image tag នោះយឺតពេលហើយ។
 
 សម្អាត៖
 

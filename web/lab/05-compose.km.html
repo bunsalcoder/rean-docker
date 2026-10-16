@@ -67,6 +67,18 @@ docker compose up --build
 curl http://127.0.0.1:3000/health
 # hit / a few times — &quot;hits&quot; should increase (Redis)
 </code></pre>
+<details class="md-callout md-callout-expected">
+<summary class="md-callout-title">លទ្ធផលដែលរំពឹងទុក</summary>
+<div class="md-callout-body">
+<p><code>/health</code> បៃតងពេល Postgres និង Redis healthy។ <code>/</code> JSON មាន <code>hits</code> (Redis) និង <code>dbTime</code> (Postgres); <code>hits</code> កើនពេល refresh។</p>
+</div>
+</details>
+<details class="md-callout md-callout-error">
+<summary class="md-callout-title">កំហុសទូទៅ</summary>
+<div class="md-callout-body">
+<p><code>error while interpolating … POSTGRES_PASSWORD</code> ឬ env ទទេ — ភ្លេច <code>cp .env.example .env</code> (ឬឯកសារទទេ)។ Compose មិនបង្កើតតម្លៃទាំងនោះឱ្យអ្នកទេ។</p>
+</div>
+</details>
 <p>ពាក្យបញ្ជាមានប្រយោជន៍៖</p>
 <pre><code class="language-bash">docker compose ps
 docker compose logs -f api
@@ -81,10 +93,16 @@ docker compose down -v     # DELETE database volume
 <li><code>depends_on</code> + <code>service_healthy</code> រង់ចាំរហូត Postgres <strong>និង</strong> Redis ទទួល connections។</li>
 <li>Named volume <code>pgdata</code> នៅរស់បន្ទាប់ពី <code>docker compose down</code> (លុះត្រាតែ <code>-v</code>)។</li>
 <li>Password ស្ថិតក្នុង <code>.env</code> មិនមែនជាតួអក្សរក្នុង <code>compose.yaml</code>។ Compose interpolate <code>${POSTGRES_PASSWORD}</code> ពេលចាប់ផ្ដើម។</li>
-<li><code>DATABASE_URL</code> នៅតែត្រូវផ្គុំពី variables ទាំងនោះ។ រត់ <code>docker compose config</code> អ្នកនឹងឃើញ URL រួម password។ នោះហើយជាហេតុ production ចូលចិត្ត Docker secrets ឬ vault មិនមែន connection string នៅក្នុងលទ្ធផល Compose។ <strong>Pitfall:</strong> password មាន <code>@</code>, <code>:</code>, <code>/</code>, ឬ <code>#</code> បំបែក URL interpolation — រក្សា lab password សាមញ្ញ ឬ URL-encode / ផ្ញើ <code>POSTGRES_*</code> ដាច់ដោយឡែក ជំនួស URL មួយ។</li>
+<li><code>DATABASE_URL</code> នៅតែត្រូវផ្គុំពី variables ទាំងនោះ។ រត់ <code>docker compose config</code> អ្នកនឹងឃើញ URL រួម password។ នោះហើយជាហេតុ production ចូលចិត្ត Docker secrets ឬ vault មិនមែន connection string នៅក្នុងលទ្ធផល Compose។</li>
 <li>API publish ជា <code>127.0.0.1:${PORT}:3000</code> — curl បានលើម៉ាស៊ីននេះ មិនផ្សព្វផ្សាយលើគ្រប់ host interface។</li>
 <li>API <code>Dockerfile</code> pin <code>FROM node:22-alpine@sha256:…</code> ដើម្បីឱ្យ CRITICAL scan ក្នុង CI reproducible។ <code>postgres:16-alpine</code> / <code>redis:7-alpine</code> នៅតែ <strong>floating series tags</strong> ក្នុង Compose ដើម្បីឱ្យ file ងាយចូល។ Lab 13 (និងជំពូក 15) pin digests ទាំងនោះសម្រាប់ supply-chain — កុំយក Compose file នេះធ្វើ production template។</li>
 </ol>
+<aside class="md-callout md-callout-pitfall" role="note">
+<div class="md-callout-body">
+<p class="md-callout-title">អន្ទាក់</p>
+<p>password មាន <code>@</code>, <code>:</code>, <code>/</code>, ឬ <code>#</code> បំបែក <code>DATABASE_URL</code> interpolation — រក្សា lab password សាមញ្ញ ឬ URL-encode / ផ្ញើ <code>POSTGRES_*</code> ដាច់ដោយឡែក ជំនួស URL មួយ។</p>
+</div>
+</aside>
 <h2>លក្ខខណ្ឌជោគជ័យ</h2>
 <ul>
 <li><input disabled="" type="checkbox"> អ្នក copy <code>.env.example</code> → <code>.env</code> មុន <code>up</code></li>

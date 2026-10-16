@@ -80,9 +80,12 @@ docker compose down
 # → PONG
 docker compose down
 </code></pre>
-<blockquote>
-<p><strong>គន្លឹះ:</strong> មើល <code>compose.fixed.yaml</code> (services ដូចគ្នា hostname ត្រឹមត្រូវរួច) — រួចកែ <code>compose.yaml</code> ដោយខ្លួនឯង។</p>
-</blockquote>
+<aside class="md-callout md-callout-hint" role="note">
+<div class="md-callout-body">
+<p class="md-callout-title">គន្លឹះ</p>
+<p>មើល <code>compose.fixed.yaml</code> (services ដូចគ្នា hostname ត្រឹមត្រូវរួច) — រួចកែ <code>compose.yaml</code> ដោយខ្លួនឯង។</p>
+</div>
+</aside>
 <p><code>localhost</code> ពី browser អ្នកនៅតែអាចទៅដល់ port ដែល publish។ Containers បងប្អូនត្រូវប្រើ <strong>ឈ្មោះ service</strong>។</p>
 <h3>4. Inspect មួយវាល មិនមែនលិចក្នុង JSON</h3>
 <pre><code class="language-bash">docker run -d --name lab10-inspect alpine:3.22 sleep 30
