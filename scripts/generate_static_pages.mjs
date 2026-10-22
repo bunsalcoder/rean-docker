@@ -64,21 +64,26 @@ function escapeAttr(s) {
   return escapeHtml(s).replace(/'/g, "&#39;");
 }
 
-function chapterStarts(lines, locale) {
-  const howTo =
-    locale === "km"
-      ? /^## របៀបប្រើមគ្គុទ្ទេសក៍នេះ$/
-      : /^## How to use this guide$/;
-  const toc =
-    locale === "km" ? /^## តារាងខ្លឹមសារ$/ : /^## Table of contents$/;
+function chapterMatchers(chapters) {
+  return (chapters || []).map((ch) => {
+    const id = String(ch.id);
+    const source = ch.match || (/^\d+$/.test(id) ? `^## ${id}\\. ` : null);
+    if (!source) throw new Error(`Chapter ${id} needs match in routes.json`);
+    return { id, re: new RegExp(source) };
+  });
+}
+
+function chapterStarts(lines, chapters) {
+  const toc = /^## (Table of contents|តារាងខ្លឹមសារ)$/;
+  const matchers = chapterMatchers(chapters);
   const starts = [];
   for (let i = 0; i < lines.length; i++) {
-    if (howTo.test(lines[i])) {
-      starts.push({ id: "how-to-use", index: i });
-      continue;
+    for (const m of matchers) {
+      if (m.re.test(lines[i])) {
+        starts.push({ id: m.id, index: i });
+        break;
+      }
     }
-    const m = lines[i].match(/^## (\d+)\. /);
-    if (m) starts.push({ id: m[1], index: i });
   }
   starts.sort((a, b) => a.index - b.index);
 
@@ -94,8 +99,8 @@ function chapterStarts(lines, locale) {
   });
 }
 
-function splitGuide(markdown, locale) {
-  return chapterStarts(markdown.split("\n"), locale);
+function splitGuide(markdown, chapters) {
+  return chapterStarts(markdown.split("\n"), chapters);
 }
 
 function staticName(id, locale) {
@@ -255,7 +260,7 @@ function main() {
   for (const locale of ["en", "km"]) {
     const strings = locale === "km" ? kmMap : enMap;
     const guide = read(path.join(WEB, "content", locale, "guide.md"));
-    const chapters = splitGuide(guide, locale);
+    const chapters = splitGuide(guide, routes.chapters);
     const byId = new Map(chapters.map((c) => [c.id, c]));
 
     const ordered = chapterIds.map((id) => {

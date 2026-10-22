@@ -171,7 +171,11 @@ function syncChecklistProgress(scope, boxes) {
 
 function enhanceChecklists(root, scope) {
   const boxes = root.querySelectorAll('li > input[type="checkbox"]');
-  if (!boxes.length) return;
+  if (!boxes.length) {
+    // Intro / reference pages have no tasks — mark visited so "next chapter" can advance.
+    window.ReanProgress?.record(scope, 1, 1);
+    return;
+  }
 
   let rawSaved = {};
   try {
