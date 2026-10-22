@@ -143,6 +143,7 @@ function renderPage({
   prevLabel,
   nextLabel,
   skipLabel,
+  pairHtml = "",
 }) {
   const file = staticName(id, locale);
   const dir = kind === "chapter" ? "learn" : "lab";
@@ -209,6 +210,7 @@ function renderPage({
     <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
       <p class="eyebrow">${escapeHtml(eyebrow)}</p>
       <h1>${escapeHtml(title)}</h1>
+      ${pairHtml}
       <p class="cta-row" style="margin: 1rem 0 1.5rem">
         <a class="btn btn-primary" href="${escapeAttr(spaHref)}">${escapeHtml(ctaLabel)}</a>
       </p>
@@ -242,10 +244,29 @@ function wipeHtmlDir(dir) {
   }
 }
 
+function buildPairMaps(pairs) {
+  const chapterToLab = {};
+  const labToChapter = {};
+  for (const pair of pairs || []) {
+    const chapter = String(pair.chapter);
+    const lab = String(pair.lab);
+    chapterToLab[chapter] = lab;
+    // First pairing wins for labs that appear twice (e.g. Lab 11 ← Ch.15 then Ch.16).
+    if (!labToChapter[lab]) labToChapter[lab] = chapter;
+  }
+  return { chapterToLab, labToChapter };
+}
+
+function pairBlock({ label, href, text }) {
+  if (!href || !text) return "";
+  return `<p class="pair-cta"><span class="pair-cta-label">${escapeHtml(label)}</span><a href="${escapeAttr(href)}">${escapeHtml(text)}</a></p>`;
+}
+
 function main() {
   const routes = loadJson(path.join(WEB, "assets/routes.json"));
   const chapterIds = routes.chapters.map((c) => String(c.id));
   const labIds = routes.labs.map((l) => String(l.id));
+  const { chapterToLab, labToChapter } = buildPairMaps(routes.pairs);
 
   const enMap = parseStringMap(read(path.join(WEB, "assets/js/i18n.js")));
   const kmMap = { ...enMap, ...parseStringMap(read(path.join(WEB, "assets/js/i18n-km.js"))) };
@@ -286,6 +307,24 @@ function main() {
         strings["learn.description"] ||
         "rean-docker Docker curriculum";
 
+      const pairedLab = chapterToLab[ch.id];
+      let pairHtml = "";
+      if (pairedLab) {
+        const labTitle = strings[`labMeta.${pairedLab}`] || pairedLab;
+        const linkText = (strings["pair.labTitle"] || "Lab {n} — {title}")
+          .replace("{n}", pairedLab.slice(0, 2))
+          .replace("{title}", labTitle);
+        const labHref =
+          locale === "km"
+            ? `./lab.html?id=${encodeURIComponent(pairedLab)}&lang=km`
+            : `./lab.html?id=${encodeURIComponent(pairedLab)}`;
+        pairHtml = pairBlock({
+          label: strings["pair.practice"] || "Practice",
+          href: labHref,
+          text: linkText,
+        });
+      }
+
       const html = renderPage({
         kind: "chapter",
         id: ch.id,
@@ -307,6 +346,7 @@ function main() {
         prevLabel: strings["learn.prev"] || "Previous",
         nextLabel: strings["learn.next"] || "Next",
         skipLabel: strings["a11y.skip"] || "Skip to content",
+        pairHtml,
       });
       fs.writeFileSync(path.join(learnDir, file), html, "utf8");
       written += 1;
@@ -335,6 +375,24 @@ function main() {
           ? `./lab.html?id=${encodeURIComponent(lab.id)}&lang=km`
           : `./lab.html?id=${encodeURIComponent(lab.id)}`;
 
+      const pairedChapter = labToChapter[lab.id];
+      let pairHtml = "";
+      if (pairedChapter) {
+        const chapterTitle = strings[`chapter.${pairedChapter}`] || pairedChapter;
+        const linkText = (strings["pair.chapterTitle"] || "Chapter {n} — {title}")
+          .replace("{n}", pairedChapter)
+          .replace("{title}", chapterTitle);
+        const chapterHref =
+          locale === "km"
+            ? `./learn.html?c=${encodeURIComponent(pairedChapter)}&lang=km`
+            : `./learn.html?c=${encodeURIComponent(pairedChapter)}`;
+        pairHtml = pairBlock({
+          label: strings["pair.theory"] || "Theory",
+          href: chapterHref,
+          text: linkText,
+        });
+      }
+
       const html = renderPage({
         kind: "lab",
         id: lab.id,
@@ -356,6 +414,7 @@ function main() {
         prevLabel: strings["lab.prev"] || "Previous lab",
         nextLabel: strings["lab.next"] || "Next lab",
         skipLabel: strings["a11y.skip"] || "Skip to content",
+        pairHtml,
       });
       fs.writeFileSync(path.join(labDir, file), html, "utf8");
       written += 1;

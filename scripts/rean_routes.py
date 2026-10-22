@@ -42,6 +42,21 @@ def load_manifest(path: Path | None = None) -> dict:
             raise SystemExit(
                 f"Lab {lab.get('id')!r} needs a positive integer minutes in {manifest_path}"
             )
+
+    chapter_id_set = {str(ch["id"]) for ch in data["chapters"]}
+    lab_id_set = {str(lab["id"]) for lab in data["labs"]}
+    pairs = data.get("pairs") or []
+    if not isinstance(pairs, list):
+        raise SystemExit(f"pairs must be a list in {manifest_path}")
+    for pair in pairs:
+        if not isinstance(pair, dict):
+            raise SystemExit(f"Invalid pair entry in {manifest_path}")
+        chapter_id = str(pair.get("chapter") or "")
+        lab_id = str(pair.get("lab") or "")
+        if chapter_id not in chapter_id_set:
+            raise SystemExit(f"Pair chapter {chapter_id!r} missing from chapters")
+        if lab_id not in lab_id_set:
+            raise SystemExit(f"Pair lab {lab_id!r} missing from labs")
     return data
 
 

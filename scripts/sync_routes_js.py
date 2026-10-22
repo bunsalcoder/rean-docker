@@ -48,6 +48,14 @@ def render_routes_js(data: dict) -> str:
         for lab in data["labs"]
     ]
 
+    pair_lines = [
+        "    {"
+        f" chapter: {js_string(str(pair['chapter']))},"
+        f" lab: {js_string(str(pair['lab']))}"
+        " },"
+        for pair in data.get("pairs") or []
+    ]
+
     version = int(data.get("version") or 1)
     body = "\n".join(
         [
@@ -64,7 +72,26 @@ def render_routes_js(data: dict) -> str:
             "",
             "  const LAB_IDS = LAB_DEFS.map((lab) => lab.id);",
             "",
-            "  window.ReanRoutes = { version: VERSION, CHAPTERS, LAB_DEFS, LAB_IDS };",
+            "  const PAIR_LIST = [",
+            *pair_lines,
+            "  ];",
+            "",
+            "  const CHAPTER_TO_LAB = Object.fromEntries(",
+            "    PAIR_LIST.map((pair) => [pair.chapter, pair.lab])",
+            "  );",
+            "  const LAB_TO_CHAPTER = Object.fromEntries(",
+            "    [...PAIR_LIST].reverse().map((pair) => [pair.lab, pair.chapter])",
+            "  );",
+            "",
+            "  window.ReanRoutes = {",
+            "    version: VERSION,",
+            "    CHAPTERS,",
+            "    LAB_DEFS,",
+            "    LAB_IDS,",
+            "    PAIRS: PAIR_LIST,",
+            "    CHAPTER_TO_LAB,",
+            "    LAB_TO_CHAPTER,",
+            "  };",
             "})();",
             "",
         ]
