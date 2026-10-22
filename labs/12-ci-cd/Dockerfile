@@ -1,7 +1,7 @@
 # Pin Node 22 + Alpine by digest (Chapter 15). Tags move; this digest is the bits we mean.
 # Refresh with: docker buildx imagetools inspect node:22-alpine --format '{{json .Manifest}}'
 # Labs 09, 12, and 13 share this shape — keep them identical (see scripts/check_lab_invariants.sh).
-FROM node:22-alpine@sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32
+FROM node:26-alpine@sha256:ef24c5053d50fdc3e4e56eb4e7ddb7861874ab0fdc797046ba897581deb8e868
 
 WORKDIR /app
 
