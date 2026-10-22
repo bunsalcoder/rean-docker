@@ -1,6 +1,6 @@
 /* Generated from web/assets/routes.json — edit the JSON, then: make sync-routes */
 (() => {
-  const VERSION = 2;
+  const VERSION = 3;
   const CHAPTERS = [
     {
       id: "how-to-use",
@@ -49,5 +49,37 @@
 
   const LAB_IDS = LAB_DEFS.map((lab) => lab.id);
 
-  window.ReanRoutes = { version: VERSION, CHAPTERS, LAB_DEFS, LAB_IDS };
+  const PAIR_LIST = [
+    { chapter: "2", lab: "01-isolation-basics" },
+    { chapter: "5", lab: "02-hello" },
+    { chapter: "7", lab: "03-dockerfile" },
+    { chapter: "8", lab: "07-volumes" },
+    { chapter: "9", lab: "06-networks" },
+    { chapter: "10", lab: "04-env-secrets" },
+    { chapter: "11", lab: "05-compose" },
+    { chapter: "12", lab: "08-multi-stage" },
+    { chapter: "13", lab: "09-production" },
+    { chapter: "14", lab: "10-debugging" },
+    { chapter: "15", lab: "11-security" },
+    { chapter: "16", lab: "11-security" },
+    { chapter: "17", lab: "12-ci-cd" },
+    { chapter: "18", lab: "13-capstone" },
+  ];
+
+  const CHAPTER_TO_LAB = Object.fromEntries(
+    PAIR_LIST.map((pair) => [pair.chapter, pair.lab])
+  );
+  const LAB_TO_CHAPTER = Object.fromEntries(
+    [...PAIR_LIST].reverse().map((pair) => [pair.lab, pair.chapter])
+  );
+
+  window.ReanRoutes = {
+    version: VERSION,
+    CHAPTERS,
+    LAB_DEFS,
+    LAB_IDS,
+    PAIRS: PAIR_LIST,
+    CHAPTER_TO_LAB,
+    LAB_TO_CHAPTER,
+  };
 })();

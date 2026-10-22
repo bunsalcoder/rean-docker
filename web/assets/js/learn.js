@@ -384,9 +384,68 @@ function renderMissingRoute(bodyEl, titleEl, progressEl, pagerEl, { title, hint,
     progressEl.textContent = "";
   }
   if (pagerEl) pagerEl.innerHTML = "";
+  clearPairCta();
   document.title = `${title} — rean-docker`;
   bodyEl.innerHTML = `<div class="error"><strong>${title}</strong><br>${hint}<br><br><a class="btn btn-primary" href="${href}">${cta}</a></div>`;
   focusReaderTitle(titleEl);
+}
+
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function clearPairCta() {
+  const el = document.querySelector("[data-pair-cta]");
+  if (!el) return;
+  el.hidden = true;
+  el.innerHTML = "";
+}
+
+function renderPairCta({ kind, id }) {
+  const el = document.querySelector("[data-pair-cta]");
+  if (!el) return;
+
+  const routes = window.ReanRoutes || {};
+  let href = "";
+  let label = "";
+  let linkText = "";
+
+  if (kind === "chapter") {
+    const labId = routes.CHAPTER_TO_LAB?.[id];
+    if (!labId) {
+      clearPairCta();
+      return;
+    }
+    const num = labId.slice(0, 2);
+    href = labHref(labId);
+    label = t("pair.practice");
+    linkText = t("pair.labTitle", {
+      n: num,
+      title: t(`labMeta.${labId}`),
+    });
+  } else if (kind === "lab") {
+    const chapterId = routes.LAB_TO_CHAPTER?.[id];
+    if (!chapterId) {
+      clearPairCta();
+      return;
+    }
+    href = chapterHref(chapterId);
+    label = t("pair.theory");
+    linkText = t("pair.chapterTitle", {
+      n: chapterId,
+      title: t(`chapter.${chapterId}`),
+    });
+  } else {
+    clearPairCta();
+    return;
+  }
+
+  el.hidden = false;
+  el.innerHTML = `<span class="pair-cta-label">${escapeHtml(label)}</span><a href="${escapeHtml(href)}">${escapeHtml(linkText)}</a>`;
 }
 
 async function initLearnPage() {
@@ -463,6 +522,7 @@ async function initLearnPage() {
       });
       renderMarkdown(bodyEl, chapter.body, { checklistScope: `learn:${chapter.id}` });
       setEditSource("learn", chapter.id);
+      renderPairCta({ kind: "chapter", id: chapter.id });
       renderPager(index);
       if (focusTitle) focusReaderTitle(titleEl);
     };
@@ -648,6 +708,7 @@ async function initLabPage() {
       type: "article",
     });
     renderPager(index);
+    renderPairCta({ kind: "lab", id: lab.id });
 
     try {
       const md = await loadLabMarkdown(lab.id);

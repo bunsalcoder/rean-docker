@@ -184,6 +184,10 @@ assert(learnJs.includes('key !== "Escape"') || learnJs.includes('key === "Escape
 assert(learnJs.includes("prefersReducedMotion"), "learn respects reduced-motion for scroll");
 assert(learnJs.includes("record(scope, 1, 1)"), "checklist-free chapters mark visited");
 assert(i18nJs.includes("chapter.weekly-plan") && i18nJs.includes("chapter.glossary"), "appendix chapter titles exist");
+assert(i18nJs.includes("pair.practice") && i18nJs.includes("pair.theory"), "chapter↔lab pair CTA strings exist");
+const routesJs = readFileSync(join(ROOT, "web/assets/js/routes.js"), "utf8");
+assert(routesJs.includes("CHAPTER_TO_LAB") && routesJs.includes("LAB_TO_CHAPTER"), "routes expose chapter↔lab maps");
+assert(learnJs.includes("renderPairCta"), "learn renders chapter↔lab pair CTA");
 const siteJs = readFileSync(join(ROOT, "web/assets/js/site.js"), "utf8");
 assert(siteJs.includes("beforeprint"), "print expands collapsed callouts");
 assert(siteJs.includes("aria-controls") || siteJs.includes("setNavOpen"), "mobile nav manages open state");
@@ -193,6 +197,7 @@ const genStatic = readFileSync(join(ROOT, "scripts/generate_static_pages.mjs"), 
 assert(genStatic.includes("skipLabel") && genStatic.includes("a11y.skip"), "static pages bake skip-link locale");
 assert(genStatic.includes("enhanceCalloutsHtml"), "static pages enhance callouts");
 assert(genStatic.includes(".filter(Boolean)"), "static pager omits empty prev/next slots");
+assert(genStatic.includes("pairHtml") || genStatic.includes("pair-cta"), "static pages bake pair CTA");
 
 const { enhanceCalloutsHtml } = await import(
   pathToFileURL(join(ROOT, "scripts/enhance_callouts_html.mjs")).href

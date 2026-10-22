@@ -2069,6 +2069,47 @@ body > main.section > .wrap {
   font-family: var(--font-ui);
 }
 
+.pair-cta {
+  margin: 0.65rem 0 1.15rem;
+  font-family: var(--font-ui);
+  font-size: 0.92rem;
+  color: var(--muted);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.65rem;
+}
+
+.pair-cta[hidden] {
+  display: none;
+}
+
+.pair-cta-label {
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  color: var(--ocean-deep);
+}
+
+.pair-cta a {
+  color: var(--ink);
+  font-weight: 650;
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--ocean) 45%, transparent);
+  transition: color var(--dur-fast), border-color var(--dur-fast);
+}
+
+.pair-cta a:hover {
+  color: var(--ocean);
+  border-bottom-color: var(--ocean);
+}
+
+.pair-cta a:focus-visible {
+  outline: 2px solid var(--ocean);
+  outline-offset: 3px;
+}
+
 .edit-source {
   margin: 1.25rem 0 0;
   font-family: var(--font-ui);
