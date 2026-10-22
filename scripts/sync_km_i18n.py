@@ -11,7 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 GUIDE = ROOT / "web/content/km/guide.md"
 I18N_KM = ROOT / "web/assets/js/i18n-km.js"
-LEARN_JS = ROOT / "web/assets/js/learn.js"
+GUIDE_JS = ROOT / "web/assets/js/guide.js"
 
 PURE_TOC = "## " + "".join(
     map(
@@ -84,23 +84,12 @@ def main() -> None:
         encoding="utf-8",
     )
 
-    js = LEARN_JS.read_text(encoding="utf-8")
-    m = re.search(r'if \(CHAPTERS\[s\.ci\]\.id === "how-to-use"\) \{\n.*?\}', js, re.S)
-    if not m:
-        raise SystemExit("learn.js how-to-use TOC block not found")
-    block = (
-        "if (CHAPTERS[s.ci].id === \"how-to-use\") {\n"
-        "      const tocAt = lines.findIndex(\n"
-        "        (line, idx) =>\n"
-        "          idx > s.index &&\n"
-        "          (/^## Table of contents$/m.test(line) || line.trim() === "
-        + json.dumps(PURE_TOC, ensure_ascii=False)
-        + ")\n"
-        "      );\n"
-        "      if (tocAt !== -1) end = tocAt;\n"
-        "    }"
-    )
-    LEARN_JS.write_text(js[: m.start()] + block + js[m.end() :], encoding="utf-8")
+    # TOC clipping lives in guide.js (EN + KM). Fail if the Khmer heading drifted.
+    guide_js = GUIDE_JS.read_text(encoding="utf-8")
+    if PURE_TOC[3:] not in guide_js and "តារាងខ្លឹមសារ" not in guide_js:
+        raise SystemExit(
+            "guide.js TOC_LINE is missing the Khmer table-of-contents heading"
+        )
 
     print("TOC:", PURE_TOC)
     print("how-to-use:", chapters["how-to-use"])

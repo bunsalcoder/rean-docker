@@ -55,7 +55,7 @@
     <div class="backdrop" data-backdrop></div>
 
     <div class="app-shell">
-      <aside class="sidebar" data-sidebar>
+      <aside class="sidebar" id="reader-sidebar" data-sidebar>
         <h2 data-i18n="lab.sidebar">Labs</h2>
         <ul class="side-nav" data-lab-nav>
           <li class="status" data-i18n="learn.loading">Loading…</li>
@@ -67,7 +67,7 @@
 
       <main class="content-pane" id="main" tabindex="-1">
         <div class="toolbar">
-          <button class="btn btn-ghost side-toggle" type="button" data-side-toggle aria-expanded="false" data-i18n="lab.menu">
+          <button class="btn btn-ghost side-toggle" type="button" data-side-toggle aria-expanded="false" aria-controls="reader-sidebar" data-i18n="lab.menu">
             Labs menu
           </button>
           <div class="toolbar-end">

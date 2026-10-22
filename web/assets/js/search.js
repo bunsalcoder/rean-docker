@@ -281,7 +281,7 @@
         const snip = highlight(snippetFor(doc, termGroups), termGroups);
         const optionId = `rean-search-opt-${i}`;
         return `<li role="presentation">
-          <a href="${escapeAttr(doc.href)}" id="${optionId}" role="option" aria-selected="false" data-search-item data-index="${i}">
+          <a href="${escapeAttr(doc.href)}" id="${optionId}" role="option" tabindex="-1" aria-selected="false" data-search-item data-index="${i}">
             <span class="search-kind">${kind}</span>
             <span class="search-title">${highlight(doc.title, termGroups)}</span>
             <span class="search-snippet">${snip}</span>
