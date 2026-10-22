@@ -46,14 +46,14 @@ path = pathlib.Path(sys.argv[1])
 marked_sri, purify_sri = sys.argv[2], sys.argv[3]
 text = path.read_text(encoding="utf-8")
 text2, n1 = re.subn(
-    r'<script src="\./assets/js/vendor/marked\.min\.js"[^>]*>\s*</script>',
-    f'<script src="./assets/js/vendor/marked.min.js" integrity="{marked_sri}" crossorigin="anonymous"></script>',
+    r'<script(?:\s+defer)?\s+src="\./assets/js/vendor/marked\.min\.js"[^>]*>\s*</script>',
+    f'<script defer src="./assets/js/vendor/marked.min.js" integrity="{marked_sri}" crossorigin="anonymous"></script>',
     text,
     count=1,
 )
 text3, n2 = re.subn(
-    r'<script src="\./assets/js/vendor/purify\.min\.js"[^>]*>\s*</script>',
-    f'<script src="./assets/js/vendor/purify.min.js" integrity="{purify_sri}" crossorigin="anonymous"></script>',
+    r'<script(?:\s+defer)?\s+src="\./assets/js/vendor/purify\.min\.js"[^>]*>\s*</script>',
+    f'<script defer src="./assets/js/vendor/purify.min.js" integrity="{purify_sri}" crossorigin="anonymous"></script>',
     text2,
     count=1,
 )
