@@ -589,7 +589,19 @@ rean-header {
 .nav-toggle:focus-visible,
 .side-toggle:focus-visible,
 .nav a:focus-visible,
-.search-toggle:focus-visible {
+.search-toggle:focus-visible,
+.logo:focus-visible,
+.side-nav a:focus-visible,
+.pager a:focus-visible,
+.lab-grid a:focus-visible,
+.copy-btn:focus-visible,
+.progress-next:focus-visible,
+.search-results a:focus-visible,
+.search-close:focus-visible,
+.edit-source a:focus-visible,
+.site-footer a:focus-visible,
+.sidebar-foot a:focus-visible,
+.path-more a:focus-visible {
   outline: 2px solid var(--ocean);
   outline-offset: 3px;
 }
@@ -2312,6 +2324,10 @@ body > main.section > .wrap {
   .nav.is-open {
     display: flex;
     animation: rise var(--dur) var(--ease);
+  }
+
+  body.nav-open {
+    overflow: hidden;
   }
 
   .nav a {

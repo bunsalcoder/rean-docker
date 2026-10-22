@@ -144,15 +144,27 @@ assert(home.includes("home.startTitle") && home.includes("start-steps"), "home h
 const searchJs = readFileSync(join(ROOT, "web/assets/js/search.js"), "utf8");
 assert(searchJs.includes('role="combobox"'), "search input uses combobox pattern");
 assert(searchJs.includes("aria-activedescendant"), "search tracks aria-activedescendant");
+assert(searchJs.includes('tabindex="-1"'), "search options are not tab stops");
 
 const i18nJs = readFileSync(join(ROOT, "web/assets/js/i18n.js"), "utf8");
 assert(i18nJs.includes("stashUiForReload") && i18nJs.includes("takeUiRestore"), "locale reload UI restore helpers");
+assert(i18nJs.includes("learn.notFound") && i18nJs.includes("lab.notFound"), "not-found route copy keys exist");
+assert(!i18nJs.includes("02 workflow"), "labs intro does not say 02 workflow");
 assert(searchJs.includes("restoreAfterLocale") || searchJs.includes("takeUiRestore"), "search restores after locale");
 const learnJs = readFileSync(join(ROOT, "web/assets/js/learn.js"), "utf8");
 assert(learnJs.includes("GUIDE_CACHE") || learnJs.includes("guide-cache"), "learn caches guide.md");
+assert(learnJs.includes("showMissingChapter") || learnJs.includes("learn.notFound"), "learn handles unknown chapter ids");
+assert(learnJs.includes('key !== "Escape"') || learnJs.includes('key === "Escape"'), "sidebar closes on Escape");
+assert(learnJs.includes("prefersReducedMotion"), "learn respects reduced-motion for scroll");
+const siteJs = readFileSync(join(ROOT, "web/assets/js/site.js"), "utf8");
+assert(siteJs.includes("beforeprint"), "print expands collapsed callouts");
+assert(siteJs.includes("aria-controls") || siteJs.includes("setNavOpen"), "mobile nav manages open state");
+const progressJs = readFileSync(join(ROOT, "web/assets/js/progress.js"), "utf8");
+assert(progressJs.includes('aria-live="polite"'), "progress transfer status is announced");
 const genStatic = readFileSync(join(ROOT, "scripts/generate_static_pages.mjs"), "utf8");
 assert(genStatic.includes("skipLabel") && genStatic.includes("a11y.skip"), "static pages bake skip-link locale");
 assert(genStatic.includes("enhanceCalloutsHtml"), "static pages enhance callouts");
+assert(genStatic.includes(".filter(Boolean)"), "static pager omits empty prev/next slots");
 
 const { enhanceCalloutsHtml } = await import(
   pathToFileURL(join(ROOT, "scripts/enhance_callouts_html.mjs")).href

@@ -189,19 +189,54 @@
   window.addEventListener("scroll", onScroll, { passive: true });
 
   if (toggle && nav) {
+    if (!nav.id) nav.id = "site-nav";
+    toggle.setAttribute("aria-controls", nav.id);
+
+    const setNavOpen = (open) => {
+      toggle.setAttribute("aria-expanded", String(open));
+      nav.classList.toggle("is-open", open);
+      document.body.classList.toggle("nav-open", open);
+    };
+
     toggle.addEventListener("click", () => {
-      const open = toggle.getAttribute("aria-expanded") === "true";
-      toggle.setAttribute("aria-expanded", String(!open));
-      nav.classList.toggle("is-open", !open);
+      setNavOpen(toggle.getAttribute("aria-expanded") !== "true");
     });
 
     nav.querySelectorAll("a").forEach((link) => {
-      link.addEventListener("click", () => {
-        toggle.setAttribute("aria-expanded", "false");
-        nav.classList.remove("is-open");
-      });
+      link.addEventListener("click", () => setNavOpen(false));
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape" || !nav.classList.contains("is-open")) return;
+      setNavOpen(false);
+      toggle.focus();
+    });
+
+    document.addEventListener("click", (event) => {
+      if (!nav.classList.contains("is-open")) return;
+      if (nav.contains(event.target) || toggle.contains(event.target)) return;
+      setNavOpen(false);
     });
   }
+
+  // Print/PDF: expand collapsed Expected output / Common error callouts.
+  const printForcedCallouts = [];
+  window.addEventListener("beforeprint", () => {
+    printForcedCallouts.length = 0;
+    document.querySelectorAll("details.md-callout:not([open])").forEach((el) => {
+      el.setAttribute("open", "");
+      el.dataset.printForced = "1";
+      printForcedCallouts.push(el);
+    });
+  });
+  window.addEventListener("afterprint", () => {
+    printForcedCallouts.forEach((el) => {
+      if (el.dataset.printForced !== "1") return;
+      el.removeAttribute("open");
+      delete el.dataset.printForced;
+    });
+    printForcedCallouts.length = 0;
+  });
 
   // Mark current nav item (query-aware for cheat sheet)
   const path = location.pathname.replace(/index\.html$/, "");

@@ -155,7 +155,9 @@ function renderPage({
     next
       ? `<a class="pager-next" href="${escapeAttr(next.href)}"><span>${escapeHtml(nextLabel)}</span>${escapeHtml(next.title)}</a>`
       : "",
-  ].join("\n        ");
+  ]
+    .filter(Boolean)
+    .join("\n        ");
 
   return `<!DOCTYPE html>
 <html lang="${lang}">

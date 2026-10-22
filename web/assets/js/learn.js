@@ -99,6 +99,10 @@ function enhanceCodeBlocks(root) {
       } catch {
         btn.textContent = t("copyFailed");
         btn.setAttribute("aria-label", t("copyFailed"));
+        setTimeout(() => {
+          btn.textContent = t("copy");
+          btn.setAttribute("aria-label", t("copy"));
+        }, 1400);
       }
     });
     wrap.appendChild(btn);
@@ -279,10 +283,15 @@ function setupSidebarToggle() {
   const backdrop = document.querySelector("[data-backdrop]");
   if (!sidebar || !toggle) return;
 
-  const close = () => {
+  if (!sidebar.id) sidebar.id = "reader-sidebar";
+  toggle.setAttribute("aria-controls", sidebar.id);
+
+  const close = ({ restoreFocus = false } = {}) => {
+    if (!sidebar.classList.contains("is-open")) return;
     sidebar.classList.remove("is-open");
     backdrop?.classList.remove("is-on");
     toggle.setAttribute("aria-expanded", "false");
+    if (restoreFocus) toggle.focus();
   };
 
   const open = () => {
@@ -295,10 +304,16 @@ function setupSidebarToggle() {
     if (sidebar.classList.contains("is-open")) close();
     else open();
   });
-  backdrop?.addEventListener("click", close);
+  backdrop?.addEventListener("click", () => close());
   // Delegate so links added after init still close the drawer
   sidebar.addEventListener("click", (event) => {
     if (event.target.closest("a")) close();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    if (!sidebar.classList.contains("is-open")) return;
+    event.preventDefault();
+    close({ restoreFocus: true });
   });
 
   // Restore drawer after EN↔KM reload (narrow viewports).
@@ -306,6 +321,39 @@ function setupSidebarToggle() {
   if (restore?.sidebarOpen && window.matchMedia("(max-width: 900px)").matches) {
     open();
   }
+}
+
+function prefersReducedMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function scrollToTop() {
+  window.scrollTo({
+    top: 0,
+    behavior: prefersReducedMotion() ? "auto" : "smooth",
+  });
+}
+
+function focusReaderTitle(titleEl) {
+  const heading = titleEl || document.querySelector(".content-pane > h1");
+  if (!heading) return;
+  if (!heading.hasAttribute("tabindex")) heading.setAttribute("tabindex", "-1");
+  heading.focus({ preventScroll: true });
+}
+
+function renderMissingRoute(bodyEl, titleEl, progressEl, pagerEl, { title, hint, href, cta }) {
+  if (titleEl) {
+    titleEl.removeAttribute("data-i18n");
+    titleEl.textContent = title;
+  }
+  if (progressEl) {
+    progressEl.removeAttribute("data-i18n");
+    progressEl.textContent = "";
+  }
+  if (pagerEl) pagerEl.innerHTML = "";
+  document.title = `${title} — rean-docker`;
+  bodyEl.innerHTML = `<div class="error"><strong>${title}</strong><br>${hint}<br><br><a class="btn btn-primary" href="${href}">${cta}</a></div>`;
+  focusReaderTitle(titleEl);
 }
 
 async function initLearnPage() {
@@ -332,14 +380,8 @@ async function initLearnPage() {
     let transitionToken = 0;
     const paneEl = bodyEl.closest(".content-pane");
     const CHAPTER_OUT_MS = 280;
-    const prefersReducedMotion = () =>
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    const resolveIndex = (id) => {
-      let index = chapters.findIndex((c) => c.id === id);
-      if (index < 0) index = 0;
-      return index;
-    };
+    const resolveIndex = (id) => chapters.findIndex((c) => c.id === id);
 
     const setActiveNav = (id) => {
       navEl.querySelectorAll("a[data-chapter-id]").forEach((a) => {
@@ -369,7 +411,7 @@ async function initLearnPage() {
       paneEl?.classList.add("is-chapter-switching");
     };
 
-    const applyChapter = (chapter, index) => {
+    const applyChapter = (chapter, index, { focusTitle = false } = {}) => {
       setActiveNav(chapter.id);
       if (titleEl) {
         titleEl.removeAttribute("data-i18n");
@@ -389,10 +431,35 @@ async function initLearnPage() {
       renderMarkdown(bodyEl, chapter.body, { checklistScope: `learn:${chapter.id}` });
       setEditSource("learn", chapter.id);
       renderPager(index);
+      if (focusTitle) focusReaderTitle(titleEl);
+    };
+
+    const showMissingChapter = (requestedId) => {
+      currentIndex = -1;
+      setActiveNav("");
+      renderMissingRoute(bodyEl, titleEl, progressEl, pagerEl, {
+        title: t("learn.notFound"),
+        hint: t("learn.notFoundHint"),
+        href: chapterHref(chapters[0].id),
+        cta: t("learn.openFirst"),
+      });
+      window.ReanSeo?.sync({
+        title: document.title,
+        description: t("learn.description"),
+        path: `learn.html?c=${encodeURIComponent(requestedId || "")}`,
+        type: "article",
+      });
     };
 
     const showChapter = async (id, { push = false, animate = true } = {}) => {
       const index = resolveIndex(id);
+      if (index < 0) {
+        if (push) {
+          history.pushState({ c: id }, "", chapterHref(id));
+        }
+        showMissingChapter(id);
+        return;
+      }
       const chapter = chapters[index];
 
       // Same chapter click: keep URL in sync, skip re-render flicker
@@ -409,7 +476,7 @@ async function initLearnPage() {
         history.pushState({ c: chapter.id }, "", chapterHref(chapter.id));
       }
 
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      scrollToTop();
 
       const shouldAnimate = animate && !prefersReducedMotion();
 
@@ -421,7 +488,7 @@ async function initLearnPage() {
         if (token !== transitionToken) return;
       }
 
-      applyChapter(chapter, index);
+      applyChapter(chapter, index, { focusTitle: hadChapter });
 
       if (shouldAnimate) {
         playChapterIn();
@@ -484,16 +551,10 @@ async function initLabPage() {
   const paneEl = bodyEl.closest(".content-pane");
   const cache = new Map();
   const LAB_OUT_MS = 280;
-  const prefersReducedMotion = () =>
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const LABS = labsLocalized();
 
-  const resolveIndex = (id) => {
-    let index = LABS.findIndex((l) => l.id === id);
-    if (index < 0) index = 0;
-    return index;
-  };
+  const resolveIndex = (id) => LABS.findIndex((l) => l.id === id);
 
   const setActiveNav = (id) => {
     navEl.querySelectorAll("a[data-lab-id]").forEach((a) => {
@@ -532,7 +593,7 @@ async function initLabPage() {
     return md;
   };
 
-  const applyLab = async (lab, index) => {
+  const applyLab = async (lab, index, { focusTitle = false } = {}) => {
     setActiveNav(lab.id);
     if (titleEl) {
       titleEl.removeAttribute("data-i18n");
@@ -563,10 +624,35 @@ async function initLabPage() {
     } catch (err) {
       bodyEl.innerHTML = `<div class="error"><strong>${t("lab.loadError")}</strong><br>${err.message}<br><br>${t("lab.serveHint")}</div>`;
     }
+    if (focusTitle) focusReaderTitle(titleEl);
+  };
+
+  const showMissingLab = (requestedId) => {
+    currentIndex = -1;
+    setActiveNav("");
+    renderMissingRoute(bodyEl, titleEl, progressEl, pagerEl, {
+      title: t("lab.notFound"),
+      hint: t("lab.notFoundHint"),
+      href: labHref(LABS[0].id),
+      cta: t("lab.openFirst"),
+    });
+    window.ReanSeo?.sync({
+      title: document.title,
+      description: t("lab.description"),
+      path: `lab.html?id=${encodeURIComponent(requestedId || "")}`,
+      type: "article",
+    });
   };
 
   const showLab = async (id, { push = false, animate = true } = {}) => {
     const index = resolveIndex(id);
+    if (index < 0) {
+      if (push) {
+        history.pushState({ id }, "", labHref(id));
+      }
+      showMissingLab(id);
+      return;
+    }
     const lab = LABS[index];
 
     if (index === currentIndex) {
@@ -582,7 +668,7 @@ async function initLabPage() {
       history.pushState({ id: lab.id }, "", labHref(lab.id));
     }
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    scrollToTop();
 
     const shouldAnimate = animate && !prefersReducedMotion();
 
@@ -594,7 +680,7 @@ async function initLabPage() {
       if (token !== transitionToken) return;
     }
 
-    await applyLab(lab, index);
+    await applyLab(lab, index, { focusTitle: hadLab });
     if (token !== transitionToken) return;
 
     if (shouldAnimate) {

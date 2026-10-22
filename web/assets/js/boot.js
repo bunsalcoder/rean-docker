@@ -70,7 +70,7 @@
         this.innerHTML = `
       <div class="wrap">
         <a class="logo" href="./index.html">rean<span>-docker</span></a>
-        <nav class="nav" data-nav>
+        <nav class="nav" id="site-nav" data-nav>
           <a href="./index.html" data-i18n="nav.home">Home</a>
           <a href="./learn.html" data-i18n="nav.learn">Learn</a>
           <a href="./labs.html" data-i18n="nav.labs">Labs</a>
@@ -106,7 +106,7 @@
               </g>
             </svg>
           </button>
-          <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" data-i18n-attr="aria-label:nav.menu" aria-label="Menu">
+          <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="site-nav" data-i18n-attr="aria-label:nav.menu" aria-label="Menu">
             <span></span><span></span><span></span>
           </button>
         </div>

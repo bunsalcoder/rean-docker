@@ -190,7 +190,7 @@
       <button type="button" class="btn btn-ghost" data-progress-export>${t("progress.export")}</button>
       <button type="button" class="btn btn-ghost" data-progress-import>${t("progress.import")}</button>
       <input type="file" accept="application/json,.json" hidden data-progress-file />
-      <p class="progress-transfer-status" data-progress-status hidden></p>
+      <p class="progress-transfer-status" data-progress-status role="status" aria-live="polite" hidden></p>
     </div>`;
 
   const bindTransferControls = (root) => {
