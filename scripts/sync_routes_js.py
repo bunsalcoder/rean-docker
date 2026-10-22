@@ -48,10 +48,12 @@ def render_routes_js(data: dict) -> str:
         for lab in data["labs"]
     ]
 
+    version = int(data.get("version") or 1)
     body = "\n".join(
         [
             "/* Generated from web/assets/routes.json — edit the JSON, then: make sync-routes */",
             "(() => {",
+            f"  const VERSION = {version};",
             "  const CHAPTERS = [",
             *chapter_lines,
             "  ];",
@@ -62,7 +64,7 @@ def render_routes_js(data: dict) -> str:
             "",
             "  const LAB_IDS = LAB_DEFS.map((lab) => lab.id);",
             "",
-            "  window.ReanRoutes = { CHAPTERS, LAB_DEFS, LAB_IDS };",
+            "  window.ReanRoutes = { version: VERSION, CHAPTERS, LAB_DEFS, LAB_IDS };",
             "})();",
             "",
         ]

@@ -1,5 +1,6 @@
 /* Generated from web/assets/routes.json — edit the JSON, then: make sync-routes */
 (() => {
+  const VERSION = 2;
   const CHAPTERS = [
     {
       id: "how-to-use",
@@ -48,5 +49,5 @@
 
   const LAB_IDS = LAB_DEFS.map((lab) => lab.id);
 
-  window.ReanRoutes = { CHAPTERS, LAB_DEFS, LAB_IDS };
+  window.ReanRoutes = { version: VERSION, CHAPTERS, LAB_DEFS, LAB_IDS };
 })();

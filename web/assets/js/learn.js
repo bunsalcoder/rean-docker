@@ -110,37 +110,66 @@ function enhanceCodeBlocks(root) {
 }
 
 const GUIDE_CACHE_PREFIX = "rean-docker:guide-cache:";
-const GUIDE_CACHE_TTL_MS = 30 * 60 * 1000;
+const GUIDE_CACHE_TTL_MS = 10 * 60 * 1000;
+
+function guideCacheKey(url) {
+  const ver = window.ReanRoutes?.version ?? 0;
+  return `${GUIDE_CACHE_PREFIX}v${ver}:${url}`;
+}
+
+function readGuideCache(url) {
+  try {
+    const raw = sessionStorage.getItem(guideCacheKey(url));
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeGuideCache(url, payload) {
+  try {
+    sessionStorage.setItem(guideCacheKey(url), JSON.stringify(payload));
+  } catch {
+    /* quota / private mode */
+  }
+}
+
+async function isGuideCacheFresh(url, hit) {
+  if (!hit?.text) return false;
+  try {
+    const head = await fetch(url, { method: "HEAD", cache: "no-cache" });
+    if (head.ok) {
+      const etag = head.headers.get("etag");
+      const lm = head.headers.get("last-modified");
+      if (etag && hit.etag && etag === hit.etag) return true;
+      if (lm && hit.lm && lm === hit.lm) return true;
+      // Validators present but mismatched (or missing on the hit) → refetch.
+      if (etag || lm) return false;
+    }
+  } catch {
+    /* offline / HEAD unsupported */
+  }
+  return Number.isFinite(hit.at) && Date.now() - hit.at < GUIDE_CACHE_TTL_MS;
+}
 
 async function loadText(url, { fallbackUrl, cache = false } = {}) {
   if (cache) {
-    try {
-      const raw = sessionStorage.getItem(GUIDE_CACHE_PREFIX + url);
-      const hit = raw ? JSON.parse(raw) : null;
-      if (
-        hit?.text &&
-        Number.isFinite(hit.at) &&
-        Date.now() - hit.at < GUIDE_CACHE_TTL_MS
-      ) {
-        return hit.text;
-      }
-    } catch {
-      /* private mode / corrupt */
+    const hit = readGuideCache(url);
+    if (hit?.text && (await isGuideCacheFresh(url, hit))) {
+      return hit.text;
     }
   }
 
-  const res = await fetch(url);
+  const res = await fetch(url, { cache: "no-cache" });
   if (res.ok) {
     const text = await res.text();
     if (cache) {
-      try {
-        sessionStorage.setItem(
-          GUIDE_CACHE_PREFIX + url,
-          JSON.stringify({ text, at: Date.now() })
-        );
-      } catch {
-        /* quota / private mode */
-      }
+      writeGuideCache(url, {
+        text,
+        at: Date.now(),
+        etag: res.headers.get("etag"),
+        lm: res.headers.get("last-modified"),
+      });
     }
     return text;
   }

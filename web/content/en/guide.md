@@ -57,6 +57,9 @@ cd path/to/rean-docker
 18. [Capstone project](#18-capstone-project)
 19. [Cheat sheet](#19-cheat-sheet)
 20. [Learning path checklist](#20-learning-path-checklist)
+- [Suggested weekly plan](#suggested-weekly-plan)
+- [Glossary](#glossary)
+- [Next steps after this guide](#next-steps-after-this-guide)
 
 ---
 
