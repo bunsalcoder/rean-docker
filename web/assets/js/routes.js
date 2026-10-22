@@ -25,6 +25,9 @@
     { id: "18", match: /^## 18\. /m },
     { id: "19", match: /^## 19\. /m },
     { id: "20", match: /^## 20\. /m },
+    { id: "weekly-plan", match: /^## (Suggested weekly plan|ផែនការប្រចាំសប្តាហ៍ \(ណែនាំ\))$/m },
+    { id: "glossary", match: /^## (Glossary|វចនានុក្រម)$/m },
+    { id: "next-steps", match: /^## (Next steps after this guide|ជំហានបន្ទាប់បន្ទាប់ពីមគ្គុទ្ទេសក៍នេះ)$/m },
   ];
 
   const LAB_DEFS = [

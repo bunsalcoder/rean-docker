@@ -14,7 +14,7 @@ CONTENT = WEB / "content"
 OUT_DIR = WEB / "assets"
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from rean_routes import lab_ids, load_manifest  # noqa: E402
+from rean_routes import chapter_match_pattern, lab_ids, load_manifest  # noqa: E402
 
 
 def strip_md(md: str) -> str:
@@ -28,26 +28,23 @@ def strip_md(md: str) -> str:
     return text.strip()
 
 
-def chapter_starts(lines: list[str], locale: str) -> list[tuple[str, int]]:
-    how_to = {
-        "en": re.compile(r"^## How to use this guide$"),
-        "km": re.compile(r"^## របៀបប្រើមគ្គុទ្ទេសក៍នេះ$"),
-    }[locale]
+def chapter_starts(lines: list[str], chapters: list[dict]) -> list[tuple[str, int]]:
+    matchers = [
+        (str(ch["id"]), re.compile(chapter_match_pattern(ch))) for ch in chapters
+    ]
     starts: list[tuple[str, int]] = []
     for index, line in enumerate(lines):
-        if how_to.match(line):
-            starts.append(("how-to-use", index))
-            continue
-        m = re.match(r"^## (\d+)\. ", line)
-        if m:
-            starts.append((m.group(1), index))
+        for chapter_id, pattern in matchers:
+            if pattern.match(line):
+                starts.append((chapter_id, index))
+                break
     starts.sort(key=lambda item: item[1])
     return starts
 
 
-def split_guide(markdown: str, locale: str) -> list[dict]:
+def split_guide(markdown: str, chapters: list[dict]) -> list[dict]:
     lines = markdown.split("\n")
-    starts = chapter_starts(lines, locale)
+    starts = chapter_starts(lines, chapters)
     docs = []
     for i, (chapter_id, start) in enumerate(starts):
         end = starts[i + 1][1] if i + 1 < len(starts) else len(lines)
@@ -56,11 +53,11 @@ def split_guide(markdown: str, locale: str) -> list[dict]:
     return docs
 
 
-def build_locale(locale: str, labs: list[str]) -> dict:
+def build_locale(locale: str, chapters: list[dict], labs: list[str]) -> dict:
     guide_path = CONTENT / locale / "guide.md"
     docs: list[dict] = []
     if guide_path.is_file():
-        docs.extend(split_guide(guide_path.read_text(encoding="utf-8"), locale))
+        docs.extend(split_guide(guide_path.read_text(encoding="utf-8"), chapters))
     for lab_id in labs:
         lab_path = CONTENT / locale / "labs" / f"{lab_id}.md"
         if not lab_path.is_file():
@@ -77,10 +74,11 @@ def build_locale(locale: str, labs: list[str]) -> dict:
 
 def main() -> int:
     data = load_manifest()
+    chapters = data["chapters"]
     labs = lab_ids(data)
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     for locale in ("en", "km"):
-        payload = build_locale(locale, labs)
+        payload = build_locale(locale, chapters, labs)
         out = OUT_DIR / f"search-index-{locale}.json"
         out.write_text(
             json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + "\n",

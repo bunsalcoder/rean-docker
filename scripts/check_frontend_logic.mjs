@@ -88,6 +88,30 @@ const full = Guide.splitSections(sample, chapters);
 const ch1 = full.find((s) => s.id === "1");
 assert(ch1 && /compose/.test(ch1.body), "search-mode body keeps chapter content");
 
+const appendixSample = [
+  "## 20. Learning path checklist",
+  "",
+  "- [ ] Done",
+  "",
+  "## Suggested weekly plan",
+  "",
+  "Week one.",
+  "",
+  "## Glossary",
+  "",
+  "| Term | Definition |",
+  "",
+  "## Next steps after this guide",
+  "",
+  "Keep practicing.",
+].join("\n");
+const appendix = Guide.splitSections(appendixSample, chapters, { stripLeadingHeading: true });
+assert(appendix.some((s) => s.id === "weekly-plan"), "weekly-plan appendix section splits");
+assert(appendix.some((s) => s.id === "glossary"), "glossary appendix section splits");
+assert(appendix.some((s) => s.id === "next-steps"), "next-steps appendix section splits");
+const ch20 = appendix.find((s) => s.id === "20");
+assert(ch20 && !/Suggested weekly plan/.test(ch20.body) && !/Glossary/.test(ch20.body), "chapter 20 no longer swallows appendix");
+
 assert(Guide.checklistIndexKey(0) === "i:0", "index key i:0");
 assert(Guide.checklistIndexKey(3) === "i:3", "index key i:3");
 
@@ -156,6 +180,8 @@ assert(learnJs.includes("GUIDE_CACHE") || learnJs.includes("guide-cache"), "lear
 assert(learnJs.includes("showMissingChapter") || learnJs.includes("learn.notFound"), "learn handles unknown chapter ids");
 assert(learnJs.includes('key !== "Escape"') || learnJs.includes('key === "Escape"'), "sidebar closes on Escape");
 assert(learnJs.includes("prefersReducedMotion"), "learn respects reduced-motion for scroll");
+assert(learnJs.includes("record(scope, 1, 1)"), "checklist-free chapters mark visited");
+assert(i18nJs.includes("chapter.weekly-plan") && i18nJs.includes("chapter.glossary"), "appendix chapter titles exist");
 const siteJs = readFileSync(join(ROOT, "web/assets/js/site.js"), "utf8");
 assert(siteJs.includes("beforeprint"), "print expands collapsed callouts");
 assert(siteJs.includes("aria-controls") || siteJs.includes("setNavOpen"), "mobile nav manages open state");

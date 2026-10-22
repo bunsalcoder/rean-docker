@@ -218,6 +218,33 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/learn/20.html" />
   </url>
   <url>
+    <loc>https://bunsalcoder.github.io/rean-docker/learn/weekly-plan.html</loc>
+    <lastmod>2026-10-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/weekly-plan.html" />
+    <xhtml:link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/weekly-plan.km.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/learn/weekly-plan.html" />
+  </url>
+  <url>
+    <loc>https://bunsalcoder.github.io/rean-docker/learn/glossary.html</loc>
+    <lastmod>2026-10-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/glossary.html" />
+    <xhtml:link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/glossary.km.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/learn/glossary.html" />
+  </url>
+  <url>
+    <loc>https://bunsalcoder.github.io/rean-docker/learn/next-steps.html</loc>
+    <lastmod>2026-10-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/next-steps.html" />
+    <xhtml:link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/next-steps.km.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/learn/next-steps.html" />
+  </url>
+  <url>
     <loc>https://bunsalcoder.github.io/rean-docker/lab/01-isolation-basics.html</loc>
     <lastmod>2026-10-22</lastmod>
     <changefreq>monthly</changefreq>
