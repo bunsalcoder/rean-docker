@@ -49,6 +49,10 @@ docker run --rm rean-secret:lab11
 
 Build គួរជោគជ័យ ហើយមានសារ runtime។ អ្នក **មិន** គួរឃើញ `super-secret-token` ក្នុង `docker history`។ ប្រៀបធៀបជាមួយ `Dockerfile.leaky` នៃ Lab 04។
 
+> **លទ្ធផលដែលរំពឹងទុក:** container បង្ហាញសារ success ហើយ `docker history` **មិន** មាន `super-secret-token`។
+
+> **គន្លឹះ:** Stretch §5–§7 គឺផ្លូវ hands-on សម្រាប់ handbook **ជំពូក 16** (BuildKit cache, Compose Watch, SBOM)។ មើលសង្ខេបទោះបីរំលង Watch អន្តរកម្មក៏ដោយ។
+
 សម្អាត៖
 
 ```bash

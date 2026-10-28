@@ -67,6 +67,18 @@ docker history rean-multi:fat
 docker run --rm -p 3001:3000 rean-multi:slim
 # curl http://127.0.0.1:3001/
 </code></pre>
+<details class="md-callout md-callout-expected">
+<summary class="md-callout-title">លទ្ធផលដែលរំពឹងទុក</summary>
+<div class="md-callout-body">
+<p><code>docker images</code> បង្ហាញ <code>:fat</code> ធំជាង <code>:slim</code> ច្បាស់ ហើយ slim នៅតែ serve <code>/</code> (JSON greeting)។</p>
+</div>
+</details>
+<aside class="md-callout md-callout-hint" role="note">
+<div class="md-callout-body">
+<p class="md-callout-title">គន្លឹះ</p>
+<p><code>USER node</code> លើ slim ជាជ័យជម្នះសុវត្ថិភាពដាច់ពីទំហំ — ប្រៀបធៀប <code>whoami</code> លើ tags ទាំងពីរខាងក្រោម។</p>
+</div>
+</aside>
 <p><code>:fat</code> គួរធំជាងច្បាស់ (រាប់សិប MB)។ ទម្ងន់បន្ថែមនោះគឺ TypeScript compiler និង type packages នៅក្នុង image ចុងក្រោយ។</p>
 <h2>អ្វីដែលត្រូវសង្កេត</h2>
 <ul>

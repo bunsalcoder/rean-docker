@@ -210,9 +210,34 @@ const tipCallout = enhanceCalloutsHtml(
   "<blockquote><p><strong>Tip:</strong> try again</p></blockquote>"
 );
 assert(tipCallout.includes("<aside") && tipCallout.includes("md-callout-hint"), "HTML tip → aside");
+const kmCallout = enhanceCalloutsHtml(
+  "<blockquote><p><strong>លទ្ធផលដែលរំពឹងទុក:</strong> ok</p></blockquote>"
+);
+assert(kmCallout.includes("md-callout-expected"), "Khmer Expected output label enhances");
+const pitfallCallout = enhanceCalloutsHtml(
+  "<blockquote><p><strong>Pitfall:</strong> careful</p></blockquote>"
+);
+assert(
+  pitfallCallout.includes("role=\"note\"") && pitfallCallout.includes("md-callout-pitfall"),
+  "HTML pitfall → aside note"
+);
 
 const homeHtml = readFileSync(join(ROOT, "web/index.html"), "utf8");
 assert(homeHtml.includes("home.howPrint"), "home mentions print/PDF path");
+
+const learnHtml = readFileSync(join(ROOT, "web/learn.html"), "utf8");
+const labHtmlPage = readFileSync(join(ROOT, "web/lab.html"), "utf8");
+assert(learnHtml.includes("data-print"), "learn exposes data-print control");
+assert(labHtmlPage.includes("data-print"), "lab exposes data-print control");
+assert(learnHtml.includes('id="main"') && labHtmlPage.includes('id="main"'), "learn/lab have #main landmark");
+assert(siteJs.includes("md-callout"), "print path targets md-callout details");
+
+const staticLabSample = readFileSync(join(ROOT, "web/lab/03-dockerfile.html"), "utf8");
+assert(
+  staticLabSample.includes("md-callout-expected") || staticLabSample.includes("md-callout"),
+  "static lab pages bake enhanced callouts"
+);
+assert(staticLabSample.includes("pair-cta") || staticLabSample.includes("pair.practice"), "static lab has pair CTA");
 
 if (fail) {
   console.error("Frontend logic checks failed.");

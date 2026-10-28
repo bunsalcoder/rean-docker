@@ -29,6 +29,10 @@ docker run --rm -p 3001:3000 rean-multi:slim
 # curl http://127.0.0.1:3001/
 ```
 
+> **Expected output:** `docker images` shows `:fat` clearly larger than `:slim`, and slim still serves `/` (JSON greeting).
+
+> **Tip:** `USER node` on slim is a security win separate from size — compare `whoami` on both tags below.
+
 `:fat` should be clearly larger (tens of MB). That extra weight is the TypeScript compiler and type packages left in the final image.
 
 ## What to observe

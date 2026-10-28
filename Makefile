@@ -1,7 +1,7 @@
 # Common local tasks for rean-docker
 PORT ?= 5501
 
-.PHONY: help serve sync check check-km check-km-parity check-km-headings check-lab-invariants check-all check-links check-vendor-sri check-vendor-versions check-routes sync-routes check-site-smoke check-frontend-logic static-pages sitemap sync-km-i18n sync-prod-dockerfiles bump-node-deps vendor-site smoke smoke-concept ci-local refresh-digests refresh-digests-check
+.PHONY: help serve sync check check-km check-km-parity check-km-headings check-lab-invariants check-lab-callouts check-all check-links check-vendor-sri check-vendor-versions check-routes sync-routes check-site-smoke check-frontend-logic static-pages sitemap sync-km-i18n sync-prod-dockerfiles bump-node-deps vendor-site smoke smoke-concept ci-local refresh-digests refresh-digests-check
 
 help:
 	@echo "rean-docker make targets:"
@@ -13,6 +13,7 @@ help:
 	@echo "  make check-km-parity  # fail if Khmer labs drift in checklists/code/invariants"
 	@echo "  make check-km-headings  # fail if Khmer handbook ###/#### titles are Latin-only"
 	@echo "  make check-lab-invariants  # fail if shared Node digest/Express/Dockerfile twins drift"
+	@echo "  make check-lab-callouts    # fail if a lab README lacks Expected/Hint/Tip/Pitfall callout"
 	@echo "  make check-routes  # fail if routes.js drifted from routes.json"
 	@echo "  make check-links   # fail if HTML/CSS/MD points at missing local files"
 	@echo "  make check-vendor-sri  # fail if marked/DOMPurify SRI hashes drifted"
@@ -53,7 +54,7 @@ check:
 check-km:
 	./scripts/check_km_content.sh
 
-check-all: check check-km check-km-parity check-km-headings check-lab-invariants check-routes check-links check-vendor-sri check-vendor-versions check-site-smoke check-frontend-logic
+check-all: check check-km check-km-parity check-km-headings check-lab-invariants check-lab-callouts check-routes check-links check-vendor-sri check-vendor-versions check-site-smoke check-frontend-logic
 
 check-km-parity:
 	./scripts/check_km_parity.sh
@@ -63,6 +64,9 @@ check-km-headings:
 
 check-lab-invariants:
 	./scripts/check_lab_invariants.sh
+
+check-lab-callouts:
+	./scripts/check_lab_callouts.sh
 
 check-routes:
 	./scripts/check_routes_sync.sh

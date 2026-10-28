@@ -183,6 +183,27 @@ def main() -> int:
         else:
             print("OK:    /learn/1.html has locale-baked skip link")
 
+        # Lab teaching callouts + print control must survive static generation.
+        code, lab03 = fetch(f"{base}/lab/03-dockerfile.html")
+        if code != 200 or "md-callout" not in lab03:
+            print("FAIL: /lab/03-dockerfile.html missing enhanced md-callout markup")
+            fail = 1
+        else:
+            print("OK:    /lab/03-dockerfile.html has md-callout")
+        code, lab01 = fetch(f"{base}/lab/01-isolation-basics.html")
+        if code != 200 or "md-callout" not in lab01:
+            print("FAIL: /lab/01-isolation-basics.html missing md-callout (every lab needs ≥1)")
+            fail = 1
+        else:
+            print("OK:    /lab/01-isolation-basics.html has md-callout")
+        for spa in ("/learn.html", "/lab.html"):
+            code, spa_body = fetch(f"{base}{spa}")
+            if code != 200 or 'data-print' not in spa_body or 'id="main"' not in spa_body:
+                print(f"FAIL: {spa} missing data-print and/or #main")
+                fail = 1
+            else:
+                print(f"OK:    {spa} has data-print + #main")
+
         # Expected file counts: chapters + labs, each in EN + KM.
         learn_html = list((WEB / "learn").glob("*.html")) if (WEB / "learn").is_dir() else []
         lab_html = list((WEB / "lab").glob("*.html")) if (WEB / "lab").is_dir() else []

@@ -69,6 +69,18 @@ docker run --rm redis:7-alpine redis-cli -h lab06-redis ping || true
 docker rm -f lab06-redis
 docker network rm lab06-net
 </code></pre>
+<details class="md-callout md-callout-expected">
+<summary class="md-callout-title">លទ្ធផលដែលរំពឹងទុក</summary>
+<div class="md-callout-body">
+<p><code>redis-cli</code> ទីមួយបង្ហាញ <code>PONG</code>។ ទីពីរ (គ្មាន <code>--network lab06-net</code>) បរាជ័យដោយ name-resolution ឬ connection error។</p>
+</div>
+</details>
+<aside class="md-callout md-callout-hint" role="note">
+<div class="md-callout-body">
+<p class="md-callout-title">គន្លឹះ</p>
+<p>លើ user-defined network <strong>ឈ្មោះ container</strong> ជា DNS name ដែល siblings ប្រើ — មិនមែន <code>localhost</code> លើ host។</p>
+</div>
+</aside>
 <h2>ការសាកល្បង</h2>
 <p>ភ្ជាប់ alias ទីពីរ៖</p>
 <pre><code class="language-bash">docker network create lab06-net

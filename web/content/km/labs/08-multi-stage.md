@@ -29,6 +29,10 @@ docker run --rm -p 3001:3000 rean-multi:slim
 # curl http://127.0.0.1:3001/
 ```
 
+> **លទ្ធផលដែលរំពឹងទុក:** `docker images` បង្ហាញ `:fat` ធំជាង `:slim` ច្បាស់ ហើយ slim នៅតែ serve `/` (JSON greeting)។
+
+> **គន្លឹះ:** `USER node` លើ slim ជាជ័យជម្នះសុវត្ថិភាពដាច់ពីទំហំ — ប្រៀបធៀប `whoami` លើ tags ទាំងពីរខាងក្រោម។
+
 `:fat` គួរធំជាងច្បាស់ (រាប់សិប MB)។ ទម្ងន់បន្ថែមនោះគឺ TypeScript compiler និង type packages នៅក្នុង image ចុងក្រោយ។
 
 ## អ្វីដែលត្រូវសង្កេត

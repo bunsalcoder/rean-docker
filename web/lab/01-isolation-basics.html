@@ -123,6 +123,18 @@ curl -s -o /dev/null -w &quot;%{http_code}\n&quot; http://127.0.0.1:18081/
 
 docker rm -f lab01-web-a lab01-web-b
 </code></pre>
+<details class="md-callout md-callout-expected">
+<summary class="md-callout-title">Expected output</summary>
+<div class="md-callout-body">
+<p>Both curls print <code>200</code>.</p>
+</div>
+</details>
+<aside class="md-callout md-callout-pitfall" role="note">
+<div class="md-callout-body">
+<p class="md-callout-title">Pitfall</p>
+<p>Publishing the same host port twice (for example <code>-p 18080:80</code> on both containers) fails with “port is already allocated.” Inside each container, port <code>80</code> can still be the same — isolation is per network namespace.</p>
+</div>
+</aside>
 <h3>4. Memory limits</h3>
 <p>Docker can cap how much RAM a container may use.</p>
 <pre><code class="language-bash">docker run -d --name lab01-limited -m 256m alpine:3.22 sleep 60

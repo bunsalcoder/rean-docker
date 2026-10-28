@@ -69,6 +69,18 @@ docker run --rm redis:7-alpine redis-cli -h lab06-redis ping || true
 docker rm -f lab06-redis
 docker network rm lab06-net
 </code></pre>
+<details class="md-callout md-callout-expected">
+<summary class="md-callout-title">Expected output</summary>
+<div class="md-callout-body">
+<p>The first <code>redis-cli</code> prints <code>PONG</code>. The second (no <code>--network lab06-net</code>) fails with a name-resolution or connection error.</p>
+</div>
+</details>
+<aside class="md-callout md-callout-hint" role="note">
+<div class="md-callout-body">
+<p class="md-callout-title">Tip</p>
+<p>On a user-defined network, the container <strong>name</strong> is the DNS name siblings use — not <code>localhost</code> on the host.</p>
+</div>
+</aside>
 <h2>Experiment</h2>
 <p>Attach a second alias:</p>
 <pre><code class="language-bash">docker network create lab06-net
