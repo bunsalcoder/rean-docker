@@ -1,0 +1,23 @@
+# Secret scan for rean-docker. Teaching labs intentionally show weak secrets —
+# allowlist those demos; still fail on real-looking credentials elsewhere.
+title = "rean-docker"
+
+[extend]
+# Use the default gitleaks rule set shipped with the binary.
+useDefault = true
+
+[allowlist]
+description = "Intentional teaching secrets and examples"
+paths = [
+  '''(^|/)labs/04-env-secrets/''',
+  '''(^|/)labs/07-volumes/''',
+  '''(^|/)labs/11-security/''',
+  '''(^|/)\.env\.example$''',
+  '''(^|/)web/content/(en|km)/labs/(04-env-secrets|07-volumes|11-security)\.md$''',
+]
+regexes = [
+  '''POSTGRES_PASSWORD=secret''',
+  '''super-secret-token''',
+  '''change-me-now''',
+  '''sha-deadbee''',
+]

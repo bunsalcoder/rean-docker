@@ -113,7 +113,9 @@ make sitemap       # static chapter/lab HTML + sitemap + search indexes
 make check-routes
 ```
 
-`make sitemap` also runs `make static-pages` (npm ci in `web/` + `scripts/generate_static_pages.mjs`) so crawlable HTML under `web/learn/` and `web/lab/` stays in sync with Markdown. Commit those files with the sitemap/search indexes.
+`make sitemap` runs `scripts/site_artifacts.sh generate` (npm ci in `web/`, static HTML, sitemap, robots.txt, search indexes) so crawlable pages under `web/learn/` and `web/lab/` stay in sync with Markdown. Commit those files with the sitemap/search indexes. CI and Pages both call the same script, then `make check-site-artifacts` (dirty-tree gate).
+
+`make check-secrets` runs gitleaks with `.gitleaks.toml`. Intentional teaching secrets (Labs 04 / 07 / 11 and `.env.example`) are allowlisted — real-looking credentials elsewhere still fail CI.
 
 Sitemap `lastmod` is derived from content file mtimes (or `SOURCE_DATE_EPOCH`), not the calendar day — so regenerating without content changes stays dirty-tree clean.
 
