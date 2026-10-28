@@ -219,6 +219,22 @@ def main() -> int:
             fail = 1
         else:
             print("OK:    /learn/16.html has stretch practice hint")
+        for soft_path, needle in (
+            ("/learn/3.html", "01-isolation-basics"),
+            ("/learn/4.html", "01-isolation-basics"),
+            ("/learn/6.html", "03-dockerfile"),
+        ):
+            code, soft_body = fetch(f"{base}{soft_path}")
+            if code != 200 or needle not in soft_body or "pair-cta" not in soft_body:
+                print(f"FAIL: {soft_path} missing soft Practice CTA → {needle}")
+                fail = 1
+            else:
+                print(f"OK:    {soft_path} has soft Practice CTA")
+        if lab01.count("learn.html?c=3") or lab01.count("learn.html?c=4"):
+            print("FAIL: Lab 01 Theory should not include soft Ch.3/4 practiceOnly pairs")
+            fail = 1
+        else:
+            print("OK:    Lab 01 Theory omits soft practiceOnly chapters")
         code, capstone = fetch(f"{base}/lab/13-capstone.html")
         if code != 200 or "lab-note" not in capstone or "CAPSTONE_OWN" not in capstone:
             print("FAIL: /lab/13-capstone.html missing ownership lab-note banner")

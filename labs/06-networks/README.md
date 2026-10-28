@@ -8,6 +8,11 @@
 
 See Docker DNS: containers reach each other by **name** on a user-defined network.
 
+## Prerequisites
+
+- Lab 05 (Compose) finished — you have seen services talk by hostname
+- Docker Engine running (`docker network ls` works)
+
 ## Steps
 
 **Optional helper:** `./run.sh` runs the CLI demos with cleanup.  
@@ -44,6 +49,12 @@ docker run -d --name lab06-redis --network lab06-net --network-alias cache redis
 docker run --rm --network lab06-net redis:7-alpine redis-cli -h cache ping
 docker rm -f lab06-redis && docker network rm lab06-net
 ```
+
+## Discuss
+
+- Why does `redis-cli -h localhost` from a sibling container fail even when Redis is healthy?
+- What is the difference between the default bridge and a user-defined network for DNS?
+- When would you add a `--network-alias` instead of renaming the container?
 
 ## Success criteria
 

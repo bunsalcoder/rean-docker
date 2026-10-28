@@ -52,6 +52,11 @@
 <p><strong>Intermediate.</strong> Named volumes and persistence after networks (Lab 06).</p>
 <h2>Goal</h2>
 <p>Prove that named volumes keep data after a container is deleted.</p>
+<h2>Prerequisites</h2>
+<ul>
+<li>Lab 06 (networks) finished — optional but helps for Compose form</li>
+<li>Docker Engine running; disk space for a small Postgres volume</li>
+</ul>
 <h2>Steps</h2>
 <p><strong>Optional helper:</strong> <code>./run.sh</code> proves the named volume survives recreate (uses <code>.bind/</code> for the bind-mount contrast).<br><strong>Optional Compose form:</strong> <code>cp .env.example .env</code>, then <code>docker compose up -d --wait</code>, <code>docker compose exec db psql …</code>, <code>docker compose down</code> (keep volume) vs <code>docker compose down -v</code>. The password stays in <code>.env</code> (Labs 04/05), not hardcoded in YAML.</p>
 <blockquote>
@@ -107,6 +112,12 @@ docker volume rm lab07-pgdata
 echo &quot;hello&quot; &gt; /tmp/lab07-bind/note.txt
 docker run --rm -v /tmp/lab07-bind:/data alpine:3.22 cat /data/note.txt
 </code></pre>
+<h2>Discuss</h2>
+<ul>
+<li>Named volume vs bind mount: which one belongs in production Compose for Postgres data, and why?</li>
+<li>What still exists on the host after <code>docker rm -f</code> but before <code>docker volume rm</code>?</li>
+<li>Why is putting the DB password on the <code>docker run</code> command line a teaching shortcut (see the note above), not a habit to keep?</li>
+</ul>
 <h2>Success criteria</h2>
 <ul>
 <li><input disabled="" type="checkbox"> Data survived container recreation</li>

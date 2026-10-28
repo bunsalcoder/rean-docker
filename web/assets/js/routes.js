@@ -1,6 +1,6 @@
 /* Generated from web/assets/routes.json — edit the JSON, then: make sync-routes */
 (() => {
-  const VERSION = 4;
+  const VERSION = 5;
   const CHAPTERS = [
     {
       id: "how-to-use",
@@ -51,7 +51,10 @@
 
   const PAIR_LIST = [
     { chapter: "2", lab: "01-isolation-basics" },
+    { chapter: "3", lab: "01-isolation-basics", practiceHintKey: "pair.afterMentalModel", practiceOnly: true },
+    { chapter: "4", lab: "01-isolation-basics", practiceHintKey: "pair.afterInstall", practiceOnly: true },
     { chapter: "5", lab: "02-hello" },
+    { chapter: "6", lab: "03-dockerfile", practiceHintKey: "pair.afterImages", practiceOnly: true },
     { chapter: "7", lab: "03-dockerfile" },
     { chapter: "8", lab: "07-volumes" },
     { chapter: "9", lab: "06-networks" },
@@ -73,12 +76,14 @@
   const CHAPTER_TO_LAB = Object.fromEntries(
     PAIR_LIST.map((pair) => [pair.chapter, pair.lab])
   );
-  // First pairing wins as the primary theory chapter (Lab 11 → Ch.15).
+  // First non-practiceOnly pairing wins as primary theory (Lab 11 → Ch.15).
   const LAB_TO_CHAPTER = PAIR_LIST.reduce((acc, pair) => {
+    if (pair.practiceOnly) return acc;
     if (!acc[pair.lab]) acc[pair.lab] = pair.chapter;
     return acc;
   }, {});
   const LAB_TO_CHAPTERS = PAIR_LIST.reduce((acc, pair) => {
+    if (pair.practiceOnly) return acc;
     const list = acc[pair.lab] || (acc[pair.lab] = []);
     if (!list.includes(pair.chapter)) list.push(pair.chapter);
     return acc;

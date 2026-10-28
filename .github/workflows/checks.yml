@@ -36,6 +36,8 @@ jobs:
         run: ./scripts/check_lab_invariants.sh
       - name: Verify every lab has a teaching callout
         run: ./scripts/check_lab_callouts.sh
+      - name: Verify EN/KM UI i18n keys and references
+        run: python3 ./scripts/check_i18n_keys.py
       - name: Verify routes.js matches routes.json
         run: ./scripts/check_routes_sync.sh
       - name: Verify local site links

@@ -108,4 +108,6 @@ REGISTRY_OWNER=example IMAGE_REF=:sha-deadbee \
 - [ ] You validated `compose.prod.yaml` with `IMAGE_REF` set (or folded at least one hardening habit from it into your owned stack)
 - [ ] `CAPSTONE_OWN`: at least two ownership changes from the list above are done and noted in this README
 
-You are done with the guided path. Next steps: containerize an app you already know, then wire Chapter 17’s pipeline to it.
+## Next
+
+You are done with the guided path. Containerize an app you already know, then wire Chapter 17’s pipeline to it — or revisit Chapter 20’s checklist to see what you still want to practice.

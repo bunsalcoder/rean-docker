@@ -192,6 +192,13 @@ assert(routesJs.includes("LAB_NOTES") && routesJs.includes("lab.ownBanner"), "ro
 assert(learnJs.includes("renderPairCta"), "learn renders chapter↔lab pair CTA");
 assert(learnJs.includes("renderLabNote") && learnJs.includes("LAB_TO_CHAPTERS"), "learn shows multi-theory + lab notes");
 assert(i18nJs.includes("pair.ch16Stretch") && i18nJs.includes("lab.ownBanner"), "Ch16 stretch + capstone banner strings exist");
+assert(
+  i18nJs.includes("pair.afterInstall") &&
+    i18nJs.includes("pair.afterImages") &&
+    i18nJs.includes("pair.afterMentalModel"),
+  "soft foundation practice hint strings exist"
+);
+assert(routesJs.includes("practiceOnly: true"), "routes mark soft pairs practiceOnly");
 const siteJs = readFileSync(join(ROOT, "web/assets/js/site.js"), "utf8");
 assert(siteJs.includes("beforeprint"), "print expands collapsed callouts");
 assert(siteJs.includes("aria-controls") || siteJs.includes("setNavOpen"), "mobile nav manages open state");

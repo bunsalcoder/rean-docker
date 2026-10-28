@@ -11,6 +11,11 @@ Compare a fat single-stage image (compiler + source + app) with a multi-stage im
 
 This lab compiles TypeScript on purpose so the size gap is obvious. `typescript` is a **devDependency** — the slim image must not contain `tsc`.
 
+## Prerequisites
+
+- Lab 03+ (comfortable writing Dockerfiles)
+- Docker Engine with BuildKit available (`docker buildx version`)
+
 **Optional helper:** `./run.sh` builds `:fat` and `:slim`, asserts the size/USER contrast, and curls the slim image. Prefer typing the commands yourself the first time.
 
 ## Steps
@@ -48,6 +53,12 @@ docker run --rm -p 3001:3000 rean-multi:slim
 docker run --rm --entrypoint whoami rean-multi:slim
 docker run --rm --entrypoint whoami rean-multi:fat
 ```
+
+## Discuss
+
+- Which layers make `:fat` larger — compiler, type packages, or both?
+- Why is `USER node` a separate win from “smaller image”?
+- When would you still keep a fat image around (local debug) even if production ships slim?
 
 ## Success criteria
 

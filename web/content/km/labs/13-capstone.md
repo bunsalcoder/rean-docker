@@ -108,4 +108,6 @@ REGISTRY_OWNER=example IMAGE_REF=:sha-deadbee \
 - [ ] អ្នក validate `compose.prod.yaml` ដោយកំណត់ `IMAGE_REF` (ឬយក hardening យ៉ាងហោចមួយពីវាដាក់ចូល stack ដែលអ្នក own)
 - [ ] `CAPSTONE_OWN`: ការផ្លាស់ប្តូរ ownership យ៉ាងហោចពីរពីបញ្ជីខាងលើរួច ហើយកត់ក្នុង README នេះ
 
-អ្នកបញ្ចប់ផ្លូវណែនាំហើយ។ ជំហានបន្ទាប់៖ containerize app ដែលអ្នកស្គាល់ រួចភ្ជាប់ pipeline ជំពូក 17។
+## បន្ទាប់
+
+អ្នកបញ្ចប់ផ្លូវណែនាំហើយ។ Containerize app ដែលអ្នកស្គាល់ រួចភ្ជាប់ pipeline ជំពូក 17 — ឬមើល checklist ជំពូក 20 ឡើងវិញដើម្បីឃើញអ្វីដែលនៅចង់អនុវត្ត។

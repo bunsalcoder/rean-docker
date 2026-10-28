@@ -53,6 +53,11 @@
 <h2>Goal</h2>
 <p>Compare a fat single-stage image (compiler + source + app) with a multi-stage image that ships only compiled JavaScript and production dependencies.</p>
 <p>This lab compiles TypeScript on purpose so the size gap is obvious. <code>typescript</code> is a <strong>devDependency</strong> — the slim image must not contain <code>tsc</code>.</p>
+<h2>Prerequisites</h2>
+<ul>
+<li>Lab 03+ (comfortable writing Dockerfiles)</li>
+<li>Docker Engine with BuildKit available (<code>docker buildx version</code>)</li>
+</ul>
 <p><strong>Optional helper:</strong> <code>./run.sh</code> builds <code>:fat</code> and <code>:slim</code>, asserts the size/USER contrast, and curls the slim image. Prefer typing the commands yourself the first time.</p>
 <h2>Steps</h2>
 <pre><code class="language-bash">cd labs/08-multi-stage
@@ -92,6 +97,12 @@ docker run --rm -p 3001:3000 rean-multi:slim
 <pre><code class="language-bash">docker run --rm --entrypoint whoami rean-multi:slim
 docker run --rm --entrypoint whoami rean-multi:fat
 </code></pre>
+<h2>Discuss</h2>
+<ul>
+<li>Which layers make <code>:fat</code> larger — compiler, type packages, or both?</li>
+<li>Why is <code>USER node</code> a separate win from “smaller image”?</li>
+<li>When would you still keep a fat image around (local debug) even if production ships slim?</li>
+</ul>
 <h2>Success criteria</h2>
 <ul>
 <li><input disabled="" type="checkbox"> Both images build and the slim image serves <code>/</code></li>
