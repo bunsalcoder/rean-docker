@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "chapters": [
     {
       "id": "how-to-use",
@@ -65,8 +65,15 @@
     { "chapter": "13", "lab": "09-production" },
     { "chapter": "14", "lab": "10-debugging" },
     { "chapter": "15", "lab": "11-security" },
-    { "chapter": "16", "lab": "11-security" },
+    {
+      "chapter": "16",
+      "lab": "11-security",
+      "practiceHintKey": "pair.ch16Stretch"
+    },
     { "chapter": "17", "lab": "12-ci-cd" },
     { "chapter": "18", "lab": "13-capstone" }
-  ]
+  ],
+  "labNotes": {
+    "13-capstone": "lab.ownBanner"
+  }
 }

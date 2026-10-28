@@ -43,7 +43,7 @@
     <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
       <p class="eyebrow">Hands-on</p>
       <h1>Capstone</h1>
-      <p class="pair-cta"><span class="pair-cta-label">Theory</span><a href="./learn.html?c=18">Chapter 18 — Capstone project</a></p>
+      <div class="pair-cta"><span class="pair-cta-label">Theory</span><a href="./learn.html?c=18">Chapter 18 — Capstone project</a></div><p class="lab-note">Baseline ≠ done. Capstone is complete only after CAPSTONE_OWN — at least two ownership changes noted in the README checklist.</p>
       <p class="cta-row" style="margin: 1rem 0 1.5rem">
         <a class="btn btn-primary" href="./lab.html?id=13-capstone">Open interactive reader</a>
       </p>
@@ -53,6 +53,12 @@
 <h2>Goal</h2>
 <p>Build a small <strong>API + Postgres + Redis</strong> stack that you could show a teammate. Pair with handbook <strong>Chapter 18</strong>.</p>
 <p>This folder ships a <strong>day-one runnable baseline</strong> (Compose + Node API) so CI and newcomers can <code>up</code> immediately. That baseline is <strong>not</strong> the finish line — Capstone means you <strong>own</strong> the stack (marker: <code>CAPSTONE_OWN</code>).</p>
+<aside class="md-callout md-callout-pitfall" role="note">
+<div class="md-callout-body">
+<p class="md-callout-title">Pitfall</p>
+<p><code>./run.sh</code> going green only proves the <strong>baseline</strong>. Capstone is incomplete until the ownership checklist below is true — the site banner says the same thing.</p>
+</div>
+</aside>
 <p><strong>Baseline vs prod:</strong> <code>compose.yaml</code> is intentionally soft (easy first <code>up</code>). Prod habits — <code>read_only</code>, <code>cap_drop</code>, <code>no-new-privileges</code>, log limits, <code>IMAGE_REF</code> — live in <code>compose.prod.yaml</code> (Lab 09 / 12 pattern). Finishing Capstone means ownership <strong>and</strong> knowing that gap, not stopping after the soft stack.</p>
 <p>Work in this folder (<code>labs/13-capstone</code>) so your capstone stays separate from the teaching labs.</p>
 <p><strong>Optional helper:</strong> <code>./run.sh</code> validates Compose and smoke-tests the <strong>baseline</strong> stack only. Capstone ownership (<code>CAPSTONE_OWN</code>) stays manual.</p>
@@ -75,6 +81,13 @@
 <li>Ship a reverse proxy (Nginx or Caddy) in front of the API — no reference file on purpose.</li>
 <li>Customize <code>compose.prod.yaml</code> and/or <code>workflows/ci.yml</code> beyond copy-paste (limits, scan, your image name) — or fold at least one API hardening habit from <code>compose.prod.yaml</code> into the stack you ship.</li>
 </ol>
+<h3>Ownership log</h3>
+<p>Fill this in (or add your own bullets) so a teammate can see what you changed:</p>
+<ul>
+<li><input disabled="" type="checkbox"> Change 1: …</li>
+<li><input disabled="" type="checkbox"> Change 2: …</li>
+<li><input disabled="" type="checkbox"> (Optional) Stretch / prod note: …</li>
+</ul>
 <p>Optional clean-room restart from Lab 05 if you prefer writing Compose from scratch:</p>
 <pre><code class="language-bash">cp -R ../05-compose/. .
 # then restore this README and re-apply digests + your ideas

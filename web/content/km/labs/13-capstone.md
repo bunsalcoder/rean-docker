@@ -10,6 +10,8 @@
 
 ថតនេះមាន **day-one runnable baseline** (Compose + Node API) ដើម្បីឱ្យ CI និងអ្នកថ្មី `up` បានភ្លាម។ Baseline នោះ **មិនមែន** ជាចុងបញ្ចប់ — Capstone មានន័យថាអ្នក **own** stack (marker: `CAPSTONE_OWN`)។
 
+> **អន្ទាក់:** `./run.sh` បៃតងបញ្ជាក់តែ **baseline**។ Capstone មិនរួចទេរហូត checklist ownership ខាងក្រោមពិត — banner លើគេហទំព័រនិយាយដូចគ្នា។
+
 **Baseline vs prod:** `compose.yaml` ទន់ដោយចេតនា (ងាយ `up` ដំបូង)។ ទម្លាប់ prod — `read_only`, `cap_drop`, `no-new-privileges`, log limits, `IMAGE_REF` — ស្ថិតក្នុង `compose.prod.yaml` (pattern Lab 09 / 12)។ បញ្ចប់ Capstone មានន័យ ownership **និង** យល់ពីគម្លាតនោះ មិនមែនឈប់បន្ទាប់ពី soft stack។
 
 ធ្វើការក្នុងថតនេះ (`labs/13-capstone`) ដើម្បីឱ្យ capstone ដាច់ពី labs បង្រៀន។
@@ -35,6 +37,14 @@ Run baseline ដោយមិនកែ **មិន** បញ្ចប់ lab ន�
 3. ប្តូរ API image ទៅ **multi-stage** (Lab 08) ខណៈរក្សា digests / non-root។
 4. បន្ថែម reverse proxy (Nginx ឬ Caddy) មុខ API — គ្មានឯកសារ reference ដោយចេតនា។
 5. Customize `compose.prod.yaml` និង/ឬ `workflows/ci.yml` ហួសពី copy-paste (limits, scan, ឈ្មោះ image របស់អ្នក) — ឬយក hardening យ៉ាងហោចមួយពី `compose.prod.yaml` ដាក់ចូល stack ដែលអ្នកផ្ញើ។
+
+### កំណត់ត្រា ownership
+
+បំពេញ (ឬបន្ថែម bullet ផ្ទាល់ខ្លួន) ឱ្យមិត្តរួមការឃើញអ្វីដែលអ្នកកែ៖
+
+- [ ] ការផ្លាស់ប្តូរ 1: …
+- [ ] ការផ្លាស់ប្តូរ 2: …
+- [ ] (ស្រេចចិត្ត) Stretch / កំណត់ចំណាំ prod: …
 
 ចាប់ផ្ដើមស្អាតស្រេចចិត្តពី Lab 05 បើចង់សរសេរ Compose ពីដើម៖
 

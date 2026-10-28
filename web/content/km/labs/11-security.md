@@ -10,6 +10,14 @@
 
 ផ្គូផ្គង Lab 04 (`ENV` លេច) និង Lab 08/09 (non-root + images ស្ដើង)។ Stretch §5–§7 ផ្គូផ្គង **ជំពូក 16** (BuildKit cache, Compose Watch, SBOM)។
 
+**ផ្លូវជំពូក 16 (stretch តែប៉ុណ្ណោះ)៖**
+
+| ផ្នែក | ប្រធានបទ |
+|--------|----------|
+| §5 | BuildKit cache mount + multi-arch inspect |
+| §6 | Compose Watch (`compose.watch.yaml`) |
+| §7 | SBOM peek (Trivy SPDX) |
+
 **ជំនួយស្រេចចិត្ត:** `./run.sh` គ្រប whoami, BuildKit secret check, digest inspect, `compose.watch.yaml` config, BuildKit cache-mount stretch និង SPDX peek (Compose Watch អន្តរកម្មនៅដៃ)។ ចូលចិត្តវាយពាក្យបញ្ជាពី README ដោយខ្លួនឯងលើកដំបូង។
 
 ## ជំហាន

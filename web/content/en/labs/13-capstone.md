@@ -10,6 +10,8 @@ Build a small **API + Postgres + Redis** stack that you could show a teammate. P
 
 This folder ships a **day-one runnable baseline** (Compose + Node API) so CI and newcomers can `up` immediately. That baseline is **not** the finish line — Capstone means you **own** the stack (marker: `CAPSTONE_OWN`).
 
+> **Pitfall:** `./run.sh` going green only proves the **baseline**. Capstone is incomplete until the ownership checklist below is true — the site banner says the same thing.
+
 **Baseline vs prod:** `compose.yaml` is intentionally soft (easy first `up`). Prod habits — `read_only`, `cap_drop`, `no-new-privileges`, log limits, `IMAGE_REF` — live in `compose.prod.yaml` (Lab 09 / 12 pattern). Finishing Capstone means ownership **and** knowing that gap, not stopping after the soft stack.
 
 Work in this folder (`labs/13-capstone`) so your capstone stays separate from the teaching labs.
@@ -35,6 +37,14 @@ Running the baseline unchanged does **not** complete this lab. Change the produc
 3. Turn the API image into a **multi-stage** build (Lab 08) while keeping digests / non-root habits.
 4. Ship a reverse proxy (Nginx or Caddy) in front of the API — no reference file on purpose.
 5. Customize `compose.prod.yaml` and/or `workflows/ci.yml` beyond copy-paste (limits, scan, your image name) — or fold at least one API hardening habit from `compose.prod.yaml` into the stack you ship.
+
+### Ownership log
+
+Fill this in (or add your own bullets) so a teammate can see what you changed:
+
+- [ ] Change 1: …
+- [ ] Change 2: …
+- [ ] (Optional) Stretch / prod note: …
 
 Optional clean-room restart from Lab 05 if you prefer writing Compose from scratch:
 

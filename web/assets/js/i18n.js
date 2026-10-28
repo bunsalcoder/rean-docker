@@ -137,6 +137,9 @@
     "pair.theory": "Theory",
     "pair.labTitle": "Lab {n} — {title}",
     "pair.chapterTitle": "Chapter {n} — {title}",
+    "pair.ch16Stretch": "Start at §5–§7 (BuildKit cache, Watch, SBOM)",
+    "lab.ownBanner":
+      "Baseline ≠ done. Capstone is complete only after CAPSTONE_OWN — at least two ownership changes noted in the README checklist.",
     "lab.level.beginner": "Beginner",
     "lab.level.intermediate": "Intermediate",
     "lab.level.advanced": "Advanced",

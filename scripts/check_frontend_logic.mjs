@@ -187,7 +187,11 @@ assert(i18nJs.includes("chapter.weekly-plan") && i18nJs.includes("chapter.glossa
 assert(i18nJs.includes("pair.practice") && i18nJs.includes("pair.theory"), "chapter↔lab pair CTA strings exist");
 const routesJs = readFileSync(join(ROOT, "web/assets/js/routes.js"), "utf8");
 assert(routesJs.includes("CHAPTER_TO_LAB") && routesJs.includes("LAB_TO_CHAPTER"), "routes expose chapter↔lab maps");
+assert(routesJs.includes("LAB_TO_CHAPTERS"), "routes expose multi-chapter lab map");
+assert(routesJs.includes("LAB_NOTES") && routesJs.includes("lab.ownBanner"), "routes expose lab note keys");
 assert(learnJs.includes("renderPairCta"), "learn renders chapter↔lab pair CTA");
+assert(learnJs.includes("renderLabNote") && learnJs.includes("LAB_TO_CHAPTERS"), "learn shows multi-theory + lab notes");
+assert(i18nJs.includes("pair.ch16Stretch") && i18nJs.includes("lab.ownBanner"), "Ch16 stretch + capstone banner strings exist");
 const siteJs = readFileSync(join(ROOT, "web/assets/js/site.js"), "utf8");
 assert(siteJs.includes("beforeprint"), "print expands collapsed callouts");
 assert(siteJs.includes("aria-controls") || siteJs.includes("setNavOpen"), "mobile nav manages open state");

@@ -57,6 +57,15 @@ def load_manifest(path: Path | None = None) -> dict:
             raise SystemExit(f"Pair chapter {chapter_id!r} missing from chapters")
         if lab_id not in lab_id_set:
             raise SystemExit(f"Pair lab {lab_id!r} missing from labs")
+
+    lab_notes = data.get("labNotes") or {}
+    if lab_notes and not isinstance(lab_notes, dict):
+        raise SystemExit(f"labNotes must be an object in {manifest_path}")
+    for lab_id, note_key in lab_notes.items():
+        if str(lab_id) not in lab_id_set:
+            raise SystemExit(f"labNotes key {lab_id!r} missing from labs")
+        if not isinstance(note_key, str) or not note_key.strip():
+            raise SystemExit(f"labNotes[{lab_id!r}] must be a non-empty i18n key")
     return data
 
 

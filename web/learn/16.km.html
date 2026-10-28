@@ -43,12 +43,18 @@
     <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
       <p class="eyebrow">កម្មវិធីសិក្សា</p>
       <h1>ប្រធានបទកម្រិតខ្ពស់</h1>
-      <p class="pair-cta"><span class="pair-cta-label">អនុវត្ត</span><a href="./lab.html?id=11-security&amp;lang=km">លំហាត់ 11 — សុវត្ថិភាពសំខាន់ៗ</a></p>
+      <div class="pair-cta"><span class="pair-cta-label">អនុវត្ត</span><a href="./lab.html?id=11-security&amp;lang=km">លំហាត់ 11 — សុវត្ថិភាពសំខាន់ៗ</a><span class="pair-cta-hint">ចាប់ផ្តើមនៅ §5–§7 (BuildKit cache, Watch, SBOM)</span></div>
       <p class="cta-row" style="margin: 1rem 0 1.5rem">
         <a class="btn btn-primary" href="./learn.html?c=16&amp;lang=km">បើកអ្នកអានអន្តរកម្ម</a>
       </p>
       <div class="md-body">
 <p>លំហាត់បន្ថែមសម្រាប់ជំពូកនេះស្ថិតនៅ <strong>Lab 11 §5–§7</strong> (BuildKit cache + multi-arch, Compose Watch, SBOM)។ Secrets mounts បានអនុវត្តរួចក្នុង Lab 11 §2។ Profiles បានបង្ហាញខ្លីក្នុងជំពូក 11 — ត្រឡប់មកវិញពេល service ស្រេចចិត្តធ្វើឱ្យ Compose រាលថ្ងៃរញ៉េរញ៉ៃ។</p>
+<aside class="md-callout md-callout-hint" role="note">
+<div class="md-callout-body">
+<p class="md-callout-title">គន្លឹះ</p>
+<p>បើក <strong>Lab 11 — សុវត្ថិភាពសំខាន់ៗ</strong> រំលងជំហានស្នូលជំពូក 15 បើរួចហើយ រួចលោតទៅចំណងជើង <strong>Stretch</strong> (§5 cache/multi-arch, §6 Compose Watch, §7 SBOM)។ CTA អនុវត្តខាងលើជំពូកចង្អុលទៅ lab ដូចគ្នា។</p>
+</div>
+</aside>
 <h3>BuildKit (សំខាន់)</h3>
 <p>Builder ទំនើប (ធម្មតាជា default ឥឡូវ)៖</p>
 <pre><code class="language-bash">DOCKER_BUILDKIT=1 docker build -t myapp .
