@@ -57,6 +57,8 @@ def render_routes_js(data: dict) -> str:
         hint = pair.get("practiceHintKey")
         if hint:
             parts.append(f" practiceHintKey: {js_string(str(hint))}")
+        if pair.get("practiceOnly"):
+            parts.append(" practiceOnly: true")
         pair_lines.append("    {" + ",".join(parts) + " },")
 
     note_lines = [
@@ -91,12 +93,14 @@ def render_routes_js(data: dict) -> str:
             "  const CHAPTER_TO_LAB = Object.fromEntries(",
             "    PAIR_LIST.map((pair) => [pair.chapter, pair.lab])",
             "  );",
-            "  // First pairing wins as the primary theory chapter (Lab 11 → Ch.15).",
+            "  // First non-practiceOnly pairing wins as primary theory (Lab 11 → Ch.15).",
             "  const LAB_TO_CHAPTER = PAIR_LIST.reduce((acc, pair) => {",
+            "    if (pair.practiceOnly) return acc;",
             "    if (!acc[pair.lab]) acc[pair.lab] = pair.chapter;",
             "    return acc;",
             "  }, {});",
             "  const LAB_TO_CHAPTERS = PAIR_LIST.reduce((acc, pair) => {",
+            "    if (pair.practiceOnly) return acc;",
             "    const list = acc[pair.lab] || (acc[pair.lab] = []);",
             "    if (!list.includes(pair.chapter)) list.push(pair.chapter);",
             "    return acc;",

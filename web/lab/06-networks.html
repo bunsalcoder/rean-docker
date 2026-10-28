@@ -52,6 +52,11 @@
 <p><strong>Intermediate.</strong> User-defined networks and DNS after Compose basics (Lab 05).</p>
 <h2>Goal</h2>
 <p>See Docker DNS: containers reach each other by <strong>name</strong> on a user-defined network.</p>
+<h2>Prerequisites</h2>
+<ul>
+<li>Lab 05 (Compose) finished — you have seen services talk by hostname</li>
+<li>Docker Engine running (<code>docker network ls</code> works)</li>
+</ul>
 <h2>Steps</h2>
 <p><strong>Optional helper:</strong> <code>./run.sh</code> runs the CLI demos with cleanup.<br><strong>Optional Compose form</strong> (same DNS idea): <code>docker compose run --rm client</code> → <code>PONG</code>, then <code>docker compose down</code>.</p>
 <pre><code class="language-bash">docker network create lab06-net
@@ -88,6 +93,12 @@ docker run -d --name lab06-redis --network lab06-net --network-alias cache redis
 docker run --rm --network lab06-net redis:7-alpine redis-cli -h cache ping
 docker rm -f lab06-redis &amp;&amp; docker network rm lab06-net
 </code></pre>
+<h2>Discuss</h2>
+<ul>
+<li>Why does <code>redis-cli -h localhost</code> from a sibling container fail even when Redis is healthy?</li>
+<li>What is the difference between the default bridge and a user-defined network for DNS?</li>
+<li>When would you add a <code>--network-alias</code> instead of renaming the container?</li>
+</ul>
 <h2>Success criteria</h2>
 <ul>
 <li><input disabled="" type="checkbox"> <code>PONG</code> when on the same network</li>

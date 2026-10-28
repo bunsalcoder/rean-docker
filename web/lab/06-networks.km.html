@@ -52,6 +52,11 @@
 <p><strong>ថ្នាក់កណ្តាល។</strong> User-defined networks និង DNS បន្ទាប់ពីមូលដ្ឋាន Compose (Lab 05)។</p>
 <h2>គោលដៅ</h2>
 <p>មើល Docker DNS៖ containers ទៅដល់គ្នាតាម <strong>ឈ្មោះ</strong> លើ user-defined network។</p>
+<h2>តម្រូវការមុន</h2>
+<ul>
+<li>Lab 05 (Compose) រួច — អ្នកបានឃើញ services និយាយតាម hostname</li>
+<li>Docker Engine ដំណើរការ (<code>docker network ls</code> បាន)</li>
+</ul>
 <h2>ជំហាន</h2>
 <p><strong>ជំនួយស្រេចចិត្ត:</strong> <code>./run.sh</code>។ <strong>Compose ស្រេចចិត្ត:</strong> <code>docker compose run --rm client</code> → <code>PONG</code>។</p>
 <pre><code class="language-bash">docker network create lab06-net
@@ -88,6 +93,12 @@ docker run -d --name lab06-redis --network lab06-net --network-alias cache redis
 docker run --rm --network lab06-net redis:7-alpine redis-cli -h cache ping
 docker rm -f lab06-redis &amp;&amp; docker network rm lab06-net
 </code></pre>
+<h2>ពិភាក្សា</h2>
+<ul>
+<li>ហេតុអ្វី <code>redis-cli -h localhost</code> ពី sibling container បរាជ័យទោះ Redis healthy?</li>
+<li>តើ default bridge និង user-defined network ខុសគ្នាយ៉ាងណាចំពោះ DNS?</li>
+<li>ពេលណាអ្នកបន្ថែម <code>--network-alias</code> ជំនួសការប្ដូរឈ្មោះ container?</li>
+</ul>
 <h2>លក្ខខណ្ឌជោគជ័យ</h2>
 <ul>
 <li><input disabled="" type="checkbox"> <code>PONG</code> ពេលនៅលើ network ដូចគ្នា</li>

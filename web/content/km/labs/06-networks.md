@@ -8,6 +8,11 @@
 
 មើល Docker DNS៖ containers ទៅដល់គ្នាតាម **ឈ្មោះ** លើ user-defined network។
 
+## តម្រូវការមុន
+
+- Lab 05 (Compose) រួច — អ្នកបានឃើញ services និយាយតាម hostname
+- Docker Engine ដំណើរការ (`docker network ls` បាន)
+
 ## ជំហាន
 
 **ជំនួយស្រេចចិត្ត:** `./run.sh`។ **Compose ស្រេចចិត្ត:** `docker compose run --rm client` → `PONG`។
@@ -43,6 +48,12 @@ docker run -d --name lab06-redis --network lab06-net --network-alias cache redis
 docker run --rm --network lab06-net redis:7-alpine redis-cli -h cache ping
 docker rm -f lab06-redis && docker network rm lab06-net
 ```
+
+## ពិភាក្សា
+
+- ហេតុអ្វី `redis-cli -h localhost` ពី sibling container បរាជ័យទោះ Redis healthy?
+- តើ default bridge និង user-defined network ខុសគ្នាយ៉ាងណាចំពោះ DNS?
+- ពេលណាអ្នកបន្ថែម `--network-alias` ជំនួសការប្ដូរឈ្មោះ container?
 
 ## លក្ខខណ្ឌជោគជ័យ
 

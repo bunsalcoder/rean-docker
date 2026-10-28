@@ -138,6 +138,9 @@
     "pair.labTitle": "Lab {n} — {title}",
     "pair.chapterTitle": "Chapter {n} — {title}",
     "pair.ch16Stretch": "Start at §5–§7 (BuildKit cache, Watch, SBOM)",
+    "pair.afterMentalModel": "Feel isolation next — processes, files, ports, memory",
+    "pair.afterInstall": "Verify Docker, then practice isolation in Lab 01",
+    "pair.afterImages": "Build your first image in Lab 03 when ready",
     "lab.ownBanner":
       "Baseline ≠ done. Capstone is complete only after CAPSTONE_OWN — at least two ownership changes noted in the README checklist.",
     "lab.level.beginner": "Beginner",

@@ -8,6 +8,11 @@
 
 Prove that named volumes keep data after a container is deleted.
 
+## Prerequisites
+
+- Lab 06 (networks) finished — optional but helps for Compose form
+- Docker Engine running; disk space for a small Postgres volume
+
 ## Steps
 
 **Optional helper:** `./run.sh` proves the named volume survives recreate (uses `.bind/` for the bind-mount contrast).  
@@ -62,6 +67,12 @@ mkdir -p /tmp/lab07-bind
 echo "hello" > /tmp/lab07-bind/note.txt
 docker run --rm -v /tmp/lab07-bind:/data alpine:3.22 cat /data/note.txt
 ```
+
+## Discuss
+
+- Named volume vs bind mount: which one belongs in production Compose for Postgres data, and why?
+- What still exists on the host after `docker rm -f` but before `docker volume rm`?
+- Why is putting the DB password on the `docker run` command line a teaching shortcut (see the note above), not a habit to keep?
 
 ## Success criteria
 

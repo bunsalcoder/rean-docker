@@ -11,6 +11,11 @@
 
 Lab នេះ compile TypeScript ដោយចេតនា ដើម្បីឱ្យគម្លាតទំហំច្បាស់។ `typescript` គឺ **devDependency** — slim image មិនត្រូវមាន `tsc`។
 
+## តម្រូវការមុន
+
+- Lab 03+ (ស្គាល់ការសរសេរ Dockerfiles)
+- Docker Engine មាន BuildKit (`docker buildx version`)
+
 **ជំនួយស្រេចចិត្ត:** `./run.sh` build `:fat` និង `:slim`, assert size/USER, រួច curl slim image។ ចូលចិត្តវាយពាក្យបញ្ជាពី README ដោយខ្លួនឯងលើកដំបូង។
 
 ## ជំហាន
@@ -48,6 +53,12 @@ docker run --rm -p 3001:3000 rean-multi:slim
 docker run --rm --entrypoint whoami rean-multi:slim
 docker run --rm --entrypoint whoami rean-multi:fat
 ```
+
+## ពិភាក្សា
+
+- Layers ណាធ្វើឱ្យ `:fat` ធំ — compiler, type packages, ឬទាំងពីរ?
+- ហេតុអ្វី `USER node` ជាជ័យជម្នះដាច់ពី «image តូចជាង»?
+- ពេលណាអ្នកនៅតែរក្សា fat image (debug មូលដ្ឋាន) ទោះ production ផ្ញើ slim?
 
 ## លក្ខខណ្ឌជោគជ័យ
 

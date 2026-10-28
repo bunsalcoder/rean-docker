@@ -170,6 +170,9 @@ window.REAN_I18N_KM = {
   "pair.practice": "អនុវត្ត",
   "pair.theory": "ទ្រឹស្តី",
   "pair.ch16Stretch": "ចាប់ផ្តើមនៅ §5–§7 (BuildKit cache, Watch, SBOM)",
+  "pair.afterMentalModel": "សាក isolation បន្ទាប់ — process, file, port, memory",
+  "pair.afterInstall": "ផ្ទៀងផ្ទាត់ Docker រួចអនុវត្ត isolation ក្នុង Lab 01",
+  "pair.afterImages": "Build image ដំបូងក្នុង Lab 03 ពេលរួច",
   "lab.ownBanner":
     "Baseline ≠ រួច។ Capstone រួចតែបន្ទាប់ពី CAPSTONE_OWN — យ៉ាងហោចពីរការផ្លាស់ប្តូរ ownership កត់ក្នុង checklist README។",
   "progress.allChaptersDone": "Checklist ជំពូកទាំងអស់រួចហើយ។ ល្អណាស់។",

@@ -253,6 +253,8 @@ function buildPairMaps(pairs) {
     const lab = String(pair.lab);
     chapterToLab[chapter] = lab;
     pairByChapter[chapter] = pair;
+    // practiceOnly: chapter→lab CTA only (soft foundation links).
+    if (pair.practiceOnly) continue;
     const list = labToChapters[lab] || (labToChapters[lab] = []);
     if (!list.includes(chapter)) list.push(chapter);
   }

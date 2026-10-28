@@ -8,6 +8,11 @@
 
 បង្ហាញថា named volumes រក្សាទិន្នន័យបន្ទាប់ពី container ត្រូវបានលុប។
 
+## តម្រូវការមុន
+
+- Lab 06 (networks) រួច — ស្រេចចិត្ត ប៉ុន្តែជួយសម្រាប់ Compose form
+- Docker Engine ដំណើរការ; ទំហំថាសសម្រាប់ Postgres volume តូច
+
 ## ជំហាន
 
 **ជំនួយស្រេចចិត្ត:** `./run.sh`។ **Compose ស្រេចចិត្ត:** `cp .env.example .env` រួច `docker compose up -d --wait` រួច `exec` / `down` vs `down -v`។ Password នៅក្នុង `.env` (Labs 04/05) មិន hardcode ក្នុង YAML។
@@ -61,6 +66,12 @@ mkdir -p /tmp/lab07-bind
 echo "hello" > /tmp/lab07-bind/note.txt
 docker run --rm -v /tmp/lab07-bind:/data alpine:3.22 cat /data/note.txt
 ```
+
+## ពិភាក្សា
+
+- Named volume vs bind mount៖ មួយណាសម្រាប់ Postgres data ក្នុង production Compose ហើយហេតុអ្វី?
+- អ្វីនៅលើ host បន្ទាប់ពី `docker rm -f` ប៉ុន្តែមុន `docker volume rm`?
+- ហេតុអ្វីដាក់ DB password លើ `docker run` ជា shorthand បង្រៀន (មើលចំណាំខាងលើ) មិនមែនទម្លាប់ត្រូវរក្សា?
 
 ## លក្ខខណ្ឌជោគជ័យ
 

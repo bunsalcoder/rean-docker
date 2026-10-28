@@ -52,6 +52,11 @@
 <p><strong>ថ្នាក់កណ្តាល។</strong> Named volumes និង persistence បន្ទាប់ពី networks (Lab 06)។</p>
 <h2>គោលដៅ</h2>
 <p>បង្ហាញថា named volumes រក្សាទិន្នន័យបន្ទាប់ពី container ត្រូវបានលុប។</p>
+<h2>តម្រូវការមុន</h2>
+<ul>
+<li>Lab 06 (networks) រួច — ស្រេចចិត្ត ប៉ុន្តែជួយសម្រាប់ Compose form</li>
+<li>Docker Engine ដំណើរការ; ទំហំថាសសម្រាប់ Postgres volume តូច</li>
+</ul>
 <h2>ជំហាន</h2>
 <p><strong>ជំនួយស្រេចចិត្ត:</strong> <code>./run.sh</code>។ <strong>Compose ស្រេចចិត្ត:</strong> <code>cp .env.example .env</code> រួច <code>docker compose up -d --wait</code> រួច <code>exec</code> / <code>down</code> vs <code>down -v</code>។ Password នៅក្នុង <code>.env</code> (Labs 04/05) មិន hardcode ក្នុង YAML។</p>
 <blockquote>
@@ -107,6 +112,12 @@ docker volume rm lab07-pgdata
 echo &quot;hello&quot; &gt; /tmp/lab07-bind/note.txt
 docker run --rm -v /tmp/lab07-bind:/data alpine:3.22 cat /data/note.txt
 </code></pre>
+<h2>ពិភាក្សា</h2>
+<ul>
+<li>Named volume vs bind mount៖ មួយណាសម្រាប់ Postgres data ក្នុង production Compose ហើយហេតុអ្វី?</li>
+<li>អ្វីនៅលើ host បន្ទាប់ពី <code>docker rm -f</code> ប៉ុន្តែមុន <code>docker volume rm</code>?</li>
+<li>ហេតុអ្វីដាក់ DB password លើ <code>docker run</code> ជា shorthand បង្រៀន (មើលចំណាំខាងលើ) មិនមែនទម្លាប់ត្រូវរក្សា?</li>
+</ul>
 <h2>លក្ខខណ្ឌជោគជ័យ</h2>
 <ul>
 <li><input disabled="" type="checkbox"> ទិន្នន័យនៅរស់បន្ទាប់ពីបង្កើត container ឡើងវិញ</li>

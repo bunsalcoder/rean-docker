@@ -53,6 +53,11 @@
 <h2>គោលដៅ</h2>
 <p>ប្រៀបធៀប image single-stage ធំ (compiler + source + app) ជាមួយ multi-stage image ដែលដឹកតែ JavaScript ដែល compile រួច និង production dependencies។</p>
 <p>Lab នេះ compile TypeScript ដោយចេតនា ដើម្បីឱ្យគម្លាតទំហំច្បាស់។ <code>typescript</code> គឺ <strong>devDependency</strong> — slim image មិនត្រូវមាន <code>tsc</code>។</p>
+<h2>តម្រូវការមុន</h2>
+<ul>
+<li>Lab 03+ (ស្គាល់ការសរសេរ Dockerfiles)</li>
+<li>Docker Engine មាន BuildKit (<code>docker buildx version</code>)</li>
+</ul>
 <p><strong>ជំនួយស្រេចចិត្ត:</strong> <code>./run.sh</code> build <code>:fat</code> និង <code>:slim</code>, assert size/USER, រួច curl slim image។ ចូលចិត្តវាយពាក្យបញ្ជាពី README ដោយខ្លួនឯងលើកដំបូង។</p>
 <h2>ជំហាន</h2>
 <pre><code class="language-bash">cd labs/08-multi-stage
@@ -92,6 +97,12 @@ docker run --rm -p 3001:3000 rean-multi:slim
 <pre><code class="language-bash">docker run --rm --entrypoint whoami rean-multi:slim
 docker run --rm --entrypoint whoami rean-multi:fat
 </code></pre>
+<h2>ពិភាក្សា</h2>
+<ul>
+<li>Layers ណាធ្វើឱ្យ <code>:fat</code> ធំ — compiler, type packages, ឬទាំងពីរ?</li>
+<li>ហេតុអ្វី <code>USER node</code> ជាជ័យជម្នះដាច់ពី «image តូចជាង»?</li>
+<li>ពេលណាអ្នកនៅតែរក្សា fat image (debug មូលដ្ឋាន) ទោះ production ផ្ញើ slim?</li>
+</ul>
 <h2>លក្ខខណ្ឌជោគជ័យ</h2>
 <ul>
 <li><input disabled="" type="checkbox"> Images ទាំងពីរ build ហើយ slim image serve <code>/</code></li>
