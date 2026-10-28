@@ -30,6 +30,8 @@ Required checks for contributors: keep **CI** green on PRs into `develop`. Pages
 
 ## Edit English, then sync
 
+**Quick path (one lab README):** edit `labs/<id>/README.md` → update matching Khmer callouts/structure in `web/content/km/labs/<id>.md` → `make sync && make sitemap && make ci-local`. Commit the synced EN copies plus regenerated `web/learn/`, `web/lab/`, sitemap, and search indexes.
+
 ```bash
 # after changing the handbook or a lab README:
 make sync    # copy sources → web/content/en/
@@ -55,20 +57,20 @@ make check-links # HTML/CSS/MD local link targets + labs/<id> mentions
 make check-all   # English copies + Khmer structure + parity + links + frontend logic
 ```
 
-Lab callouts (optional): use a labeled blockquote so the reader turns it into a styled widget — `> **Expected output:** …`, `> **Common error:** …`, `> **Hint:**` / `> **Tip:**`, `> **Pitfall:**` (Khmer: `លទ្ធផលដែលរំពឹងទុក`, `កំហុសទូទៅ`, `គន្លឹះ`, `អន្ទាក់`).
+Lab callouts (**required**, at least one per lab): use a labeled blockquote so the reader turns it into a styled widget — `> **Expected output:** …`, `> **Common error:** …`, `> **Hint:**` / `> **Tip:**`, `> **Pitfall:**` (Khmer: `លទ្ធផលដែលរំពឹងទុក`, `កំហុសទូទៅ`, `គន្លឹះ`, `អន្ទាក់`). `make check-lab-callouts` (part of `make check-all`) fails if a lab README or its Khmer copy has none.
 
 Optional: `make sync-km-i18n` (or `python3 scripts/sync_km_i18n.py`) refreshes Khmer chapter titles in `i18n-km.js` from the Khmer handbook.
 
 ## Shared Node lab apps
 
-Labs `03`, `05`, `08`, `09`, `12`, and `13` each have their own `package.json` / lockfile on purpose (isolated teaching folders). When bumping Express or other shared deps, update **all six** locks together:
+Labs `03`, `05`, `08`, `09`, `12`, and `13` each have their own `package.json` / lockfile on purpose (isolated teaching folders). Dependabot does **not** watch those six npm trees (it cannot open one multi-directory PR, and partial bumps fail `check-lab-invariants`). When bumping Express or other shared deps, update **all six** locks in one PR:
 
 ```bash
 make bump-node-deps PKG=express@^4.21.2
 make check-lab-invariants
 ```
 
-Or merge the Dependabot PRs for **all six** lab directories in one sitting (partial merges fail `check-lab-invariants`). Prefer `make bump-node-deps` for a single coordinated PR. Do not assume a change in one lab propagates.
+Do not assume a change in one lab propagates.
 
 | Lab | App shape | Hardening notes |
 |-----|-----------|-----------------|

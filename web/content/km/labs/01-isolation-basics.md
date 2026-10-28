@@ -87,6 +87,10 @@ curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:18081/
 docker rm -f lab01-web-a lab01-web-b
 ```
 
+> **លទ្ធផលដែលរំពឹងទុក:** curl ទាំងពីរបង្ហាញ `200`។
+
+> **អន្ទាក់:** publish host port ដូចគ្នាពីរដង (ឧ. `-p 18080:80` លើ containers ទាំងពីរ) នឹងបរាជ័យដោយ “port is already allocated.” ក្នុង container នីមួយ port `80` នៅតែដូចគ្នាបាន — isolation តាម network namespace។
+
 ### 4. Memory limits
 
 Docker អាចកំណត់ RAM ដែល container អាចប្រើ។

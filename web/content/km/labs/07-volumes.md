@@ -48,6 +48,10 @@ docker rm -f lab07-pg
 docker volume rm lab07-pgdata
 ```
 
+> **លទ្ធផលដែលរំពឹងទុក:** `SELECT` ទីពីរនៅតែត្រឡប់ `id = 1` បន្ទាប់ពីលុបហើយបង្កើត container ឡើងវិញលើ volume ដូចគ្នា។
+
+> **អន្ទាក់:** `docker volume rm` (ឬ `docker compose down -v`) លុបទិន្នន័យ។ Wipe នោះចេតនាតែពេលអ្នកចង់ចាប់ផ្តើមស្អាត។
+
 ## ប្រៀបធៀប bind mount
 
 នៅ Windows គ្មាន WSL សូមប្រើថតក្នុង repo (ឧ. `labs/07-volumes/.bind`) ជំនួស `/tmp`។

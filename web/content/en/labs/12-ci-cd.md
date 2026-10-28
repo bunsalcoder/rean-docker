@@ -45,6 +45,10 @@ curl -fsS http://127.0.0.1:3000/ | python3 -m json.tool
 docker compose down -v
 ```
 
+> **Expected output:** `/health` returns JSON with `"status":"ok"` (and usually a version field).
+
+> **Pitfall:** `compose.prod.yaml` errors if `IMAGE_REF` is unset — that is intentional. Do not “fix” it by defaulting to `latest`.
+
 ### 3. Tag like CI would
 
 ```bash

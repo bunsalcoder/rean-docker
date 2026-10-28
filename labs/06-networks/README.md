@@ -30,6 +30,10 @@ docker rm -f lab06-redis
 docker network rm lab06-net
 ```
 
+> **Expected output:** The first `redis-cli` prints `PONG`. The second (no `--network lab06-net`) fails with a name-resolution or connection error.
+
+> **Tip:** On a user-defined network, the container **name** is the DNS name siblings use — not `localhost` on the host.
+
 ## Experiment
 
 Attach a second alias:

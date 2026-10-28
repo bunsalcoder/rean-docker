@@ -80,6 +80,18 @@ docker history rean-secret:lab11
 docker run --rm rean-secret:lab11
 </code></pre>
 <p>Build គួរជោគជ័យ ហើយមានសារ runtime។ អ្នក <strong>មិន</strong> គួរឃើញ <code>super-secret-token</code> ក្នុង <code>docker history</code>។ ប្រៀបធៀបជាមួយ <code>Dockerfile.leaky</code> នៃ Lab 04។</p>
+<details class="md-callout md-callout-expected">
+<summary class="md-callout-title">លទ្ធផលដែលរំពឹងទុក</summary>
+<div class="md-callout-body">
+<p>container បង្ហាញសារ success ហើយ <code>docker history</code> <strong>មិន</strong> មាន <code>super-secret-token</code>។</p>
+</div>
+</details>
+<aside class="md-callout md-callout-hint" role="note">
+<div class="md-callout-body">
+<p class="md-callout-title">គន្លឹះ</p>
+<p>Stretch §5–§7 គឺផ្លូវ hands-on សម្រាប់ handbook <strong>ជំពូក 16</strong> (BuildKit cache, Compose Watch, SBOM)។ មើលសង្ខេបទោះបីរំលង Watch អន្តរកម្មក៏ដោយ។</p>
+</div>
+</aside>
 <p>សម្អាត៖</p>
 <pre><code class="language-bash">rm -f /tmp/rean-demo.secret
 docker rmi rean-secret:lab11

@@ -67,6 +67,18 @@ docker history rean-multi:fat
 docker run --rm -p 3001:3000 rean-multi:slim
 # curl http://127.0.0.1:3001/
 </code></pre>
+<details class="md-callout md-callout-expected">
+<summary class="md-callout-title">Expected output</summary>
+<div class="md-callout-body">
+<p><code>docker images</code> shows <code>:fat</code> clearly larger than <code>:slim</code>, and slim still serves <code>/</code> (JSON greeting).</p>
+</div>
+</details>
+<aside class="md-callout md-callout-hint" role="note">
+<div class="md-callout-body">
+<p class="md-callout-title">Tip</p>
+<p><code>USER node</code> on slim is a security win separate from size — compare <code>whoami</code> on both tags below.</p>
+</div>
+</aside>
 <p><code>:fat</code> should be clearly larger (tens of MB). That extra weight is the TypeScript compiler and type packages left in the final image.</p>
 <h2>What to observe</h2>
 <ul>

@@ -45,6 +45,10 @@ curl -fsS http://127.0.0.1:3000/ | python3 -m json.tool
 docker compose down -v
 ```
 
+> **លទ្ធផលដែលរំពឹងទុក:** `/health` ត្រឡប់ JSON ដែលមាន `"status":"ok"` (ជាធម្មតាមាន version field ផង)។
+
+> **អន្ទាក់:** `compose.prod.yaml` error បើ `IMAGE_REF` មិនកំណត់ — នេះចេតនា។ កុំ «ជួស» ដោយ default ទៅ `latest`។
+
 ### 3. Tag ដូច CI
 
 ```bash

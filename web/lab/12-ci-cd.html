@@ -77,6 +77,18 @@ curl -fsS http://127.0.0.1:3000/ | python3 -m json.tool
 
 docker compose down -v
 </code></pre>
+<details class="md-callout md-callout-expected">
+<summary class="md-callout-title">Expected output</summary>
+<div class="md-callout-body">
+<p><code>/health</code> returns JSON with <code>&quot;status&quot;:&quot;ok&quot;</code> (and usually a version field).</p>
+</div>
+</details>
+<aside class="md-callout md-callout-pitfall" role="note">
+<div class="md-callout-body">
+<p class="md-callout-title">Pitfall</p>
+<p><code>compose.prod.yaml</code> errors if <code>IMAGE_REF</code> is unset — that is intentional. Do not “fix” it by defaulting to <code>latest</code>.</p>
+</div>
+</aside>
 <h3>3. Tag like CI would</h3>
 <pre><code class="language-bash">GIT_SHA=$(git rev-parse --short HEAD)
 docker build -t &quot;rean-deploy-api:sha-$GIT_SHA&quot; .

@@ -89,6 +89,18 @@ docker exec lab07-pg psql -U postgres -c &quot;SELECT * FROM demo;&quot;
 docker rm -f lab07-pg
 docker volume rm lab07-pgdata
 </code></pre>
+<details class="md-callout md-callout-expected">
+<summary class="md-callout-title">លទ្ធផលដែលរំពឹងទុក</summary>
+<div class="md-callout-body">
+<p><code>SELECT</code> ទីពីរនៅតែត្រឡប់ <code>id = 1</code> បន្ទាប់ពីលុបហើយបង្កើត container ឡើងវិញលើ volume ដូចគ្នា។</p>
+</div>
+</details>
+<aside class="md-callout md-callout-pitfall" role="note">
+<div class="md-callout-body">
+<p class="md-callout-title">អន្ទាក់</p>
+<p><code>docker volume rm</code> (ឬ <code>docker compose down -v</code>) លុបទិន្នន័យ។ Wipe នោះចេតនាតែពេលអ្នកចង់ចាប់ផ្តើមស្អាត។</p>
+</div>
+</aside>
 <h2>ប្រៀបធៀប bind mount</h2>
 <p>នៅ Windows គ្មាន WSL សូមប្រើថតក្នុង repo (ឧ. <code>labs/07-volumes/.bind</code>) ជំនួស <code>/tmp</code>។</p>
 <pre><code class="language-bash">mkdir -p /tmp/lab07-bind

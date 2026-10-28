@@ -87,6 +87,10 @@ curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:18081/
 docker rm -f lab01-web-a lab01-web-b
 ```
 
+> **Expected output:** Both curls print `200`.
+
+> **Pitfall:** Publishing the same host port twice (for example `-p 18080:80` on both containers) fails with “port is already allocated.” Inside each container, port `80` can still be the same — isolation is per network namespace.
+
 ### 4. Memory limits
 
 Docker can cap how much RAM a container may use.

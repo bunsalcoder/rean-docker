@@ -29,6 +29,10 @@ docker rm -f lab06-redis
 docker network rm lab06-net
 ```
 
+> **លទ្ធផលដែលរំពឹងទុក:** `redis-cli` ទីមួយបង្ហាញ `PONG`។ ទីពីរ (គ្មាន `--network lab06-net`) បរាជ័យដោយ name-resolution ឬ connection error។
+
+> **គន្លឹះ:** លើ user-defined network **ឈ្មោះ container** ជា DNS name ដែល siblings ប្រើ — មិនមែន `localhost` លើ host។
+
 ## ការសាកល្បង
 
 ភ្ជាប់ alias ទីពីរ៖

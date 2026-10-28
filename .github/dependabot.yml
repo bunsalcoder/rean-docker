@@ -36,75 +36,11 @@ updates:
       interval: weekly
     open-pull-requests-limit: 2
 
-  # Teaching Node apps share Express (and friends). Prefer one bump via:
+  # Teaching Node apps share Express (and friends) across six lab folders.
+  # Dependabot cannot open one multi-directory npm PR, and six separate PRs break
+  # check-lab-invariants unless merged together. Bump coordinated via:
   #   make bump-node-deps PKG=express@^4.22.0
-  # Groups collapse multi-package noise per lab; still merge all six lab PRs together
-  # (or use bump-node-deps) so check-lab-invariants stays green.
-  - package-ecosystem: npm
-    directory: /labs/03-dockerfile
-    target-branch: develop
-    schedule:
-      interval: monthly
-    open-pull-requests-limit: 2
-    groups:
-      lab-node-deps:
-        patterns:
-          - "*"
-
-  - package-ecosystem: npm
-    directory: /labs/05-compose
-    target-branch: develop
-    schedule:
-      interval: monthly
-    open-pull-requests-limit: 2
-    groups:
-      lab-node-deps:
-        patterns:
-          - "*"
-
-  - package-ecosystem: npm
-    directory: /labs/08-multi-stage
-    target-branch: develop
-    schedule:
-      interval: monthly
-    open-pull-requests-limit: 2
-    groups:
-      lab-node-deps:
-        patterns:
-          - "*"
-
-  - package-ecosystem: npm
-    directory: /labs/09-production
-    target-branch: develop
-    schedule:
-      interval: monthly
-    open-pull-requests-limit: 2
-    groups:
-      lab-node-deps:
-        patterns:
-          - "*"
-
-  - package-ecosystem: npm
-    directory: /labs/12-ci-cd
-    target-branch: develop
-    schedule:
-      interval: monthly
-    open-pull-requests-limit: 2
-    groups:
-      lab-node-deps:
-        patterns:
-          - "*"
-
-  - package-ecosystem: npm
-    directory: /labs/13-capstone
-    target-branch: develop
-    schedule:
-      interval: monthly
-    open-pull-requests-limit: 2
-    groups:
-      lab-node-deps:
-        patterns:
-          - "*"
+  # Do not re-add per-lab npm ecosystems here.
 
   # Self-hosted marked + DOMPurify (copied into assets/js/vendor/).
   # Before merging a /web bump PR, run locally (CI will fail otherwise):

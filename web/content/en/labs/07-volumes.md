@@ -49,6 +49,10 @@ docker rm -f lab07-pg
 docker volume rm lab07-pgdata
 ```
 
+> **Expected output:** The second `SELECT` still returns `id = 1` after you removed and recreated the container on the same volume.
+
+> **Pitfall:** `docker volume rm` (or `docker compose down -v`) deletes the data. That wipe is intentional only when you mean to start clean.
+
 ## Bind mount contrast
 
 On Windows without WSL, use a folder inside this repo (e.g. `labs/07-volumes/.bind`) instead of `/tmp`.

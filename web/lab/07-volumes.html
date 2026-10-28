@@ -89,6 +89,18 @@ docker exec lab07-pg psql -U postgres -c &quot;SELECT * FROM demo;&quot;
 docker rm -f lab07-pg
 docker volume rm lab07-pgdata
 </code></pre>
+<details class="md-callout md-callout-expected">
+<summary class="md-callout-title">Expected output</summary>
+<div class="md-callout-body">
+<p>The second <code>SELECT</code> still returns <code>id = 1</code> after you removed and recreated the container on the same volume.</p>
+</div>
+</details>
+<aside class="md-callout md-callout-pitfall" role="note">
+<div class="md-callout-body">
+<p class="md-callout-title">Pitfall</p>
+<p><code>docker volume rm</code> (or <code>docker compose down -v</code>) deletes the data. That wipe is intentional only when you mean to start clean.</p>
+</div>
+</aside>
 <h2>Bind mount contrast</h2>
 <p>On Windows without WSL, use a folder inside this repo (e.g. <code>labs/07-volumes/.bind</code>) instead of <code>/tmp</code>.</p>
 <pre><code class="language-bash">mkdir -p /tmp/lab07-bind
