@@ -203,6 +203,28 @@ def main() -> int:
                 fail = 1
             else:
                 print(f"OK:    {spa} has data-print + #main")
+            if 'data-lab-note' not in spa_body:
+                print(f"FAIL: {spa} missing data-lab-note slot")
+                fail = 1
+
+        code, lab11 = fetch(f"{base}/lab/11-security.html")
+        if code != 200 or lab11.count("learn.html?c=15") < 1 or lab11.count("learn.html?c=16") < 1:
+            print("FAIL: /lab/11-security.html should link theory to chapters 15 and 16")
+            fail = 1
+        else:
+            print("OK:    /lab/11-security.html links Ch.15 + Ch.16")
+        code, learn16 = fetch(f"{base}/learn/16.html")
+        if code != 200 or "pair-cta-hint" not in learn16:
+            print("FAIL: /learn/16.html missing Chapter 16 stretch practice hint")
+            fail = 1
+        else:
+            print("OK:    /learn/16.html has stretch practice hint")
+        code, capstone = fetch(f"{base}/lab/13-capstone.html")
+        if code != 200 or "lab-note" not in capstone or "CAPSTONE_OWN" not in capstone:
+            print("FAIL: /lab/13-capstone.html missing ownership lab-note banner")
+            fail = 1
+        else:
+            print("OK:    /lab/13-capstone.html has ownership banner")
 
         # Expected file counts: chapters + labs, each in EN + KM.
         learn_html = list((WEB / "learn").glob("*.html")) if (WEB / "learn").is_dir() else []

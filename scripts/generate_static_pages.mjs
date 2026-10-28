@@ -246,27 +246,30 @@ function wipeHtmlDir(dir) {
 
 function buildPairMaps(pairs) {
   const chapterToLab = {};
-  const labToChapter = {};
+  const labToChapters = {};
+  const pairByChapter = {};
   for (const pair of pairs || []) {
     const chapter = String(pair.chapter);
     const lab = String(pair.lab);
     chapterToLab[chapter] = lab;
-    // First pairing wins for labs that appear twice (e.g. Lab 11 ← Ch.15 then Ch.16).
-    if (!labToChapter[lab]) labToChapter[lab] = chapter;
+    pairByChapter[chapter] = pair;
+    const list = labToChapters[lab] || (labToChapters[lab] = []);
+    if (!list.includes(chapter)) list.push(chapter);
   }
-  return { chapterToLab, labToChapter };
+  return { chapterToLab, labToChapters, pairByChapter };
 }
 
-function pairBlock({ label, href, text }) {
-  if (!href || !text) return "";
-  return `<p class="pair-cta"><span class="pair-cta-label">${escapeHtml(label)}</span><a href="${escapeAttr(href)}">${escapeHtml(text)}</a></p>`;
+function pairBlock({ label, linksHtml, hintHtml = "" }) {
+  if (!linksHtml) return "";
+  return `<div class="pair-cta"><span class="pair-cta-label">${escapeHtml(label)}</span>${linksHtml}${hintHtml}</div>`;
 }
 
 function main() {
   const routes = loadJson(path.join(WEB, "assets/routes.json"));
   const chapterIds = routes.chapters.map((c) => String(c.id));
   const labIds = routes.labs.map((l) => String(l.id));
-  const { chapterToLab, labToChapter } = buildPairMaps(routes.pairs);
+  const { chapterToLab, labToChapters, pairByChapter } = buildPairMaps(routes.pairs);
+  const labNotes = routes.labNotes || {};
 
   const enMap = parseStringMap(read(path.join(WEB, "assets/js/i18n.js")));
   const kmMap = { ...enMap, ...parseStringMap(read(path.join(WEB, "assets/js/i18n-km.js"))) };
@@ -318,10 +321,15 @@ function main() {
           locale === "km"
             ? `./lab.html?id=${encodeURIComponent(pairedLab)}&lang=km`
             : `./lab.html?id=${encodeURIComponent(pairedLab)}`;
+        const hintKey = pairByChapter[ch.id]?.practiceHintKey;
+        const hintHtml =
+          hintKey && strings[hintKey]
+            ? `<span class="pair-cta-hint">${escapeHtml(strings[hintKey])}</span>`
+            : "";
         pairHtml = pairBlock({
           label: strings["pair.practice"] || "Practice",
-          href: labHref,
-          text: linkText,
+          linksHtml: `<a href="${escapeAttr(labHref)}">${escapeHtml(linkText)}</a>`,
+          hintHtml,
         });
       }
 
@@ -375,23 +383,37 @@ function main() {
           ? `./lab.html?id=${encodeURIComponent(lab.id)}&lang=km`
           : `./lab.html?id=${encodeURIComponent(lab.id)}`;
 
-      const pairedChapter = labToChapter[lab.id];
+      const pairedChapters = labToChapters[lab.id] || [];
       let pairHtml = "";
-      if (pairedChapter) {
-        const chapterTitle = strings[`chapter.${pairedChapter}`] || pairedChapter;
-        const linkText = (strings["pair.chapterTitle"] || "Chapter {n} — {title}")
-          .replace("{n}", pairedChapter)
-          .replace("{title}", chapterTitle);
-        const chapterHref =
-          locale === "km"
-            ? `./learn.html?c=${encodeURIComponent(pairedChapter)}&lang=km`
-            : `./learn.html?c=${encodeURIComponent(pairedChapter)}`;
+      if (pairedChapters.length) {
+        const linksHtml = pairedChapters
+          .map((pairedChapter, index) => {
+            const chapterTitle = strings[`chapter.${pairedChapter}`] || pairedChapter;
+            const linkText = (strings["pair.chapterTitle"] || "Chapter {n} — {title}")
+              .replace("{n}", pairedChapter)
+              .replace("{title}", chapterTitle);
+            const chapterHref =
+              locale === "km"
+                ? `./learn.html?c=${encodeURIComponent(pairedChapter)}&lang=km`
+                : `./learn.html?c=${encodeURIComponent(pairedChapter)}`;
+            const sep =
+              index > 0
+                ? `<span class="pair-cta-sep" aria-hidden="true">·</span>`
+                : "";
+            return `${sep}<a href="${escapeAttr(chapterHref)}">${escapeHtml(linkText)}</a>`;
+          })
+          .join("");
         pairHtml = pairBlock({
           label: strings["pair.theory"] || "Theory",
-          href: chapterHref,
-          text: linkText,
+          linksHtml,
         });
       }
+
+      const noteKey = labNotes[lab.id];
+      const noteHtml =
+        noteKey && strings[noteKey]
+          ? `<p class="lab-note">${escapeHtml(strings[noteKey])}</p>`
+          : "";
 
       const html = renderPage({
         kind: "lab",
@@ -414,7 +436,7 @@ function main() {
         prevLabel: strings["lab.prev"] || "Previous lab",
         nextLabel: strings["lab.next"] || "Next lab",
         skipLabel: strings["a11y.skip"] || "Skip to content",
-        pairHtml,
+        pairHtml: `${pairHtml}${noteHtml}`,
       });
       fs.writeFileSync(path.join(labDir, file), html, "utf8");
       written += 1;

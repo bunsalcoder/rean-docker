@@ -1,6 +1,6 @@
 /* Generated from web/assets/routes.json — edit the JSON, then: make sync-routes */
 (() => {
-  const VERSION = 3;
+  const VERSION = 4;
   const CHAPTERS = [
     {
       id: "how-to-use",
@@ -61,17 +61,28 @@
     { chapter: "13", lab: "09-production" },
     { chapter: "14", lab: "10-debugging" },
     { chapter: "15", lab: "11-security" },
-    { chapter: "16", lab: "11-security" },
+    { chapter: "16", lab: "11-security", practiceHintKey: "pair.ch16Stretch" },
     { chapter: "17", lab: "12-ci-cd" },
     { chapter: "18", lab: "13-capstone" },
   ];
 
+  const LAB_NOTES = {
+    "13-capstone": "lab.ownBanner",
+  };
+
   const CHAPTER_TO_LAB = Object.fromEntries(
     PAIR_LIST.map((pair) => [pair.chapter, pair.lab])
   );
-  const LAB_TO_CHAPTER = Object.fromEntries(
-    [...PAIR_LIST].reverse().map((pair) => [pair.lab, pair.chapter])
-  );
+  // First pairing wins as the primary theory chapter (Lab 11 → Ch.15).
+  const LAB_TO_CHAPTER = PAIR_LIST.reduce((acc, pair) => {
+    if (!acc[pair.lab]) acc[pair.lab] = pair.chapter;
+    return acc;
+  }, {});
+  const LAB_TO_CHAPTERS = PAIR_LIST.reduce((acc, pair) => {
+    const list = acc[pair.lab] || (acc[pair.lab] = []);
+    if (!list.includes(pair.chapter)) list.push(pair.chapter);
+    return acc;
+  }, {});
 
   window.ReanRoutes = {
     version: VERSION,
@@ -79,7 +90,9 @@
     LAB_DEFS,
     LAB_IDS,
     PAIRS: PAIR_LIST,
+    LAB_NOTES,
     CHAPTER_TO_LAB,
     LAB_TO_CHAPTER,
+    LAB_TO_CHAPTERS,
   };
 })();

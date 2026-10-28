@@ -169,6 +169,9 @@ window.REAN_I18N_KM = {
   "pair.labTitle": "លំហាត់ {n} — {title}",
   "pair.practice": "អនុវត្ត",
   "pair.theory": "ទ្រឹស្តី",
+  "pair.ch16Stretch": "ចាប់ផ្តើមនៅ §5–§7 (BuildKit cache, Watch, SBOM)",
+  "lab.ownBanner":
+    "Baseline ≠ រួច។ Capstone រួចតែបន្ទាប់ពី CAPSTONE_OWN — យ៉ាងហោចពីរការផ្លាស់ប្តូរ ownership កត់ក្នុង checklist README។",
   "progress.allChaptersDone": "Checklist ជំពូកទាំងអស់រួចហើយ។ ល្អណាស់។",
   "progress.allDone": "Checklist លំហាត់ទាំងអស់រួចហើយ។ ល្អណាស់។",
   "progress.allDoneBoth": "Checklist ជំពូក និងលំហាត់ទាំងអស់រួចហើយ។ ល្អណាស់។",

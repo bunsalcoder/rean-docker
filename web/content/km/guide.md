@@ -1419,6 +1419,8 @@ docker pull nginx@sha256:...
 
 លំហាត់បន្ថែមសម្រាប់ជំពូកនេះស្ថិតនៅ **Lab 11 §5–§7** (BuildKit cache + multi-arch, Compose Watch, SBOM)។ Secrets mounts បានអនុវត្តរួចក្នុង Lab 11 §2។ Profiles បានបង្ហាញខ្លីក្នុងជំពូក 11 — ត្រឡប់មកវិញពេល service ស្រេចចិត្តធ្វើឱ្យ Compose រាលថ្ងៃរញ៉េរញ៉ៃ។
 
+> **គន្លឹះ:** បើក **Lab 11 — សុវត្ថិភាពសំខាន់ៗ** រំលងជំហានស្នូលជំពូក 15 បើរួចហើយ រួចលោតទៅចំណងជើង **Stretch** (§5 cache/multi-arch, §6 Compose Watch, §7 SBOM)។ CTA អនុវត្តខាងលើជំពូកចង្អុលទៅ lab ដូចគ្នា។
+
 ### BuildKit (សំខាន់)
 
 Builder ទំនើប (ធម្មតាជា default ឥឡូវ)៖

@@ -385,6 +385,7 @@ function renderMissingRoute(bodyEl, titleEl, progressEl, pagerEl, { title, hint,
   }
   if (pagerEl) pagerEl.innerHTML = "";
   clearPairCta();
+  clearLabNote();
   document.title = `${title} — rean-docker`;
   bodyEl.innerHTML = `<div class="error"><strong>${title}</strong><br>${hint}<br><br><a class="btn btn-primary" href="${href}">${cta}</a></div>`;
   focusReaderTitle(titleEl);
@@ -405,14 +406,31 @@ function clearPairCta() {
   el.innerHTML = "";
 }
 
+function clearLabNote() {
+  const el = document.querySelector("[data-lab-note]");
+  if (!el) return;
+  el.hidden = true;
+  el.textContent = "";
+}
+
+function renderLabNote(labId) {
+  const el = document.querySelector("[data-lab-note]");
+  if (!el) return;
+  const key = window.ReanRoutes?.LAB_NOTES?.[labId];
+  if (!key) {
+    clearLabNote();
+    return;
+  }
+  el.hidden = false;
+  el.textContent = t(key);
+}
+
 function renderPairCta({ kind, id }) {
   const el = document.querySelector("[data-pair-cta]");
   if (!el) return;
 
   const routes = window.ReanRoutes || {};
-  let href = "";
-  let label = "";
-  let linkText = "";
+  const pairs = Array.isArray(routes.PAIRS) ? routes.PAIRS : [];
 
   if (kind === "chapter") {
     const labId = routes.CHAPTER_TO_LAB?.[id];
@@ -420,32 +438,46 @@ function renderPairCta({ kind, id }) {
       clearPairCta();
       return;
     }
+    const pair = pairs.find((p) => String(p.chapter) === String(id) && p.lab === labId);
     const num = labId.slice(0, 2);
-    href = labHref(labId);
-    label = t("pair.practice");
-    linkText = t("pair.labTitle", {
+    const href = labHref(labId);
+    const linkText = t("pair.labTitle", {
       n: num,
       title: t(`labMeta.${labId}`),
     });
-  } else if (kind === "lab") {
-    const chapterId = routes.LAB_TO_CHAPTER?.[id];
-    if (!chapterId) {
-      clearPairCta();
-      return;
-    }
-    href = chapterHref(chapterId);
-    label = t("pair.theory");
-    linkText = t("pair.chapterTitle", {
-      n: chapterId,
-      title: t(`chapter.${chapterId}`),
-    });
-  } else {
-    clearPairCta();
+    const hintKey = pair?.practiceHintKey;
+    const hint = hintKey ? `<span class="pair-cta-hint">${escapeHtml(t(hintKey))}</span>` : "";
+    el.hidden = false;
+    el.innerHTML = `<span class="pair-cta-label">${escapeHtml(t("pair.practice"))}</span><a href="${escapeHtml(href)}">${escapeHtml(linkText)}</a>${hint}`;
     return;
   }
 
-  el.hidden = false;
-  el.innerHTML = `<span class="pair-cta-label">${escapeHtml(label)}</span><a href="${escapeHtml(href)}">${escapeHtml(linkText)}</a>`;
+  if (kind === "lab") {
+    const chapterIds =
+      routes.LAB_TO_CHAPTERS?.[id] ||
+      (routes.LAB_TO_CHAPTER?.[id] ? [routes.LAB_TO_CHAPTER[id]] : []);
+    if (!chapterIds.length) {
+      clearPairCta();
+      return;
+    }
+    const links = chapterIds
+      .map((chapterId, index) => {
+        const href = chapterHref(chapterId);
+        const linkText = t("pair.chapterTitle", {
+          n: chapterId,
+          title: t(`chapter.${chapterId}`),
+        });
+        const sep =
+          index > 0 ? `<span class="pair-cta-sep" aria-hidden="true">·</span>` : "";
+        return `${sep}<a href="${escapeHtml(href)}">${escapeHtml(linkText)}</a>`;
+      })
+      .join("");
+    el.hidden = false;
+    el.innerHTML = `<span class="pair-cta-label">${escapeHtml(t("pair.theory"))}</span>${links}`;
+    return;
+  }
+
+  clearPairCta();
 }
 
 async function initLearnPage() {
@@ -523,6 +555,7 @@ async function initLearnPage() {
       renderMarkdown(bodyEl, chapter.body, { checklistScope: `learn:${chapter.id}` });
       setEditSource("learn", chapter.id);
       renderPairCta({ kind: "chapter", id: chapter.id });
+      clearLabNote();
       renderPager(index);
       if (focusTitle) focusReaderTitle(titleEl);
     };
@@ -709,6 +742,7 @@ async function initLabPage() {
     });
     renderPager(index);
     renderPairCta({ kind: "lab", id: lab.id });
+    renderLabNote(lab.id);
 
     try {
       const md = await loadLabMarkdown(lab.id);

@@ -48,12 +48,20 @@ def render_routes_js(data: dict) -> str:
         for lab in data["labs"]
     ]
 
-    pair_lines = [
-        "    {"
-        f" chapter: {js_string(str(pair['chapter']))},"
-        f" lab: {js_string(str(pair['lab']))}"
-        " },"
-        for pair in data.get("pairs") or []
+    pair_lines: list[str] = []
+    for pair in data.get("pairs") or []:
+        parts = [
+            f" chapter: {js_string(str(pair['chapter']))}",
+            f" lab: {js_string(str(pair['lab']))}",
+        ]
+        hint = pair.get("practiceHintKey")
+        if hint:
+            parts.append(f" practiceHintKey: {js_string(str(hint))}")
+        pair_lines.append("    {" + ",".join(parts) + " },")
+
+    note_lines = [
+        f"    {js_string(str(lab_id))}: {js_string(str(key))},"
+        for lab_id, key in (data.get("labNotes") or {}).items()
     ]
 
     version = int(data.get("version") or 1)
@@ -76,12 +84,23 @@ def render_routes_js(data: dict) -> str:
             *pair_lines,
             "  ];",
             "",
+            "  const LAB_NOTES = {",
+            *note_lines,
+            "  };",
+            "",
             "  const CHAPTER_TO_LAB = Object.fromEntries(",
             "    PAIR_LIST.map((pair) => [pair.chapter, pair.lab])",
             "  );",
-            "  const LAB_TO_CHAPTER = Object.fromEntries(",
-            "    [...PAIR_LIST].reverse().map((pair) => [pair.lab, pair.chapter])",
-            "  );",
+            "  // First pairing wins as the primary theory chapter (Lab 11 → Ch.15).",
+            "  const LAB_TO_CHAPTER = PAIR_LIST.reduce((acc, pair) => {",
+            "    if (!acc[pair.lab]) acc[pair.lab] = pair.chapter;",
+            "    return acc;",
+            "  }, {});",
+            "  const LAB_TO_CHAPTERS = PAIR_LIST.reduce((acc, pair) => {",
+            "    const list = acc[pair.lab] || (acc[pair.lab] = []);",
+            "    if (!list.includes(pair.chapter)) list.push(pair.chapter);",
+            "    return acc;",
+            "  }, {});",
             "",
             "  window.ReanRoutes = {",
             "    version: VERSION,",
@@ -89,8 +108,10 @@ def render_routes_js(data: dict) -> str:
             "    LAB_DEFS,",
             "    LAB_IDS,",
             "    PAIRS: PAIR_LIST,",
+            "    LAB_NOTES,",
             "    CHAPTER_TO_LAB,",
             "    LAB_TO_CHAPTER,",
+            "    LAB_TO_CHAPTERS,",
             "  };",
             "})();",
             "",

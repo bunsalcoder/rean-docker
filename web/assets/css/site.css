@@ -2110,6 +2110,32 @@ body > main.section > .wrap {
   outline-offset: 3px;
 }
 
+.pair-cta-sep {
+  color: color-mix(in srgb, var(--muted) 70%, transparent);
+  user-select: none;
+}
+
+.pair-cta-hint {
+  flex: 1 1 12rem;
+  font-size: 0.86rem;
+  color: var(--muted);
+}
+
+.lab-note {
+  margin: -0.35rem 0 1.1rem;
+  padding: 0.7rem 0.9rem;
+  font-family: var(--font-ui);
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--ocean) 10%, var(--bg));
+  border-left: 3px solid var(--ocean);
+}
+
+.lab-note[hidden] {
+  display: none;
+}
+
 .edit-source {
   margin: 1.25rem 0 0;
   font-family: var(--font-ui);

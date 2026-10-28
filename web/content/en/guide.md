@@ -1419,6 +1419,8 @@ docker pull nginx@sha256:...
 
 Hands-on stretches for this chapter live in **Lab 11 §5–§7** (BuildKit cache + multi-arch, Compose Watch, SBOM). Secrets mounts are already practiced in Lab 11 §2. Profiles showed up briefly in Chapter 11 — revisit them when optional services clutter your day-to-day Compose file.
 
+> **Tip:** Open **Lab 11 — Security essentials**, skip past the Chapter 15 core steps if you already finished them, and jump straight to the **Stretch** headings (§5 cache/multi-arch, §6 Compose Watch, §7 SBOM). The Practice CTA above the chapter points at the same lab.
+
 ### BuildKit
 
 Modern builder (usually default now):

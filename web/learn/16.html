@@ -43,12 +43,18 @@
     <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
       <p class="eyebrow">Curriculum</p>
       <h1>Advanced topics</h1>
-      <p class="pair-cta"><span class="pair-cta-label">Practice</span><a href="./lab.html?id=11-security">Lab 11 — Security essentials</a></p>
+      <div class="pair-cta"><span class="pair-cta-label">Practice</span><a href="./lab.html?id=11-security">Lab 11 — Security essentials</a><span class="pair-cta-hint">Start at §5–§7 (BuildKit cache, Watch, SBOM)</span></div>
       <p class="cta-row" style="margin: 1rem 0 1.5rem">
         <a class="btn btn-primary" href="./learn.html?c=16">Open interactive reader</a>
       </p>
       <div class="md-body">
 <p>Hands-on stretches for this chapter live in <strong>Lab 11 §5–§7</strong> (BuildKit cache + multi-arch, Compose Watch, SBOM). Secrets mounts are already practiced in Lab 11 §2. Profiles showed up briefly in Chapter 11 — revisit them when optional services clutter your day-to-day Compose file.</p>
+<aside class="md-callout md-callout-hint" role="note">
+<div class="md-callout-body">
+<p class="md-callout-title">Tip</p>
+<p>Open <strong>Lab 11 — Security essentials</strong>, skip past the Chapter 15 core steps if you already finished them, and jump straight to the <strong>Stretch</strong> headings (§5 cache/multi-arch, §6 Compose Watch, §7 SBOM). The Practice CTA above the chapter points at the same lab.</p>
+</div>
+</aside>
 <h3>BuildKit</h3>
 <p>Modern builder (usually default now):</p>
 <pre><code class="language-bash">DOCKER_BUILDKIT=1 docker build -t myapp .
