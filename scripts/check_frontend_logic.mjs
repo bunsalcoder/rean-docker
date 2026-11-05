@@ -206,8 +206,11 @@ const progressJs = readFileSync(join(ROOT, "web/assets/js/progress.js"), "utf8")
 assert(progressJs.includes('aria-live="polite"'), "progress transfer status is announced");
 assert(progressJs.includes("importConfirm"), "progress import asks before overwrite");
 assert(progressJs.includes('role="progressbar"'), "progress meters use progressbar role");
+assert(progressJs.includes("progress-tip-seen") && progressJs.includes("showProgressTip"), "first checklist tick shows progress tip");
+assert(i18nJs.includes("progress.tip") && i18nJs.includes("progress.tipDismiss"), "progress tip copy keys exist");
 const guideJs = readFileSync(join(ROOT, "web/assets/js/guide.js"), "utf8");
 assert(guideJs.includes("enhanceChecklists"), "guide exposes shared checklist wiring");
+assert(guideJs.includes('source: "tick"'), "checklist change marks progress source as tick");
 assert(siteJs.includes("data-checklist-scope"), "site wires static page checklists");
 assert(siteJs.includes('querySelector(".hero")'), "reveals arm immediately off the home hero");
 assert(searchJs.includes("aria-modal"), "search dialog declares aria-modal");

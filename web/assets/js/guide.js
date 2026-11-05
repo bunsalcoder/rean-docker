@@ -98,13 +98,13 @@
     return `rean-docker:checklist:${scope}`;
   }
 
-  function syncChecklistProgress(scope, boxes) {
+  function syncChecklistProgress(scope, boxes, opts) {
     const total = boxes.length;
     let done = 0;
     boxes.forEach((input) => {
       if (input.checked) done += 1;
     });
-    window.ReanProgress?.record(scope, done, total);
+    window.ReanProgress?.record(scope, done, total, opts);
   }
 
   /**
@@ -177,7 +177,7 @@
         saved[key] = input.checked;
         persistIndexOnly();
         li.classList.toggle("is-done", input.checked);
-        syncChecklistProgress(scope, boxes);
+        syncChecklistProgress(scope, boxes, { source: "tick" });
       });
     });
 
