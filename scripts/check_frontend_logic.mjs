@@ -184,7 +184,13 @@ assert(learnJs.includes('key !== "Escape"') || learnJs.includes('key === "Escape
 assert(learnJs.includes("prefersReducedMotion"), "learn respects reduced-motion for scroll");
 assert(learnJs.includes("setupPagerKeys") && learnJs.includes("ArrowLeft"), "learn/lab support keyboard prev/next");
 assert(i18nJs.includes("a11y.pagerKeys"), "pager keyboard hint string exists");
+assert(learnJs.includes("normalizeLegacyHashRoute"), "legacy hash routes normalize to query params");
+assert(!/location\.hash[\s\S]{0,80}return decodeURIComponent/.test(learnJs), "getRouteId no longer prefers raw hash");
 assert(learnJs.includes("record(scope, 1, 1)"), "checklist-free chapters mark visited");
+const notFoundHtml = readFileSync(join(ROOT, "web/404.html"), "utf8");
+assert(notFoundHtml.includes("notFound.hint") && notFoundHtml.includes("notFound.ctaLab"), "404 offers recovery CTAs");
+assert(notFoundHtml.includes("site-footer") && notFoundHtml.includes('lang="km"'), "404 has footer + bilingual noscript");
+assert(i18nJs.includes("notFound.eyebrow") && i18nJs.includes("notFound.ctaGuide"), "404 i18n keys exist");
 assert(i18nJs.includes("chapter.weekly-plan") && i18nJs.includes("chapter.glossary"), "appendix chapter titles exist");
 assert(i18nJs.includes("pair.practice") && i18nJs.includes("pair.theory"), "chapter↔lab pair CTA strings exist");
 const routesJs = readFileSync(join(ROOT, "web/assets/js/routes.js"), "utf8");
