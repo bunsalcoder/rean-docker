@@ -2082,6 +2082,38 @@ body > main.section > .wrap {
   font-family: var(--font-ui);
 }
 
+.pager-keys {
+  grid-column: 1 / -1;
+  margin: 0.15rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.45rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.pager-keys kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.55rem;
+  padding: 0.12rem 0.35rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1.2;
+  color: var(--ink-soft);
+}
+
+@media (max-width: 720px) {
+  .pager-keys {
+    display: none;
+  }
+}
+
 .pair-cta {
   margin: 0.65rem 0 1.15rem;
   font-family: var(--font-ui);

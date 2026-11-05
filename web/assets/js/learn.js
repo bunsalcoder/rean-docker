@@ -312,6 +312,40 @@ function prefersReducedMotion() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
+function isTypingTarget(target) {
+  const tag = (target?.tagName || "").toLowerCase();
+  return tag === "input" || tag === "textarea" || tag === "select" || Boolean(target?.isContentEditable);
+}
+
+/**
+ * ArrowLeft / [ → previous; ArrowRight / ] → next.
+ * Skips when typing, a dialog is open, or modifiers are held.
+ */
+function setupPagerKeys({ getPrevId, getNextId, goTo }) {
+  document.addEventListener("keydown", (event) => {
+    if (event.defaultPrevented) return;
+    if (event.metaKey || event.ctrlKey || event.altKey) return;
+    if (isTypingTarget(event.target)) return;
+    if (document.querySelector("dialog[open]")) return;
+
+    let id = null;
+    if (event.key === "ArrowLeft" || event.key === "[") {
+      id = getPrevId?.();
+    } else if (event.key === "ArrowRight" || event.key === "]") {
+      id = getNextId?.();
+    } else {
+      return;
+    }
+    if (!id) return;
+    event.preventDefault();
+    goTo(id, { push: true, animate: true });
+  });
+}
+
+function pagerKeysHintHtml() {
+  return `<p class="pager-keys"><kbd>←</kbd> <kbd>→</kbd> <span>${t("a11y.pagerKeys")}</span></p>`;
+}
+
 function scrollToTop() {
   window.scrollTo({
     top: 0,
@@ -472,6 +506,7 @@ async function initLearnPage() {
       pagerEl.innerHTML = `
         ${prev ? `<a class="pager-prev" href="${chapterHref(prev.id)}" data-chapter-id="${prev.id}"><span>${t("learn.prev")}</span>${prev.title}</a>` : ""}
         ${next ? `<a class="pager-next" href="${chapterHref(next.id)}" data-chapter-id="${next.id}"><span>${t("learn.next")}</span>${next.title}</a>` : ""}
+        ${pagerKeysHintHtml()}
       `;
     };
 
@@ -603,6 +638,12 @@ async function initLearnPage() {
       goToChapter(link.dataset.chapterId, { push: true, animate: true });
     });
 
+    setupPagerKeys({
+      getPrevId: () => chapters[currentIndex - 1]?.id || null,
+      getNextId: () => chapters[currentIndex + 1]?.id || null,
+      goTo: goToChapter,
+    });
+
     window.addEventListener("popstate", () => {
       goToChapter(getRouteId("c") || chapters[0].id, { push: false, animate: true });
     });
@@ -647,6 +688,7 @@ async function initLabPage() {
     pagerEl.innerHTML = `
       ${prev ? `<a class="pager-prev" href="${labHref(prev.id)}" data-lab-id="${prev.id}"><span>${t("lab.prev")}</span>${prev.title}</a>` : ""}
       ${next ? `<a class="pager-next" href="${labHref(next.id)}" data-lab-id="${next.id}"><span>${t("lab.next")}</span>${next.title}</a>` : ""}
+      ${pagerKeysHintHtml()}
     `;
   };
 
@@ -794,6 +836,12 @@ async function initLabPage() {
     if (!link) return;
     event.preventDefault();
     goToLab(link.dataset.labId, { push: true, animate: true });
+  });
+
+  setupPagerKeys({
+    getPrevId: () => LABS[currentIndex - 1]?.id || null,
+    getNextId: () => LABS[currentIndex + 1]?.id || null,
+    goTo: goToLab,
   });
 
   window.addEventListener("popstate", () => {

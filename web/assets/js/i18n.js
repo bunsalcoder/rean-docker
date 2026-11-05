@@ -12,6 +12,7 @@
     "a11y.skip": "Skip to content",
     "a11y.langEn": "Language set to English",
     "a11y.langKm": "Language set to Khmer",
+    "a11y.pagerKeys": "Previous / next page",
     "notFound.title": "Not found — rean-docker",
     "notFound.description": "This page is not in the rean-docker learning site.",
     "notFound.heading": "Page not found",
