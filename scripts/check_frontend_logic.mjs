@@ -204,11 +204,22 @@ assert(siteJs.includes("beforeprint"), "print expands collapsed callouts");
 assert(siteJs.includes("aria-controls") || siteJs.includes("setNavOpen"), "mobile nav manages open state");
 const progressJs = readFileSync(join(ROOT, "web/assets/js/progress.js"), "utf8");
 assert(progressJs.includes('aria-live="polite"'), "progress transfer status is announced");
+assert(progressJs.includes("importConfirm"), "progress import asks before overwrite");
+assert(progressJs.includes('role="progressbar"'), "progress meters use progressbar role");
+const guideJs = readFileSync(join(ROOT, "web/assets/js/guide.js"), "utf8");
+assert(guideJs.includes("enhanceChecklists"), "guide exposes shared checklist wiring");
+assert(siteJs.includes("data-checklist-scope"), "site wires static page checklists");
+assert(siteJs.includes('querySelector(".hero")'), "reveals arm immediately off the home hero");
+assert(searchJs.includes("aria-modal"), "search dialog declares aria-modal");
+assert(searchJs.includes("restoreOpenerFocus") || searchJs.includes("lastOpener"), "search restores focus to opener");
+assert(learnJs.includes("setBackgroundInert") || learnJs.includes("inert"), "sidebar drawer inerts background");
 const genStatic = readFileSync(join(ROOT, "scripts/generate_static_pages.mjs"), "utf8");
 assert(genStatic.includes("skipLabel") && genStatic.includes("a11y.skip"), "static pages bake skip-link locale");
 assert(genStatic.includes("enhanceCalloutsHtml"), "static pages enhance callouts");
 assert(genStatic.includes(".filter(Boolean)"), "static pager omits empty prev/next slots");
 assert(genStatic.includes("pairHtml") || genStatic.includes("pair-cta"), "static pages bake pair CTA");
+assert(genStatic.includes("data-checklist-scope"), "static pages expose checklist scope");
+assert(genStatic.includes("static.readerHint"), "static pages bake checklist hint");
 
 const { enhanceCalloutsHtml } = await import(
   pathToFileURL(join(ROOT, "scripts/enhance_callouts_html.mjs")).href
@@ -241,7 +252,11 @@ const labHtmlPage = readFileSync(join(ROOT, "web/lab.html"), "utf8");
 assert(learnHtml.includes("data-print"), "learn exposes data-print control");
 assert(labHtmlPage.includes("data-print"), "lab exposes data-print control");
 assert(learnHtml.includes('id="main"') && labHtmlPage.includes('id="main"'), "learn/lab have #main landmark");
+assert(learnHtml.includes("site-footer") && labHtmlPage.includes("site-footer"), "learn/lab SPA pages include footer");
+assert(learnHtml.includes('lang="km"') && labHtmlPage.includes('lang="km"'), "noscript fallback is bilingual");
 assert(siteJs.includes("md-callout"), "print path targets md-callout details");
+const labsHtml = readFileSync(join(ROOT, "web/labs.html"), "utf8");
+assert(labsHtml.includes("reveal-block") && labsHtml.includes("data-lab-duration"), "labs index uses reveal-block + baked durations");
 
 const staticLabSample = readFileSync(join(ROOT, "web/lab/03-dockerfile.html"), "utf8");
 assert(
@@ -249,6 +264,8 @@ assert(
   "static lab pages bake enhanced callouts"
 );
 assert(staticLabSample.includes("pair-cta") || staticLabSample.includes("pair.practice"), "static lab has pair CTA");
+assert(staticLabSample.includes("data-checklist-scope"), "static lab exposes checklist scope");
+assert(staticLabSample.includes("progress.js"), "static lab loads progress.js");
 
 if (fail) {
   console.error("Frontend logic checks failed.");

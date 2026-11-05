@@ -40,14 +40,15 @@
     <a class="skip-link" href="#main" data-i18n="a11y.skip">Skip to content</a>
     <rean-header class="site-header" role="banner"></rean-header>
 
-    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+    <main class="content-pane wrap static-reader" id="main" tabindex="-1">
       <p class="eyebrow">Curriculum</p>
       <h1>Install &amp; verify</h1>
       <div class="pair-cta"><span class="pair-cta-label">Practice</span><a href="./lab.html?id=01-isolation-basics">Lab 01 — Isolation basics</a><span class="pair-cta-hint">Verify Docker, then practice isolation in Lab 01</span></div>
-      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+      <p class="cta-row static-reader-cta">
         <a class="btn btn-primary" href="./learn.html?c=4">Open interactive reader</a>
       </p>
-      <div class="md-body">
+      <p class="static-reader-hint">Checklists and progress sync in the interactive reader (and on this page when JavaScript is on).</p>
+      <div class="md-body" data-checklist-scope="learn:4">
 <p>You need Docker on <strong>your</strong> computer before the labs will work. Most learners install <strong>Docker Desktop</strong> (Windows, macOS, or Linux). On Linux servers you can install <strong>Docker Engine</strong> instead.</p>
 <p>Official downloads and docs: <a href="https://docs.docker.com/get-started/get-docker/">https://docs.docker.com/get-started/get-docker/</a></p>
 <p>Pick your operating system below, then finish with the shared <strong>Verify</strong> steps.</p>
@@ -260,7 +261,7 @@ sudo systemctl status docker
 <hr>
 
       </div>
-      <nav class="pager" style="margin-top: 2rem">
+      <nav class="pager static-reader-pager">
         <a class="pager-prev" href="./learn/3.html"><span>Previous</span>Core mental model</a>
         <a class="pager-next" href="./learn/5.html"><span>Next</span>Your first containers</a>
       </nav>
@@ -269,12 +270,16 @@ sudo systemctl status docker
     <footer class="site-footer">
       <div class="wrap">
         <span class="brand">rean-docker</span>
+        <a href="./learn.html?c=4">Open interactive reader</a>
       </div>
     </footer>
 
     <script defer src="./assets/js/i18n-km.js"></script>
     <script defer src="./assets/js/i18n.js"></script>
     <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/guide.js"></script>
+    <script defer src="./assets/js/progress.js"></script>
+    <script defer src="./assets/js/search.js"></script>
     <script defer src="./assets/js/site.js"></script>
   </body>
 </html>

@@ -40,14 +40,15 @@
     <a class="skip-link" href="#main" data-i18n="a11y.skip">Skip to content</a>
     <rean-header class="site-header" role="banner"></rean-header>
 
-    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+    <main class="content-pane wrap static-reader" id="main" tabindex="-1">
       <p class="eyebrow">Curriculum</p>
       <h1>Security essentials</h1>
       <div class="pair-cta"><span class="pair-cta-label">Practice</span><a href="./lab.html?id=11-security">Lab 11 — Security essentials</a></div>
-      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+      <p class="cta-row static-reader-cta">
         <a class="btn btn-primary" href="./learn.html?c=15">Open interactive reader</a>
       </p>
-      <div class="md-body">
+      <p class="static-reader-hint">Checklists and progress sync in the interactive reader (and on this page when JavaScript is on).</p>
+      <div class="md-body" data-checklist-scope="learn:15">
 <h3>Lab: <code>labs/11-security</code></h3>
 <p>Compare <code>whoami</code> on a non-root image vs Alpine, build with BuildKit <code>--secret</code> (nothing in <code>docker history</code>), and optionally scan with Trivy. Lab 04 already showed the leaky <code>ENV</code> anti-pattern.</p>
 <ol>
@@ -70,7 +71,7 @@
 <hr>
 
       </div>
-      <nav class="pager" style="margin-top: 2rem">
+      <nav class="pager static-reader-pager">
         <a class="pager-prev" href="./learn/14.html"><span>Previous</span>Debugging &amp; troubleshooting</a>
         <a class="pager-next" href="./learn/16.html"><span>Next</span>Advanced topics</a>
       </nav>
@@ -79,12 +80,16 @@
     <footer class="site-footer">
       <div class="wrap">
         <span class="brand">rean-docker</span>
+        <a href="./learn.html?c=15">Open interactive reader</a>
       </div>
     </footer>
 
     <script defer src="./assets/js/i18n-km.js"></script>
     <script defer src="./assets/js/i18n.js"></script>
     <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/guide.js"></script>
+    <script defer src="./assets/js/progress.js"></script>
+    <script defer src="./assets/js/search.js"></script>
     <script defer src="./assets/js/site.js"></script>
   </body>
 </html>

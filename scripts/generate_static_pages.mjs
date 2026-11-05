@@ -140,6 +140,7 @@ function renderPage({
   next,
   eyebrow,
   ctaLabel,
+  ctaHint,
   prevLabel,
   nextLabel,
   skipLabel,
@@ -153,6 +154,7 @@ function renderPage({
   const canonical = absUrl(pagePath);
   const lang = locale === "km" ? "km" : "en";
   const fullTitle = `${title} — rean-docker`;
+  const checklistScope = kind === "chapter" ? `learn:${id}` : `lab:${id}`;
 
   const pager = [
     prev
@@ -207,17 +209,18 @@ function renderPage({
     <a class="skip-link" href="#main" data-i18n="a11y.skip">${escapeHtml(skipLabel || "Skip to content")}</a>
     <rean-header class="site-header" role="banner"></rean-header>
 
-    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+    <main class="content-pane wrap static-reader" id="main" tabindex="-1">
       <p class="eyebrow">${escapeHtml(eyebrow)}</p>
       <h1>${escapeHtml(title)}</h1>
       ${pairHtml}
-      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+      <p class="cta-row static-reader-cta">
         <a class="btn btn-primary" href="${escapeAttr(spaHref)}">${escapeHtml(ctaLabel)}</a>
       </p>
-      <div class="md-body">
+      <p class="static-reader-hint">${escapeHtml(ctaHint)}</p>
+      <div class="md-body" data-checklist-scope="${escapeAttr(checklistScope)}">
 ${bodyHtml}
       </div>
-      <nav class="pager" style="margin-top: 2rem">
+      <nav class="pager static-reader-pager">
         ${pager}
       </nav>
     </main>
@@ -225,12 +228,16 @@ ${bodyHtml}
     <footer class="site-footer">
       <div class="wrap">
         <span class="brand">rean-docker</span>
+        <a href="${escapeAttr(spaHref)}">${escapeHtml(ctaLabel)}</a>
       </div>
     </footer>
 
     <script defer src="./assets/js/i18n-km.js"></script>
     <script defer src="./assets/js/i18n.js"></script>
     <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/guide.js"></script>
+    <script defer src="./assets/js/progress.js"></script>
+    <script defer src="./assets/js/search.js"></script>
     <script defer src="./assets/js/site.js"></script>
   </body>
 </html>
@@ -351,8 +358,10 @@ function main() {
           ? { href: `./learn/${staticName(next.id, locale)}`, title: next.title }
           : null,
         eyebrow: strings["learn.curriculum"] || "Curriculum",
-        ctaLabel:
-          locale === "km" ? "បើកអ្នកអានអន្តរកម្ម" : "Open interactive reader",
+        ctaLabel: strings["static.readerCta"] || "Open interactive reader",
+        ctaHint:
+          strings["static.readerHint"] ||
+          "Checklists and progress sync in the interactive reader (and on this page when JavaScript is on).",
         prevLabel: strings["learn.prev"] || "Previous",
         nextLabel: strings["learn.next"] || "Next",
         skipLabel: strings["a11y.skip"] || "Skip to content",
@@ -433,8 +442,10 @@ function main() {
           ? { href: `./lab/${staticName(next.id, locale)}`, title: next.title }
           : null,
         eyebrow: strings["lab.eyebrow"] || "Hands-on",
-        ctaLabel:
-          locale === "km" ? "បើកអ្នកអានអន្តរកម្ម" : "Open interactive reader",
+        ctaLabel: strings["static.readerCta"] || "Open interactive reader",
+        ctaHint:
+          strings["static.readerHint"] ||
+          "Checklists and progress sync in the interactive reader (and on this page when JavaScript is on).",
         prevLabel: strings["lab.prev"] || "Previous lab",
         nextLabel: strings["lab.next"] || "Next lab",
         skipLabel: strings["a11y.skip"] || "Skip to content",

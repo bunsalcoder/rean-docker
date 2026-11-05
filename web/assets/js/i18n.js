@@ -92,7 +92,7 @@
     "labs.09.title": "Production practices",
     "labs.09.desc": "Healthchecks, limits, read-only rootfs, dropped capabilities.",
     "labs.10.title": "Debugging",
-    "labs.10.desc": "logs, inspect, and a Compose hostname bug you fix.",
+    "labs.10.desc": "Logs, inspect, and a Compose hostname bug you fix.",
     "labs.11.title": "Security essentials",
     "labs.11.desc": "Non-root, BuildKit secrets, and image scanning.",
     "labs.12.title": "Deploy & CI/CD",
@@ -212,12 +212,16 @@
     "progress.import": "Import progress",
     "progress.exportDone": "Progress file downloaded.",
     "progress.importDone": "Progress restored on this device.",
+    "progress.importConfirm":
+      "Replace progress on this device with the selected file? Export a backup first if you are unsure.",
+    "progress.importCancelled": "Import cancelled — existing progress kept.",
     "progress.importFailed": "Could not import that file. Use a rean-docker progress export.",
     "search.title": "Search",
     "search.open": "Search chapters and labs",
     "search.close": "Close search",
     "search.placeholder": "Search Docker topics, commands, labs…",
-    "search.hint": "Try “compose”, “volume”, “healthcheck”, or “Dockerfile”. Aliases count (e.g. compose ≈ docker compose).",
+    "search.hint":
+      "Try “compose”, “volume”, “healthcheck”, or “Dockerfile”. Aliases count (e.g. compose ≈ docker compose). / is ignored while typing in a field.",
     "search.loading": "Searching…",
     "search.empty": "No matches. Try compose, volume, healthcheck, CI/CD, or a lab number.",
     "search.error": "Could not load content for search. Serve the site over HTTP.",
@@ -225,6 +229,10 @@
     "search.kindChapter": "Chapter",
     "search.kindLab": "Lab",
     "search.openHint": "or Ctrl/⌘ K to open search",
+    "learn.footer": "Handbook · tick checklists as you go",
+    "lab.footer": "Labs · tick checklists as you go",
+    "static.readerCta": "Open interactive reader",
+    "static.readerHint": "Checklists and progress sync in the interactive reader (and on this page when JavaScript is on).",
   };
 
   const STRINGS = {

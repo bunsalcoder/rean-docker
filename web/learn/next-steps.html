@@ -40,14 +40,15 @@
     <a class="skip-link" href="#main" data-i18n="a11y.skip">Skip to content</a>
     <rean-header class="site-header" role="banner"></rean-header>
 
-    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+    <main class="content-pane wrap static-reader" id="main" tabindex="-1">
       <p class="eyebrow">Curriculum</p>
       <h1>Next steps after this guide</h1>
       
-      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+      <p class="cta-row static-reader-cta">
         <a class="btn btn-primary" href="./learn.html?c=next-steps">Open interactive reader</a>
       </p>
-      <div class="md-body">
+      <p class="static-reader-hint">Checklists and progress sync in the interactive reader (and on this page when JavaScript is on).</p>
+      <div class="md-body" data-checklist-scope="learn:next-steps">
 <ol>
 <li>Practice labs in order under <code>labs/</code> (Lab 04 with Chapter 10; Lab 12 for deploy/CI; Lab 13 for the capstone).</li>
 <li>Re-run the Chapter 2 isolation examples until they feel obvious.</li>
@@ -60,7 +61,7 @@
 <p><em>Created for the <code>rean-docker</code> learning project. Work chapter by chapter; prefer understanding over rushing commands.</em></p>
 
       </div>
-      <nav class="pager" style="margin-top: 2rem">
+      <nav class="pager static-reader-pager">
         <a class="pager-prev" href="./learn/glossary.html"><span>Previous</span>Glossary</a>
       </nav>
     </main>
@@ -68,12 +69,16 @@
     <footer class="site-footer">
       <div class="wrap">
         <span class="brand">rean-docker</span>
+        <a href="./learn.html?c=next-steps">Open interactive reader</a>
       </div>
     </footer>
 
     <script defer src="./assets/js/i18n-km.js"></script>
     <script defer src="./assets/js/i18n.js"></script>
     <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/guide.js"></script>
+    <script defer src="./assets/js/progress.js"></script>
+    <script defer src="./assets/js/search.js"></script>
     <script defer src="./assets/js/site.js"></script>
   </body>
 </html>

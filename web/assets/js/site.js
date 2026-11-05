@@ -404,6 +404,12 @@
 
   decorateLabDurations();
 
+  // Static chapter/lab HTML: enable checklists when JS is available
+  document.querySelectorAll("[data-checklist-scope]").forEach((root) => {
+    const scope = root.getAttribute("data-checklist-scope");
+    if (scope) window.ReanGuide?.enhanceChecklists?.(root, scope);
+  });
+
   // Below-fold reveals: armed after leaving the hero, then one soft staggered pass per section
   const revealBlocks = document.querySelectorAll(".reveal-block");
   if (!revealBlocks.length) return;
@@ -439,11 +445,15 @@
     });
   };
 
-  // Stay quiet on the hero; start listening once the user scrolls away
-  const onRevealScroll = () => {
-    if (window.scrollY < 56) return;
+  // Home: stay quiet on the hero until scroll. Labs / other pages: arm immediately.
+  if (!document.querySelector(".hero")) {
     armReveals();
-    window.removeEventListener("scroll", onRevealScroll);
-  };
-  window.addEventListener("scroll", onRevealScroll, { passive: true });
+  } else {
+    const onRevealScroll = () => {
+      if (window.scrollY < 56) return;
+      armReveals();
+      window.removeEventListener("scroll", onRevealScroll);
+    };
+    window.addEventListener("scroll", onRevealScroll, { passive: true });
+  }
 })();

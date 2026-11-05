@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#f2f6fa" />
     <link rel="manifest" href="./site.webmanifest" />
     <title>កែកំហុស — rean-docker</title>
-    <meta name="description" content="logs, inspect និង bug hostname Compose ដែលអ្នកកែ។" />
+    <meta name="description" content="Logs, inspect និង bug hostname Compose ដែលអ្នកកែ។" />
     <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/lab/10-debugging.km.html" />
     <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/lab/10-debugging.html" />
     <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/lab/10-debugging.km.html" />
@@ -17,12 +17,12 @@
     <meta property="og:site_name" content="rean-docker" />
     <meta property="og:type" content="article" />
     <meta property="og:title" content="កែកំហុស — rean-docker" />
-    <meta property="og:description" content="logs, inspect និង bug hostname Compose ដែលអ្នកកែ។" />
+    <meta property="og:description" content="Logs, inspect និង bug hostname Compose ដែលអ្នកកែ។" />
     <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/lab/10-debugging.km.html" />
     <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="កែកំហុស — rean-docker" />
-    <meta name="twitter:description" content="logs, inspect និង bug hostname Compose ដែលអ្នកកែ។" />
+    <meta name="twitter:description" content="Logs, inspect និង bug hostname Compose ដែលអ្នកកែ។" />
     <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
     <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
@@ -40,14 +40,15 @@
     <a class="skip-link" href="#main" data-i18n="a11y.skip">រំលងទៅមាតិកា</a>
     <rean-header class="site-header" role="banner"></rean-header>
 
-    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+    <main class="content-pane wrap static-reader" id="main" tabindex="-1">
       <p class="eyebrow">អនុវត្ត</p>
       <h1>កែកំហុស</h1>
       <div class="pair-cta"><span class="pair-cta-label">ទ្រឹស្តី</span><a href="./learn.html?c=14&amp;lang=km">ជំពូក 14 — Debug និងដោះស្រាយបញ្ហា</a></div>
-      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+      <p class="cta-row static-reader-cta">
         <a class="btn btn-primary" href="./lab.html?id=10-debugging&amp;lang=km">បើកអ្នកអានអន្តរកម្ម</a>
       </p>
-      <div class="md-body">
+      <p class="static-reader-hint">Checklist និងវឌ្ឍនភាពធ្វើសមកាលនៅអ្នកអានអន្តរកម្ម (និងនៅទំព័រនេះពេល JavaScript បើក).</p>
+      <div class="md-body" data-checklist-scope="lab:10-debugging">
 <h2>កម្រិត</h2>
 <p><strong>ថ្នាក់ខ្ពស់។</strong> Debug ជាមួយ <code>logs</code>, <code>inspect</code> និង Compose file ដែល fail រហូតអ្នកកែ។</p>
 <h2>គោលដៅ</h2>
@@ -109,7 +110,7 @@ docker rm -f lab10-inspect
 <p>ទៅ <strong>Lab 11 — សុវត្ថិភាពសំខាន់ៗ</strong> (non-root, scans, BuildKit secrets)។</p>
 
       </div>
-      <nav class="pager" style="margin-top: 2rem">
+      <nav class="pager static-reader-pager">
         <a class="pager-prev" href="./lab/09-production.km.html"><span>លំហាត់មុន</span>ទម្លាប់ production</a>
         <a class="pager-next" href="./lab/11-security.km.html"><span>លំហាត់បន្ទាប់</span>សុវត្ថិភាពសំខាន់ៗ</a>
       </nav>
@@ -118,12 +119,16 @@ docker rm -f lab10-inspect
     <footer class="site-footer">
       <div class="wrap">
         <span class="brand">rean-docker</span>
+        <a href="./lab.html?id=10-debugging&amp;lang=km">បើកអ្នកអានអន្តរកម្ម</a>
       </div>
     </footer>
 
     <script defer src="./assets/js/i18n-km.js"></script>
     <script defer src="./assets/js/i18n.js"></script>
     <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/guide.js"></script>
+    <script defer src="./assets/js/progress.js"></script>
+    <script defer src="./assets/js/search.js"></script>
     <script defer src="./assets/js/site.js"></script>
   </body>
 </html>

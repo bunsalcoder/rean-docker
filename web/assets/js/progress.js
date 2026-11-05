@@ -177,7 +177,14 @@
   const renderMeter = ({ complete, total, labelKey, ariaKey }) => {
     const fill = pct(complete, total);
     return `
-      <div class="progress-meter" role="img" aria-label="${t(ariaKey, { complete, total })}">
+      <div
+        class="progress-meter"
+        role="progressbar"
+        aria-valuemin="0"
+        aria-valuemax="${total}"
+        aria-valuenow="${complete}"
+        aria-label="${t(ariaKey, { complete, total })}"
+      >
         <div class="progress-meter-track">
           <div class="progress-meter-fill" style="width:${fill}%"></div>
         </div>
@@ -231,6 +238,13 @@
       if (!input || !root.contains(input) || !input.files?.length) return;
       const file = input.files[0];
       input.value = "";
+      const existing = readAll();
+      const hasExisting =
+        Object.keys(existing).length > 0 || Object.keys(readChecklists()).length > 0;
+      if (hasExisting && !window.confirm(t("progress.importConfirm"))) {
+        setStatus(t("progress.importCancelled"));
+        return;
+      }
       try {
         const text = await file.text();
         importPayload(text);
@@ -397,10 +411,17 @@
     const fill = pct(complete, total);
     root.innerHTML = `
       <div class="progress-summary is-compact">
-        <div class="progress-meter" role="img" aria-label="${t("progress.labsAria", {
-          complete,
-          total,
-        })}">
+        <div
+          class="progress-meter"
+          role="progressbar"
+          aria-valuemin="0"
+          aria-valuemax="${total}"
+          aria-valuenow="${complete}"
+          aria-label="${t("progress.labsAria", {
+            complete,
+            total,
+          })}"
+        >
           <div class="progress-meter-track">
             <div class="progress-meter-fill" style="width:${fill}%"></div>
           </div>
