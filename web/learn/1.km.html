@@ -40,14 +40,15 @@
     <a class="skip-link" href="#main" data-i18n="a11y.skip">រំលងទៅមាតិកា</a>
     <rean-header class="site-header" role="banner"></rean-header>
 
-    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+    <main class="content-pane wrap static-reader" id="main" tabindex="-1">
       <p class="eyebrow">កម្មវិធីសិក្សា</p>
       <h1>តើ Docker ដោះស្រាយបញ្ហាអ្វី?</h1>
       
-      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+      <p class="cta-row static-reader-cta">
         <a class="btn btn-primary" href="./learn.html?c=1&amp;lang=km">បើកអ្នកអានអន្តរកម្ម</a>
       </p>
-      <div class="md-body">
+      <p class="static-reader-hint">Checklist និងវឌ្ឍនភាពធ្វើសមកាលនៅអ្នកអានអន្តរកម្ម (និងនៅទំព័រនេះពេល JavaScript បើក).</p>
+      <div class="md-body" data-checklist-scope="learn:1">
 <h3>ការឈឺចដែលជាប់ទម្លាប់</h3>
 <p>អ្នក build app នៅ laptop។ វាដំណើរការ។ នៅ machine មិត្តរួមការ៖ ខូច។ នៅ server៖ ខូច។ មូលហេតុជាធរមានរួមមាន៖</p>
 <ul>
@@ -117,7 +118,7 @@
 <hr>
 
       </div>
-      <nav class="pager" style="margin-top: 2rem">
+      <nav class="pager static-reader-pager">
         <a class="pager-prev" href="./learn/how-to-use.km.html"><span>មុន</span>របៀបប្រើមគ្គុទ្ទេសក៍នេះ</a>
         <a class="pager-next" href="./learn/2.km.html"><span>បន្ទាប់</span>មូលដ្ឋាន containerization</a>
       </nav>
@@ -126,12 +127,16 @@
     <footer class="site-footer">
       <div class="wrap">
         <span class="brand">rean-docker</span>
+        <a href="./learn.html?c=1&amp;lang=km">បើកអ្នកអានអន្តរកម្ម</a>
       </div>
     </footer>
 
     <script defer src="./assets/js/i18n-km.js"></script>
     <script defer src="./assets/js/i18n.js"></script>
     <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/guide.js"></script>
+    <script defer src="./assets/js/progress.js"></script>
+    <script defer src="./assets/js/search.js"></script>
     <script defer src="./assets/js/site.js"></script>
   </body>
 </html>

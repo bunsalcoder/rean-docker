@@ -40,14 +40,15 @@
     <a class="skip-link" href="#main" data-i18n="a11y.skip">Skip to content</a>
     <rean-header class="site-header" role="banner"></rean-header>
 
-    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+    <main class="content-pane wrap static-reader" id="main" tabindex="-1">
       <p class="eyebrow">Curriculum</p>
       <h1>Capstone project</h1>
       <div class="pair-cta"><span class="pair-cta-label">Practice</span><a href="./lab.html?id=13-capstone">Lab 13 — Capstone</a></div>
-      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+      <p class="cta-row static-reader-cta">
         <a class="btn btn-primary" href="./learn.html?c=18">Open interactive reader</a>
       </p>
-      <div class="md-body">
+      <p class="static-reader-hint">Checklists and progress sync in the interactive reader (and on this page when JavaScript is on).</p>
+      <div class="md-body" data-checklist-scope="learn:18">
 <h3>Lab: <code>labs/13-capstone</code></h3>
 <p>Build a small stack in this repo. A <strong>day-one runnable baseline</strong> (Compose + Node API) already lives in the capstone folder so you can <code>up</code> immediately — then <strong>own</strong> it (<code>CAPSTONE_OWN</code> in Lab 13): add routes, reshape Compose/Dockerfile, or add a proxy. Prefer editing that folder over leaving Lab 05 untouched (or restart from <code>labs/05-compose</code> if you want a clean room).</p>
 <p>The baseline <code>compose.yaml</code> is intentionally softer than Lab 09 / <code>compose.prod.yaml</code>. Stopping after a green <code>/health</code> on the soft stack is not Capstone — own the product <strong>and</strong> validate (or adopt) the prod Compose habits.</p>
@@ -73,7 +74,7 @@
 <hr>
 
       </div>
-      <nav class="pager" style="margin-top: 2rem">
+      <nav class="pager static-reader-pager">
         <a class="pager-prev" href="./learn/17.html"><span>Previous</span>Deploy with Docker &amp; CI/CD</a>
         <a class="pager-next" href="./learn/19.html"><span>Next</span>Cheat sheet</a>
       </nav>
@@ -82,12 +83,16 @@
     <footer class="site-footer">
       <div class="wrap">
         <span class="brand">rean-docker</span>
+        <a href="./learn.html?c=18">Open interactive reader</a>
       </div>
     </footer>
 
     <script defer src="./assets/js/i18n-km.js"></script>
     <script defer src="./assets/js/i18n.js"></script>
     <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/guide.js"></script>
+    <script defer src="./assets/js/progress.js"></script>
+    <script defer src="./assets/js/search.js"></script>
     <script defer src="./assets/js/site.js"></script>
   </body>
 </html>

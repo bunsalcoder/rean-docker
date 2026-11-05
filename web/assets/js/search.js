@@ -13,6 +13,7 @@
   let resultsEl = null;
   let statusEl = null;
   let activeIndex = -1;
+  let lastOpener = null;
 
   const loadText = async (url, fallbackUrl) => {
     const res = await fetch(url);
@@ -305,20 +306,43 @@
     }
   };
 
-  const open = () => {
+  const open = (opener) => {
     if (!dialog) return;
+    lastOpener =
+      opener instanceof Element
+        ? opener
+        : document.activeElement instanceof Element
+          ? document.activeElement
+          : null;
     if (typeof dialog.showModal === "function") dialog.showModal();
-    else dialog.setAttribute("open", "");
+    else {
+      dialog.setAttribute("open", "");
+      dialog.setAttribute("aria-modal", "true");
+    }
     input?.focus();
     input?.select();
     ensureIndex();
     runQuery();
   };
 
+  const restoreOpenerFocus = () => {
+    const returnTo = lastOpener;
+    lastOpener = null;
+    if (returnTo && typeof returnTo.focus === "function") {
+      window.setTimeout(() => returnTo.focus(), 0);
+    }
+  };
+
   const close = () => {
     if (!dialog) return;
-    if (typeof dialog.close === "function") dialog.close();
-    else dialog.removeAttribute("open");
+    if (typeof dialog.close === "function") {
+      // Native dialog fires "close"; restore focus there so Escape and buttons share one path.
+      dialog.close();
+    } else {
+      dialog.removeAttribute("open");
+      dialog.removeAttribute("aria-modal");
+      restoreOpenerFocus();
+    }
   };
 
   const mountDialog = () => {
@@ -326,6 +350,7 @@
     dialog = document.createElement("dialog");
     dialog.className = "search-dialog";
     dialog.setAttribute("aria-labelledby", "rean-search-title");
+    dialog.setAttribute("aria-modal", "true");
     dialog.innerHTML = `
       <div class="search-shell">
         <div class="search-head">
@@ -373,6 +398,7 @@
     dialog.addEventListener("click", (event) => {
       if (event.target === dialog) close();
     });
+    dialog.addEventListener("close", restoreOpenerFocus);
     input?.addEventListener("input", () => {
       window.clearTimeout(input._reanSearchTimer);
       input._reanSearchTimer = window.setTimeout(runQuery, 120);
@@ -425,7 +451,7 @@
   const init = () => {
     mountDialog();
     document.querySelectorAll("[data-search-open]").forEach((btn) => {
-      btn.addEventListener("click", open);
+      btn.addEventListener("click", () => open(btn));
       btn.setAttribute("aria-label", t("search.open"));
       btn.setAttribute("title", t("search.open"));
     });
@@ -436,12 +462,12 @@
         tag === "input" || tag === "textarea" || event.target?.isContentEditable;
       if ((event.key === "k" || event.key === "K") && (event.metaKey || event.ctrlKey)) {
         event.preventDefault();
-        open();
+        open(event.target instanceof Element ? event.target : null);
         return;
       }
       if (event.key === "/" && !typing && !event.metaKey && !event.ctrlKey && !event.altKey) {
         event.preventDefault();
-        open();
+        open(event.target instanceof Element ? event.target : null);
       }
     });
 

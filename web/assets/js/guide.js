@@ -94,6 +94,97 @@
     return false;
   }
 
+  function checklistStorageKey(scope) {
+    return `rean-docker:checklist:${scope}`;
+  }
+
+  function syncChecklistProgress(scope, boxes) {
+    const total = boxes.length;
+    let done = 0;
+    boxes.forEach((input) => {
+      if (input.checked) done += 1;
+    });
+    window.ReanProgress?.record(scope, done, total);
+  }
+
+  /**
+   * Enable GFM task-list checkboxes and persist ticks (SPA + static pages).
+   * Checklist-free pages record a 1/1 visit so "next" can advance.
+   */
+  function enhanceChecklists(root, scope) {
+    if (!root || !scope) return;
+    const boxes = root.querySelectorAll('li > input[type="checkbox"]');
+    if (!boxes.length) {
+      window.ReanProgress?.record(scope, 1, 1);
+      return;
+    }
+
+    let rawSaved = {};
+    try {
+      rawSaved = JSON.parse(localStorage.getItem(checklistStorageKey(scope)) || "{}");
+    } catch {
+      rawSaved = {};
+    }
+
+    const saved = normalizeChecklistSaved(rawSaved, boxes.length);
+
+    const persistIndexOnly = () => {
+      const indexOnly = {};
+      boxes.forEach((input, index) => {
+        const key = checklistIndexKey(index);
+        indexOnly[key] = Boolean(input.checked);
+        saved[key] = indexOnly[key];
+      });
+      Object.keys(saved).forEach((k) => {
+        if (!/^i:\d+$/.test(k)) delete saved[k];
+      });
+      try {
+        localStorage.setItem(checklistStorageKey(scope), JSON.stringify(indexOnly));
+      } catch {
+        /* ignore quota / private mode */
+      }
+    };
+
+    boxes.forEach((input, index) => {
+      const li = input.closest("li");
+      if (!li) return;
+
+      li.classList.add("task-item");
+      input.disabled = false;
+      input.removeAttribute("disabled");
+
+      if (!li.querySelector(".task-label")) {
+        const label = document.createElement("label");
+        label.className = "task-label";
+        const text = document.createElement("span");
+        text.className = "task-text";
+        while (input.nextSibling) {
+          text.appendChild(input.nextSibling);
+        }
+        label.appendChild(input);
+        label.appendChild(text);
+        li.appendChild(label);
+      }
+
+      const key = checklistIndexKey(index);
+      input.checked = resolveChecklistChecked(saved, li, index);
+      li.classList.toggle("is-done", input.checked);
+      saved[key] = input.checked;
+
+      if (input.dataset.reanChecklistBound === "1") return;
+      input.dataset.reanChecklistBound = "1";
+      input.addEventListener("change", () => {
+        saved[key] = input.checked;
+        persistIndexOnly();
+        li.classList.toggle("is-done", input.checked);
+        syncChecklistProgress(scope, boxes);
+      });
+    });
+
+    persistIndexOnly();
+    syncChecklistProgress(scope, boxes);
+  }
+
   /**
    * Turn labeled blockquotes into callout / details widgets.
    * Recognizes EN + KM strong labels: Tip, Hint, Expected output, Common error, Pitfall.
@@ -266,6 +357,8 @@
     checklistLegacyKey,
     normalizeChecklistSaved,
     resolveChecklistChecked,
+    checklistStorageKey,
+    enhanceChecklists,
     enhanceCallouts,
     expandSearchTerms,
   };

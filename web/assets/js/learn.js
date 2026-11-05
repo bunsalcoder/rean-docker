@@ -185,100 +185,15 @@ function localizedContentUrl(relativePath) {
   return { primary, fallback: primary === english ? null : english };
 }
 
-function checklistStorageKey(scope) {
-  return `rean-docker:checklist:${scope}`;
-}
-
-function syncChecklistProgress(scope, boxes) {
-  const total = boxes.length;
-  let done = 0;
-  boxes.forEach((input) => {
-    if (input.checked) done += 1;
-  });
-  window.ReanProgress?.record(scope, done, total);
-}
-
 function enhanceChecklists(root, scope) {
-  const boxes = root.querySelectorAll('li > input[type="checkbox"]');
-  if (!boxes.length) {
-    // Intro / reference pages have no tasks — mark visited so "next chapter" can advance.
-    window.ReanProgress?.record(scope, 1, 1);
+  if (window.ReanGuide?.enhanceChecklists) {
+    window.ReanGuide.enhanceChecklists(root, scope);
     return;
   }
-
-  let rawSaved = {};
-  try {
-    rawSaved = JSON.parse(localStorage.getItem(checklistStorageKey(scope)) || "{}");
-  } catch {
-    rawSaved = {};
+  // Intro / reference pages with no shared helper — still mark visited.
+  if (!root?.querySelector?.('li > input[type="checkbox"]')) {
+    window.ReanProgress?.record(scope, 1, 1);
   }
-
-  const guide = window.ReanGuide;
-  const saved = guide?.normalizeChecklistSaved
-    ? guide.normalizeChecklistSaved(rawSaved, boxes.length)
-    : rawSaved;
-
-  const persistIndexOnly = () => {
-    const indexOnly = {};
-    boxes.forEach((input, index) => {
-      const key = guide?.checklistIndexKey
-        ? guide.checklistIndexKey(index)
-        : `i:${index}`;
-      indexOnly[key] = Boolean(input.checked);
-      saved[key] = indexOnly[key];
-    });
-    Object.keys(saved).forEach((k) => {
-      if (!/^i:\d+$/.test(k)) delete saved[k];
-    });
-    try {
-      localStorage.setItem(checklistStorageKey(scope), JSON.stringify(indexOnly));
-    } catch {
-      /* ignore quota / private mode */
-    }
-  };
-
-  boxes.forEach((input, index) => {
-    const li = input.closest("li");
-    if (!li) return;
-
-    li.classList.add("task-item");
-    input.disabled = false;
-    input.removeAttribute("disabled");
-
-    if (!li.querySelector(".task-label")) {
-      const label = document.createElement("label");
-      label.className = "task-label";
-      const text = document.createElement("span");
-      text.className = "task-text";
-      while (input.nextSibling) {
-        text.appendChild(input.nextSibling);
-      }
-      label.appendChild(input);
-      label.appendChild(text);
-      li.appendChild(label);
-    }
-
-    // Index keys survive EN↔KM; legacy text keys still resolve same-locale.
-    const key = guide?.checklistIndexKey
-      ? guide.checklistIndexKey(index)
-      : `i:${index}`;
-    input.checked = guide?.resolveChecklistChecked
-      ? guide.resolveChecklistChecked(saved, li, index)
-      : Boolean(saved[key]);
-    li.classList.toggle("is-done", input.checked);
-    saved[key] = input.checked;
-
-    input.addEventListener("change", () => {
-      saved[key] = input.checked;
-      persistIndexOnly();
-      li.classList.toggle("is-done", input.checked);
-      syncChecklistProgress(scope, boxes);
-    });
-  });
-
-  // Rewrite any legacy text-key blob to stable index keys on first load.
-  persistIndexOnly();
-  syncChecklistProgress(scope, boxes);
 }
 
 function sanitizeHtml(html) {
@@ -319,11 +234,29 @@ function setupSidebarToggle() {
   if (!sidebar.id) sidebar.id = "reader-sidebar";
   toggle.setAttribute("aria-controls", sidebar.id);
 
+  const inertTargets = () =>
+    [document.querySelector(".site-header"), document.querySelector(".content-pane"), document.querySelector(".site-footer")].filter(
+      Boolean
+    );
+
+  const setBackgroundInert = (on) => {
+    inertTargets().forEach((el) => {
+      if (on) el.setAttribute("inert", "");
+      else el.removeAttribute("inert");
+    });
+  };
+
+  const focusableIn = (root) =>
+    root.querySelectorAll(
+      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    );
+
   const close = ({ restoreFocus = false } = {}) => {
     if (!sidebar.classList.contains("is-open")) return;
     sidebar.classList.remove("is-open");
     backdrop?.classList.remove("is-on");
     toggle.setAttribute("aria-expanded", "false");
+    setBackgroundInert(false);
     if (restoreFocus) toggle.focus();
   };
 
@@ -331,22 +264,41 @@ function setupSidebarToggle() {
     sidebar.classList.add("is-open");
     backdrop?.classList.add("is-on");
     toggle.setAttribute("aria-expanded", "true");
+    setBackgroundInert(true);
+    const first = focusableIn(sidebar)[0];
+    if (first && window.matchMedia("(max-width: 900px)").matches) {
+      first.focus({ preventScroll: true });
+    }
   };
 
   toggle.addEventListener("click", () => {
-    if (sidebar.classList.contains("is-open")) close();
+    if (sidebar.classList.contains("is-open")) close({ restoreFocus: true });
     else open();
   });
-  backdrop?.addEventListener("click", () => close());
+  backdrop?.addEventListener("click", () => close({ restoreFocus: true }));
   // Delegate so links added after init still close the drawer
   sidebar.addEventListener("click", (event) => {
-    if (event.target.closest("a")) close();
+    if (event.target.closest("a")) close({ restoreFocus: true });
   });
   document.addEventListener("keydown", (event) => {
-    if (event.key !== "Escape") return;
     if (!sidebar.classList.contains("is-open")) return;
-    event.preventDefault();
-    close({ restoreFocus: true });
+    if (event.key === "Escape") {
+      event.preventDefault();
+      close({ restoreFocus: true });
+      return;
+    }
+    if (event.key !== "Tab" || !window.matchMedia("(max-width: 900px)").matches) return;
+    const nodes = [...focusableIn(sidebar)];
+    if (!nodes.length) return;
+    const first = nodes[0];
+    const last = nodes[nodes.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
   });
 
   // Restore drawer after EN↔KM reload (narrow viewports).

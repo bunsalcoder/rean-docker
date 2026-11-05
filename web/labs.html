@@ -34,20 +34,21 @@
     <rean-header class="site-header" role="banner"></rean-header>
 
     <main class="section" id="main" tabindex="-1">
-      <div class="wrap">
-        <div class="section-head reveal">
+      <div class="wrap reveal-block">
+        <div class="section-head" style="--reveal-i: 0">
           <p class="eyebrow" data-i18n="labs.eyebrow">Practice</p>
           <h1 class="lab-page-title" data-i18n="labs.heading">Labs</h1>
-<p data-i18n="labs.intro">Work through these in order. Lab numbers match the path: 01 isolation, 02 hello containers, 03 Dockerfile, 04 env/secrets, then Compose and the rest. Each lab lives under labs/ — open a terminal next to this page. Times are a first-pass estimate.</p>
+          <p data-i18n="labs.intro">Work through these in order. Lab numbers match the path: 01 isolation, 02 hello containers, 03 Dockerfile, 04 env/secrets, then Compose and the rest. Each lab lives under labs/ — open a terminal next to this page. Times are a first-pass estimate.</p>
         </div>
 
-        <div class="progress-panel reveal" data-progress-labs hidden></div>
+        <div class="progress-panel" data-progress-labs hidden style="--reveal-i: 1"></div>
 
-        <div class="lab-grid reveal">
+        <div class="lab-grid" style="--reveal-i: 2">
           <a href="./lab.html?id=01-isolation-basics">
             <span class="num">01</span>
             <div>
               <h3 data-i18n="labs.01.title">Isolation basics</h3>
+              <p class="lab-duration" data-lab-duration>~25 min</p>
               <p data-i18n="labs.01.desc">Beginner: see process, file, network, and memory isolation.</p>
             </div>
           </a>
@@ -55,6 +56,7 @@
             <span class="num">02</span>
             <div>
               <h3 data-i18n="labs.02.title">Hello containers</h3>
+              <p class="lab-duration" data-lab-duration>~20 min</p>
               <p data-i18n="labs.02.desc">Run, publish ports, read logs, clean up.</p>
             </div>
           </a>
@@ -62,6 +64,7 @@
             <span class="num">03</span>
             <div>
               <h3 data-i18n="labs.03.title">Your first Dockerfile</h3>
+              <p class="lab-duration" data-lab-duration>~30 min</p>
               <p data-i18n="labs.03.desc">Build and run a small Node API image.</p>
             </div>
           </a>
@@ -69,6 +72,7 @@
             <span class="num">04</span>
             <div>
               <h3 data-i18n="labs.04.title">Env, secrets, and config</h3>
+              <p class="lab-duration" data-lab-duration>~30 min</p>
               <p data-i18n="labs.04.desc">Pass config at runtime; see why secrets must not live in image layers.</p>
             </div>
           </a>
@@ -76,6 +80,7 @@
             <span class="num">05</span>
             <div>
               <h3 data-i18n="labs.05.title">Compose stack</h3>
+              <p class="lab-duration" data-lab-duration>~40 min</p>
               <p data-i18n="labs.05.desc">API + Postgres + Redis with healthchecks and .env config.</p>
             </div>
           </a>
@@ -83,6 +88,7 @@
             <span class="num">06</span>
             <div>
               <h3 data-i18n="labs.06.title">Networks &amp; DNS</h3>
+              <p class="lab-duration" data-lab-duration>~25 min</p>
               <p data-i18n="labs.06.desc">Reach services by container name.</p>
             </div>
           </a>
@@ -90,6 +96,7 @@
             <span class="num">07</span>
             <div>
               <h3 data-i18n="labs.07.title">Volumes &amp; persistence</h3>
+              <p class="lab-duration" data-lab-duration>~25 min</p>
               <p data-i18n="labs.07.desc">Keep database data after containers die.</p>
             </div>
           </a>
@@ -97,6 +104,7 @@
             <span class="num">08</span>
             <div>
               <h3 data-i18n="labs.08.title">Multi-stage builds</h3>
+              <p class="lab-duration" data-lab-duration>~30 min</p>
               <p data-i18n="labs.08.desc">Compare fat vs slim production images.</p>
             </div>
           </a>
@@ -104,6 +112,7 @@
             <span class="num">09</span>
             <div>
               <h3 data-i18n="labs.09.title">Production practices</h3>
+              <p class="lab-duration" data-lab-duration>~30 min</p>
               <p data-i18n="labs.09.desc">Healthchecks, limits, read-only rootfs, dropped capabilities.</p>
             </div>
           </a>
@@ -111,13 +120,15 @@
             <span class="num">10</span>
             <div>
               <h3 data-i18n="labs.10.title">Debugging</h3>
-              <p data-i18n="labs.10.desc">logs, inspect, and a Compose hostname bug you fix.</p>
+              <p class="lab-duration" data-lab-duration>~30 min</p>
+              <p data-i18n="labs.10.desc">Logs, inspect, and a Compose hostname bug you fix.</p>
             </div>
           </a>
           <a href="./lab.html?id=11-security">
             <span class="num">11</span>
             <div>
               <h3 data-i18n="labs.11.title">Security essentials</h3>
+              <p class="lab-duration" data-lab-duration>~40 min</p>
               <p data-i18n="labs.11.desc">Non-root, BuildKit secrets, and image scanning.</p>
             </div>
           </a>
@@ -125,6 +136,7 @@
             <span class="num">12</span>
             <div>
               <h3 data-i18n="labs.12.title">Deploy &amp; CI/CD</h3>
+              <p class="lab-duration" data-lab-duration>~40 min</p>
               <p data-i18n="labs.12.desc">Special: validate, smoke-test, tag, and ship with Compose + Actions.</p>
             </div>
           </a>
@@ -132,6 +144,7 @@
             <span class="num">13</span>
             <div>
               <h3 data-i18n="labs.13.title">Capstone</h3>
+              <p class="lab-duration" data-lab-duration>~90 min</p>
               <p data-i18n="labs.13.desc">Build your own API + Postgres + Redis stack.</p>
             </div>
           </a>

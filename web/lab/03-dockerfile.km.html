@@ -40,14 +40,15 @@
     <a class="skip-link" href="#main" data-i18n="a11y.skip">រំលងទៅមាតិកា</a>
     <rean-header class="site-header" role="banner"></rean-header>
 
-    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+    <main class="content-pane wrap static-reader" id="main" tabindex="-1">
       <p class="eyebrow">អនុវត្ត</p>
       <h1>Dockerfile ដំបូងរបស់អ្នក</h1>
       <div class="pair-cta"><span class="pair-cta-label">ទ្រឹស្តី</span><a href="./learn.html?c=7&amp;lang=km">ជំពូក 7 — Dockerfile — បង្កើត image ផ្ទាល់ខ្លួន</a></div>
-      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+      <p class="cta-row static-reader-cta">
         <a class="btn btn-primary" href="./lab.html?id=03-dockerfile&amp;lang=km">បើកអ្នកអានអន្តរកម្ម</a>
       </p>
-      <div class="md-body">
+      <p class="static-reader-hint">Checklist និងវឌ្ឍនភាពធ្វើសមកាលនៅអ្នកអានអន្តរកម្ម (និងនៅទំព័រនេះពេល JavaScript បើក).</p>
+      <div class="md-body" data-checklist-scope="lab:03-dockerfile">
 <h2>កម្រិត</h2>
 <p><strong>ថ្នាក់ដើម។</strong> សរសេរ និង build Dockerfile សាមញ្ញសម្រាប់ Node API។<br>Labs ក្រោយនឹង harden គំនិតដូចគ្នា — កុំចាត់លំនាំ Lab 03 ថាជា production-ready។</p>
 <h2>គោលដៅ</h2>
@@ -105,7 +106,7 @@ docker build -t rean-hello:1.0 . 2&gt;&amp;1 | head -n 5
 <p>ទៅ <strong>Lab 04 — Environment, secrets និង config</strong> មុន Compose។ អ្នកនឹងផ្ទេរ config ពេល run ហើយមើលថាហេតុអ្វី secrets មិនត្រូវនៅក្នុង image layers។</p>
 
       </div>
-      <nav class="pager" style="margin-top: 2rem">
+      <nav class="pager static-reader-pager">
         <a class="pager-prev" href="./lab/02-hello.km.html"><span>លំហាត់មុន</span>សួស្តី containers</a>
         <a class="pager-next" href="./lab/04-env-secrets.km.html"><span>លំហាត់បន្ទាប់</span>Env, secrets និង config</a>
       </nav>
@@ -114,12 +115,16 @@ docker build -t rean-hello:1.0 . 2&gt;&amp;1 | head -n 5
     <footer class="site-footer">
       <div class="wrap">
         <span class="brand">rean-docker</span>
+        <a href="./lab.html?id=03-dockerfile&amp;lang=km">បើកអ្នកអានអន្តរកម្ម</a>
       </div>
     </footer>
 
     <script defer src="./assets/js/i18n-km.js"></script>
     <script defer src="./assets/js/i18n.js"></script>
     <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/guide.js"></script>
+    <script defer src="./assets/js/progress.js"></script>
+    <script defer src="./assets/js/search.js"></script>
     <script defer src="./assets/js/site.js"></script>
   </body>
 </html>

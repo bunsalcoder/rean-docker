@@ -40,14 +40,15 @@
     <a class="skip-link" href="#main" data-i18n="a11y.skip">Skip to content</a>
     <rean-header class="site-header" role="banner"></rean-header>
 
-    <main class="content-pane wrap" id="main" tabindex="-1" style="max-width: 48rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem">
+    <main class="content-pane wrap static-reader" id="main" tabindex="-1">
       <p class="eyebrow">Hands-on</p>
       <h1>Capstone</h1>
       <div class="pair-cta"><span class="pair-cta-label">Theory</span><a href="./learn.html?c=18">Chapter 18 — Capstone project</a></div><p class="lab-note">Baseline ≠ done. Capstone is complete only after CAPSTONE_OWN — at least two ownership changes noted in the README checklist.</p>
-      <p class="cta-row" style="margin: 1rem 0 1.5rem">
+      <p class="cta-row static-reader-cta">
         <a class="btn btn-primary" href="./lab.html?id=13-capstone">Open interactive reader</a>
       </p>
-      <div class="md-body">
+      <p class="static-reader-hint">Checklists and progress sync in the interactive reader (and on this page when JavaScript is on).</p>
+      <div class="md-body" data-checklist-scope="lab:13-capstone">
 <h2>Level</h2>
 <p><strong>Special.</strong> Own an API + Postgres + Redis stack end to end (handbook Chapter 18).</p>
 <h2>Goal</h2>
@@ -166,7 +167,7 @@ docker compose down
 <p>You are done with the guided path. Containerize an app you already know, then wire Chapter 17’s pipeline to it — or revisit Chapter 20’s checklist to see what you still want to practice.</p>
 
       </div>
-      <nav class="pager" style="margin-top: 2rem">
+      <nav class="pager static-reader-pager">
         <a class="pager-prev" href="./lab/12-ci-cd.html"><span>Previous lab</span>Deploy &amp; CI/CD</a>
       </nav>
     </main>
@@ -174,12 +175,16 @@ docker compose down
     <footer class="site-footer">
       <div class="wrap">
         <span class="brand">rean-docker</span>
+        <a href="./lab.html?id=13-capstone">Open interactive reader</a>
       </div>
     </footer>
 
     <script defer src="./assets/js/i18n-km.js"></script>
     <script defer src="./assets/js/i18n.js"></script>
     <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/guide.js"></script>
+    <script defer src="./assets/js/progress.js"></script>
+    <script defer src="./assets/js/search.js"></script>
     <script defer src="./assets/js/site.js"></script>
   </body>
 </html>
