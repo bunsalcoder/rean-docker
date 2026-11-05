@@ -1,6 +1,7 @@
 (() => {
   const PROGRESS_KEY = "rean-docker:progress";
   const CHECKLIST_PREFIX = "rean-docker:checklist:";
+  const TIP_KEY = "rean-docker:progress-tip-seen";
   const EXPORT_VERSION = 1;
   const LAB_IDS = window.ReanRoutes?.LAB_IDS || [];
   const CHAPTER_IDS = () => (window.ReanRoutes?.CHAPTERS || []).map((ch) => ch.id);
@@ -8,6 +9,22 @@
   const t = (key, vars) => (window.ReanI18n ? window.ReanI18n.t(key, vars) : key);
 
   const localeHref = (href) => window.ReanI18n?.localeHref?.(href) ?? href;
+
+  const tipSeen = () => {
+    try {
+      return localStorage.getItem(TIP_KEY) === "1";
+    } catch {
+      return true;
+    }
+  };
+
+  const markTipSeen = () => {
+    try {
+      localStorage.setItem(TIP_KEY, "1");
+    } catch {
+      /* private mode */
+    }
+  };
 
   const readAll = () => {
     try {
@@ -102,15 +119,49 @@
     return data;
   };
 
-  const record = (scope, done, total) => {
+  const record = (scope, done, total, opts = {}) => {
     if (!scope || !Number.isFinite(total) || total < 1) return;
     const safeDone = Math.max(0, Math.min(Number(done) || 0, total));
     const data = readAll();
     data[scope] = { done: safeDone, total, updatedAt: Date.now() };
     writeAll(data);
     window.dispatchEvent(
-      new CustomEvent("rean:progress", { detail: { scope, done: safeDone, total } })
+      new CustomEvent("rean:progress", {
+        detail: { scope, done: safeDone, total, source: opts.source || "sync" },
+      })
     );
+  };
+
+  const dismissProgressTip = () => {
+    markTipSeen();
+    document.querySelector("[data-progress-tip]")?.remove();
+  };
+
+  const showProgressTip = () => {
+    if (tipSeen() || document.querySelector("[data-progress-tip]")) return;
+    const tip = document.createElement("aside");
+    tip.className = "progress-tip";
+    tip.setAttribute("data-progress-tip", "");
+    tip.setAttribute("role", "status");
+    tip.setAttribute("aria-live", "polite");
+    tip.innerHTML = `
+      <p class="progress-tip-text">${t("progress.tip")}</p>
+      <div class="progress-tip-actions">
+        <a class="btn btn-ghost" href="${localeHref("./index.html")}#progress">${t("progress.tipHome")}</a>
+        <button type="button" class="btn btn-primary" data-progress-tip-dismiss>${t("progress.tipDismiss")}</button>
+      </div>`;
+    tip.querySelector("[data-progress-tip-dismiss]")?.addEventListener("click", dismissProgressTip);
+    tip.querySelector('a[href*="index.html"]')?.addEventListener("click", markTipSeen);
+    const host =
+      document.querySelector(".content-pane .toolbar") ||
+      document.querySelector(".content-pane") ||
+      document.querySelector("main") ||
+      document.body;
+    if (host.classList?.contains("toolbar")) {
+      host.insertAdjacentElement("afterend", tip);
+    } else {
+      host.prepend(tip);
+    }
   };
 
   const entry = (scope) => {
@@ -224,6 +275,7 @@
       const exportBtn = event.target.closest("[data-progress-export]");
       if (exportBtn && root.contains(exportBtn)) {
         downloadExport();
+        markTipSeen();
         setStatus(t("progress.exportDone"));
         return;
       }
@@ -473,5 +525,8 @@
     init();
   }
 
-  window.addEventListener("rean:progress", () => init());
+  window.addEventListener("rean:progress", (event) => {
+    init();
+    if (event.detail?.source === "tick") showProgressTip();
+  });
 })();

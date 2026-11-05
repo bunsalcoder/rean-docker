@@ -216,6 +216,10 @@
       "Replace progress on this device with the selected file? Export a backup first if you are unsure.",
     "progress.importCancelled": "Import cancelled — existing progress kept.",
     "progress.importFailed": "Could not import that file. Use a rean-docker progress export.",
+    "progress.tip":
+      "Saved on this device. Export a backup from Home when you switch machines — progress does not sync automatically.",
+    "progress.tipHome": "Open Home progress",
+    "progress.tipDismiss": "Got it",
     "search.title": "Search",
     "search.open": "Search chapters and labs",
     "search.close": "Close search",
