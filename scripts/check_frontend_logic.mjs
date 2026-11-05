@@ -182,6 +182,8 @@ assert(learnJs.includes("ReanRoutes?.version"), "guide cache keys include routes
 assert(learnJs.includes("showMissingChapter") || learnJs.includes("learn.notFound"), "learn handles unknown chapter ids");
 assert(learnJs.includes('key !== "Escape"') || learnJs.includes('key === "Escape"'), "sidebar closes on Escape");
 assert(learnJs.includes("prefersReducedMotion"), "learn respects reduced-motion for scroll");
+assert(learnJs.includes("setupPagerKeys") && learnJs.includes("ArrowLeft"), "learn/lab support keyboard prev/next");
+assert(i18nJs.includes("a11y.pagerKeys"), "pager keyboard hint string exists");
 assert(learnJs.includes("record(scope, 1, 1)"), "checklist-free chapters mark visited");
 assert(i18nJs.includes("chapter.weekly-plan") && i18nJs.includes("chapter.glossary"), "appendix chapter titles exist");
 assert(i18nJs.includes("pair.practice") && i18nJs.includes("pair.theory"), "chapter↔lab pair CTA strings exist");

@@ -2,6 +2,7 @@
 window.REAN_I18N_KM = {
   "a11y.langEn": "បានកំណត់ភាសាជាអង់គ្លេស",
   "a11y.langKm": "បានកំណត់ភាសាជាខ្មែរ",
+  "a11y.pagerKeys": "ទំព័រមុន / បន្ទាប់",
   "a11y.skip": "រំលងទៅមាតិកា",
   "chapter.1": "តើ Docker ដោះស្រាយបញ្ហាអ្វី?",
   "chapter.10": "Environment, secrets និង config",
