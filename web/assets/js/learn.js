@@ -20,8 +20,6 @@ function getParam(name) {
 }
 
 function getRouteId(queryKey) {
-  const hash = location.hash.replace(/^#/, "").trim();
-  if (hash) return decodeURIComponent(hash);
   return getParam(queryKey);
 }
 
@@ -33,6 +31,30 @@ function chapterHref(id) {
 function labHref(id) {
   const base = `./lab.html?id=${encodeURIComponent(id)}`;
   return window.ReanI18n?.localeHref?.(base) ?? base;
+}
+
+/**
+ * Legacy `#chapter` / `#lab-id` hashes still open the right page, then rewrite
+ * to the shareable `?c=` / `?id=` form (and strip a leftover hash when query wins).
+ */
+function normalizeLegacyHashRoute(queryKey, hrefForId) {
+  const fromQuery = getParam(queryKey);
+  if (fromQuery) {
+    if (location.hash) {
+      history.replaceState(history.state, "", `${location.pathname}${location.search}`);
+    }
+    return;
+  }
+  const raw = location.hash.replace(/^#/, "").trim();
+  if (!raw) return;
+  let id = raw;
+  try {
+    id = decodeURIComponent(raw);
+  } catch {
+    /* keep raw */
+  }
+  if (!id) return;
+  history.replaceState(history.state, "", hrefForId(id));
 }
 
 const GH_EDIT_BASE = "https://github.com/bunsalcoder/rean-docker/edit/develop/";
@@ -475,6 +497,7 @@ async function initLearnPage() {
   if (!navEl || !bodyEl) return;
 
   setupSidebarToggle();
+  normalizeLegacyHashRoute("c", chapterHref);
 
   try {
     const guideUrl = localizedContentUrl("guide.md");
@@ -664,6 +687,7 @@ async function initLabPage() {
   if (!navEl || !bodyEl) return;
 
   setupSidebarToggle();
+  normalizeLegacyHashRoute("id", labHref);
 
   let currentIndex = -1;
   let transitionToken = 0;

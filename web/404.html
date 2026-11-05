@@ -23,18 +23,47 @@
   <body class="bg-mesh" data-i18n-title="notFound.title" data-i18n-description="notFound.description" data-seo="none">
     <a class="skip-link" href="#main" data-i18n="a11y.skip">Skip to content</a>
     <rean-header class="site-header" role="banner"></rean-header>
+
+    <noscript>
+      <div class="wrap noscript-fallback">
+        <p lang="en">Page not found. Open Home, Learn, or Labs (enable JavaScript for language switching):</p>
+        <p lang="km">រកមិនឃើញទំព័រ។ បើកទំព័រដើម Learn ឬ Labs (បើក JavaScript ដើម្បីប្តូរភាសា)៖</p>
+        <ul>
+          <li><a href="./index.html">Home / ទំព័រដើម</a></li>
+          <li><a href="./learn.html">Learn / រៀន</a></li>
+          <li><a href="./labs.html">Labs / លំហាត់</a></li>
+          <li><a href="./lab/01-isolation-basics.html">Lab 01 (EN)</a></li>
+          <li><a href="./lab/01-isolation-basics.km.html">លំហាត់ 01 (ខ្មែរ)</a></li>
+        </ul>
+      </div>
+    </noscript>
+
     <main class="section" id="main" tabindex="-1">
       <div class="wrap">
-        <p class="eyebrow">404</p>
+        <p class="eyebrow" data-i18n="notFound.eyebrow">404</p>
         <h1 data-i18n="notFound.heading">Page not found</h1>
         <p data-i18n="notFound.body">That URL is not part of the rean-docker site.</p>
+        <p class="not-found-hint" data-i18n="notFound.hint">Try Home, the handbook, or Lab 01 to get back on the path.</p>
         <div class="cta-row">
           <a class="btn btn-primary" href="./index.html" data-i18n="nav.home">Home</a>
-          <a class="btn btn-ghost" href="./labs.html" data-i18n="nav.labs">Labs</a>
-          <a class="btn btn-ghost" href="./learn.html" data-i18n="nav.learn">Learn</a>
+          <a class="btn btn-ghost" href="./learn.html?c=how-to-use" data-i18n="notFound.ctaGuide">How to use this guide</a>
+          <a class="btn btn-ghost" href="./lab.html?id=01-isolation-basics" data-i18n="notFound.ctaLab">Open Lab 01</a>
         </div>
+        <p class="path-more">
+          <a href="./learn.html" data-i18n="nav.learn">Learn</a>
+          <span aria-hidden="true"> · </span>
+          <a href="./labs.html" data-i18n="nav.labs">Labs</a>
+        </p>
       </div>
     </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+        <span data-i18n="home.footer">Learn Docker · phone, tablet, and desktop</span>
+      </div>
+    </footer>
+
     <script defer src="./assets/js/i18n-km.js"></script>
     <script defer src="./assets/js/i18n.js"></script>
     <script defer src="./assets/js/routes.js"></script>

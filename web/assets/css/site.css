@@ -1442,6 +1442,15 @@ body > main.section > .wrap {
   color: var(--ink-soft);
 }
 
+.not-found-hint {
+  margin: 0 0 1.25rem;
+  max-width: 36rem;
+  color: var(--muted);
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
 .path-more {
   margin: 1.35rem 0 0;
   font-family: var(--font-ui);
