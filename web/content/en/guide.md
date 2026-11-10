@@ -1417,9 +1417,11 @@ docker pull nginx@sha256:...
 
 ## 16. Advanced topics
 
-Hands-on stretches for this chapter live in **Lab 11 §5–§7** (BuildKit cache + multi-arch, Compose Watch, SBOM). Secrets mounts are already practiced in Lab 11 §2. Profiles showed up briefly in Chapter 11 — revisit them when optional services clutter your day-to-day Compose file.
+### Lab: `labs/14-advanced`
 
-> **Tip:** Open **Lab 11 — Security essentials**, skip past the Chapter 15 core steps if you already finished them, and jump straight to the **Stretch** headings (§5 cache/multi-arch, §6 Compose Watch, §7 SBOM). The Practice CTA above the chapter points at the same lab.
+BuildKit cache mounts, a multi-arch inspect, Compose Watch, and an SBOM peek. Do this after Lab 11 (secrets are already practiced there, §2) and before Lab 12. Profiles showed up briefly in Chapter 11 — revisit them when optional services clutter your day-to-day Compose file.
+
+> **Tip:** The Practice CTA above this chapter opens Lab 14.
 
 ### BuildKit
 
@@ -1469,7 +1471,7 @@ GHCR example tag: `ghcr.io/you/rean-hello:1.0`
 `docker compose up` rebuilds when you ask. **Compose Watch** rebuilds or syncs when files change — useful for bind-mount-style iteration without a custom file watcher.
 
 ```yaml
-# sketch — see labs/11-security/compose.watch.yaml
+# sketch — see labs/14-advanced/compose.watch.yaml
 services:
   demo:
     image: alpine:3.22
@@ -1494,7 +1496,7 @@ An **SBOM** (Software Bill of Materials) lists what an image contains so scanner
 Practical ways to see one without installing extra tools:
 
 ```bash
-# Trivy can emit SPDX (Lab 11 §7)
+# Trivy can emit SPDX (Lab 14)
 docker run --rm aquasec/trivy:0.63.0 image --format spdx alpine:3.22 | head
 
 # BuildKit can attach SBOM + provenance when you build/push (needs a capable builder)
@@ -2009,7 +2011,7 @@ docker system prune
 - [ ] Non-root user, healthchecks, restart policies
 - [ ] Debug with `inspect`, `logs`, `stats`, ephemeral shells (`labs/10-debugging`)
 - [ ] Scan images; BuildKit secrets; pin tags/digests (`labs/11-security`)
-- [ ] (Stretch) Compose Watch, SBOM peek, or multi-arch inspect (Lab 11 §5–§7 / Chapter 16)
+- [ ] Compose Watch, SBOM peek, or multi-arch inspect (`labs/14-advanced` / Chapter 16)
 - [ ] Push/pull from a registry
 - [ ] Complete Chapter 17 deploy checklist; finish `labs/12-ci-cd`
 - [ ] Explain CI vs CD and a build → registry → pull → up path
@@ -2026,7 +2028,7 @@ docker system prune
 | 3 | Compose basics | `labs/05-compose` |
 | 4 | Networks & volumes | `labs/06-networks`, `labs/07-volumes` |
 | 5 | Multi-stage + prod habits | `labs/08-multi-stage`, `labs/09-production` |
-| 6 | Debug + security | `labs/10-debugging`, `labs/11-security` |
+| 6 | Debug, security, Chapter 16 | `labs/10-debugging`, `labs/11-security`, `labs/14-advanced` |
 | 7 | Deploy + CI/CD (special) | `labs/12-ci-cd` |
 | 8–9 | Capstone | `labs/13-capstone` |
 
@@ -2056,7 +2058,7 @@ docker system prune
 2. Re-run the Chapter 2 isolation examples until they feel obvious.
 3. Containerize a real app you already know — then wire Chapter 17’s pipeline to it.
 4. Read official docs: [https://docs.docker.com/](https://docs.docker.com/)
-5. Learn Compose Watch / Dev Containers for daily development.
+5. Reuse Lab 14’s Compose Watch loop day to day, then look at Dev Containers.
 6. Harden CD: image scanning in CI, manual prod approvals, then multi-node Kubernetes (Pods, Deployments, Services).
 
 ---

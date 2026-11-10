@@ -34,7 +34,7 @@ help:
 	@echo "  make refresh-digests       # update Lab 13 Postgres/Redis Compose digests from Hub"
 	@echo "  make refresh-digests-check # fail if Lab 13 Compose digests drifted from Hub"
 	@echo "  make smoke         # compose smoke via labs 04, 05, 09, 12, 13 run.sh"
-	@echo "  make smoke-concept # run.sh helpers for labs 01–03, 06–08, 10, 11"
+	@echo "  make smoke-concept # run.sh helpers for labs 01–03, 06–08, 10, 11, 14"
 	@echo "  make ci-local      # check-all + shell + secrets + sitemap dirty-tree (Docker smokes optional)"
 	@echo ""
 	@echo "Override port:  make serve PORT=8080"

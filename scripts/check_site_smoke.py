@@ -208,11 +208,17 @@ def main() -> int:
                 fail = 1
 
         code, lab11 = fetch(f"{base}/lab/11-security.html")
-        if code != 200 or lab11.count("learn.html?c=15") < 1 or lab11.count("learn.html?c=16") < 1:
-            print("FAIL: /lab/11-security.html should link theory to chapters 15 and 16")
+        if code != 200 or lab11.count("learn.html?c=15") < 1 or "learn.html?c=16" in lab11:
+            print("FAIL: /lab/11-security.html should link theory to chapter 15 only")
             fail = 1
         else:
-            print("OK:    /lab/11-security.html links Ch.15 + Ch.16")
+            print("OK:    /lab/11-security.html links Ch.15 only")
+        code, lab14 = fetch(f"{base}/lab/14-advanced.html")
+        if code != 200 or "learn.html?c=16" not in lab14 or "compose.watch.yaml" not in lab14:
+            print("FAIL: /lab/14-advanced.html should link Chapter 16 and teach Compose Watch")
+            fail = 1
+        else:
+            print("OK:    /lab/14-advanced.html links Ch.16 and Compose Watch")
         code, learn16 = fetch(f"{base}/learn/16.html")
         if code != 200 or "pair-cta-hint" not in learn16:
             print("FAIL: /learn/16.html missing Chapter 16 stretch practice hint")

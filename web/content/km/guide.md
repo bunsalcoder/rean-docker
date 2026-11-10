@@ -1417,9 +1417,11 @@ docker pull nginx@sha256:...
 
 ## 16. ប្រធានបទកម្រិតខ្ពស់
 
-លំហាត់បន្ថែមសម្រាប់ជំពូកនេះស្ថិតនៅ **Lab 11 §5–§7** (BuildKit cache + multi-arch, Compose Watch, SBOM)។ Secrets mounts បានអនុវត្តរួចក្នុង Lab 11 §2។ Profiles បានបង្ហាញខ្លីក្នុងជំពូក 11 — ត្រឡប់មកវិញពេល service ស្រេចចិត្តធ្វើឱ្យ Compose រាលថ្ងៃរញ៉េរញ៉ៃ។
+### Lab៖ `labs/14-advanced`
 
-> **គន្លឹះ:** បើក **Lab 11 — សុវត្ថិភាពសំខាន់ៗ** រំលងជំហានស្នូលជំពូក 15 បើរួចហើយ រួចលោតទៅចំណងជើង **Stretch** (§5 cache/multi-arch, §6 Compose Watch, §7 SBOM)។ CTA អនុវត្តខាងលើជំពូកចង្អុលទៅ lab ដូចគ្នា។
+Cache mounts របស់ BuildKit, ការពិនិត្យ multi-arch, Compose Watch និងការមើល SBOM។ ធ្វើបន្ទាប់ពី Lab 11 (secrets បានអនុវត្តនៅ §2) និងមុន Lab 12។ Profiles បានបង្ហាញខ្លីក្នុងជំពូក 11 — ត្រឡប់មកវិញពេល service ស្រេចចិត្តធ្វើឱ្យ Compose រាលថ្ងៃរញ៉េរញ៉ៃ។
+
+> **គន្លឹះ:** CTA អនុវត្តខាងលើជំពូកនេះបើក Lab 14។
 
 ### BuildKit (សំខាន់)
 
@@ -1469,7 +1471,7 @@ docker pull youruser/rean-hello:1.0
 `docker compose up` rebuild ពេលអ្នកស្នើ។ **Compose Watch** rebuild ឬ sync ពេលឯកសារផ្លាស់ — មានប្រយោជន៍សម្រាប់ iteration បែប bind-mount ដោយមិនត្រូវ file watcher ផ្ទាល់ខ្លួន។
 
 ```yaml
-# sketch — see labs/11-security/compose.watch.yaml
+# sketch — see labs/14-advanced/compose.watch.yaml
 services:
   demo:
     image: alpine:3.22
@@ -1494,7 +1496,7 @@ docker compose -f compose.watch.yaml watch
 វិធីមើលដោយមិនត្រូវដំឡើងឧបករណ៍បន្ថែម៖
 
 ```bash
-# Trivy can emit SPDX (Lab 11 §7)
+# Trivy can emit SPDX (Lab 14)
 docker run --rm aquasec/trivy:0.63.0 image --format spdx alpine:3.22 | head
 
 # BuildKit can attach SBOM + provenance when you build/push (needs a capable builder)
@@ -2009,7 +2011,7 @@ docker system prune
 - [ ] User មិនមែន root, healthchecks, restart policies
 - [ ] Debug ដោយ `inspect`, `logs`, `stats`, shell បណ្ដោះអាសន្ន (`labs/10-debugging`)
 - [ ] ស្កេន images; BuildKit secrets; pin tags/digests (`labs/11-security`)
-- [ ] (Stretch) Compose Watch, SBOM peek, ឬ multi-arch inspect (Lab 11 §5–§7 / ជំពូក 16)
+- [ ] Compose Watch, SBOM peek, ឬ multi-arch inspect (`labs/14-advanced` / ជំពូក 16)
 - [ ] Push/pull ពី registry
 - [ ] បញ្ចប់ checklist deploy ជំពូក 17; បញ្ចប់ `labs/12-ci-cd`
 - [ ] ពន្យល់ CI vs CD និងផ្លូវ build → registry → pull → up
@@ -2026,7 +2028,7 @@ docker system prune
 | 3 | Compose មូលដ្ឋាន | `labs/05-compose` |
 | 4 | Networks និង volumes | `labs/06-networks`, `labs/07-volumes` |
 | 5 | Multi-stage + ទម្លាប់ prod | `labs/08-multi-stage`, `labs/09-production` |
-| 6 | Debug + សុវត្ថិភាព | `labs/10-debugging`, `labs/11-security` |
+| 6 | Debug, សុវត្ថិភាព, ជំពូក 16 | `labs/10-debugging`, `labs/11-security`, `labs/14-advanced` |
 | 7 | Deploy + CI/CD (ពិសេស) | `labs/12-ci-cd` |
 | 8–9 | Capstone | `labs/13-capstone` |
 
@@ -2056,7 +2058,7 @@ docker system prune
 2. រត់ឧទាហរណ៍ isolation ជំពូក 2 ឡើងវិញរហូតមានអារម្មណ៍ច្បាស់។
 3. Containerize app ពិតដែលអ្នកស្គាល់ — រួចភ្ជាប់ pipeline ជំពូក 17។
 4. អានឯកសារផ្លូវការ: [https://docs.docker.com/](https://docs.docker.com/)
-5. រៀន Compose Watch / Dev Containers សម្រាប់ការអភិវឌ្ឍប្រចាំថ្ងៃ។
+5. ប្រើរង្វិលជុំ Compose Watch របស់ Lab 14 ប្រចាំថ្ងៃ រួចមើល Dev Containers។
 6. រឹត CD: ស្កេន image ក្នុង CI, ការយល់ព្រម prod ដោយដៃ, រួច Kubernetes ច្រើន node (Pods, Deployments, Services)។
 
 ---

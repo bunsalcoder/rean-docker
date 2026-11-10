@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="km">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="../" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f6fa" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <title>BuildKit, Watch និង SBOM — rean-docker</title>
+    <meta name="description" content="Cache mounts, Compose Watch និងការមើល SBOM ខ្លី។" />
+    <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/lab/14-advanced.km.html" />
+    <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/lab/14-advanced.html" />
+    <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/lab/14-advanced.km.html" />
+    <link rel="alternate" hreflang="x-default" href="https://bunsalcoder.github.io/rean-docker/lab/14-advanced.html" />
+    <meta property="og:site_name" content="rean-docker" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="BuildKit, Watch និង SBOM — rean-docker" />
+    <meta property="og:description" content="Cache mounts, Compose Watch និងការមើល SBOM ខ្លី។" />
+    <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/lab/14-advanced.km.html" />
+    <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="BuildKit, Watch និង SBOM — rean-docker" />
+    <meta name="twitter:description" content="Cache mounts, Compose Watch និងការមើល SBOM ខ្លី។" />
+    <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
+    <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="./assets/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./assets/css/site.css" />
+    <script src="./assets/js/static-page.js"></script>
+    <script src="./assets/js/boot.js"></script>
+  </head>
+  <body
+    class="bg-mesh"
+    data-page="static-lab"
+    data-static-locale="km"
+    data-static-twin="./14-advanced.html"
+  >
+    <a class="skip-link" href="#main" data-i18n="a11y.skip">រំលងទៅមាតិកា</a>
+    <rean-header class="site-header" role="banner"></rean-header>
+
+    <main class="content-pane wrap static-reader" id="main" tabindex="-1">
+      <p class="eyebrow">អនុវត្ត</p>
+      <h1>BuildKit, Watch និង SBOM</h1>
+      <div class="pair-cta"><span class="pair-cta-label">ទ្រឹស្តី</span><a href="./learn.html?c=16&amp;lang=km">ជំពូក 16 — ប្រធានបទកម្រិតខ្ពស់</a></div>
+      <p class="cta-row static-reader-cta">
+        <a class="btn btn-primary" href="./lab.html?id=14-advanced&amp;lang=km">បើកអ្នកអានអន្តរកម្ម</a>
+      </p>
+      <p class="static-reader-hint">Checklist និងវឌ្ឍនភាពធ្វើសមកាលនៅអ្នកអានអន្តរកម្ម (និងនៅទំព័រនេះពេល JavaScript បើក).</p>
+      <div class="md-body" data-checklist-scope="lab:14-advanced">
+<h2>កម្រិត</h2>
+<p><strong>ថ្នាក់ខ្ពស់។</strong> Handbook <strong>ជំពូក 16</strong>។ ធ្វើបន្ទាប់ពី Lab 11 និងមុន Lab 12។ លេខនៅ 14 ដើម្បីឱ្យ Lab 12 និង 13 រក្សាផ្លូវដើម។</p>
+<h2>គោលដៅ</h2>
+<p>អនុវត្តទម្លាប់ជំពូក 16 បីយ៉ាងដាច់ពីការពិនិត្យសុវត្ថិភាព Lab 11៖ BuildKit cache mount, Compose Watch សម្រាប់ iteration លើ laptop និងការមើល SBOM ខ្លី។</p>
+<p><strong>ជំនួយស្រេចចិត្ត:</strong> <code>./run.sh</code> គ្រប cache-mount build, config <code>compose.watch.yaml</code> និង SPDX peek។ រង្វិលជុំ Watch អន្តរកម្មនៅដៃ។ ចូលចិត្តវាយពាក្យបញ្ជាពី README ដោយខ្លួនឯងលើកដំបូង។</p>
+<h2>ជំហាន</h2>
+<h3>1. BuildKit cache mount + multi-arch inspect</h3>
+<p>មិនត្រូវ image app ថ្មី។ Build ទីពីរគួរប្រើ apk cache ឡើងវិញ។</p>
+<pre><code class="language-bash">docker buildx version
+
+cat &gt; /tmp/rean-lab14-cache.Dockerfile &lt;&lt;&#39;EOF&#39;
+# syntax=docker/dockerfile:1
+FROM alpine:3.22
+RUN --mount=type=cache,target=/var/cache/apk \
+    apk add --no-cache curl
+EOF
+
+docker build -t rean-cache:lab14 -f /tmp/rean-lab14-cache.Dockerfile /tmp
+docker build -t rean-cache:lab14 -f /tmp/rean-lab14-cache.Dockerfile /tmp
+
+# Multi-platform inspect (pushing multi-arch needs a registry; skip --push here)
+docker buildx imagetools inspect alpine:3.22 | head -n 40
+
+rm -f /tmp/rean-lab14-cache.Dockerfile
+docker rmi rean-cache:lab14 &gt;/dev/null 2&gt;&amp;1 || true
+</code></pre>
+<p>Cache mounts បង្កើនល្បឿន package install ដោយមិន bake cache ចូល image។ <code>imagetools inspect</code> បង្ហាញ amd64/arm64 manifests ក្រោម tag តែមួយ។</p>
+<details class="md-callout md-callout-expected">
+<summary class="md-callout-title">លទ្ធផលដែលរំពឹងទុក</summary>
+<div class="md-callout-body">
+<p>Build ទីពីរចប់ដោយមិនទាញ apk packages សាឡើង ហើយ <code>imagetools inspect</code> រាយ platform ច្រើនជាងមួយ។</p>
+</div>
+</details>
+<h3>2. Compose Watch</h3>
+<p>Validate ឯកសារបង្រៀន រួចសាក Watch បើចង់ loop ផ្ទាល់។</p>
+<pre><code class="language-bash">cd labs/14-advanced
+docker compose -f compose.watch.yaml config &gt;/dev/null
+
+# Interactive (Ctrl+C when done):
+docker compose -f compose.watch.yaml up -d
+docker compose -f compose.watch.yaml watch
+# In another terminal, edit watch-demo/hello.txt and watch the container pick it up.
+docker compose -f compose.watch.yaml down
+</code></pre>
+<aside class="md-callout md-callout-hint" role="note">
+<div class="md-callout-body">
+<p class="md-callout-title">គន្លឹះ</p>
+<p><code>develop.watch</code> សម្រាប់ iteration លើ laptop។ កុំដាក់ក្នុង production Compose (ជំពូក 17)។</p>
+</div>
+</aside>
+<h3>3. មើល SBOM</h3>
+<p>Image Trivy ដូច Lab 11 ប្រើសម្រាប់ស្កេន ទម្រង់ output ផ្សេង៖ SPDX bill of materials តូច។</p>
+<pre><code class="language-bash">docker run --rm aquasec/trivy:0.63.0 image --format spdx alpine:3.22 | head -n 40
+</code></pre>
+<p>អ្នកគួរឃើញបន្ទាត់អត្តសញ្ញាណ package (SPDX)។ Signing ជាមួយ Cosign នៅតែ orientation ក្នុង handbook — lab នេះមិនដំឡើងវាទេ។</p>
+<details class="md-callout md-callout-expected">
+<summary class="md-callout-title">លទ្ធផលដែលរំពឹងទុក</summary>
+<div class="md-callout-body">
+<p>អត្ថបទ SPDX មានបន្ទាត់អត្តសញ្ញាណ package (<code>SPDXID</code> ឬ <code>PackageName</code>)។</p>
+</div>
+</details>
+<h2>ពិភាក្សា</h2>
+<ul>
+<li>ទស្សន៍ទាយ៖ បើ <code>develop.watch</code> ជាប់ក្នុង <code>compose.prod.yaml</code> អ្វីខូចសម្រាប់ teammate ដែល pull តែ images?</li>
+<li>ហេតុអ្វីរក្សា apk cache mount ក្រៅពី image layers?</li>
+</ul>
+<h2>លក្ខខណ្ឌជោគជ័យ</h2>
+<ul>
+<li><input disabled="" type="checkbox"> អ្នកបានរត់ BuildKit cache-mount build ឬ inspect multi-arch manifest</li>
+<li><input disabled="" type="checkbox"> អ្នកបាន validate <code>compose.watch.yaml</code> ឬរត់ <code>docker compose watch</code></li>
+<li><input disabled="" type="checkbox"> អ្នកបាន peek SPDX SBOM (ឬពន្យល់បានថាហេតុអ្វីវាសំខាន់)</li>
+</ul>
+<h2>បន្ទាប់</h2>
+<p>ទៅ <strong>Lab 12 — Deploy &amp; CI/CD</strong> ហើយរត់ជំហាន pipeline លើម៉ាស៊ីនផ្ទាល់។</p>
+
+      </div>
+      <nav class="pager static-reader-pager">
+        <a class="pager-prev" href="./lab/11-security.km.html"><span>លំហាត់មុន</span>សុវត្ថិភាពសំខាន់ៗ</a>
+        <a class="pager-next" href="./lab/12-ci-cd.km.html"><span>លំហាត់បន្ទាប់</span>Deploy និង CI/CD</a>
+      </nav>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span class="brand">rean-docker</span>
+        <a href="./lab.html?id=14-advanced&amp;lang=km">បើកអ្នកអានអន្តរកម្ម</a>
+      </div>
+    </footer>
+
+    <script defer src="./assets/js/i18n-km.js"></script>
+    <script defer src="./assets/js/i18n.js"></script>
+    <script defer src="./assets/js/routes.js"></script>
+    <script defer src="./assets/js/guide.js"></script>
+    <script defer src="./assets/js/progress.js"></script>
+    <script defer src="./assets/js/search.js"></script>
+    <script defer src="./assets/js/site.js"></script>
+  </body>
+</html>

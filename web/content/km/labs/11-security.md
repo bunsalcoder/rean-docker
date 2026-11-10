@@ -8,17 +8,9 @@
 
 មើលទម្លាប់បីពី handbook **ជំពូក 15**: កុំ run ជា root ពេលអាចជៀស, កុំដុត secrets ចូល layers និងមើលរបាយការណ៍ scan image។
 
-ផ្គូផ្គង Lab 04 (`ENV` លេច) និង Lab 08/09 (non-root + images ស្ដើង)។ Stretch §5–§7 ផ្គូផ្គង **ជំពូក 16** (BuildKit cache, Compose Watch, SBOM)។
+ផ្គូផ្គង Lab 04 (`ENV` លេច) និង Lab 08/09 (non-root + images ស្ដើង)។ Cache mounts, Compose Watch និង SBOM ស្ថិតនៅ **Lab 14** (ជំពូក 16) — ធ្វើបន្ទាប់ពី lab នេះ និងមុន Lab 12។
 
-**ផ្លូវជំពូក 16 (stretch តែប៉ុណ្ណោះ)៖**
-
-| ផ្នែក | ប្រធានបទ |
-|--------|----------|
-| §5 | BuildKit cache mount + multi-arch inspect |
-| §6 | Compose Watch (`compose.watch.yaml`) |
-| §7 | SBOM peek (Trivy SPDX) |
-
-**ជំនួយស្រេចចិត្ត:** `./run.sh` គ្រប whoami, BuildKit secret check, digest inspect, `compose.watch.yaml` config, BuildKit cache-mount stretch និង SPDX peek (Compose Watch អន្តរកម្មនៅដៃ)។ ចូលចិត្តវាយពាក្យបញ្ជាពី README ដោយខ្លួនឯងលើកដំបូង។
+**ជំនួយស្រេចចិត្ត:** `./run.sh` គ្រប whoami, BuildKit secret check និង digest inspect។ ចូលចិត្តវាយពាក្យបញ្ជាពី README ដោយខ្លួនឯងលើកដំបូង។
 
 ## ជំហាន
 
@@ -59,8 +51,6 @@ Build គួរជោគជ័យ ហើយមានសារ runtime។ អ្�
 
 > **លទ្ធផលដែលរំពឹងទុក:** container បង្ហាញសារ success ហើយ `docker history` **មិន** មាន `super-secret-token`។
 
-> **គន្លឹះ:** Stretch §5–§7 គឺផ្លូវ hands-on សម្រាប់ handbook **ជំពូក 16** (BuildKit cache, Compose Watch, SBOM)។ មើលសង្ខេបទោះបីរំលង Watch អន្តរកម្មក៏ដោយ។
-
 សម្អាត៖
 
 ```bash
@@ -94,76 +84,18 @@ docker pull "$DIGEST"
 
 Tags ផ្លាស់ទី។ Digest (`alpine@sha256:…`) គឺ bits ដែលអ្នកពិតជា pull។ Pin digests ពេលគ្រប់គ្រង supply-chain សំខាន់ (CI, production)។ Labs 05, 08 (slim), 09, 12, និង 13 pin `FROM node:22-alpine@sha256:…`; Lab 13 pin Postgres/Redis ក្នុង Compose ដែរ។ Digest ហួសសម័យដោយចេតនា — refresh Dockerfiles តាម Dependabot ហើយ Lab 13 Compose pins តាម `make refresh-digests` (CI weekly workflow រត់ target នោះ ហើយបើក PR ទៅ `develop` ពេល pin drift; optionally រត់ `make refresh-digests-check` locally ដើម្បី fail បើ Hub ផ្លាស់)។
 
-### 5. លំហាត់បន្ថែម — BuildKit cache + multi-arch (ជំពូក 16)
-
-Optional។ ផ្គូផ្គង handbook **ជំពូក 16**។ មិនត្រូវ image ថ្មីក្រៅពី Alpine។
-
-```bash
-# Cache mount (BuildKit) — second build should reuse the apk cache layer faster
-docker buildx version
-
-cat > /tmp/rean-lab11-cache.Dockerfile <<'EOF'
-# syntax=docker/dockerfile:1
-FROM alpine:3.22
-RUN --mount=type=cache,target=/var/cache/apk \
-    apk add --no-cache curl
-EOF
-
-docker build -t rean-cache:lab11 -f /tmp/rean-lab11-cache.Dockerfile /tmp
-docker build -t rean-cache:lab11 -f /tmp/rean-lab11-cache.Dockerfile /tmp
-
-# Multi-platform *inspect* (pushing multi-arch needs a registry; skip --push here)
-docker buildx imagetools inspect alpine:3.22 | head -n 40
-
-rm -f /tmp/rean-lab11-cache.Dockerfile
-docker rmi rean-cache:lab11 >/dev/null 2>&1 || true
-```
-
-សម្គាល់៖ cache mounts បង្កើនល្បឿន package install ដោយមិន bake cache ចូល image; `imagetools inspect` បង្ហាញ amd64/arm64 manifests ក្រោម tag តែមួយ។
-
-### 6. លំហាត់បន្ថែម — Compose Watch (ជំពូក 16)
-
-Optional។ Validate ឯកសារបង្រៀន រួចសាក Watch បើចង់ loop ផ្ទាល់៖
-
-```bash
-cd labs/11-security
-docker compose -f compose.watch.yaml config >/dev/null
-
-# Interactive (Ctrl+C when done):
-docker compose -f compose.watch.yaml up -d
-docker compose -f compose.watch.yaml watch
-# In another terminal, edit watch-demo/hello.txt and watch the container pick it up.
-docker compose -f compose.watch.yaml down
-```
-
-`develop.watch` សម្រាប់ **iteration លើ laptop**។ កុំដាក់ក្នុង production Compose (ជំពូក 17)។
-
-### 7. លំហាត់បន្ថែម — SBOM peek (ជំពូក 16)
-
-Optional។ Image Trivy ដូច §3 ទម្រង់ output ផ្សេង — SPDX bill of materials តូចៗ៖
-
-```bash
-docker run --rm aquasec/trivy:0.63.0 image --format spdx alpine:3.22 | head -n 40
-```
-
-អ្នកគួរឃើញបន្ទាត់អត្តសញ្ញាណ package (SPDX)។ Signing ជាមួយ Cosign គឺ orientation ក្នុង handbook — មិនត្រូវ install សម្រាប់ lab នេះ។
-
 ## ពិភាក្សា
 
 - ហេតុអ្វី mount `/var/run/docker.sock` ចូល app container ស្ទើរតែដូចឱ្យវា root លើ host?
 - ពេលណា `ENV NODE_ENV=production` ទទួលបាន ហើយពេលណា `ENV` លេច secret (Lab 04)?
 - អ្នកនឹង fail CI លើអ្វី: critical CVEs ក្នុង deps *របស់ app* ឬ CVE គ្រប់មួយក្នុង base image?
-- Predict: បើ `develop.watch` ជាប់ក្នុង `compose.prod.yaml` អ្វីខូចសម្រាប់ teammate ដែល pull តែ images?
 
 ## លក្ខខណ្ឌជោគជ័យ
 
 - [ ] `whoami` បង្ហាញ `node` លើ `rean-hello:1.0` និង `root` លើ Alpine
 - [ ] BuildKit `--secret` បាន build; `docker history` មិនបោះពុម្ព token
 - [ ] អ្នកអាចពន្យល់ tag vs digest ក្នុងមួយប្រយោគ
-- [ ] (Stretch) អ្នកបានរត់ BuildKit cache-mount build ឬ inspect multi-arch manifest
-- [ ] (Stretch) អ្នកបាន validate `compose.watch.yaml` ឬរត់ `docker compose watch`
-- [ ] (Stretch) អ្នកបាន peek SPDX SBOM (ឬពន្យល់បានថាហេតុអ្វីវាសំខាន់)
 
 ## បន្ទាប់
 
-ទៅ **Lab 12 — Deploy & CI/CD** ហើយរត់ជំហាន pipeline លើម៉ាស៊ីនផ្ទាល់។
+ទៅ **Lab 14 — BuildKit, Watch និង SBOM** (ជំពូក 16) រួច **Lab 12 — Deploy & CI/CD**។

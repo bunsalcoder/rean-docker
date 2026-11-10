@@ -148,7 +148,7 @@ npm-debug.log
 .env.*
 ```
 
-Add lab-specific extras as needed (`dist` for Lab 08, `watch-demo` for Lab 11, `workflows` for Labs 12/13). Keep early labs without a Dockerfile free of ignore files.
+Add lab-specific extras as needed (`dist` for Lab 08, `watch-demo` for Lab 14, `workflows` for Labs 12/13). Keep early labs without a Dockerfile free of ignore files.
 
 ## Pull requests
 

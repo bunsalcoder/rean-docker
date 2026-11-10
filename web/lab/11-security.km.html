@@ -43,7 +43,7 @@
     <main class="content-pane wrap static-reader" id="main" tabindex="-1">
       <p class="eyebrow">អនុវត្ត</p>
       <h1>សុវត្ថិភាពសំខាន់ៗ</h1>
-      <div class="pair-cta"><span class="pair-cta-label">ទ្រឹស្តី</span><a href="./learn.html?c=15&amp;lang=km">ជំពូក 15 — សុវត្ថិភាពសំខាន់ៗ</a><span class="pair-cta-sep" aria-hidden="true">·</span><a href="./learn.html?c=16&amp;lang=km">ជំពូក 16 — ប្រធានបទកម្រិតខ្ពស់</a></div>
+      <div class="pair-cta"><span class="pair-cta-label">ទ្រឹស្តី</span><a href="./learn.html?c=15&amp;lang=km">ជំពូក 15 — សុវត្ថិភាពសំខាន់ៗ</a></div>
       <p class="cta-row static-reader-cta">
         <a class="btn btn-primary" href="./lab.html?id=11-security&amp;lang=km">បើកអ្នកអានអន្តរកម្ម</a>
       </p>
@@ -53,29 +53,8 @@
 <p><strong>ថ្នាក់ខ្ពស់។</strong> Non-root, BuildKit secrets និងការស្កេន image (handbook ជំពូក 15)។</p>
 <h2>គោលដៅ</h2>
 <p>មើលទម្លាប់បីពី handbook <strong>ជំពូក 15</strong>: កុំ run ជា root ពេលអាចជៀស, កុំដុត secrets ចូល layers និងមើលរបាយការណ៍ scan image។</p>
-<p>ផ្គូផ្គង Lab 04 (<code>ENV</code> លេច) និង Lab 08/09 (non-root + images ស្ដើង)។ Stretch §5–§7 ផ្គូផ្គង <strong>ជំពូក 16</strong> (BuildKit cache, Compose Watch, SBOM)។</p>
-<p><strong>ផ្លូវជំពូក 16 (stretch តែប៉ុណ្ណោះ)៖</strong></p>
-<table>
-<thead>
-<tr>
-<th>ផ្នែក</th>
-<th>ប្រធានបទ</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>§5</td>
-<td>BuildKit cache mount + multi-arch inspect</td>
-</tr>
-<tr>
-<td>§6</td>
-<td>Compose Watch (<code>compose.watch.yaml</code>)</td>
-</tr>
-<tr>
-<td>§7</td>
-<td>SBOM peek (Trivy SPDX)</td>
-</tr>
-</tbody></table>
-<p><strong>ជំនួយស្រេចចិត្ត:</strong> <code>./run.sh</code> គ្រប whoami, BuildKit secret check, digest inspect, <code>compose.watch.yaml</code> config, BuildKit cache-mount stretch និង SPDX peek (Compose Watch អន្តរកម្មនៅដៃ)។ ចូលចិត្តវាយពាក្យបញ្ជាពី README ដោយខ្លួនឯងលើកដំបូង។</p>
+<p>ផ្គូផ្គង Lab 04 (<code>ENV</code> លេច) និង Lab 08/09 (non-root + images ស្ដើង)។ Cache mounts, Compose Watch និង SBOM ស្ថិតនៅ <strong>Lab 14</strong> (ជំពូក 16) — ធ្វើបន្ទាប់ពី lab នេះ និងមុន Lab 12។</p>
+<p><strong>ជំនួយស្រេចចិត្ត:</strong> <code>./run.sh</code> គ្រប whoami, BuildKit secret check និង digest inspect។ ចូលចិត្តវាយពាក្យបញ្ជាពី README ដោយខ្លួនឯងលើកដំបូង។</p>
 <h2>ជំហាន</h2>
 <h3>1. នរណាជា PID 1?</h3>
 <p>Build image Lab 03 បើអ្នកមិននៅមាន រួច៖</p>
@@ -108,12 +87,6 @@ docker run --rm rean-secret:lab11
 <p>container បង្ហាញសារ success ហើយ <code>docker history</code> <strong>មិន</strong> មាន <code>super-secret-token</code>។</p>
 </div>
 </details>
-<aside class="md-callout md-callout-hint" role="note">
-<div class="md-callout-body">
-<p class="md-callout-title">គន្លឹះ</p>
-<p>Stretch §5–§7 គឺផ្លូវ hands-on សម្រាប់ handbook <strong>ជំពូក 16</strong> (BuildKit cache, Compose Watch, SBOM)។ មើលសង្ខេបទោះបីរំលង Watch អន្តរកម្មក៏ដោយ។</p>
-</div>
-</aside>
 <p>សម្អាត៖</p>
 <pre><code class="language-bash">rm -f /tmp/rean-demo.secret
 docker rmi rean-secret:lab11
@@ -134,68 +107,25 @@ echo &quot;$DIGEST&quot;
 docker pull &quot;$DIGEST&quot;
 </code></pre>
 <p>Tags ផ្លាស់ទី។ Digest (<code>alpine@sha256:…</code>) គឺ bits ដែលអ្នកពិតជា pull។ Pin digests ពេលគ្រប់គ្រង supply-chain សំខាន់ (CI, production)។ Labs 05, 08 (slim), 09, 12, និង 13 pin <code>FROM node:22-alpine@sha256:…</code>; Lab 13 pin Postgres/Redis ក្នុង Compose ដែរ។ Digest ហួសសម័យដោយចេតនា — refresh Dockerfiles តាម Dependabot ហើយ Lab 13 Compose pins តាម <code>make refresh-digests</code> (CI weekly workflow រត់ target នោះ ហើយបើក PR ទៅ <code>develop</code> ពេល pin drift; optionally រត់ <code>make refresh-digests-check</code> locally ដើម្បី fail បើ Hub ផ្លាស់)។</p>
-<h3>5. លំហាត់បន្ថែម — BuildKit cache + multi-arch (ជំពូក 16)</h3>
-<p>Optional។ ផ្គូផ្គង handbook <strong>ជំពូក 16</strong>។ មិនត្រូវ image ថ្មីក្រៅពី Alpine។</p>
-<pre><code class="language-bash"># Cache mount (BuildKit) — second build should reuse the apk cache layer faster
-docker buildx version
-
-cat &gt; /tmp/rean-lab11-cache.Dockerfile &lt;&lt;&#39;EOF&#39;
-# syntax=docker/dockerfile:1
-FROM alpine:3.22
-RUN --mount=type=cache,target=/var/cache/apk \
-    apk add --no-cache curl
-EOF
-
-docker build -t rean-cache:lab11 -f /tmp/rean-lab11-cache.Dockerfile /tmp
-docker build -t rean-cache:lab11 -f /tmp/rean-lab11-cache.Dockerfile /tmp
-
-# Multi-platform *inspect* (pushing multi-arch needs a registry; skip --push here)
-docker buildx imagetools inspect alpine:3.22 | head -n 40
-
-rm -f /tmp/rean-lab11-cache.Dockerfile
-docker rmi rean-cache:lab11 &gt;/dev/null 2&gt;&amp;1 || true
-</code></pre>
-<p>សម្គាល់៖ cache mounts បង្កើនល្បឿន package install ដោយមិន bake cache ចូល image; <code>imagetools inspect</code> បង្ហាញ amd64/arm64 manifests ក្រោម tag តែមួយ។</p>
-<h3>6. លំហាត់បន្ថែម — Compose Watch (ជំពូក 16)</h3>
-<p>Optional។ Validate ឯកសារបង្រៀន រួចសាក Watch បើចង់ loop ផ្ទាល់៖</p>
-<pre><code class="language-bash">cd labs/11-security
-docker compose -f compose.watch.yaml config &gt;/dev/null
-
-# Interactive (Ctrl+C when done):
-docker compose -f compose.watch.yaml up -d
-docker compose -f compose.watch.yaml watch
-# In another terminal, edit watch-demo/hello.txt and watch the container pick it up.
-docker compose -f compose.watch.yaml down
-</code></pre>
-<p><code>develop.watch</code> សម្រាប់ <strong>iteration លើ laptop</strong>។ កុំដាក់ក្នុង production Compose (ជំពូក 17)។</p>
-<h3>7. លំហាត់បន្ថែម — SBOM peek (ជំពូក 16)</h3>
-<p>Optional។ Image Trivy ដូច §3 ទម្រង់ output ផ្សេង — SPDX bill of materials តូចៗ៖</p>
-<pre><code class="language-bash">docker run --rm aquasec/trivy:0.63.0 image --format spdx alpine:3.22 | head -n 40
-</code></pre>
-<p>អ្នកគួរឃើញបន្ទាត់អត្តសញ្ញាណ package (SPDX)។ Signing ជាមួយ Cosign គឺ orientation ក្នុង handbook — មិនត្រូវ install សម្រាប់ lab នេះ។</p>
 <h2>ពិភាក្សា</h2>
 <ul>
 <li>ហេតុអ្វី mount <code>/var/run/docker.sock</code> ចូល app container ស្ទើរតែដូចឱ្យវា root លើ host?</li>
 <li>ពេលណា <code>ENV NODE_ENV=production</code> ទទួលបាន ហើយពេលណា <code>ENV</code> លេច secret (Lab 04)?</li>
 <li>អ្នកនឹង fail CI លើអ្វី: critical CVEs ក្នុង deps <em>របស់ app</em> ឬ CVE គ្រប់មួយក្នុង base image?</li>
-<li>Predict: បើ <code>develop.watch</code> ជាប់ក្នុង <code>compose.prod.yaml</code> អ្វីខូចសម្រាប់ teammate ដែល pull តែ images?</li>
 </ul>
 <h2>លក្ខខណ្ឌជោគជ័យ</h2>
 <ul>
 <li><input disabled="" type="checkbox"> <code>whoami</code> បង្ហាញ <code>node</code> លើ <code>rean-hello:1.0</code> និង <code>root</code> លើ Alpine</li>
 <li><input disabled="" type="checkbox"> BuildKit <code>--secret</code> បាន build; <code>docker history</code> មិនបោះពុម្ព token</li>
 <li><input disabled="" type="checkbox"> អ្នកអាចពន្យល់ tag vs digest ក្នុងមួយប្រយោគ</li>
-<li><input disabled="" type="checkbox"> (Stretch) អ្នកបានរត់ BuildKit cache-mount build ឬ inspect multi-arch manifest</li>
-<li><input disabled="" type="checkbox"> (Stretch) អ្នកបាន validate <code>compose.watch.yaml</code> ឬរត់ <code>docker compose watch</code></li>
-<li><input disabled="" type="checkbox"> (Stretch) អ្នកបាន peek SPDX SBOM (ឬពន្យល់បានថាហេតុអ្វីវាសំខាន់)</li>
 </ul>
 <h2>បន្ទាប់</h2>
-<p>ទៅ <strong>Lab 12 — Deploy &amp; CI/CD</strong> ហើយរត់ជំហាន pipeline លើម៉ាស៊ីនផ្ទាល់។</p>
+<p>ទៅ <strong>Lab 14 — BuildKit, Watch និង SBOM</strong> (ជំពូក 16) រួច <strong>Lab 12 — Deploy &amp; CI/CD</strong>។</p>
 
       </div>
       <nav class="pager static-reader-pager">
         <a class="pager-prev" href="./lab/10-debugging.km.html"><span>លំហាត់មុន</span>កែកំហុស</a>
-        <a class="pager-next" href="./lab/12-ci-cd.km.html"><span>លំហាត់បន្ទាប់</span>Deploy និង CI/CD</a>
+        <a class="pager-next" href="./lab/14-advanced.km.html"><span>លំហាត់បន្ទាប់</span>BuildKit, Watch និង SBOM</a>
       </nav>
     </main>
 

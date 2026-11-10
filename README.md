@@ -54,7 +54,7 @@ make sync    # copy sources → web/content/en/
 make check   # fail if anything drifted
 make ci-local    # check-all + static pages + sitemap + search index (CI content gate)
 make smoke          # optional: compose smoke for labs 04, 05, 09, 12, 13
-make smoke-concept  # optional: run.sh helpers for labs 01, 02, 06, 07, 08, 10, 11
+make smoke-concept  # optional: run.sh helpers for labs 01, 02, 06, 07, 08, 10, 11, 14
 ```
 
 Or run the scripts directly: `./scripts/sync_en_content.sh` / `./scripts/check_content_sync.sh`.
@@ -97,7 +97,8 @@ Work in order:
 | 08 | Multi-stage builds | [labs/08-multi-stage](labs/08-multi-stage) (`run.sh`) |
 | 09 | Production practices | [labs/09-production](labs/09-production) (`run.sh`) |
 | 10 | Debugging & troubleshooting | [labs/10-debugging](labs/10-debugging) (`run.sh`) |
-| 11 | Security essentials | [labs/11-security](labs/11-security) (`run.sh`; Chapter 16 stretch) |
+| 11 | Security essentials | [labs/11-security](labs/11-security) (`run.sh`) |
+| 14 | BuildKit, Watch, and SBOM (Chapter 16; do after 11, before 12) | [labs/14-advanced](labs/14-advanced) (`run.sh`) |
 | 12 | Deploy & CI/CD (special) | [labs/12-ci-cd](labs/12-ci-cd) (`run.sh`) |
 | 13 | Capstone (own the baseline) | [labs/13-capstone](labs/13-capstone) (`run.sh`) |
 
