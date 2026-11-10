@@ -43,7 +43,7 @@
     <main class="content-pane wrap static-reader" id="main" tabindex="-1">
       <p class="eyebrow">Hands-on</p>
       <h1>Security essentials</h1>
-      <div class="pair-cta"><span class="pair-cta-label">Theory</span><a href="./learn.html?c=15">Chapter 15 — Security essentials</a><span class="pair-cta-sep" aria-hidden="true">·</span><a href="./learn.html?c=16">Chapter 16 — Advanced topics</a></div>
+      <div class="pair-cta"><span class="pair-cta-label">Theory</span><a href="./learn.html?c=15">Chapter 15 — Security essentials</a></div>
       <p class="cta-row static-reader-cta">
         <a class="btn btn-primary" href="./lab.html?id=11-security">Open interactive reader</a>
       </p>
@@ -53,29 +53,8 @@
 <p><strong>Advanced.</strong> Non-root, BuildKit secrets, and image scanning (handbook Chapter 15).</p>
 <h2>Goal</h2>
 <p>See three habits from handbook <strong>Chapter 15</strong>: don’t run as root when you can avoid it, don’t bake secrets into layers, and look at what an image scan reports.</p>
-<p>Pair with Lab 04 (leaky <code>ENV</code>) and Lab 08/09 (non-root + slim images). Stretches §5–§7 pair with <strong>Chapter 16</strong> (BuildKit cache, Compose Watch, SBOM).</p>
-<p><strong>Chapter 16 track (stretches only):</strong></p>
-<table>
-<thead>
-<tr>
-<th>Section</th>
-<th>Topic</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>§5</td>
-<td>BuildKit cache mount + multi-arch inspect</td>
-</tr>
-<tr>
-<td>§6</td>
-<td>Compose Watch (<code>compose.watch.yaml</code>)</td>
-</tr>
-<tr>
-<td>§7</td>
-<td>SBOM peek (Trivy SPDX)</td>
-</tr>
-</tbody></table>
-<p><strong>Optional helper:</strong> <code>./run.sh</code> covers whoami, the BuildKit secret check, digest inspect, <code>compose.watch.yaml</code> config, the BuildKit cache-mount stretch, and an SPDX peek (interactive Compose Watch stays manual). Prefer typing the commands yourself the first time.</p>
+<p>Pair with Lab 04 (leaky <code>ENV</code>) and Lab 08/09 (non-root + slim images). Cache mounts, Compose Watch, and SBOM live in <strong>Lab 14</strong> (Chapter 16) — do that after this lab and before Lab 12.</p>
+<p><strong>Optional helper:</strong> <code>./run.sh</code> covers whoami, the BuildKit secret check, and digest inspect. Prefer typing the commands yourself the first time.</p>
 <h2>Steps</h2>
 <h3>1. Who is PID 1?</h3>
 <p>Build the Lab 03 image if you don’t still have it, then:</p>
@@ -108,12 +87,6 @@ docker run --rm rean-secret:lab11
 <p>The container prints its success message, and <code>docker history</code> does <strong>not</strong> contain <code>super-secret-token</code>.</p>
 </div>
 </details>
-<aside class="md-callout md-callout-hint" role="note">
-<div class="md-callout-body">
-<p class="md-callout-title">Tip</p>
-<p>Stretches §5–§7 are the hands-on pair for handbook <strong>Chapter 16</strong> (BuildKit cache, Compose Watch, SBOM). Skim them even if you skip the interactive Watch loop.</p>
-</div>
-</aside>
 <p>Cleanup:</p>
 <pre><code class="language-bash">rm -f /tmp/rean-demo.secret
 docker rmi rean-secret:lab11
@@ -134,68 +107,25 @@ echo &quot;$DIGEST&quot;
 docker pull &quot;$DIGEST&quot;
 </code></pre>
 <p>Tags move. A digest (<code>alpine@sha256:…</code>) is the bits you actually pulled. Pin digests when supply-chain control matters (CI, production). Labs 05, 08 (slim), 09, 12, and 13 pin <code>FROM node:22-alpine@sha256:…</code>; Lab 13 also pins Postgres/Redis in Compose. Digests go stale on purpose — refresh Dockerfiles via Dependabot, and Lab 13 Compose pins with <code>make refresh-digests</code> (a weekly CI workflow runs that target and opens a PR against <code>develop</code> when pins drift; optionally run <code>make refresh-digests-check</code> locally to fail if Hub moved).</p>
-<h3>5. Stretch — BuildKit cache + multi-arch (Chapter 16)</h3>
-<p>Optional. Pair with handbook <strong>Chapter 16</strong>. No new images required beyond Alpine.</p>
-<pre><code class="language-bash"># Cache mount (BuildKit) — second build should reuse the apk cache layer faster
-docker buildx version
-
-cat &gt; /tmp/rean-lab11-cache.Dockerfile &lt;&lt;&#39;EOF&#39;
-# syntax=docker/dockerfile:1
-FROM alpine:3.22
-RUN --mount=type=cache,target=/var/cache/apk \
-    apk add --no-cache curl
-EOF
-
-docker build -t rean-cache:lab11 -f /tmp/rean-lab11-cache.Dockerfile /tmp
-docker build -t rean-cache:lab11 -f /tmp/rean-lab11-cache.Dockerfile /tmp
-
-# Multi-platform *inspect* (pushing multi-arch needs a registry; skip --push here)
-docker buildx imagetools inspect alpine:3.22 | head -n 40
-
-rm -f /tmp/rean-lab11-cache.Dockerfile
-docker rmi rean-cache:lab11 &gt;/dev/null 2&gt;&amp;1 || true
-</code></pre>
-<p>Notice: cache mounts speed package installs without baking the cache into the image; <code>imagetools inspect</code> shows amd64/arm64 manifests behind a single tag.</p>
-<h3>6. Stretch — Compose Watch (Chapter 16)</h3>
-<p>Optional. Validate the teaching file, then try Watch if you want the live loop:</p>
-<pre><code class="language-bash">cd labs/11-security
-docker compose -f compose.watch.yaml config &gt;/dev/null
-
-# Interactive (Ctrl+C when done):
-docker compose -f compose.watch.yaml up -d
-docker compose -f compose.watch.yaml watch
-# In another terminal, edit watch-demo/hello.txt and watch the container pick it up.
-docker compose -f compose.watch.yaml down
-</code></pre>
-<p><code>develop.watch</code> is for <strong>laptop iteration</strong>. Keep it out of production Compose (Chapter 17).</p>
-<h3>7. Stretch — SBOM peek (Chapter 16)</h3>
-<p>Optional. Same Trivy image as §3, different output format — a tiny SPDX bill of materials:</p>
-<pre><code class="language-bash">docker run --rm aquasec/trivy:0.63.0 image --format spdx alpine:3.22 | head -n 40
-</code></pre>
-<p>You should see package identity lines (SPDX). Signing with Cosign is orientation-only in the handbook — no install required for this lab.</p>
 <h2>Discuss</h2>
 <ul>
 <li>Why is mounting <code>/var/run/docker.sock</code> into an app container almost the same as giving it root on the host?</li>
 <li>When is <code>ENV NODE_ENV=production</code> fine, and when is <code>ENV</code> a secret leak (Lab 04)?</li>
 <li>What would you fail CI on: critical CVEs in <em>your</em> app deps, or every CVE in the base image?</li>
-<li>Predict: if <code>develop.watch</code> shipped in <code>compose.prod.yaml</code>, what breaks for a teammate who only pulls images?</li>
 </ul>
 <h2>Success criteria</h2>
 <ul>
 <li><input disabled="" type="checkbox"> <code>whoami</code> showed <code>node</code> on <code>rean-hello:1.0</code> and <code>root</code> on Alpine</li>
 <li><input disabled="" type="checkbox"> BuildKit <code>--secret</code> built; <code>docker history</code> did not print the token</li>
 <li><input disabled="" type="checkbox"> You can explain tag vs digest in one sentence</li>
-<li><input disabled="" type="checkbox"> (Stretch) You ran a BuildKit cache-mount build or inspected a multi-arch manifest</li>
-<li><input disabled="" type="checkbox"> (Stretch) You validated <code>compose.watch.yaml</code> or ran <code>docker compose watch</code></li>
-<li><input disabled="" type="checkbox"> (Stretch) You peeked at an SPDX SBOM (or can explain why one matters)</li>
 </ul>
 <h2>Next</h2>
-<p>Go to <strong>Lab 12 — Deploy &amp; CI/CD</strong> and run the pipeline steps locally.</p>
+<p>Go to <strong>Lab 14 — BuildKit, Watch, and SBOM</strong> (Chapter 16), then <strong>Lab 12 — Deploy &amp; CI/CD</strong>.</p>
 
       </div>
       <nav class="pager static-reader-pager">
         <a class="pager-prev" href="./lab/10-debugging.html"><span>Previous lab</span>Debugging</a>
-        <a class="pager-next" href="./lab/12-ci-cd.html"><span>Next lab</span>Deploy &amp; CI/CD</a>
+        <a class="pager-next" href="./lab/14-advanced.html"><span>Next lab</span>BuildKit, Watch, and SBOM</a>
       </nav>
     </main>
 

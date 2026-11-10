@@ -47,6 +47,39 @@ function mockChaptersFromRoutes() {
   });
 }
 
+function loadReader() {
+  const document = {
+    addEventListener() {},
+    documentElement: { dataset: {} },
+    body: { dataset: {} },
+    querySelector() {
+      return null;
+    },
+  };
+  const location = { search: "", hash: "", pathname: "/learn.html" };
+  const history = {
+    state: null,
+    pushState() {},
+    replaceState() {},
+  };
+  const window = {
+    document,
+    location,
+    history,
+    addEventListener() {},
+    matchMedia() {
+      return { matches: false };
+    },
+  };
+  const sandbox = { window, document, location, history, console };
+  sandbox.globalThis = sandbox;
+  vm.createContext(sandbox);
+  vm.runInContext(readFileSync(join(ROOT, "web/assets/js/learn.js"), "utf8"), sandbox, {
+    filename: "learn.js",
+  });
+  return sandbox.window.ReanReader;
+}
+
 const Guide = loadGuide();
 assert(Guide && typeof Guide.splitSections === "function", "ReanGuide.splitSections exported");
 assert(typeof Guide.checklistIndexKey === "function", "checklistIndexKey exported");
@@ -185,6 +218,61 @@ assert(learnJs.includes("prefersReducedMotion"), "learn respects reduced-motion 
 assert(learnJs.includes("setupPagerKeys") && learnJs.includes("ArrowLeft"), "learn/lab support keyboard prev/next");
 assert(i18nJs.includes("a11y.pagerKeys"), "pager keyboard hint string exists");
 assert(learnJs.includes("normalizeLegacyHashRoute"), "legacy hash routes normalize to query params");
+assert(learnJs.includes('setAttribute("aria-current", "page")'), "sidebar exposes the current chapter/lab");
+assert(learnJs.includes("revealActiveNav"), "sidebar scrolls the current item into view");
+assert((learnJs.match(/createReader\(/g) || []).length >= 3, "learn and lab share createReader");
+assert(!learnJs.includes("transitionToken"), "transition tokens live in the shared gate");
+
+const Reader = loadReader();
+assert(Reader && typeof Reader.planNavigation === "function", "planNavigation exported");
+assert(typeof Reader.createTransitionGate === "function", "createTransitionGate exported");
+const readerIds = ["a", "b", "c"];
+const resolveReaderIndex = (id) => readerIds.indexOf(id);
+const unknownNav = Reader.planNavigation({
+  currentIndex: 0,
+  requestedId: "missing",
+  resolveIndex: resolveReaderIndex,
+  push: true,
+});
+assert(
+  unknownNav.action === "missing" && unknownNav.push === true && unknownNav.replace === false,
+  "unknown id plans a history push to the missing screen"
+);
+const unknownQuiet = Reader.planNavigation({
+  currentIndex: 0,
+  requestedId: "missing",
+  resolveIndex: resolveReaderIndex,
+  push: false,
+});
+assert(unknownQuiet.action === "missing" && unknownQuiet.push === false, "unknown id without push leaves history alone");
+const sameNav = Reader.planNavigation({
+  currentIndex: 1,
+  requestedId: "b",
+  resolveIndex: resolveReaderIndex,
+  push: true,
+});
+assert(
+  sameNav.action === "same" && sameNav.push === false && sameNav.replace === true,
+  "same id replaces history and does not push again"
+);
+const sameQuiet = Reader.planNavigation({
+  currentIndex: 1,
+  requestedId: "b",
+  resolveIndex: resolveReaderIndex,
+  push: false,
+});
+assert(sameQuiet.action === "same" && sameQuiet.replace === false, "same id without push leaves history alone");
+const nextNav = Reader.planNavigation({
+  currentIndex: -1,
+  requestedId: "a",
+  resolveIndex: resolveReaderIndex,
+  push: false,
+});
+assert(nextNav.action === "show" && nextNav.hadItem === false && nextNav.index === 0, "first open has no previous item");
+const gate = Reader.createTransitionGate();
+const olderToken = gate.begin();
+const newerToken = gate.begin();
+assert(gate.isCurrent(newerToken) && !gate.isCurrent(olderToken), "a newer navigation cancels the previous token");
 assert(!/location\.hash[\s\S]{0,80}return decodeURIComponent/.test(learnJs), "getRouteId no longer prefers raw hash");
 assert(learnJs.includes("record(scope, 1, 1)"), "checklist-free chapters mark visited");
 const notFoundHtml = readFileSync(join(ROOT, "web/404.html"), "utf8");

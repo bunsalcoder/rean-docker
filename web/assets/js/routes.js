@@ -1,6 +1,6 @@
 /* Generated from web/assets/routes.json — edit the JSON, then: make sync-routes */
 (() => {
-  const VERSION = 5;
+  const VERSION = 6;
   const CHAPTERS = [
     {
       id: "how-to-use",
@@ -43,6 +43,7 @@
     { id: "09-production", levelKey: "lab.level.advanced", minutes: 30 },
     { id: "10-debugging", levelKey: "lab.level.advanced", minutes: 30 },
     { id: "11-security", levelKey: "lab.level.advanced", minutes: 40 },
+    { id: "14-advanced", levelKey: "lab.level.advanced", minutes: 25 },
     { id: "12-ci-cd", levelKey: "lab.level.special", minutes: 40 },
     { id: "13-capstone", levelKey: "lab.level.special", minutes: 90 },
   ];
@@ -64,7 +65,7 @@
     { chapter: "13", lab: "09-production" },
     { chapter: "14", lab: "10-debugging" },
     { chapter: "15", lab: "11-security" },
-    { chapter: "16", lab: "11-security", practiceHintKey: "pair.ch16Stretch" },
+    { chapter: "16", lab: "14-advanced", practiceHintKey: "pair.ch16Stretch" },
     { chapter: "17", lab: "12-ci-cd" },
     { chapter: "18", lab: "13-capstone" },
   ];

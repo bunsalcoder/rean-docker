@@ -395,8 +395,174 @@ function renderMissingRoute(bodyEl, titleEl, progressEl, pagerEl, { title, hint,
   clearPairCta();
   clearLabNote();
   document.title = `${title} — rean-docker`;
-  bodyEl.innerHTML = `<div class="error"><strong>${title}</strong><br>${hint}<br><br><a class="btn btn-primary" href="${href}">${cta}</a></div>`;
+  bodyEl.innerHTML = `<div class="error"><strong>${escapeHtml(title)}</strong><br>${escapeHtml(hint)}<br><br><a class="btn btn-primary" href="${escapeHtml(href)}">${escapeHtml(cta)}</a></div>`;
   focusReaderTitle(titleEl);
+}
+
+/**
+ * What a chapter/lab navigation should do. Pure: no history writes, no DOM.
+ * `push: true` on the same id replaces the current entry instead of pushing.
+ */
+function planNavigation({ currentIndex, requestedId, resolveIndex, push = false }) {
+  const index = resolveIndex(requestedId);
+  if (index < 0) {
+    return { action: "missing", index: -1, push: Boolean(push), replace: false, hadItem: false };
+  }
+  if (index === currentIndex) {
+    return {
+      action: "same",
+      index,
+      push: false,
+      replace: Boolean(push),
+      hadItem: currentIndex >= 0,
+    };
+  }
+  return {
+    action: "show",
+    index,
+    push: Boolean(push),
+    replace: false,
+    hadItem: currentIndex >= 0,
+  };
+}
+
+/** Monotonic token so a newer show() cancels an in-flight leave animation or fetch. */
+function createTransitionGate() {
+  let token = 0;
+  return {
+    begin() {
+      token += 1;
+      return token;
+    },
+    isCurrent(value) {
+      return value === token;
+    },
+  };
+}
+
+/** Scroll the sidebar itself so the current item is visible without moving the page. */
+function revealActiveNav(link) {
+  const sidebar = link.closest(".sidebar");
+  if (!sidebar) return;
+  const linkBox = link.getBoundingClientRect();
+  const sideBox = sidebar.getBoundingClientRect();
+  if (linkBox.top < sideBox.top) {
+    sidebar.scrollTop -= sideBox.top - linkBox.top;
+  } else if (linkBox.bottom > sideBox.bottom) {
+    sidebar.scrollTop += linkBox.bottom - sideBox.bottom;
+  }
+}
+
+function setActiveNav(navEl, attr, id) {
+  let active = null;
+  navEl.querySelectorAll(`a[${attr}]`).forEach((a) => {
+    const on = Boolean(id) && a.getAttribute(attr) === id;
+    a.classList.toggle("is-active", on);
+    if (on) {
+      a.setAttribute("aria-current", "page");
+      active = a;
+    } else {
+      a.removeAttribute("aria-current");
+    }
+  });
+  if (active) revealActiveNav(active);
+}
+
+function renderPagerLinks(pagerEl, { prev, next, hrefFor, attr, prevLabel, nextLabel }) {
+  if (!pagerEl) return;
+  const link = (item, className, label) => {
+    if (!item) return "";
+    const href = escapeHtml(hrefFor(item.id));
+    const id = escapeHtml(item.id);
+    return (
+      `<a class="${className}" href="${href}" ${attr}="${id}">` +
+      `<span>${escapeHtml(label)}</span>${escapeHtml(item.title)}</a>`
+    );
+  };
+  pagerEl.innerHTML =
+    `${link(prev, "pager-prev", prevLabel)}` +
+    `${link(next, "pager-next", nextLabel)}` +
+    pagerKeysHintHtml();
+}
+
+const READER_OUT_MS = 280;
+
+/**
+ * Shared Learn/Lab transition: history, leave/enter motion, and cancellation.
+ * `applyItem` may be async (lab markdown). Pass `isCurrent` through and bail
+ * after any await so a newer navigation does not get overwritten.
+ */
+function createReader({ items, bodyEl, hrefFor, stateFor, applyItem, onMissing }) {
+  let currentIndex = -1;
+  const gate = createTransitionGate();
+  const paneEl = bodyEl.closest(".content-pane");
+
+  const clearMotion = () => {
+    bodyEl.classList.remove("is-leaving", "is-switching");
+    bodyEl.style.animation = "";
+    paneEl?.classList.remove("is-chapter-leaving", "is-chapter-switching");
+  };
+
+  const playIn = () => {
+    clearMotion();
+    void bodyEl.offsetWidth;
+    bodyEl.classList.add("is-switching");
+    paneEl?.classList.add("is-chapter-switching");
+  };
+
+  const show = async (id, { push = false, animate = true } = {}) => {
+    const plan = planNavigation({
+      currentIndex,
+      requestedId: id,
+      resolveIndex: (wanted) => items.findIndex((item) => item.id === wanted),
+      push,
+    });
+
+    if (plan.action === "missing") {
+      if (plan.push) history.pushState(stateFor(id), "", hrefFor(id));
+      currentIndex = -1;
+      clearMotion();
+      onMissing(id);
+      return;
+    }
+
+    const item = items[plan.index];
+    if (plan.action === "same") {
+      if (plan.replace) history.replaceState(stateFor(item.id), "", hrefFor(item.id));
+      return;
+    }
+
+    const token = gate.begin();
+    const hadItem = plan.hadItem;
+    currentIndex = plan.index;
+
+    if (plan.push) history.pushState(stateFor(item.id), "", hrefFor(item.id));
+
+    scrollToTop();
+
+    const shouldAnimate = animate && !prefersReducedMotion();
+    if (shouldAnimate && hadItem) {
+      clearMotion();
+      bodyEl.classList.add("is-leaving");
+      paneEl?.classList.add("is-chapter-leaving");
+      await new Promise((resolve) => setTimeout(resolve, READER_OUT_MS));
+      if (!gate.isCurrent(token)) return;
+    }
+
+    await applyItem(item, plan.index, {
+      focusTitle: hadItem,
+      isCurrent: () => gate.isCurrent(token),
+    });
+    if (!gate.isCurrent(token)) return;
+
+    if (shouldAnimate) playIn();
+    else clearMotion();
+  };
+
+  return {
+    show,
+    index: () => currentIndex,
+  };
 }
 
 function escapeHtml(value) {
@@ -509,44 +675,20 @@ async function initLearnPage() {
     const chapters = splitGuide(raw);
     if (!chapters.length) throw new Error("No chapters found");
 
-    let currentIndex = -1;
-    let transitionToken = 0;
-    const paneEl = bodyEl.closest(".content-pane");
-    const CHAPTER_OUT_MS = 280;
-
-    const resolveIndex = (id) => chapters.findIndex((c) => c.id === id);
-
-    const setActiveNav = (id) => {
-      navEl.querySelectorAll("a[data-chapter-id]").forEach((a) => {
-        a.classList.toggle("is-active", a.dataset.chapterId === id);
+    const renderPager = (index) => {
+      renderPagerLinks(pagerEl, {
+        prev: chapters[index - 1],
+        next: chapters[index + 1],
+        hrefFor: chapterHref,
+        attr: "data-chapter-id",
+        prevLabel: t("learn.prev"),
+        nextLabel: t("learn.next"),
       });
     };
 
-    const renderPager = (index) => {
-      if (!pagerEl) return;
-      const prev = chapters[index - 1];
-      const next = chapters[index + 1];
-      pagerEl.innerHTML = `
-        ${prev ? `<a class="pager-prev" href="${chapterHref(prev.id)}" data-chapter-id="${prev.id}"><span>${t("learn.prev")}</span>${prev.title}</a>` : ""}
-        ${next ? `<a class="pager-next" href="${chapterHref(next.id)}" data-chapter-id="${next.id}"><span>${t("learn.next")}</span>${next.title}</a>` : ""}
-        ${pagerKeysHintHtml()}
-      `;
-    };
-
-    const clearChapterMotion = () => {
-      bodyEl.classList.remove("is-leaving", "is-switching");
-      paneEl?.classList.remove("is-chapter-leaving", "is-chapter-switching");
-    };
-
-    const playChapterIn = () => {
-      clearChapterMotion();
-      void bodyEl.offsetWidth;
-      bodyEl.classList.add("is-switching");
-      paneEl?.classList.add("is-chapter-switching");
-    };
-
-    const applyChapter = (chapter, index, { focusTitle = false } = {}) => {
-      setActiveNav(chapter.id);
+    const applyChapter = (chapter, index, { focusTitle = false, isCurrent = () => true } = {}) => {
+      if (!isCurrent()) return;
+      setActiveNav(navEl, "data-chapter-id", chapter.id);
       if (titleEl) {
         titleEl.removeAttribute("data-i18n");
         titleEl.textContent = chapter.title;
@@ -571,8 +713,7 @@ async function initLearnPage() {
     };
 
     const showMissingChapter = (requestedId) => {
-      currentIndex = -1;
-      setActiveNav("");
+      setActiveNav(navEl, "data-chapter-id", "");
       renderMissingRoute(bodyEl, titleEl, progressEl, pagerEl, {
         title: t("learn.notFound"),
         hint: t("learn.notFoundHint"),
@@ -587,94 +728,56 @@ async function initLearnPage() {
       });
     };
 
-    const showChapter = async (id, { push = false, animate = true } = {}) => {
-      const index = resolveIndex(id);
-      if (index < 0) {
-        if (push) {
-          history.pushState({ c: id }, "", chapterHref(id));
-        }
-        showMissingChapter(id);
-        return;
-      }
-      const chapter = chapters[index];
-
-      // Same chapter click: keep URL in sync, skip re-render flicker
-      if (index === currentIndex) {
-        if (push) history.replaceState({ c: chapter.id }, "", chapterHref(chapter.id));
-        return;
-      }
-
-      const token = ++transitionToken;
-      const hadChapter = currentIndex >= 0;
-      currentIndex = index;
-
-      if (push) {
-        history.pushState({ c: chapter.id }, "", chapterHref(chapter.id));
-      }
-
-      scrollToTop();
-
-      const shouldAnimate = animate && !prefersReducedMotion();
-
-      if (shouldAnimate && hadChapter) {
-        clearChapterMotion();
-        bodyEl.classList.add("is-leaving");
-        paneEl?.classList.add("is-chapter-leaving");
-        await new Promise((resolve) => setTimeout(resolve, CHAPTER_OUT_MS));
-        if (token !== transitionToken) return;
-      }
-
-      applyChapter(chapter, index, { focusTitle: hadChapter });
-
-      if (shouldAnimate) {
-        playChapterIn();
-      } else {
-        clearChapterMotion();
-      }
-    };
+    const reader = createReader({
+      items: chapters,
+      bodyEl,
+      hrefFor: chapterHref,
+      stateFor: (id) => ({ c: id }),
+      applyItem: applyChapter,
+      onMissing: showMissingChapter,
+    });
 
     navEl.innerHTML = chapters
       .map((c, i) => {
         const n = String(i + 1).padStart(2, "0");
-        return `<li><a href="${chapterHref(c.id)}" data-chapter-id="${c.id}"><small class="side-nav-index">${n}</small>${c.title}</a></li>`;
+        const href = escapeHtml(chapterHref(c.id));
+        const id = escapeHtml(c.id);
+        return (
+          `<li><a href="${href}" data-chapter-id="${id}">` +
+          `<small class="side-nav-index">${n}</small>${escapeHtml(c.title)}</a></li>`
+        );
       })
       .join("");
 
     window.ReanProgress?.decorateChapterNav?.(navEl);
 
-    const goToChapter = (id, opts) => {
-      if (!id) return;
-      showChapter(id, opts);
-    };
-
     navEl.addEventListener("click", (event) => {
       const link = event.target.closest("a[data-chapter-id]");
       if (!link) return;
       event.preventDefault();
-      goToChapter(link.dataset.chapterId, { push: true, animate: true });
+      reader.show(link.dataset.chapterId, { push: true, animate: true });
     });
 
     pagerEl?.addEventListener("click", (event) => {
       const link = event.target.closest("a[data-chapter-id]");
       if (!link) return;
       event.preventDefault();
-      goToChapter(link.dataset.chapterId, { push: true, animate: true });
+      reader.show(link.dataset.chapterId, { push: true, animate: true });
     });
 
     setupPagerKeys({
-      getPrevId: () => chapters[currentIndex - 1]?.id || null,
-      getNextId: () => chapters[currentIndex + 1]?.id || null,
-      goTo: goToChapter,
+      getPrevId: () => chapters[reader.index() - 1]?.id || null,
+      getNextId: () => chapters[reader.index() + 1]?.id || null,
+      goTo: (id, opts) => reader.show(id, opts),
     });
 
     window.addEventListener("popstate", () => {
-      goToChapter(getRouteId("c") || chapters[0].id, { push: false, animate: true });
+      reader.show(getRouteId("c") || chapters[0].id, { push: false, animate: true });
     });
 
-    const initialId = getRouteId("c") || chapters[0].id;
-    showChapter(initialId, { push: false, animate: true });
+    reader.show(getRouteId("c") || chapters[0].id, { push: false, animate: true });
   } catch (err) {
-    bodyEl.innerHTML = `<div class="error"><strong>${t("learn.loadError")}</strong><br>${err.message}<br><br>${t("learn.serveHint")}</div>`;
+    bodyEl.innerHTML = `<div class="error"><strong>${escapeHtml(t("learn.loadError"))}</strong><br>${escapeHtml(err.message)}<br><br>${escapeHtml(t("learn.serveHint"))}</div>`;
   }
 }
 
@@ -689,44 +792,18 @@ async function initLabPage() {
   setupSidebarToggle();
   normalizeLegacyHashRoute("id", labHref);
 
-  let currentIndex = -1;
-  let transitionToken = 0;
-  const paneEl = bodyEl.closest(".content-pane");
   const cache = new Map();
-  const LAB_OUT_MS = 280;
-
   const LABS = labsLocalized();
 
-  const resolveIndex = (id) => LABS.findIndex((l) => l.id === id);
-
-  const setActiveNav = (id) => {
-    navEl.querySelectorAll("a[data-lab-id]").forEach((a) => {
-      a.classList.toggle("is-active", a.dataset.labId === id);
-    });
-  };
-
   const renderPager = (index) => {
-    if (!pagerEl) return;
-    const prev = LABS[index - 1];
-    const next = LABS[index + 1];
-    pagerEl.innerHTML = `
-      ${prev ? `<a class="pager-prev" href="${labHref(prev.id)}" data-lab-id="${prev.id}"><span>${t("lab.prev")}</span>${prev.title}</a>` : ""}
-      ${next ? `<a class="pager-next" href="${labHref(next.id)}" data-lab-id="${next.id}"><span>${t("lab.next")}</span>${next.title}</a>` : ""}
-      ${pagerKeysHintHtml()}
-    `;
-  };
-
-  const clearLabMotion = () => {
-    bodyEl.classList.remove("is-leaving", "is-switching");
-    bodyEl.style.animation = "";
-    paneEl?.classList.remove("is-chapter-leaving", "is-chapter-switching");
-  };
-
-  const playLabIn = () => {
-    clearLabMotion();
-    void bodyEl.offsetWidth;
-    bodyEl.classList.add("is-switching");
-    paneEl?.classList.add("is-chapter-switching");
+    renderPagerLinks(pagerEl, {
+      prev: LABS[index - 1],
+      next: LABS[index + 1],
+      hrefFor: labHref,
+      attr: "data-lab-id",
+      prevLabel: t("lab.prev"),
+      nextLabel: t("lab.next"),
+    });
   };
 
   const loadLabMarkdown = async (id) => {
@@ -737,15 +814,16 @@ async function initLabPage() {
     return md;
   };
 
-  const applyLab = async (lab, index, { focusTitle = false } = {}) => {
-    setActiveNav(lab.id);
+  const applyLab = async (lab, index, { focusTitle = false, isCurrent = () => true } = {}) => {
+    if (!isCurrent()) return;
+    setActiveNav(navEl, "data-lab-id", lab.id);
     if (titleEl) {
       titleEl.removeAttribute("data-i18n");
       titleEl.textContent = lab.title;
     }
     if (progressEl) {
       progressEl.removeAttribute("data-i18n");
-      const base = t("lab.of", { n: index + 1, total: LABS.length, level: lab.level });
+      const base = t("lab.of", { n: lab.id.slice(0, 2), level: lab.level });
       progressEl.textContent = lab.minutes
         ? `${base} · ${t("labs.duration", { n: lab.minutes })}`
         : base;
@@ -764,18 +842,21 @@ async function initLabPage() {
 
     try {
       const md = await loadLabMarkdown(lab.id);
+      if (!isCurrent()) return;
       renderMarkdown(bodyEl, md, { checklistScope: `lab:${lab.id}` });
       bodyEl.querySelector("h1")?.remove();
       setEditSource("lab", lab.id);
     } catch (err) {
-      bodyEl.innerHTML = `<div class="error"><strong>${t("lab.loadError")}</strong><br>${err.message}<br><br>${t("lab.serveHint")}</div>`;
+      if (!isCurrent()) return;
+      bodyEl.innerHTML =
+        `<div class="error"><strong>${escapeHtml(t("lab.loadError"))}</strong><br>` +
+        `${escapeHtml(err.message)}<br><br>${escapeHtml(t("lab.serveHint"))}</div>`;
     }
     if (focusTitle) focusReaderTitle(titleEl);
   };
 
   const showMissingLab = (requestedId) => {
-    currentIndex = -1;
-    setActiveNav("");
+    setActiveNav(navEl, "data-lab-id", "");
     renderMissingRoute(bodyEl, titleEl, progressEl, pagerEl, {
       title: t("lab.notFound"),
       hint: t("lab.notFoundHint"),
@@ -790,90 +871,54 @@ async function initLabPage() {
     });
   };
 
-  const showLab = async (id, { push = false, animate = true } = {}) => {
-    const index = resolveIndex(id);
-    if (index < 0) {
-      if (push) {
-        history.pushState({ id }, "", labHref(id));
-      }
-      showMissingLab(id);
-      return;
-    }
-    const lab = LABS[index];
-
-    if (index === currentIndex) {
-      if (push) history.replaceState({ id: lab.id }, "", labHref(lab.id));
-      return;
-    }
-
-    const token = ++transitionToken;
-    const hadLab = currentIndex >= 0;
-    currentIndex = index;
-
-    if (push) {
-      history.pushState({ id: lab.id }, "", labHref(lab.id));
-    }
-
-    scrollToTop();
-
-    const shouldAnimate = animate && !prefersReducedMotion();
-
-    if (shouldAnimate && hadLab) {
-      clearLabMotion();
-      bodyEl.classList.add("is-leaving");
-      paneEl?.classList.add("is-chapter-leaving");
-      await new Promise((resolve) => setTimeout(resolve, LAB_OUT_MS));
-      if (token !== transitionToken) return;
-    }
-
-    await applyLab(lab, index, { focusTitle: hadLab });
-    if (token !== transitionToken) return;
-
-    if (shouldAnimate) {
-      playLabIn();
-    } else {
-      clearLabMotion();
-    }
-  };
+  const reader = createReader({
+    items: LABS,
+    bodyEl,
+    hrefFor: labHref,
+    stateFor: (id) => ({ id }),
+    applyItem: applyLab,
+    onMissing: showMissingLab,
+  });
 
   navEl.innerHTML = LABS.map(
     (l) =>
-      `<li><a href="${labHref(l.id)}" data-lab-id="${l.id}">${l.title}<br><span class="side-nav-meta">${l.level}</span></a></li>`
+      `<li><a href="${escapeHtml(labHref(l.id))}" data-lab-id="${escapeHtml(l.id)}">` +
+      `${escapeHtml(l.title)}<br><span class="side-nav-meta">${escapeHtml(l.level)}</span></a></li>`
   ).join("");
 
   window.ReanProgress?.decorateLabNav?.(navEl);
-
-  const goToLab = (id, opts) => {
-    if (!id) return;
-    showLab(id, opts);
-  };
 
   navEl.addEventListener("click", (event) => {
     const link = event.target.closest("a[data-lab-id]");
     if (!link) return;
     event.preventDefault();
-    goToLab(link.dataset.labId, { push: true, animate: true });
+    reader.show(link.dataset.labId, { push: true, animate: true });
   });
 
   pagerEl?.addEventListener("click", (event) => {
     const link = event.target.closest("a[data-lab-id]");
     if (!link) return;
     event.preventDefault();
-    goToLab(link.dataset.labId, { push: true, animate: true });
+    reader.show(link.dataset.labId, { push: true, animate: true });
   });
 
   setupPagerKeys({
-    getPrevId: () => LABS[currentIndex - 1]?.id || null,
-    getNextId: () => LABS[currentIndex + 1]?.id || null,
-    goTo: goToLab,
+    getPrevId: () => LABS[reader.index() - 1]?.id || null,
+    getNextId: () => LABS[reader.index() + 1]?.id || null,
+    goTo: (id, opts) => reader.show(id, opts),
   });
 
   window.addEventListener("popstate", () => {
-    goToLab(getRouteId("id") || LABS[0].id, { push: false, animate: true });
+    reader.show(getRouteId("id") || LABS[0].id, { push: false, animate: true });
   });
 
-  goToLab(getRouteId("id") || LABS[0].id, { push: false, animate: true });
+  reader.show(getRouteId("id") || LABS[0].id, { push: false, animate: true });
 }
+
+window.ReanReader = {
+  planNavigation,
+  createTransitionGate,
+};
 
 document.addEventListener("DOMContentLoaded", () => {
   if (document.body.dataset.page === "learn") initLearnPage();

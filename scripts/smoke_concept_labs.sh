@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Optional: run concept-lab helpers (01, 02, 06, 07, 08, 10, 11). Used by CI / `make smoke-concept`.
+# Optional: run concept-lab helpers (01, 02, 03, 06, 07, 08, 10, 11, 14). Used by CI / `make smoke-concept`.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -19,6 +19,7 @@ run_one labs/07-volumes/run.sh
 run_one labs/08-multi-stage/run.sh
 run_one labs/10-debugging/run.sh
 run_one labs/11-security/run.sh
+run_one labs/14-advanced/run.sh
 
 echo "== compose config (06 / 07 / 10 fixed) =="
 docker compose -f labs/06-networks/compose.yaml config >/dev/null

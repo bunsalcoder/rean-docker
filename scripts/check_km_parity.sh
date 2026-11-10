@@ -92,12 +92,16 @@ require_in_both "Lab 11 run.sh" '\./run\.sh' \
   "$EN_DIR/labs/11-security.md" "$KM_DIR/labs/11-security.md"
 require_in_both "Lab 11 Trivy gate" 'unfixed CRITICAL' \
   "$EN_DIR/labs/11-security.md" "$KM_DIR/labs/11-security.md"
-require_in_both "Lab 11 Chapter 16 stretch" 'Chapter 16|ជំពូក 16' \
+require_in_both "Lab 11 points at Lab 14" 'Lab 14' \
   "$EN_DIR/labs/11-security.md" "$KM_DIR/labs/11-security.md"
-require_in_both "Lab 11 Compose Watch" 'compose\.watch\.yaml' \
-  "$EN_DIR/labs/11-security.md" "$KM_DIR/labs/11-security.md"
-require_in_both "Lab 11 SBOM" 'spdx|SPDX' \
-  "$EN_DIR/labs/11-security.md" "$KM_DIR/labs/11-security.md"
+require_in_both "Lab 14 run.sh" '\./run\.sh' \
+  "$EN_DIR/labs/14-advanced.md" "$KM_DIR/labs/14-advanced.md"
+require_in_both "Lab 14 Compose Watch" 'compose\.watch\.yaml' \
+  "$EN_DIR/labs/14-advanced.md" "$KM_DIR/labs/14-advanced.md"
+require_in_both "Lab 14 SBOM" 'spdx|SPDX' \
+  "$EN_DIR/labs/14-advanced.md" "$KM_DIR/labs/14-advanced.md"
+require_in_both "Lab 14 Chapter 16" 'Chapter 16|ជំពូក 16' \
+  "$EN_DIR/labs/14-advanced.md" "$KM_DIR/labs/14-advanced.md"
 require_in_both "Lab 12 run.sh" '\./run\.sh' \
   "$EN_DIR/labs/12-ci-cd.md" "$KM_DIR/labs/12-ci-cd.md"
 require_in_both "Lab 12 IMAGE_REF" 'IMAGE_REF' \
