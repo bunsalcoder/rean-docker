@@ -184,6 +184,29 @@ const guideSrc = readFileSync(GUIDE_JS, "utf8");
 assert(/Expected output|លទ្ធផលដែលរំពឹងទុក/.test(guideSrc), "callout labels include Expected output (EN/KM)");
 assert(/Common error|កំហុសទូទៅ/.test(guideSrc), "callout labels include Common error (EN/KM)");
 
+assert(typeof Guide.chapterSummary === "function", "chapterSummary exported");
+const ch16Summary = Guide.chapterSummary(
+  "### Lab: `labs/14-advanced`\n\nBuildKit cache mounts, a multi-arch inspect, Compose Watch, and an SBOM peek.\n"
+);
+assert(ch16Summary.includes("multi-arch") && !ch16Summary.startsWith("Lab"), "chapter summary skips the lab heading");
+const sheetSummary = Guide.chapterSummary(
+  "```bash\n# Images\ndocker pull IMAGE\n# cosign verify IMAGE@sha256:abc\n# Containers\ndocker ps\n```\n"
+);
+assert(
+  sheetSummary.includes("Images") &&
+    sheetSummary.includes("Containers") &&
+    !sheetSummary.includes("```") &&
+    !sheetSummary.includes("cosign"),
+  "cheat sheet summary uses fence headings"
+);
+const glossSummary = Guide.chapterSummary(
+  "| Term | Definition |\n|------|------------|\n| OCI | Open Container Initiative |\n| Daemon | Background engine |\n"
+);
+assert(glossSummary.startsWith("OCI:") && !glossSummary.includes("|"), "glossary summary uses table rows");
+const leadIn = Guide.chapterSummary(
+  "### Run\n\n```bash\ndocker run\n```\n\nInside the container try:\n\nWhen you exit, the container stops.\n"
+);
+assert(leadIn.includes("stops") && !leadIn.includes("Inside the container try"), "summary skips a short lead-in");
 assert(typeof Guide.expandSearchTerms === "function", "expandSearchTerms exported");
 const composeTerms = Guide.expandSearchTerms("compose");
 assert(
@@ -226,6 +249,7 @@ assert(i18nJs.includes("a11y.pagerKeys"), "pager keyboard hint string exists");
 assert(learnJs.includes("normalizeLegacyHashRoute"), "legacy hash routes normalize to query params");
 assert(learnJs.includes('setAttribute("aria-current", "page")'), "sidebar exposes the current chapter/lab");
 assert(learnJs.includes("handbookChapterNumber"), "sidebar uses handbook chapter numbers");
+assert(learnJs.includes("chapterSummary"), "learn meta description uses the chapter summary");
 assert(learnJs.includes("learn.meta."), "non-numbered sections do not use a fake chapter number");
 assert(i18nJs.includes("learn.meta.how-to-use") && i18nJs.includes("learn.meta.glossary"), "reader meta labels exist");
 assert(learnJs.includes("revealActiveNav"), "sidebar scrolls the current item into view");

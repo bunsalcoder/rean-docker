@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import html
 import json
 import re
 import sys
@@ -122,6 +123,30 @@ def main() -> int:
             fail = 1
         else:
             print(f"OK:    {index_path.name} chapter 19 keeps cheat-sheet commands")
+
+    def meta_description(page: Path) -> str:
+        match = re.search(
+            r'<meta name="description" content="([^"]*)"',
+            page.read_text(encoding="utf-8"),
+        )
+        return html.unescape(match.group(1)) if match else ""
+
+    description_checks = [
+        (WEB / "learn/16.html", "multi-arch", "Lab:"),
+        (WEB / "learn/16.km.html", "multi-arch", "Lab៖"),
+        (WEB / "learn/5.html", "stops", "|"),
+        (WEB / "learn/glossary.html", "Containerization:", "|"),
+        (WEB / "learn/weekly-plan.html", "Isolation basics", "|"),
+        (WEB / "learn/19.html", "Images", "```"),
+        (WEB / "lab/14-advanced.html", "Cache mounts, Compose Watch", "Lab:"),
+    ]
+    for page, need, banned in description_checks:
+        desc = meta_description(page)
+        if need not in desc or banned in desc:
+            print(f"FAIL: {page.relative_to(ROOT)} description {desc!r}")
+            fail = 1
+        else:
+            print(f"OK:    {page.relative_to(ROOT)} description")
 
     for lab_id in labs:
         for locale in ("en", "km"):

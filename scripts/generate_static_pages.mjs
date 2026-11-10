@@ -111,16 +111,85 @@ function absUrl(relPath) {
   return `${SITE}/${relPath}`;
 }
 
-function firstParagraph(md) {
-  const text = md
-    .replace(/```[\s\S]*?```/g, " ")
+function plainInline(text) {
+  return String(text || "")
     .replace(/\[([^\]]*)\]\([^)]+\)/g, "$1")
-    .replace(/[#>*_`\[\]()-]/g, " ")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/\*([^*]+)\*/g, "$1")
     .replace(/\s+/g, " ")
     .trim();
-  if (!text) return "";
-  const cut = text.slice(0, 160);
-  return cut.length < text.length ? `${cut.trim()}…` : cut;
+}
+
+function clipSummary(text, max = 160) {
+  const clean = String(text || "").replace(/\s+/g, " ").trim();
+  if (clean.length <= max) return clean;
+  const cut = clean.slice(0, max);
+  const space = cut.lastIndexOf(" ");
+  const base = (space > 80 ? cut.slice(0, space) : cut).replace(/[.,;:]$/, "").trim();
+  return `${base}…`;
+}
+
+/** Keep in sync with ReanGuide.chapterSummary in web/assets/js/guide.js. */
+function chapterSummary(md) {
+  const source = String(md || "");
+  const withoutFences = source.replace(/```[\s\S]*?```/g, "\n");
+  const prose = [];
+  for (const raw of withoutFences.split(/\n{2,}/)) {
+    const lines = raw.split("\n").map((line) => line.trim()).filter(Boolean);
+    if (!lines.length) continue;
+    if (lines.every((line) => /^#{1,6}\s/.test(line))) continue;
+    if (lines.every((line) => /^(-{3,}|\*{3,}|_{3,})$/.test(line))) continue;
+    if (lines.every((line) => /^\|/.test(line))) continue;
+    const parts = lines
+      .map((line) =>
+        plainInline(
+          line
+            .replace(/^>\s?/, "")
+            .replace(/^[-*]\s+\[[ xX]\]\s+/, "")
+            .replace(/^[-*]\s+/, "")
+            .replace(/^\d+\.\s+/, "")
+        )
+      )
+      .filter(Boolean);
+    const listish = lines.every((line) => /^([-*]|\d+\.)\s+/.test(line));
+    const joiner = listish && parts.some((part) => !/[.!?។]$/.test(part)) ? ". " : " ";
+    const text = parts.join(joiner);
+    if (!text) continue;
+    if (text.length < 80 && !/[.!?។]/.test(text)) continue;
+    prose.push(text);
+  }
+  if (prose.length) return clipSummary(prose[0]);
+
+  const rows = [];
+  for (const line of source.split("\n")) {
+    const trimmed = line.trim();
+    if (!trimmed.startsWith("|")) continue;
+    const cells = trimmed.split("|").map((cell) => plainInline(cell)).filter(Boolean);
+    if (!cells.length || cells.every((cell) => /^:?-{3,}:?$/.test(cell))) continue;
+    rows.push(cells);
+  }
+  if (rows.length >= 2) {
+    const bits = rows.slice(1, 4).map((cells) =>
+      cells.length > 1 ? `${cells[0]}: ${cells.slice(1).join(", ")}` : cells[0]
+    );
+    return clipSummary(bits.join(". "));
+  }
+
+  const fence = source.match(/```[\s\S]*?```/);
+  if (fence) {
+    const comments = [];
+    for (const line of fence[0].split("\n")) {
+      const match = line.match(/^\s*#\s+(.+)$/);
+      if (!match) continue;
+      const label = plainInline(match[1]);
+      // Section labels, not commented-out commands (`# cosign verify …`).
+      if (!/^[A-Z0-9\u1780-\u17FF]/.test(label)) continue;
+      comments.push(label);
+    }
+    if (comments.length >= 2) return clipSummary(comments.join(", "));
+  }
+  return "";
 }
 
 function renderMarkdownBody(md) {
@@ -315,7 +384,7 @@ function main() {
           ? `./learn.html?c=${encodeURIComponent(ch.id)}&lang=km`
           : `./learn.html?c=${encodeURIComponent(ch.id)}`;
       const description =
-        firstParagraph(ch.body) ||
+        chapterSummary(ch.body) ||
         strings["learn.description"] ||
         "rean-docker Docker curriculum";
 
@@ -379,7 +448,7 @@ function main() {
       const title = strings[`labMeta.${id}`] || id;
       const num = id.slice(0, 2);
       const description =
-        strings[`labs.${num}.desc`] || firstParagraph(md) || title;
+        strings[`labs.${num}.desc`] || chapterSummary(md) || title;
       return { id, title, body: md, description };
     });
 

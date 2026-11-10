@@ -711,7 +711,7 @@ async function initLearnPage() {
       document.title = `${chapter.title} — rean-docker`;
       window.ReanSeo?.sync({
         title: document.title,
-        description: t("learn.description"),
+        description: window.ReanGuide?.chapterSummary?.(chapter.body) || t("learn.description"),
         path: `learn.html?c=${encodeURIComponent(chapter.id)}`,
         type: "article",
       });
