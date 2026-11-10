@@ -145,6 +145,10 @@ assert(appendix.some((s) => s.id === "next-steps"), "next-steps appendix section
 const ch20 = appendix.find((s) => s.id === "20");
 assert(ch20 && !/Suggested weekly plan/.test(ch20.body) && !/Glossary/.test(ch20.body), "chapter 20 no longer swallows appendix");
 
+assert(Guide.handbookChapterNumber("1") === "01", "chapter 1 keeps a two-digit handbook number");
+assert(Guide.handbookChapterNumber("16") === "16", "chapter 16 is not renumbered by the sidebar");
+assert(Guide.handbookChapterNumber("how-to-use") === "", "intro is not chapter 01");
+assert(Guide.handbookChapterNumber("weekly-plan") === "", "weekly plan is not a numbered chapter");
 assert(Guide.checklistIndexKey(0) === "i:0", "index key i:0");
 assert(Guide.checklistIndexKey(3) === "i:3", "index key i:3");
 
@@ -219,6 +223,9 @@ assert(learnJs.includes("setupPagerKeys") && learnJs.includes("ArrowLeft"), "lea
 assert(i18nJs.includes("a11y.pagerKeys"), "pager keyboard hint string exists");
 assert(learnJs.includes("normalizeLegacyHashRoute"), "legacy hash routes normalize to query params");
 assert(learnJs.includes('setAttribute("aria-current", "page")'), "sidebar exposes the current chapter/lab");
+assert(learnJs.includes("handbookChapterNumber"), "sidebar uses handbook chapter numbers");
+assert(learnJs.includes("learn.meta."), "non-numbered sections do not use a fake chapter number");
+assert(i18nJs.includes("learn.meta.how-to-use") && i18nJs.includes("learn.meta.glossary"), "reader meta labels exist");
 assert(learnJs.includes("revealActiveNav"), "sidebar scrolls the current item into view");
 assert((learnJs.match(/createReader\(/g) || []).length >= 3, "learn and lab share createReader");
 assert(!learnJs.includes("transitionToken"), "transition tokens live in the shared gate");
@@ -299,6 +306,7 @@ const siteJs = readFileSync(join(ROOT, "web/assets/js/site.js"), "utf8");
 assert(siteJs.includes("beforeprint"), "print expands collapsed callouts");
 assert(siteJs.includes("aria-controls") || siteJs.includes("setNavOpen"), "mobile nav manages open state");
 const progressJs = readFileSync(join(ROOT, "web/assets/js/progress.js"), "utf8");
+assert(progressJs.includes("handbookChapterNumber"), "home progress uses handbook chapter numbers");
 assert(progressJs.includes('aria-live="polite"'), "progress transfer status is announced");
 assert(progressJs.includes("importConfirm"), "progress import asks before overwrite");
 assert(progressJs.includes('role="progressbar"'), "progress meters use progressbar role");

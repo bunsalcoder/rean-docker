@@ -190,11 +190,11 @@
     });
 
   const chapterEntries = () =>
-    CHAPTER_IDS().map((id, index) => {
+    CHAPTER_IDS().map((id) => {
       const stats = entry(`learn:${id}`);
       return {
         id,
-        num: String(index + 1).padStart(2, "0"),
+        num: window.ReanGuide?.handbookChapterNumber?.(id) || "",
         title: t(`chapter.${id}`),
         href: localeHref(`./learn.html?c=${encodeURIComponent(id)}`),
         done: stats?.done || 0,
@@ -214,10 +214,11 @@
 
   const summarizeChapters = () => {
     const chapters = chapterEntries();
+    const numbered = chapters.filter((c) => c.num);
     const started = chapters.filter((c) => c.started).length;
-    const complete = chapters.filter((c) => c.complete).length;
+    const complete = numbered.filter((c) => c.complete).length;
     const next = chapters.find((c) => !c.complete) || null;
-    return { chapters, started, complete, total: chapters.length, next };
+    return { chapters, started, complete, total: numbered.length, next };
   };
 
   const pct = (done, total) => {
@@ -339,7 +340,7 @@
     if (nextChapter && chaptersStarted) {
       nextBlocks.push(`<a class="progress-next" href="${nextChapter.href}">
            <span class="eyebrow">${t("progress.nextChapter")}</span>
-           <strong>${nextChapter.num} · ${nextChapter.title}</strong>
+           <strong>${nextChapter.num ? `${nextChapter.num} · ` : ""}${nextChapter.title}</strong>
            <span class="progress-next-meta">${
              nextChapter.started
                ? t("progress.partial", { done: nextChapter.done, total: nextChapter.total })
