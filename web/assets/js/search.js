@@ -31,16 +31,30 @@
     return { primary, fallback: primary === english ? null : english };
   };
 
-  const stripMd = (md) =>
-    String(md || "")
-      .replace(/```[\s\S]*?```/g, " ")
-      .replace(/`[^`]+`/g, " ")
-      .replace(/!\[[^\]]*]\([^)]+\)/g, " ")
-      .replace(/\[[^\]]*]\([^)]+\)/g, " ")
+  // Keep fenced commands and inline code so the cheat sheet is searchable.
+  const stripMd = (md) => {
+    const fences = [];
+    let text = String(md || "").replace(/```[^\n]*\n([\s\S]*?)```/g, (_, body) => {
+      fences.push(body.replace(/\s+/g, " ").trim());
+      return ` \u0000fence${fences.length - 1}\u0000 `;
+    });
+    text = text
+      .replace(/`([^`\n]+)`/g, " $1 ")
+      .replace(/!\[([^\]]*)]\([^)]+\)/g, " $1 ")
+      .replace(/\[([^\]]*)]\([^)]+\)/g, " $1 ")
       .replace(/^#{1,6}\s+/gm, "")
-      .replace(/[*_>#|-]+/g, " ")
+      .replace(/^[|\s:-]+$/gm, " ")
+      .replace(/[*_>#]+/g, " ")
+      .replace(/\|/g, " ")
+      .replace(/^\s*[-+]\s+/gm, " ")
+      .replace(/^-{3,}\s*$/gm, " ")
       .replace(/\s+/g, " ")
       .trim();
+    fences.forEach((body, i) => {
+      text = text.replace(`\u0000fence${i}\u0000`, body);
+    });
+    return text.replace(/\s+/g, " ").trim();
+  };
 
   const splitGuide = (markdown) => {
     const sections = window.ReanGuide?.splitSections
