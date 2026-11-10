@@ -351,6 +351,91 @@
     return groups;
   }
 
+  function plainInline(text) {
+    return String(text || "")
+      .replace(/\[([^\]]*)\]\([^)]+\)/g, "$1")
+      .replace(/`([^`]+)`/g, "$1")
+      .replace(/\*\*([^*]+)\*\*/g, "$1")
+      .replace(/\*([^*]+)\*/g, "$1")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function clipSummary(text, max = 160) {
+    const clean = String(text || "").replace(/\s+/g, " ").trim();
+    if (clean.length <= max) return clean;
+    const cut = clean.slice(0, max);
+    const space = cut.lastIndexOf(" ");
+    const base = (space > 80 ? cut.slice(0, space) : cut).replace(/[.,;:]$/, "").trim();
+    return `${base}…`;
+  }
+
+  /**
+   * One-line chapter blurb for link previews.
+   * Skip lab headings, code fences, and table chrome. Keep hyphens.
+   * A table-only section uses the first data rows. A command-only section uses fence comments.
+   */
+  function chapterSummary(md) {
+    const source = String(md || "");
+    const withoutFences = source.replace(/```[\s\S]*?```/g, "\n");
+    const prose = [];
+    for (const raw of withoutFences.split(/\n{2,}/)) {
+      const lines = raw.split("\n").map((line) => line.trim()).filter(Boolean);
+      if (!lines.length) continue;
+      if (lines.every((line) => /^#{1,6}\s/.test(line))) continue;
+      if (lines.every((line) => /^(-{3,}|\*{3,}|_{3,})$/.test(line))) continue;
+      if (lines.every((line) => /^\|/.test(line))) continue;
+      const parts = lines
+        .map((line) =>
+          plainInline(
+            line
+              .replace(/^>\s?/, "")
+              .replace(/^[-*]\s+\[[ xX]\]\s+/, "")
+              .replace(/^[-*]\s+/, "")
+              .replace(/^\d+\.\s+/, "")
+          )
+        )
+        .filter(Boolean);
+      const listish = lines.every((line) => /^([-*]|\d+\.)\s+/.test(line));
+      const joiner = listish && parts.some((part) => !/[.!?។]$/.test(part)) ? ". " : " ";
+      const text = parts.join(joiner);
+      if (!text) continue;
+      if (text.length < 80 && !/[.!?។]/.test(text)) continue;
+      prose.push(text);
+    }
+    if (prose.length) return clipSummary(prose[0]);
+
+    const rows = [];
+    for (const line of source.split("\n")) {
+      const trimmed = line.trim();
+      if (!trimmed.startsWith("|")) continue;
+      const cells = trimmed.split("|").map((cell) => plainInline(cell)).filter(Boolean);
+      if (!cells.length || cells.every((cell) => /^:?-{3,}:?$/.test(cell))) continue;
+      rows.push(cells);
+    }
+    if (rows.length >= 2) {
+      const bits = rows.slice(1, 4).map((cells) =>
+        cells.length > 1 ? `${cells[0]}: ${cells.slice(1).join(", ")}` : cells[0]
+      );
+      return clipSummary(bits.join(". "));
+    }
+
+    const fence = source.match(/```[\s\S]*?```/);
+    if (fence) {
+      const comments = [];
+      for (const line of fence[0].split("\n")) {
+        const match = line.match(/^\s*#\s+(.+)$/);
+        if (!match) continue;
+        const label = plainInline(match[1]);
+        // Section labels, not commented-out commands (`# cosign verify …`).
+        if (!/^[A-Z0-9\u1780-\u17FF]/.test(label)) continue;
+        comments.push(label);
+      }
+      if (comments.length >= 2) return clipSummary(comments.join(", "));
+    }
+    return "";
+  }
+
   /** Handbook chapter numbers are the ids "1"…"20". Front matter and appendix are not numbered. */
   function handbookChapterNumber(id) {
     const raw = String(id ?? "");
@@ -360,6 +445,7 @@
 
   window.ReanGuide = {
     handbookChapterNumber,
+    chapterSummary,
     splitSections,
     checklistIndexKey,
     checklistLegacyKey,
