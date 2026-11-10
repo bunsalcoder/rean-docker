@@ -80,6 +80,17 @@ function setEditSource(kind, id) {
   link.textContent = t("edit.onGitHub");
 }
 
+function readerProgressLabel(id, chapters) {
+  const num = window.ReanGuide?.handbookChapterNumber?.(id) || "";
+  if (num) {
+    const total = chapters.filter((c) => window.ReanGuide.handbookChapterNumber(c.id)).length;
+    return t("learn.chapterOf", { n: String(Number(num)), total });
+  }
+  const key = `learn.meta.${id}`;
+  const label = t(key);
+  return label === key ? "" : label;
+}
+
 function splitGuide(markdown) {
   if (!window.ReanGuide?.splitSections) {
     throw new Error("ReanGuide.splitSections unavailable — load guide.js before learn.js");
@@ -695,7 +706,7 @@ async function initLearnPage() {
       }
       if (progressEl) {
         progressEl.removeAttribute("data-i18n");
-        progressEl.textContent = t("learn.chapterOf", { n: index + 1, total: chapters.length });
+        progressEl.textContent = readerProgressLabel(chapter.id, chapters);
       }
       document.title = `${chapter.title} — rean-docker`;
       window.ReanSeo?.sync({
@@ -738,13 +749,14 @@ async function initLearnPage() {
     });
 
     navEl.innerHTML = chapters
-      .map((c, i) => {
-        const n = String(i + 1).padStart(2, "0");
+      .map((c) => {
         const href = escapeHtml(chapterHref(c.id));
         const id = escapeHtml(c.id);
+        const n = window.ReanGuide?.handbookChapterNumber?.(c.id) || "";
+        const indexHtml = n ? `<small class="side-nav-index">${n}</small>` : "";
         return (
           `<li><a href="${href}" data-chapter-id="${id}">` +
-          `<small class="side-nav-index">${n}</small>${escapeHtml(c.title)}</a></li>`
+          `${indexHtml}${escapeHtml(c.title)}</a></li>`
         );
       })
       .join("");

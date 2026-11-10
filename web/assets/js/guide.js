@@ -351,7 +351,15 @@
     return groups;
   }
 
+  /** Handbook chapter numbers are the ids "1"…"20". Front matter and appendix are not numbered. */
+  function handbookChapterNumber(id) {
+    const raw = String(id ?? "");
+    if (!/^\d+$/.test(raw)) return "";
+    return raw.padStart(2, "0");
+  }
+
   window.ReanGuide = {
+    handbookChapterNumber,
     splitSections,
     checklistIndexKey,
     checklistLegacyKey,
