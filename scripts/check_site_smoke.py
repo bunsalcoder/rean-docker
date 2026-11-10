@@ -113,6 +113,15 @@ def main() -> int:
             fail = 1
         else:
             print(f"OK:    {index_path.name} ({len(docs)} docs)")
+        cheat = next((d.get("text") or "" for d in docs if d.get("type") == "chapter" and d.get("id") == "19"), "")
+        if "docker system prune" not in cheat or "docker compose watch" not in cheat:
+            print(f"FAIL: {index_path.name} chapter 19 drops fenced commands")
+            fail = 1
+        elif "```" in cheat:
+            print(f"FAIL: {index_path.name} chapter 19 still contains fence markers")
+            fail = 1
+        else:
+            print(f"OK:    {index_path.name} chapter 19 keeps cheat-sheet commands")
 
     for lab_id in labs:
         for locale in ("en", "km"):

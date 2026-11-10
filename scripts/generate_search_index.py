@@ -18,14 +18,27 @@ from rean_routes import chapter_match_pattern, lab_ids, load_manifest  # noqa: E
 
 
 def strip_md(md: str) -> str:
-    text = re.sub(r"```[\s\S]*?```", " ", md)
-    text = re.sub(r"`[^`]+`", " ", text)
-    text = re.sub(r"!\[[^\]]*]\([^)]+\)", " ", text)
-    text = re.sub(r"\[[^\]]*]\([^)]+\)", " ", text)
+    """Plain text for search. Keep fenced commands and inline code so the cheat sheet matches."""
+    fences: list[str] = []
+
+    def keep_fence(match: re.Match[str]) -> str:
+        fences.append(re.sub(r"\s+", " ", match.group(1)).strip())
+        return f" \u0000fence{len(fences) - 1}\u0000 "
+
+    text = re.sub(r"```[^\n]*\n([\s\S]*?)```", keep_fence, md)
+    text = re.sub(r"`([^`\n]+)`", r" \1 ", text)
+    text = re.sub(r"!\[([^\]]*)]\([^)]+\)", r" \1 ", text)
+    text = re.sub(r"\[([^\]]*)]\([^)]+\)", r" \1 ", text)
     text = re.sub(r"^#{1,6}\s+", "", text, flags=re.M)
-    text = re.sub(r"[*_>#|-]+", " ", text)
-    text = re.sub(r"\s+", " ", text)
-    return text.strip()
+    text = re.sub(r"(?m)^[|\s:-]+$", " ", text)
+    text = re.sub(r"[*_>#]+", " ", text)
+    text = re.sub(r"\|", " ", text)
+    text = re.sub(r"(?m)^\s*[-+]\s+", " ", text)
+    text = re.sub(r"(?m)^-{3,}\s*$", " ", text)
+    text = re.sub(r"\s+", " ", text).strip()
+    for index, body in enumerate(fences):
+        text = text.replace(f"\u0000fence{index}\u0000", body)
+    return re.sub(r"\s+", " ", text).strip()
 
 
 def chapter_starts(lines: list[str], chapters: list[dict]) -> list[tuple[str, int]]:

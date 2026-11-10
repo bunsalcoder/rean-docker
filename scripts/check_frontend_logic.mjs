@@ -212,6 +212,8 @@ assert(i18nJs.includes("stashUiForReload") && i18nJs.includes("takeUiRestore"), 
 assert(i18nJs.includes("learn.notFound") && i18nJs.includes("lab.notFound"), "not-found route copy keys exist");
 assert(!i18nJs.includes("02 workflow"), "labs intro does not say 02 workflow");
 assert(searchJs.includes("restoreAfterLocale") || searchJs.includes("takeUiRestore"), "search restores after locale");
+assert(searchJs.includes("Keep fenced commands") && searchJs.includes("\\u0000fence"), "search keeps fenced commands");
+assert(!searchJs.includes('.replace(/```[\\s\\S]*?```/g, " ")'), "search does not drop code fences");
 const learnJs = readFileSync(join(ROOT, "web/assets/js/learn.js"), "utf8");
 assert(learnJs.includes("GUIDE_CACHE") || learnJs.includes("guide-cache"), "learn caches guide.md");
 assert(learnJs.includes("isGuideCacheFresh") && learnJs.includes("no-cache"), "guide cache revalidates after deploy");
