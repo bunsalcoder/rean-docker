@@ -436,10 +436,13 @@
   decorateLabPath();
   decorateLabDurations();
 
-  // Static chapter/lab HTML: enable checklists when JS is available
+  // Static chapter/lab HTML: enable checklists and command copy when JS is available
   document.querySelectorAll("[data-checklist-scope]").forEach((root) => {
     const scope = root.getAttribute("data-checklist-scope");
     if (scope) window.ReanGuide?.enhanceChecklists?.(root, scope);
+  });
+  document.querySelectorAll(".md-body").forEach((root) => {
+    window.ReanGuide?.enhanceCodeBlocks?.(root);
   });
 
   // Below-fold reveals: armed after leaving the hero, then one soft staggered pass per section

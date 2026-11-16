@@ -85,6 +85,7 @@ assert(Guide && typeof Guide.splitSections === "function", "ReanGuide.splitSecti
 assert(typeof Guide.checklistIndexKey === "function", "checklistIndexKey exported");
 assert(typeof Guide.normalizeChecklistSaved === "function", "normalizeChecklistSaved exported");
 assert(typeof Guide.enhanceCallouts === "function", "enhanceCallouts exported");
+assert(typeof Guide.enhanceCodeBlocks === "function", "enhanceCodeBlocks exported");
 
 const chapters = mockChaptersFromRoutes();
 assert(chapters.length >= 2, `routes.json chapters loaded (${chapters.length})`);
@@ -365,6 +366,7 @@ const guideJs = readFileSync(join(ROOT, "web/assets/js/guide.js"), "utf8");
 assert(guideJs.includes("enhanceChecklists"), "guide exposes shared checklist wiring");
 assert(guideJs.includes('source: "tick"'), "checklist change marks progress source as tick");
 assert(siteJs.includes("data-checklist-scope"), "site wires static page checklists");
+assert(siteJs.includes("enhanceCodeBlocks") && learnJs.includes("enhanceCodeBlocks"), "static pages and the reader share copy buttons");
 assert(siteJs.includes('querySelector(".hero")'), "reveals arm immediately off the home hero");
 assert(searchJs.includes("aria-modal"), "search dialog declares aria-modal");
 assert(searchJs.includes("restoreOpenerFocus") || searchJs.includes("lastOpener"), "search restores focus to opener");

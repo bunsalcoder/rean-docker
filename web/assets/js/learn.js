@@ -111,43 +111,6 @@ function splitGuide(markdown) {
   }));
 }
 
-function enhanceCodeBlocks(root) {
-  root.querySelectorAll("pre").forEach((pre) => {
-    if (pre.closest(".code-block")) return;
-
-    const wrap = document.createElement("div");
-    wrap.className = "code-block";
-    pre.parentNode.insertBefore(wrap, pre);
-    wrap.appendChild(pre);
-
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "copy-btn";
-    btn.textContent = t("copy");
-    btn.setAttribute("aria-label", t("copy"));
-    btn.addEventListener("click", async () => {
-      const text = pre.querySelector("code")?.textContent || pre.textContent;
-      try {
-        await navigator.clipboard.writeText(text);
-        btn.textContent = t("copied");
-        btn.setAttribute("aria-label", t("copied"));
-        setTimeout(() => {
-          btn.textContent = t("copy");
-          btn.setAttribute("aria-label", t("copy"));
-        }, 1400);
-      } catch {
-        btn.textContent = t("copyFailed");
-        btn.setAttribute("aria-label", t("copyFailed"));
-        setTimeout(() => {
-          btn.textContent = t("copy");
-          btn.setAttribute("aria-label", t("copy"));
-        }, 1400);
-      }
-    });
-    wrap.appendChild(btn);
-  });
-}
-
 const GUIDE_CACHE_PREFIX = "rean-docker:guide-cache:";
 const GUIDE_CACHE_TTL_MS = 10 * 60 * 1000;
 
@@ -276,7 +239,7 @@ function renderMarkdown(target, md, { checklistScope } = {}) {
   } else {
     target.innerHTML = `<pre>${md.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]))}</pre>`;
   }
-  enhanceCodeBlocks(target);
+  window.ReanGuide?.enhanceCodeBlocks?.(target);
   window.ReanGuide?.enhanceCallouts?.(target);
   if (checklistScope) enhanceChecklists(target, checklistScope);
 }
