@@ -259,6 +259,8 @@ assert(!searchJs.includes('.replace(/```[\\s\\S]*?```/g, " ")'), "search does no
 const learnJs = readFileSync(join(ROOT, "web/assets/js/learn.js"), "utf8");
 assert(learnJs.includes("GUIDE_CACHE") || learnJs.includes("guide-cache"), "learn caches guide.md");
 assert(learnJs.includes("isGuideCacheFresh") && learnJs.includes("no-cache"), "guide cache revalidates after deploy");
+assert(learnJs.includes("revalidateGuideCache") && learnJs.includes("onUpdate"), "cached handbook paints before revalidation");
+assert(learnJs.includes("refresh: true"), "a stale handbook refresh redraws the open chapter");
 assert(learnJs.includes("ReanRoutes?.version"), "guide cache keys include routes version");
 assert(learnJs.includes("showMissingChapter") || learnJs.includes("learn.notFound"), "learn handles unknown chapter ids");
 assert(learnJs.includes('key !== "Escape"') || learnJs.includes('key === "Escape"'), "sidebar closes on Escape");
