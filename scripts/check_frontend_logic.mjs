@@ -262,6 +262,8 @@ assert(learnJs.includes("GUIDE_CACHE") || learnJs.includes("guide-cache"), "lear
 assert(learnJs.includes("isGuideCacheFresh") && learnJs.includes("no-cache"), "guide cache revalidates after deploy");
 assert(learnJs.includes("revalidateGuideCache") && learnJs.includes("onUpdate"), "cached handbook paints before revalidation");
 assert(learnJs.includes("refresh: true"), "a stale handbook refresh redraws the open chapter");
+assert(learnJs.includes("loadLabMarkdown") && learnJs.includes("cache: true"), "labs reuse the session cache");
+assert(learnJs.includes("warmNextLab"), "the next lab is fetched ahead of the click");
 assert(learnJs.includes("ReanRoutes?.version"), "guide cache keys include routes version");
 assert(learnJs.includes("showMissingChapter") || learnJs.includes("learn.notFound"), "learn handles unknown chapter ids");
 assert(learnJs.includes('key !== "Escape"') || learnJs.includes('key === "Escape"'), "sidebar closes on Escape");

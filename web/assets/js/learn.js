@@ -813,6 +813,7 @@ async function initLabPage() {
   normalizeLegacyHashRoute("id", labHref);
 
   const cache = new Map();
+  const pending = new Map();
   const LABS = labsLocalized();
 
   const renderPager = (index) => {
@@ -826,12 +827,38 @@ async function initLabPage() {
     });
   };
 
-  const loadLabMarkdown = async (id) => {
+  const loadLabMarkdown = (id) => {
     if (cache.has(id)) return cache.get(id);
+    if (pending.has(id)) return pending.get(id);
     const labUrl = localizedContentUrl(`labs/${id}.md`);
-    const md = await loadText(labUrl.primary, { fallbackUrl: labUrl.fallback });
-    cache.set(id, md);
-    return md;
+    const job = loadText(labUrl.primary, {
+      fallbackUrl: labUrl.fallback,
+      cache: true,
+      onUpdate: (text) => {
+        cache.set(id, text);
+        if (LABS[reader.index()]?.id === id) {
+          reader.show(id, { push: false, animate: false, refresh: true });
+        }
+      },
+    })
+      .then((md) => {
+        pending.delete(id);
+        // A background revalidation may already have stored a newer copy.
+        if (!cache.has(id)) cache.set(id, md);
+        return cache.get(id);
+      })
+      .catch((err) => {
+        pending.delete(id);
+        throw err;
+      });
+    pending.set(id, job);
+    return job;
+  };
+
+  const warmNextLab = (index) => {
+    const next = LABS[index + 1];
+    if (!next || cache.has(next.id) || pending.has(next.id)) return;
+    void loadLabMarkdown(next.id).catch(() => {});
   };
 
   const applyLab = async (lab, index, { focusTitle = false, isCurrent = () => true } = {}) => {
@@ -874,6 +901,7 @@ async function initLabPage() {
       renderMarkdown(bodyEl, md, { checklistScope: `lab:${lab.id}` });
       bodyEl.querySelector("h1")?.remove();
       setEditSource("lab", lab.id);
+      warmNextLab(index);
     } catch (err) {
       if (!isCurrent()) return;
       bodyEl.innerHTML =
