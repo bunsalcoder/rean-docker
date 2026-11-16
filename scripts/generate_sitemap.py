@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import os
+import subprocess
 import sys
 from datetime import date, datetime, timezone
 from pathlib import Path
@@ -41,31 +42,45 @@ def with_lang_query(path: str, lang: str) -> str:
     return f"{path}{joiner}lang={lang}"
 
 
-def content_lastmod() -> str:
-    """Stable lastmod from content mtimes (or SOURCE_DATE_EPOCH) — not calendar today.
+# Paths whose commits define sitemap lastmod. Checkout mtimes are not stable:
+# actions/checkout stamps every file with "now", so a later CI day rewrote lastmod.
+CONTENT_LASTMOD_PATHS = (
+    "web/assets/routes.json",
+    "web/index.html",
+    "web/learn.html",
+    "web/labs.html",
+    "web/lab.html",
+    "web/content",
+    "labs",
+    "docs/DOCKER_FROM_ZERO_TO_HERO.md",
+)
 
-    Using date.today() made CI's dirty-tree check fail every calendar day even when
-    no content changed. Derive from sources that feed the site instead.
+
+def content_lastmod() -> str:
+    """Stable lastmod from the latest content commit (or SOURCE_DATE_EPOCH).
+
+    Using date.today() or file mtimes made CI's dirty-tree check fail on a later
+    calendar day even when no content changed. Git commit time does not.
+    The check and Pages jobs fetch full history so this is not the shallow HEAD.
     """
     if epoch := os.environ.get("SOURCE_DATE_EPOCH", "").strip():
         return datetime.fromtimestamp(int(epoch), tz=timezone.utc).date().isoformat()
 
-    candidates: list[Path] = [
-        WEB / "assets" / "routes.json",
-        WEB / "index.html",
-        WEB / "learn.html",
-        WEB / "labs.html",
-        WEB / "lab.html",
-        ROOT / "docs" / "DOCKER_FROM_ZERO_TO_HERO.md",
-    ]
-    for folder in (WEB / "content", ROOT / "labs"):
-        if folder.is_dir():
-            candidates.extend(folder.rglob("*.md"))
+    try:
+        result = subprocess.run(
+            ["git", "log", "-1", "--format=%ct", "--", *CONTENT_LASTMOD_PATHS],
+            cwd=ROOT,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+    except OSError:
+        result = None
+    stamp = (result.stdout or "").strip() if result and result.returncode == 0 else ""
+    if stamp.isdigit():
+        return datetime.fromtimestamp(int(stamp), tz=timezone.utc).date().isoformat()
 
-    mtimes = [p.stat().st_mtime for p in candidates if p.is_file()]
-    if not mtimes:
-        return date.today().isoformat()
-    return datetime.fromtimestamp(max(mtimes), tz=timezone.utc).date().isoformat()
+    return date.today().isoformat()
 
 
 def url_entry(

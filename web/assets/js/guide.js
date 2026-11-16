@@ -370,6 +370,21 @@
     return `${base}…`;
   }
 
+  /** Sentence end, including punctuation tucked before a closing quote or paren. */
+  function endsSentence(part) {
+    return /[.!?។]["'”’)\]]*$/.test(part);
+  }
+
+  function joinParts(parts, listish) {
+    if (!listish || parts.length < 2) return parts.join(" ");
+    let text = parts[0];
+    for (let i = 1; i < parts.length; i += 1) {
+      text += endsSentence(parts[i - 1]) ? " " : ". ";
+      text += parts[i];
+    }
+    return text;
+  }
+
   /**
    * One-line chapter blurb for link previews.
    * Skip lab headings, code fences, and table chrome. Keep hyphens.
@@ -397,8 +412,7 @@
         )
         .filter(Boolean);
       const listish = lines.every((line) => /^([-*]|\d+\.)\s+/.test(line));
-      const joiner = listish && parts.some((part) => !/[.!?។]$/.test(part)) ? ". " : " ";
-      const text = parts.join(joiner);
+      const text = joinParts(parts, listish);
       if (!text) continue;
       if (text.length < 80 && !/[.!?។]/.test(text)) continue;
       prose.push(text);

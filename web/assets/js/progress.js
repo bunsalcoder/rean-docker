@@ -174,12 +174,22 @@
     };
   };
 
+  const placeFor = (id) =>
+    window.ReanRoutes?.labPlace?.(id) || {
+      stepLabel: String(id || "").slice(0, 2),
+      folder: String(id || "").slice(0, 2),
+      shifted: false,
+    };
+
   const labEntries = () =>
     LAB_IDS.map((id) => {
       const stats = entry(`lab:${id}`);
+      const place = placeFor(id);
       return {
         id,
-        num: id.slice(0, 2),
+        num: place.stepLabel,
+        folder: place.folder,
+        shifted: place.shifted,
         title: t(`labMeta.${id}`),
         href: localeHref(`./lab.html?id=${encodeURIComponent(id)}`),
         done: stats?.done || 0,
@@ -225,6 +235,9 @@
     if (!total) return 0;
     return Math.round((100 * done) / total);
   };
+
+  const continueLabel = (lab) =>
+    lab.shifted ? t("labs.folder", { n: lab.folder }) : lab.num;
 
   const renderMeter = ({ complete, total, labelKey, ariaKey }) => {
     const fill = pct(complete, total);
@@ -349,9 +362,12 @@
          </a>`);
     }
     if (nextLab && labsStarted) {
+      const nextHeading = nextLab.shifted
+        ? t("progress.nextShifted", { step: nextLab.num, n: nextLab.folder, title: nextLab.title })
+        : `${nextLab.num} · ${nextLab.title}`;
       nextBlocks.push(`<a class="progress-next" href="${nextLab.href}">
            <span class="eyebrow">${t("progress.nextLab")}</span>
-           <strong>${nextLab.num} · ${nextLab.title}</strong>
+           <strong>${nextHeading}</strong>
            <span class="progress-next-meta">${
              nextLab.started
                ? t("progress.partial", { done: nextLab.done, total: nextLab.total })
@@ -389,10 +405,17 @@
         labsStarted
           ? `<ol class="progress-lab-dots" aria-label="${t("progress.labsLegend")}">
         ${labs
-          .map(
-            (lab) => `<li>
-              <a href="${lab.href}" class="${lab.complete ? "is-complete" : lab.started ? "is-started" : ""}" title="${lab.title}">
-                <span class="visually-hidden">${lab.num} ${lab.title}${
+          .map((lab) => {
+            const dotName = lab.shifted
+              ? t("progress.dotLabel", { step: lab.num, n: lab.folder })
+              : lab.num;
+            const dotTitle = lab.shifted
+              ? `${t("labs.folder", { n: lab.folder })} — ${lab.title}`
+              : lab.title;
+            const dotClass = lab.complete ? "is-complete" : lab.started ? "is-started" : "";
+            return `<li>
+              <a href="${lab.href}" class="${dotClass}" title="${dotTitle}">
+                <span class="visually-hidden">${dotName} ${lab.title}${
               lab.complete
                 ? ` — ${t("progress.complete")}`
                 : lab.started
@@ -401,8 +424,8 @@
             }</span>
                 <span aria-hidden="true">${lab.num}</span>
               </a>
-            </li>`
-          )
+            </li>`;
+          })
           .join("")}
       </ol>`
           : ""
@@ -485,7 +508,7 @@
         </div>
         ${
           next
-            ? `<a class="btn btn-ghost" href="${next.href}">${t("progress.continue")} ${next.num}</a>`
+            ? `<a class="btn btn-ghost" href="${next.href}">${t("progress.continue")} ${continueLabel(next)}</a>`
             : `<p class="progress-done-msg">${t("progress.allDone")}</p>`
         }
       </div>`;

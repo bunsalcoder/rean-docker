@@ -50,6 +50,21 @@
 
   const LAB_IDS = LAB_DEFS.map((lab) => lab.id);
 
+  // Path step follows teaching order. Folder number is the id prefix (Lab 14 stays 14).
+  function labPlace(id) {
+    const index = LAB_IDS.indexOf(String(id || ""));
+    const step = index >= 0 ? index + 1 : 0;
+    const folder = String(id || "").slice(0, 2);
+    const stepLabel = step ? String(step).padStart(2, "0") : folder;
+    return {
+      step,
+      stepLabel,
+      folder,
+      total: LAB_IDS.length,
+      shifted: Boolean(step) && stepLabel !== folder,
+    };
+  }
+
   const PAIR_LIST = [
     { chapter: "2", lab: "01-isolation-basics" },
     { chapter: "3", lab: "01-isolation-basics", practiceHintKey: "pair.afterMentalModel", practiceOnly: true },
@@ -100,5 +115,6 @@
     CHAPTER_TO_LAB,
     LAB_TO_CHAPTER,
     LAB_TO_CHAPTERS,
+    labPlace,
   };
 })();

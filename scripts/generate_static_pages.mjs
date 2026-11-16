@@ -130,6 +130,21 @@ function clipSummary(text, max = 160) {
   return `${base}…`;
 }
 
+/** Keep in sync with endsSentence / joinParts in web/assets/js/guide.js. */
+function endsSentence(part) {
+  return /[.!?។]["'”’)\]]*$/.test(part);
+}
+
+function joinParts(parts, listish) {
+  if (!listish || parts.length < 2) return parts.join(" ");
+  let text = parts[0];
+  for (let i = 1; i < parts.length; i += 1) {
+    text += endsSentence(parts[i - 1]) ? " " : ". ";
+    text += parts[i];
+  }
+  return text;
+}
+
 /** Keep in sync with ReanGuide.chapterSummary in web/assets/js/guide.js. */
 function chapterSummary(md) {
   const source = String(md || "");
@@ -153,8 +168,7 @@ function chapterSummary(md) {
       )
       .filter(Boolean);
     const listish = lines.every((line) => /^([-*]|\d+\.)\s+/.test(line));
-    const joiner = listish && parts.some((part) => !/[.!?។]$/.test(part)) ? ". " : " ";
-    const text = parts.join(joiner);
+    const text = joinParts(parts, listish);
     if (!text) continue;
     if (text.length < 80 && !/[.!?។]/.test(text)) continue;
     prose.push(text);

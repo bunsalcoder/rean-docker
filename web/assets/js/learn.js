@@ -33,6 +33,12 @@ function labHref(id) {
   return window.ReanI18n?.localeHref?.(base) ?? base;
 }
 
+function labPlace(id) {
+  if (window.ReanRoutes?.labPlace) return window.ReanRoutes.labPlace(id);
+  const folder = String(id || "").slice(0, 2);
+  return { step: 0, stepLabel: folder, folder, total: 0, shifted: false };
+}
+
 /**
  * Legacy `#chapter` / `#lab-id` hashes still open the right page, then rewrite
  * to the shareable `?c=` / `?id=` form (and strip a leftover hash when query wins).
@@ -835,7 +841,15 @@ async function initLabPage() {
     }
     if (progressEl) {
       progressEl.removeAttribute("data-i18n");
-      const base = t("lab.of", { n: lab.id.slice(0, 2), level: lab.level });
+      const place = labPlace(lab.id);
+      const base = place.shifted
+        ? t("lab.ofStep", {
+            step: place.stepLabel,
+            total: String(place.total),
+            n: place.folder,
+            level: lab.level,
+          })
+        : t("lab.of", { n: place.folder, level: lab.level });
       progressEl.textContent = lab.minutes
         ? `${base} · ${t("labs.duration", { n: lab.minutes })}`
         : base;
@@ -892,11 +906,17 @@ async function initLabPage() {
     onMissing: showMissingLab,
   });
 
-  navEl.innerHTML = LABS.map(
-    (l) =>
+  navEl.innerHTML = LABS.map((l) => {
+    const place = labPlace(l.id);
+    const meta = place.shifted
+      ? `${t("labs.folder", { n: place.folder })} · ${l.level}`
+      : l.level;
+    return (
       `<li><a href="${escapeHtml(labHref(l.id))}" data-lab-id="${escapeHtml(l.id)}">` +
-      `${escapeHtml(l.title)}<br><span class="side-nav-meta">${escapeHtml(l.level)}</span></a></li>`
-  ).join("");
+      `<small class="side-nav-index">${escapeHtml(place.stepLabel)}</small>` +
+      `${escapeHtml(l.title)}<br><span class="side-nav-meta">${escapeHtml(meta)}</span></a></li>`
+    );
+  }).join("");
 
   window.ReanProgress?.decorateLabNav?.(navEl);
 
