@@ -122,7 +122,7 @@ make check-routes
 
 `make check-secrets` runs gitleaks with `.gitleaks.toml`. Intentional teaching secrets (Labs 04 / 07 / 11 and `.env.example`) are allowlisted — real-looking credentials elsewhere still fail CI.
 
-Sitemap `lastmod` is derived from content file mtimes (or `SOURCE_DATE_EPOCH`), not the calendar day — so regenerating without content changes stays dirty-tree clean.
+Sitemap `lastmod` is the latest commit that touched site content (or `SOURCE_DATE_EPOCH`), not the calendar day or checkout mtimes — so regenerating without content changes stays dirty-tree clean. CI fetches full git history for that date.
 
 ## Site vendor libraries (marked / DOMPurify)
 

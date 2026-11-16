@@ -3,6 +3,6 @@
   "private": true,
   "description": "Playwright checks for the learning-site reader. Not used by the static site.",
   "dependencies": {
-    "playwright": "1.56.1"
+    "playwright": "1.65.1"
   }
 }
