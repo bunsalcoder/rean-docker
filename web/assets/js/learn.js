@@ -191,10 +191,34 @@ async function isGuideCacheFresh(url, hit) {
   return Number.isFinite(hit.at) && Date.now() - hit.at < GUIDE_CACHE_TTL_MS;
 }
 
-async function loadText(url, { fallbackUrl, cache = false } = {}) {
+function rememberGuide(url, text, headers) {
+  writeGuideCache(url, {
+    text,
+    at: Date.now(),
+    etag: headers?.get?.("etag") || null,
+    lm: headers?.get?.("last-modified") || null,
+  });
+}
+
+/** HEAD, then GET only when the cached handbook is stale. Never blocks the first paint. */
+async function revalidateGuideCache(url, hit, onUpdate) {
+  try {
+    if (await isGuideCacheFresh(url, hit)) return;
+    const res = await fetch(url, { cache: "no-cache" });
+    if (!res.ok) return;
+    const text = await res.text();
+    rememberGuide(url, text, res.headers);
+    if (text !== hit.text) onUpdate?.(text);
+  } catch {
+    /* keep the chapter already on screen */
+  }
+}
+
+async function loadText(url, { fallbackUrl, cache = false, onUpdate } = {}) {
   if (cache) {
     const hit = readGuideCache(url);
-    if (hit?.text && (await isGuideCacheFresh(url, hit))) {
+    if (hit?.text) {
+      void revalidateGuideCache(url, hit, onUpdate);
       return hit.text;
     }
   }
@@ -202,14 +226,7 @@ async function loadText(url, { fallbackUrl, cache = false } = {}) {
   const res = await fetch(url, { cache: "no-cache" });
   if (res.ok) {
     const text = await res.text();
-    if (cache) {
-      writeGuideCache(url, {
-        text,
-        at: Date.now(),
-        etag: res.headers.get("etag"),
-        lm: res.headers.get("last-modified"),
-      });
-    }
+    if (cache) rememberGuide(url, text, res.headers);
     return text;
   }
   if (fallbackUrl && fallbackUrl !== url) {
@@ -527,7 +544,7 @@ function createReader({ items, bodyEl, hrefFor, stateFor, applyItem, onMissing }
     paneEl?.classList.add("is-chapter-switching");
   };
 
-  const show = async (id, { push = false, animate = true } = {}) => {
+  const show = async (id, { push = false, animate = true, refresh = false } = {}) => {
     const plan = planNavigation({
       currentIndex,
       requestedId: id,
@@ -544,7 +561,7 @@ function createReader({ items, bodyEl, hrefFor, stateFor, applyItem, onMissing }
     }
 
     const item = items[plan.index];
-    if (plan.action === "same") {
+    if (plan.action === "same" && !refresh) {
       if (plan.replace) history.replaceState(stateFor(item.id), "", hrefFor(item.id));
       return;
     }
@@ -555,9 +572,9 @@ function createReader({ items, bodyEl, hrefFor, stateFor, applyItem, onMissing }
 
     if (plan.push) history.pushState(stateFor(item.id), "", hrefFor(item.id));
 
-    scrollToTop();
+    if (!refresh) scrollToTop();
 
-    const shouldAnimate = animate && !prefersReducedMotion();
+    const shouldAnimate = animate && !refresh && !prefersReducedMotion();
     if (shouldAnimate && hadItem) {
       clearMotion();
       bodyEl.classList.add("is-leaving");
@@ -567,7 +584,7 @@ function createReader({ items, bodyEl, hrefFor, stateFor, applyItem, onMissing }
     }
 
     await applyItem(item, plan.index, {
-      focusTitle: hadItem,
+      focusTitle: refresh ? false : hadItem,
       isCurrent: () => gate.isCurrent(token),
     });
     if (!gate.isCurrent(token)) return;
@@ -684,12 +701,34 @@ async function initLearnPage() {
 
   try {
     const guideUrl = localizedContentUrl("guide.md");
+    let chapters;
+    let reader;
     const raw = await loadText(guideUrl.primary, {
       fallbackUrl: guideUrl.fallback,
       cache: true,
+      onUpdate: (text) => {
+        if (!reader || !chapters) return;
+        let next;
+        try {
+          next = splitGuide(text);
+        } catch {
+          return;
+        }
+        const sameShape =
+          next.length === chapters.length && next.every((chapter, index) => chapter.id === chapters[index].id);
+        if (!sameShape) {
+          location.reload();
+          return;
+        }
+        next.forEach((chapter, index) => {
+          chapters[index].title = chapter.title;
+          chapters[index].body = chapter.body;
+        });
+        reader.show(getRouteId("c") || chapters[0].id, { push: false, animate: false, refresh: true });
+      },
     });
     // Strip TOC-only section noise at top but keep intro via how-to-use
-    const chapters = splitGuide(raw);
+    chapters = splitGuide(raw);
     if (!chapters.length) throw new Error("No chapters found");
 
     const renderPager = (index) => {
@@ -745,7 +784,7 @@ async function initLearnPage() {
       });
     };
 
-    const reader = createReader({
+    reader = createReader({
       items: chapters,
       bodyEl,
       hrefFor: chapterHref,
