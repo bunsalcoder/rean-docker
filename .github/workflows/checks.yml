@@ -54,3 +54,17 @@ jobs:
         run: python3 ./scripts/check_site_smoke.py
       - name: Check frontend guide/checklist logic
         run: node ./scripts/check_frontend_logic.mjs
+
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - name: Install reader browser tests
+        working-directory: scripts/browser
+        run: npm ci
+      - name: Install Chromium
+        working-directory: scripts/browser
+        run: npx playwright install --with-deps chromium
+      - name: Exercise reader flows
+        run: node ./scripts/browser/check_reader.mjs

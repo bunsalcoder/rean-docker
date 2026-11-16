@@ -138,6 +138,7 @@ def main() -> int:
         (WEB / "learn/glossary.html", "Containerization:", "|"),
         (WEB / "learn/weekly-plan.html", "Isolation basics", "|"),
         (WEB / "learn/19.html", "Images", "```"),
+        (WEB / "learn/next-steps.html", "capstone).", ".."),
         (WEB / "lab/14-advanced.html", "Cache mounts, Compose Watch", "Lab:"),
     ]
     for page, need, banned in description_checks:

@@ -55,6 +55,7 @@ make check-km-parity  # checklist/code-fence counts + teaching invariants (IMAGE
 make check-km-headings  # fail if Khmer handbook ###/#### titles are Latin-only
 make check-links # HTML/CSS/MD local link targets + labs/<id> mentions
 make check-all   # sync/KM/callouts/i18n/routes/links/vendor/site smoke/frontend logic
+make check-browser  # Playwright reader flows (also a CI job; downloads Chromium on first run)
 make check-shell # ShellCheck (skips if not installed; CI always runs it)
 make ci-local    # check-all + shell + secrets + sitemap dirty-tree gate
 ```

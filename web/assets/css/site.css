@@ -2347,6 +2347,13 @@ body > main.section > .wrap {
   color: var(--ocean);
 }
 
+.lab-grid p.lab-folder {
+  margin: 0 0 0.2rem;
+  font-size: 0.78rem;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+}
+
 .status {
   font-family: var(--font-ui);
   color: var(--muted);

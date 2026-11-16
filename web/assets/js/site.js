@@ -374,6 +374,37 @@
 
   const t = (key, vars) => (window.ReanI18n ? window.ReanI18n.t(key, vars) : key);
 
+  const decorateLabPath = () => {
+    const placeOf = window.ReanRoutes?.labPlace;
+    if (!placeOf) return;
+    document.querySelectorAll(".lab-grid a[href*='lab.html']").forEach((link) => {
+      let id = "";
+      try {
+        id = new URL(link.href, location.href).searchParams.get("id") || "";
+      } catch {
+        id = "";
+      }
+      const place = placeOf(id);
+      if (!place?.step) return;
+      const num = link.querySelector(".num");
+      if (num) num.textContent = place.stepLabel;
+      let folder = link.querySelector("[data-lab-folder]");
+      if (!place.shifted) {
+        folder?.remove();
+        return;
+      }
+      if (!folder) {
+        folder = document.createElement("p");
+        folder.className = "lab-folder";
+        folder.setAttribute("data-lab-folder", "");
+        const title = link.querySelector("h3");
+        if (title) title.insertAdjacentElement("afterend", folder);
+        else link.appendChild(folder);
+      }
+      folder.textContent = t("labs.folder", { n: place.folder });
+    });
+  };
+
   const decorateLabDurations = () => {
     const defs = window.ReanRoutes?.LAB_DEFS || [];
     if (!defs.length) return;
@@ -402,6 +433,7 @@
     });
   };
 
+  decorateLabPath();
   decorateLabDurations();
 
   // Static chapter/lab HTML: enable checklists when JS is available

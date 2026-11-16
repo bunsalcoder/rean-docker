@@ -49,8 +49,9 @@ def main() -> int:
 
     handler = partial(PagesLikeHandler, directory=directory)
     with ThreadingHTTPServer(("127.0.0.1", args.port), handler) as httpd:
-        print(f"Serving {directory} at http://127.0.0.1:{args.port}")
-        print("404 responses use web/404.html (Pages-like). Ctrl+C to stop.")
+        host, port = httpd.server_address
+        print(f"Serving {directory} at http://{host}:{port}", flush=True)
+        print("404 responses use web/404.html (Pages-like). Ctrl+C to stop.", flush=True)
         try:
             httpd.serve_forever()
         except KeyboardInterrupt:

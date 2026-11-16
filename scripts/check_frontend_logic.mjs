@@ -207,6 +207,25 @@ const leadIn = Guide.chapterSummary(
   "### Run\n\n```bash\ndocker run\n```\n\nInside the container try:\n\nWhen you exit, the container stops.\n"
 );
 assert(leadIn.includes("stops") && !leadIn.includes("Inside the container try"), "summary skips a short lead-in");
+const listSummary = Guide.chapterSummary(
+  "1. Practice labs in order under `labs/` (Lab 04 with Chapter 10; Lab 12 for deploy/CI; Lab 13 for the capstone).\n2. Re-run the Chapter 2 isolation examples until they feel obvious.\n"
+);
+assert(
+  listSummary.includes("capstone). Re-run") && !listSummary.includes(".."),
+  "list items that end in ). do not gain a second period"
+);
+const bareList = Guide.chapterSummary(
+  "1. Install Docker Engine on the machine you will use every day for these labs\n2. Open a terminal beside this repository and keep it there\n"
+);
+assert(bareList.includes("labs. Open"), "bare list items gain a separator period");
+const summarySources = [
+  readFileSync(GUIDE_JS, "utf8"),
+  readFileSync(join(ROOT, "scripts/generate_static_pages.mjs"), "utf8"),
+];
+assert(
+  summarySources.every((src) => src.includes("function endsSentence")),
+  "static page summaries share the sentence-end rule"
+);
 assert(typeof Guide.expandSearchTerms === "function", "expandSearchTerms exported");
 const composeTerms = Guide.expandSearchTerms("compose");
 assert(
@@ -250,6 +269,7 @@ assert(learnJs.includes("normalizeLegacyHashRoute"), "legacy hash routes normali
 assert(learnJs.includes('setAttribute("aria-current", "page")'), "sidebar exposes the current chapter/lab");
 assert(learnJs.includes("handbookChapterNumber"), "sidebar uses handbook chapter numbers");
 assert(learnJs.includes("chapterSummary"), "learn meta description uses the chapter summary");
+assert(learnJs.includes("labPlace") && learnJs.includes("lab.ofStep"), "lab reader shows path step and folder lab");
 assert(learnJs.includes("learn.meta."), "non-numbered sections do not use a fake chapter number");
 assert(i18nJs.includes("learn.meta.how-to-use") && i18nJs.includes("learn.meta.glossary"), "reader meta labels exist");
 assert(learnJs.includes("revealActiveNav"), "sidebar scrolls the current item into view");
@@ -316,6 +336,7 @@ assert(i18nJs.includes("chapter.weekly-plan") && i18nJs.includes("chapter.glossa
 assert(i18nJs.includes("pair.practice") && i18nJs.includes("pair.theory"), "chapter↔lab pair CTA strings exist");
 const routesJs = readFileSync(join(ROOT, "web/assets/js/routes.js"), "utf8");
 assert(routesJs.includes("CHAPTER_TO_LAB") && routesJs.includes("LAB_TO_CHAPTER"), "routes expose chapter↔lab maps");
+assert(routesJs.includes("function labPlace"), "routes expose a path index separate from the folder id");
 assert(routesJs.includes("LAB_TO_CHAPTERS"), "routes expose multi-chapter lab map");
 assert(routesJs.includes("LAB_NOTES") && routesJs.includes("lab.ownBanner"), "routes expose lab note keys");
 assert(learnJs.includes("renderPairCta"), "learn renders chapter↔lab pair CTA");
