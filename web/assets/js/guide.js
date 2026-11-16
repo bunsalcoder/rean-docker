@@ -450,6 +450,74 @@
     return "";
   }
 
+  function uiText(key) {
+    return window.ReanI18n ? window.ReanI18n.t(key) : key;
+  }
+
+  /** Must run in the click turn. A later await drops the user gesture and this returns false. */
+  function copyWithExec(text) {
+    const area = document.createElement("textarea");
+    area.value = text;
+    area.setAttribute("readonly", "");
+    area.style.position = "fixed";
+    area.style.top = "0";
+    area.style.left = "0";
+    area.style.opacity = "0";
+    document.body.appendChild(area);
+    area.focus();
+    area.select();
+    area.setSelectionRange(0, text.length);
+    let ok = false;
+    try {
+      ok = document.execCommand("copy");
+    } catch {
+      ok = false;
+    }
+    area.remove();
+    return ok;
+  }
+
+  async function writeClipboard(text) {
+    if (copyWithExec(text)) return true;
+    if (!navigator.clipboard?.writeText) return false;
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  /** Copy buttons on fenced commands. Shared by the reader and static chapter/lab pages. */
+  function enhanceCodeBlocks(root) {
+    if (!root?.querySelectorAll) return;
+    root.querySelectorAll("pre").forEach((pre) => {
+      if (pre.closest(".code-block")) return;
+
+      const wrap = document.createElement("div");
+      wrap.className = "code-block";
+      pre.parentNode.insertBefore(wrap, pre);
+      wrap.appendChild(pre);
+
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "copy-btn";
+      btn.textContent = uiText("copy");
+      btn.setAttribute("aria-label", uiText("copy"));
+      btn.addEventListener("click", async () => {
+        const text = pre.querySelector("code")?.textContent || pre.textContent || "";
+        const ok = await writeClipboard(text);
+        btn.textContent = uiText(ok ? "copied" : "copyFailed");
+        btn.setAttribute("aria-label", btn.textContent);
+        setTimeout(() => {
+          btn.textContent = uiText("copy");
+          btn.setAttribute("aria-label", uiText("copy"));
+        }, 1400);
+      });
+      wrap.appendChild(btn);
+    });
+  }
+
   /** Handbook chapter numbers are the ids "1"…"20". Front matter and appendix are not numbered. */
   function handbookChapterNumber(id) {
     const raw = String(id ?? "");
@@ -468,6 +536,7 @@
     checklistStorageKey,
     enhanceChecklists,
     enhanceCallouts,
+    enhanceCodeBlocks,
     expandSearchTerms,
   };
 })();
