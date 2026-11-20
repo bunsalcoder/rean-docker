@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#f2f6fa" />
     <link rel="manifest" href="./site.webmanifest" />
     <title>Container ដំបូងរបស់អ្នក — rean-docker</title>
-    <meta name="description" content="When exit container stops។ Still exists until remove។" />
+    <meta name="description" content="ពេលអ្នក exit container ឈប់។ វានៅមានរហូតដល់អ្នកលុប។" />
     <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/5.km.html" />
     <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/5.html" />
     <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/5.km.html" />
@@ -17,12 +17,12 @@
     <meta property="og:site_name" content="rean-docker" />
     <meta property="og:type" content="article" />
     <meta property="og:title" content="Container ដំបូងរបស់អ្នក — rean-docker" />
-    <meta property="og:description" content="When exit container stops។ Still exists until remove។" />
+    <meta property="og:description" content="ពេលអ្នក exit container ឈប់។ វានៅមានរហូតដល់អ្នកលុប។" />
     <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/5.km.html" />
     <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Container ដំបូងរបស់អ្នក — rean-docker" />
-    <meta name="twitter:description" content="When exit container stops។ Still exists until remove។" />
+    <meta name="twitter:description" content="ពេលអ្នក exit container ឈប់។ វានៅមានរហូតដល់អ្នកលុប។" />
     <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
     <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
@@ -50,68 +50,68 @@
       <p class="static-reader-hint">Checklist និងវឌ្ឍនភាពធ្វើសមកាលនៅអ្នកអានអន្តរកម្ម (និងនៅទំព័រនេះពេល JavaScript បើក).</p>
       <div class="md-body" data-checklist-scope="learn:5">
 <h3>Lab៖ <code>labs/02-hello</code></h3>
-<h3>Run container នៅ foreground</h3>
+<h3>រត់ container នៅផ្ទៃមុខ (foreground)</h3>
 <pre><code class="language-bash">docker run -it ubuntu:24.04 bash
 </code></pre>
 <table>
 <thead>
 <tr>
 <th>Flag</th>
-<th>Meaning</th>
+<th>អត្ថន័យ</th>
 </tr>
 </thead>
 <tbody><tr>
 <td><code>run</code></td>
-<td>Create + start container from image</td>
+<td>បង្កើត ហើយចាប់ផ្តើម container ពី image</td>
 </tr>
 <tr>
 <td><code>-i</code></td>
-<td>Keep STDIN open</td>
+<td>ទុក STDIN ឱ្យបើក</td>
 </tr>
 <tr>
 <td><code>-t</code></td>
-<td>Allocate TTY (interactive terminal)</td>
+<td>ផ្តល់ TTY (terminal អន្តរកម្ម)</td>
 </tr>
 <tr>
 <td><code>ubuntu:24.04</code></td>
-<td>Image name + tag</td>
+<td>ឈ្មោះ image + tag</td>
 </tr>
 <tr>
 <td><code>bash</code></td>
-<td>Command run inside</td>
+<td>ពាក្យបញ្ជាដែលរត់នៅខាងក្នុង</td>
 </tr>
 </tbody></table>
-<p>Inside container try:</p>
+<p>ក្នុង container សាក៖</p>
 <pre><code class="language-bash">cat /etc/os-release
 whoami
 exit
 </code></pre>
-<p>When <code>exit</code> container <strong>stops</strong>។ Still exists until remove។</p>
-<h3>Run នៅ background (detached)</h3>
+<p>ពេលអ្នក <code>exit</code> container <strong>ឈប់</strong>។ វានៅមានរហូតដល់អ្នកលុប។</p>
+<h3>រត់នៅផ្ទៃខាងក្រោយ (detached)</h3>
 <pre><code class="language-bash">docker run -d --name my-nginx -p 8080:80 nginx:1.28-alpine
 </code></pre>
 <table>
 <thead>
 <tr>
 <th>Flag</th>
-<th>Meaning</th>
+<th>អត្ថន័យ</th>
 </tr>
 </thead>
 <tbody><tr>
 <td><code>-d</code></td>
-<td>Detached (background)</td>
+<td>Detached (ផ្ទៃខាងក្រោយ)</td>
 </tr>
 <tr>
 <td><code>--name</code></td>
-<td>Friendly name instead of random ID</td>
+<td>ឈ្មោះងាយចាំ ជំនួស ID ចៃដន្យ</td>
 </tr>
 <tr>
 <td><code>-p 8080:80</code></td>
-<td>Map host port 8080 → container port 80</td>
+<td>ផ្គូ port 8080 លើ host → port 80 ក្នុង container</td>
 </tr>
 </tbody></table>
-<p>Open: <a href="http://localhost:8080">http://localhost:8080</a></p>
-<h3>ពាក្យបញ្ជា day-1 សំខាន់ៗ</h3>
+<p>បើក៖ <a href="http://localhost:8080">http://localhost:8080</a></p>
+<h3>ពាក្យបញ្ជាថ្ងៃដំបូងសំខាន់ៗ</h3>
 <pre><code class="language-bash">docker ps                 # running containers
 docker ps -a              # all containers (incl. stopped)
 docker logs my-nginx      # stdout/stderr of container
@@ -122,11 +122,11 @@ docker start my-nginx     # start a stopped container
 docker rm my-nginx        # delete stopped container
 docker rm -f my-nginx     # force remove (stop + delete)
 </code></pre>
-<h3><code>--rm</code> containers ប្រើរួចលុប</h3>
+<h3><code>--rm</code> សម្រាប់ containers ប្រើរួចលុប</h3>
 <pre><code class="language-bash">docker run --rm -it alpine sh
 # when you exit, container is auto-deleted
 </code></pre>
-<h3>សម្អាត (ទម្លាប់ សុវត្ថិភាព ពីដើម)</h3>
+<h3>សម្អាត (ទម្លាប់សុវត្ថិភាពតាំងពីដើម)</h3>
 <pre><code class="language-bash">docker ps -a                      # see leftover containers
 docker container prune            # remove all *stopped* containers
 docker image ls                   # list images
@@ -134,12 +134,12 @@ docker image prune                # remove dangling images
 # Nuclear (careful): remove unused images, networks, build cache
 docker system prune -a
 </code></pre>
-<p><strong>Lab exercise</strong></p>
+<p><strong>លំហាត់ lab</strong></p>
 <ol>
-<li>Run Nginx port <code>8080</code>។</li>
-<li><code>curl localhost:8080</code> confirm HTML។</li>
-<li><code>docker exec</code> list <code>/usr/share/nginx/html</code>។</li>
-<li>Stop remove container។</li>
+<li>រត់ Nginx លើ port <code>8080</code>។</li>
+<li><code>curl localhost:8080</code> រួចបញ្ជាក់ថាឃើញ HTML។</li>
+<li><code>docker exec</code> ចូលទៅ រួចមើលបញ្ជី <code>/usr/share/nginx/html</code>។</li>
+<li>ឈប់ ហើយលុប container។</li>
 </ol>
 <hr>
 
