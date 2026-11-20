@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#f2f6fa" />
     <link rel="manifest" href="./site.webmanifest" />
     <title>Docker Compose — កម្មវិធីពហុ container — rean-docker</title>
-    <meta name="description" content="Manually docker run app + db + redis painful។ Compose describes whole stack YAML។" />
+    <meta name="description" content="docker run ដោយដៃសម្រាប់ app + db + redis ធុញ។ Compose ពិពណ៌នា stack ទាំងមូលក្នុង YAML។" />
     <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/11.km.html" />
     <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/11.html" />
     <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/11.km.html" />
@@ -17,12 +17,12 @@
     <meta property="og:site_name" content="rean-docker" />
     <meta property="og:type" content="article" />
     <meta property="og:title" content="Docker Compose — កម្មវិធីពហុ container — rean-docker" />
-    <meta property="og:description" content="Manually docker run app + db + redis painful។ Compose describes whole stack YAML។" />
+    <meta property="og:description" content="docker run ដោយដៃសម្រាប់ app + db + redis ធុញ។ Compose ពិពណ៌នា stack ទាំងមូលក្នុង YAML។" />
     <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/11.km.html" />
     <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Docker Compose — កម្មវិធីពហុ container — rean-docker" />
-    <meta name="twitter:description" content="Manually docker run app + db + redis painful។ Compose describes whole stack YAML។" />
+    <meta name="twitter:description" content="docker run ដោយដៃសម្រាប់ app + db + redis ធុញ។ Compose ពិពណ៌នា stack ទាំងមូលក្នុង YAML។" />
     <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
     <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
@@ -50,9 +50,9 @@
       <p class="static-reader-hint">Checklist និងវឌ្ឍនភាពធ្វើសមកាលនៅអ្នកអានអន្តរកម្ម (និងនៅទំព័រនេះពេល JavaScript បើក).</p>
       <div class="md-body" data-checklist-scope="learn:11">
 <h3>Lab៖ <code>labs/05-compose</code></h3>
-<p>Manually <code>docker run</code> app + db + redis painful។ <strong>Compose</strong> describes whole stack YAML។</p>
+<p><code>docker run</code> ដោយដៃសម្រាប់ app + db + redis ធុញ។ <strong>Compose</strong> ពិពណ៌នា stack ទាំងមូលក្នុង YAML។</p>
 <h3><code>compose.yaml</code> តូច (សាមញ្ញ)</h3>
-<p>Lab 05 រក្សា <strong>password ក្នុង <code>.env</code></strong> មិនមែនក្នុង YAML (Lab 04)។ Compose interpolate <code>${POSTGRES_PASSWORD}</code> ពេល stack ចាប់ផ្តើម៖</p>
+<p>Lab 05 រក្សា <strong>password ក្នុង <code>.env</code></strong> មិនមែនក្នុង YAML (Lab 04)។ Compose បំពេញ <code>${POSTGRES_PASSWORD}</code> ពេល stack ចាប់ផ្តើម៖</p>
 <pre><code class="language-yaml">services:
   web:
     build: .
@@ -84,9 +84,9 @@ volumes:
 networks:
   rean:
 </code></pre>
-<p>Copy <code>.env.example</code> → <code>.env</code> មុន <code>docker compose up</code>។ តម្លៃក្នុង Compose file មើលឃើញតាម <code>docker compose config</code> លើម៉ាស៊ីនអ្នក — នេះធម្មតា។ ច្បាប់គឺ៖ <strong>កុំ commit <code>.env</code> ហើយកុំដុត secrets ចូល image</strong>។ ប្រើ <code>3000:3000</code> (គ្រប់ interface) តែពេលអ្នកចង់ remote access ដោយចេតនា។</p>
-<p><strong>URL passwords:</strong> <code>DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:…</code> បែក បើ password មាន <code>@</code>, <code>:</code>, <code>/</code>, ឬ <code>#</code> (Compose interpolate មុន URL parser)។ Lab passwords សាមញ្ញដោយចេតនា។ ក្នុង app ពិត ចូលចិត្ត env vars ដាច់ដោយឡែក ឬ URL-encode password មុនផ្គុំ string។</p>
-<h3>Compose commands សំខាន់</h3>
+<p>ចម្លង <code>.env.example</code> → <code>.env</code> មុន <code>docker compose up</code>។ តម្លៃក្នុងឯកសារ Compose មើលឃើញតាម <code>docker compose config</code> លើម៉ាស៊ីនអ្នក — នេះធម្មតា។ ច្បាប់គឺ៖ <strong>កុំ commit <code>.env</code> ហើយកុំដុត secrets ចូល image</strong>។ ប្រើ <code>3000:3000</code> (គ្រប់ interface) តែពេលអ្នកចង់ចូលពីចម្ងាយដោយចេតនា។</p>
+<p><strong>Password ក្នុង URL៖</strong> <code>DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:…</code> បែក បើ password មាន <code>@</code>, <code>:</code>, <code>/</code>, ឬ <code>#</code> (Compose បំពេញមុន URL parser)។ Password ក្នុង lab សាមញ្ញដោយចេតនា។ ក្នុង app ពិត ចូលចិត្ត env vars ដាច់ដោយឡែក ឬ URL-encode password មុនផ្គុំ string។</p>
+<h3>ពាក្យបញ្ជា Compose សំខាន់</h3>
 <pre><code class="language-bash">docker compose up           # create &amp; start (foreground, logs)
 docker compose up -d        # detached
 docker compose ps           # status
@@ -98,47 +98,47 @@ docker compose down -v      # also delete named volumes (DATA LOSS)
 docker compose build        # build images
 docker compose up --build   # rebuild then start
 </code></pre>
-<h3>Compose concepts សំខាន់</h3>
+<h3>គំនិត Compose សំខាន់</h3>
 <table>
 <thead>
 <tr>
-<th>Concept</th>
-<th>Meaning</th>
+<th>គំនិត</th>
+<th>អត្ថន័យ</th>
 </tr>
 </thead>
 <tbody><tr>
 <td><code>services</code></td>
-<td>Containers in your app</td>
+<td>Containers ក្នុង app របស់អ្នក</td>
 </tr>
 <tr>
 <td><code>build</code></td>
-<td>Build from Dockerfile</td>
+<td>Build ពី Dockerfile</td>
 </tr>
 <tr>
 <td><code>image</code></td>
-<td>Use existing image</td>
+<td>ប្រើ image ដែលមានស្រាប់</td>
 </tr>
 <tr>
 <td><code>depends_on</code></td>
-<td>Start order (not full readiness unless healthchecks)</td>
+<td>លំដាប់ចាប់ផ្តើម (មិនមែនរួចរាល់ពេញ លុះត្រាតែមាន healthchecks)</td>
 </tr>
 <tr>
 <td><code>volumes</code></td>
-<td>Named volumes declared at bottom</td>
+<td>Named volumes ដែលប្រកាសនៅខាងក្រោម</td>
 </tr>
 <tr>
 <td><code>networks</code></td>
-<td>Isolated networks for the project</td>
+<td>Networks ដាច់សម្រាប់គម្រោង</td>
 </tr>
 <tr>
 <td><code>env_file</code> / <code>.env</code></td>
-<td>Runtime config និង secrets (មិនដុតក្នុង image)</td>
+<td>Config និង secrets ពេលរត់ (មិនដុតក្នុង image)</td>
 </tr>
 </tbody></table>
-<h3>Service DNS (ប្រៀបធៀប)</h3>
-<p>Compose service name = hostname។ Web service connects Postgres host <code>db</code> not <code>localhost</code>។</p>
-<p><strong><code>localhost</code> inside container means that container itself</strong>, never host or sibling services។</p>
-<h3>Profiles និង overrides (កម្រិត)</h3>
+<h3>Service DNS (ឈ្មោះ)</h3>
+<p>ក្នុង Compose ឈ្មោះ service = hostname។ Service web ភ្ជាប់ Postgres តាម host <code>db</code> មិនមែន <code>localhost</code>។</p>
+<p><strong><code>localhost</code> ក្នុង container មានន័យថា container នោះផ្ទាល់</strong> មិនមែន host ឬ service បងប្អូនទេ។</p>
+<h3>Profiles និង overrides (កម្រិតមធ្យម)</h3>
 <pre><code class="language-yaml"># compose.override.yaml is auto-merged for local dev
 services:
   web:

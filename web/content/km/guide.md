@@ -944,21 +944,22 @@ COPY . .
 ច្បាប់៖ **ដាក់ជំហានដែលផ្លាស់កម្រ ហើយថ្លៃ នៅដើម; ដាក់ source ដែលផ្លាស់ញឹកញាប់នៅចុង។**
 
 ---
+
 ## 8. Volumes — រក្សាទិន្នន័យឱ្យនៅរស់
 
 ### Lab៖ `labs/07-volumes`
 
-Containers **ephemeral** (មិនអចិន្ត)។ Delete container → writable layer បាត់។
+Containers **មិននៅជាអចិន្ត្រៃយ៍**។ លុប container → writable layer របស់វាបាត់។
 
-រក្សាទិន្នន័យប្រើ **volumes** ឬ **bind mounts**។
+ដើម្បីរក្សាទិន្នន័យ ប្រើ **volumes** ឬ **bind mounts**។
 
 ### ប្រភេទ mount បី
 
-| Type | Use case | Example |
+| ប្រភេទ | ប្រើពេលណា | ឧទាហរណ៍ |
 |------|----------|---------|
-| **Named volume** | DB data, Docker manage | `docker volume create pgdata` |
-| **Bind mount** | Live-edit source code host | `-v $(pwd):/app` |
-| **tmpfs** | Sensitive/temp in memory | `--tmpfs /tmp` |
+| **Named volume** | ទិន្នន័យ DB, Docker គ្រប់គ្រង | `docker volume create pgdata` |
+| **Bind mount** | កែ source លើ host ផ្ទាល់ | `-v $(pwd):/app` |
+| **tmpfs** | អាថ៌កំបាំង/បណ្តោះអាសន្ន ក្នុង memory | `--tmpfs /tmp` |
 
 ### ឧទាហរណ៍ named volume (Postgres)
 
@@ -972,9 +973,9 @@ docker run -d --name rean-pg \
   postgres:16-alpine
 ```
 
-`POSTGRES_PASSWORD=secret` នៅទីនេះគឺ **demo-only** shorthand សម្រាប់ copy-paste ខ្លី។ ចូលចិត្ត `.env` / `--env-file` (Labs 04/05 / Lab 07 Compose) ពេលចង់រក្សាទម្លាប់ secrets។
+`POSTGRES_PASSWORD=secret` នៅទីនេះគឺ **សម្រាប់សាកតែប៉ុណ្ណោះ** ដើម្បី copy-paste ខ្លី។ ចូលចិត្ត `.env` / `--env-file` (Labs 04/05 / Lab 07 Compose) ពេលចង់រក្សាទម្លាប់ secrets។
 
-Stop/remove container — **data remains** in `rean-pgdata`។
+ឈប់/លុប container — **ទិន្នន័យនៅ** ក្នុង `rean-pgdata`។
 
 ```bash
 docker volume ls
@@ -987,14 +988,14 @@ docker volume inspect rean-pgdata
 docker run --rm -v "$PWD":/app -w /app node:22-alpine node -e "console.log('hi from bind mount')"
 ```
 
-### Volume vs bind: ពេលណាប្រើអ្វី
+### Volume ធៀប bind៖ ពេលណាប្រើអ្វី
 
-- **Volume:** production data, databases, អ្វី Docker គួរ manage
-- **Bind:** local development, config files edit host
+- **Volume៖** ទិន្នន័យ production, databases, អ្វីដែល Docker គួរគ្រប់គ្រង
+- **Bind៖** ការអភិវឌ្ឍក្នុងម៉ាស៊ីន, ឯកសារ config ដែលអ្នកកែលើ host
 
-### ប្រយ័ត្ន permissions
+### ប្រយ័ត្នសិទ្ធិ
 
-Bind mounts inherit host UID/GID issues។ Prefer matching user Dockerfile (`USER`) or fix ownership carefully។
+Bind mounts ទទួលបញ្ហា UID/GID របស់ host។ ចូលចិត្តផ្គូ user ក្នុង Dockerfile (`USER`) ឬកែម្ចាស់ឯកសារដោយប្រុងប្រយ័ត្ន។
 
 ---
 
@@ -1002,7 +1003,7 @@ Bind mounts inherit host UID/GID issues។ Prefer matching user Dockerfile (`USE
 
 ### Lab៖ `labs/06-networks`
 
-Default containers same user-defined bridge network reach each other **by container name** (DNS)។
+តាមលំនាំដើម containers លើ bridge network ដែលអ្នកបង្កើតដូចគ្នា អាចទៅដល់គ្នា **តាមឈ្មោះ container** (DNS)។
 
 ```bash
 docker network create rean-net
@@ -1014,25 +1015,25 @@ docker run --rm --network rean-net redis:7-alpine \
 # → PONG
 ```
 
-Hostnames:
+Hostnames៖
 
-- Container ផ្សេង `rean-net`: `rean-redis`
-- Host machine: via published ports (`localhost:6379`) មិនមែន internal name
+- ពី container ផ្សេងលើ `rean-net`៖ `rean-redis`
+- ពីម៉ាស៊ីន host៖ ជាធម្មតាតាម ports ដែលផ្សាយ (`localhost:6379`) មិនមែនឈ្មោះខាងក្នុង
 
 ### ប្រភេទ network (សាមញ្ញ)
 
-| Driver | Typical use |
+| Driver | ការប្រើធម្មតា |
 |--------|-------------|
-| `bridge` | Default single-host apps (common) |
-| `host` | Container share host network stack (Linux) |
-| `none` | No networking |
-| `overlay` | Multi-host (Swarm) |
+| `bridge` | លំនាំដើមសម្រាប់ app លើ host តែមួយ (ញឹកញាប់បំផុត) |
+| `host` | Container ចែក network stack របស់ host (Linux) |
+| `none` | គ្មាន networking |
+| `overlay` | ច្រើន host (Swarm) |
 
-### Port publishing ម្តងទៀត
+### ការផ្សាយ port ម្តងទៀត
 
-`-p HOST:CONTAINER` affects access **from host / outside**។ Containers same Docker network talk *container* port without `-p`។
+`-p HOST:CONTAINER` ប៉ះតែការចូល **ពី host / ខាងក្រៅ**។ Containers លើ Docker network ដូចគ្នា និយាយគ្នាតាម port *ក្នុង container* ដោយមិនចាំបាច់ `-p`។
 
-Example: app connects `postgres:5432` internally; publish `5432` only if host tools (psql GUI) connect។
+ឧទាហរណ៍៖ app ភ្ជាប់ `postgres:5432` ខាងក្នុង; ផ្សាយ `5432` តែពេលចង់ឱ្យឧបករណ៍លើ host (psql GUI) ភ្ជាប់។
 
 ---
 
@@ -1040,7 +1041,7 @@ Example: app connects `postgres:5432` internally; publish `5432` only if host to
 
 ### Lab៖ `labs/04-env-secrets`
 
-ធ្វើបន្ទាប់ពី Lab 03 (អ្នកសរសេរ Dockerfile រួច) និងមុន Lab 05។ អ្នកនឹងផ្ទេរ config នៅ **ពេល run** រួចមើល password ដែលដុតក្នុង image លេចក្នុង `docker history`។
+ធ្វើបន្ទាប់ពី Lab 03 (អ្នកសរសេរ Dockerfile រួច) និងមុន Lab 05។ អ្នកនឹងផ្ញើ config នៅ **ពេលរត់** រួចមើល password ដែលដុតក្នុង image លេចក្នុង `docker history`។
 
 ### បញ្ជូន env vars
 
@@ -1056,11 +1057,11 @@ docker run --rm --env-file .env alpine printenv
 ENV NODE_ENV=production
 ```
 
-### ច្បាប់ ងាយ
+### ច្បាប់ងាយៗ
 
-1. **Config** (non-secret): env vars, Compose `environment`, config files។
-2. **Secrets** (passwords, API keys): never bake image layers; env runtime, Docker secrets, vault — keep `.env` out git។
-3. Prefer **12-factor**: same image, different env per environment (dev/stage/prod)។
+1. **Config** (មិនមែន secret)៖ env vars, Compose `environment`, ឯកសារ config។
+2. **Secrets** (passwords, API keys)៖ កុំដុតចូល layers របស់ image; ប្រើ env ពេលរត់, Docker secrets, ឬ vault — ហើយទុក `.env` ចេញពី git។
+3. ចូលចិត្តរបៀប **12-factor**៖ image ដូចគ្នា, env ខុសគ្នាតាមបរិស្ថាន (dev/stage/prod)។
 
 ### ឧទាហរណ៍ `.env` (កុំ commit secrets)
 
@@ -1070,7 +1071,7 @@ POSTGRES_PASSWORD=change-me
 POSTGRES_DB=rean
 ```
 
-Add `.env` to `.gitignore`។
+បន្ថែម `.env` ទៅ `.gitignore`។
 
 ---
 
@@ -1078,11 +1079,11 @@ Add `.env` to `.gitignore`។
 
 ### Lab៖ `labs/05-compose`
 
-Manually `docker run` app + db + redis painful។ **Compose** describes whole stack YAML។
+`docker run` ដោយដៃសម្រាប់ app + db + redis ធុញ។ **Compose** ពិពណ៌នា stack ទាំងមូលក្នុង YAML។
 
 ### `compose.yaml` តូច (សាមញ្ញ)
 
-Lab 05 រក្សា **password ក្នុង `.env`** មិនមែនក្នុង YAML (Lab 04)។ Compose interpolate `${POSTGRES_PASSWORD}` ពេល stack ចាប់ផ្តើម៖
+Lab 05 រក្សា **password ក្នុង `.env`** មិនមែនក្នុង YAML (Lab 04)។ Compose បំពេញ `${POSTGRES_PASSWORD}` ពេល stack ចាប់ផ្តើម៖
 
 ```yaml
 services:
@@ -1117,11 +1118,11 @@ networks:
   rean:
 ```
 
-Copy `.env.example` → `.env` មុន `docker compose up`។ តម្លៃក្នុង Compose file មើលឃើញតាម `docker compose config` លើម៉ាស៊ីនអ្នក — នេះធម្មតា។ ច្បាប់គឺ៖ **កុំ commit `.env` ហើយកុំដុត secrets ចូល image**។ ប្រើ `3000:3000` (គ្រប់ interface) តែពេលអ្នកចង់ remote access ដោយចេតនា។
+ចម្លង `.env.example` → `.env` មុន `docker compose up`។ តម្លៃក្នុងឯកសារ Compose មើលឃើញតាម `docker compose config` លើម៉ាស៊ីនអ្នក — នេះធម្មតា។ ច្បាប់គឺ៖ **កុំ commit `.env` ហើយកុំដុត secrets ចូល image**។ ប្រើ `3000:3000` (គ្រប់ interface) តែពេលអ្នកចង់ចូលពីចម្ងាយដោយចេតនា។
 
-**URL passwords:** `DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:…` បែក បើ password មាន `@`, `:`, `/`, ឬ `#` (Compose interpolate មុន URL parser)។ Lab passwords សាមញ្ញដោយចេតនា។ ក្នុង app ពិត ចូលចិត្ត env vars ដាច់ដោយឡែក ឬ URL-encode password មុនផ្គុំ string។
+**Password ក្នុង URL៖** `DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:…` បែក បើ password មាន `@`, `:`, `/`, ឬ `#` (Compose បំពេញមុន URL parser)។ Password ក្នុង lab សាមញ្ញដោយចេតនា។ ក្នុង app ពិត ចូលចិត្ត env vars ដាច់ដោយឡែក ឬ URL-encode password មុនផ្គុំ string។
 
-### Compose commands សំខាន់
+### ពាក្យបញ្ជា Compose សំខាន់
 
 ```bash
 docker compose up           # create & start (foreground, logs)
@@ -1136,25 +1137,25 @@ docker compose build        # build images
 docker compose up --build   # rebuild then start
 ```
 
-### Compose concepts សំខាន់
+### គំនិត Compose សំខាន់
 
-| Concept | Meaning |
+| គំនិត | អត្ថន័យ |
 |---------|---------|
-| `services` | Containers in your app |
-| `build` | Build from Dockerfile |
-| `image` | Use existing image |
-| `depends_on` | Start order (not full readiness unless healthchecks) |
-| `volumes` | Named volumes declared at bottom |
-| `networks` | Isolated networks for the project |
-| `env_file` / `.env` | Runtime config និង secrets (មិនដុតក្នុង image) |
+| `services` | Containers ក្នុង app របស់អ្នក |
+| `build` | Build ពី Dockerfile |
+| `image` | ប្រើ image ដែលមានស្រាប់ |
+| `depends_on` | លំដាប់ចាប់ផ្តើម (មិនមែនរួចរាល់ពេញ លុះត្រាតែមាន healthchecks) |
+| `volumes` | Named volumes ដែលប្រកាសនៅខាងក្រោម |
+| `networks` | Networks ដាច់សម្រាប់គម្រោង |
+| `env_file` / `.env` | Config និង secrets ពេលរត់ (មិនដុតក្នុង image) |
 
-### Service DNS (ប្រៀបធៀប)
+### Service DNS (ឈ្មោះ)
 
-Compose service name = hostname។ Web service connects Postgres host `db` not `localhost`។
+ក្នុង Compose ឈ្មោះ service = hostname។ Service web ភ្ជាប់ Postgres តាម host `db` មិនមែន `localhost`។
 
-**`localhost` inside container means that container itself**, never host or sibling services។
+**`localhost` ក្នុង container មានន័យថា container នោះផ្ទាល់** មិនមែន host ឬ service បងប្អូនទេ។
 
-### Profiles និង overrides (កម្រិត)
+### Profiles និង overrides (កម្រិតមធ្យម)
 
 ```yaml
 # compose.override.yaml is auto-merged for local dev

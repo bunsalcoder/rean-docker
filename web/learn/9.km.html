@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#f2f6fa" />
     <link rel="manifest" href="./site.webmanifest" />
     <title>Networks — របៀបដែល containers និយាយគ្នា — rean-docker</title>
-    <meta name="description" content="Default containers same user-defined bridge network reach each other by container name (DNS)។" />
+    <meta name="description" content="តាមលំនាំដើម containers លើ bridge network ដែលអ្នកបង្កើតដូចគ្នា អាចទៅដល់គ្នា តាមឈ្មោះ container (DNS)។" />
     <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/9.km.html" />
     <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/9.html" />
     <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/9.km.html" />
@@ -17,12 +17,12 @@
     <meta property="og:site_name" content="rean-docker" />
     <meta property="og:type" content="article" />
     <meta property="og:title" content="Networks — របៀបដែល containers និយាយគ្នា — rean-docker" />
-    <meta property="og:description" content="Default containers same user-defined bridge network reach each other by container name (DNS)។" />
+    <meta property="og:description" content="តាមលំនាំដើម containers លើ bridge network ដែលអ្នកបង្កើតដូចគ្នា អាចទៅដល់គ្នា តាមឈ្មោះ container (DNS)។" />
     <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/9.km.html" />
     <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Networks — របៀបដែល containers និយាយគ្នា — rean-docker" />
-    <meta name="twitter:description" content="Default containers same user-defined bridge network reach each other by container name (DNS)។" />
+    <meta name="twitter:description" content="តាមលំនាំដើម containers លើ bridge network ដែលអ្នកបង្កើតដូចគ្នា អាចទៅដល់គ្នា តាមឈ្មោះ container (DNS)។" />
     <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
     <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
@@ -50,7 +50,7 @@
       <p class="static-reader-hint">Checklist និងវឌ្ឍនភាពធ្វើសមកាលនៅអ្នកអានអន្តរកម្ម (និងនៅទំព័រនេះពេល JavaScript បើក).</p>
       <div class="md-body" data-checklist-scope="learn:9">
 <h3>Lab៖ <code>labs/06-networks</code></h3>
-<p>Default containers same user-defined bridge network reach each other <strong>by container name</strong> (DNS)។</p>
+<p>តាមលំនាំដើម containers លើ bridge network ដែលអ្នកបង្កើតដូចគ្នា អាចទៅដល់គ្នា <strong>តាមឈ្មោះ container</strong> (DNS)។</p>
 <pre><code class="language-bash">docker network create rean-net
 
 docker run -d --name rean-redis --network rean-net redis:7-alpine
@@ -59,39 +59,39 @@ docker run --rm --network rean-net redis:7-alpine \
   redis-cli -h rean-redis ping
 # → PONG
 </code></pre>
-<p>Hostnames:</p>
+<p>Hostnames៖</p>
 <ul>
-<li>Container ផ្សេង <code>rean-net</code>: <code>rean-redis</code></li>
-<li>Host machine: via published ports (<code>localhost:6379</code>) មិនមែន internal name</li>
+<li>ពី container ផ្សេងលើ <code>rean-net</code>៖ <code>rean-redis</code></li>
+<li>ពីម៉ាស៊ីន host៖ ជាធម្មតាតាម ports ដែលផ្សាយ (<code>localhost:6379</code>) មិនមែនឈ្មោះខាងក្នុង</li>
 </ul>
 <h3>ប្រភេទ network (សាមញ្ញ)</h3>
 <table>
 <thead>
 <tr>
 <th>Driver</th>
-<th>Typical use</th>
+<th>ការប្រើធម្មតា</th>
 </tr>
 </thead>
 <tbody><tr>
 <td><code>bridge</code></td>
-<td>Default single-host apps (common)</td>
+<td>លំនាំដើមសម្រាប់ app លើ host តែមួយ (ញឹកញាប់បំផុត)</td>
 </tr>
 <tr>
 <td><code>host</code></td>
-<td>Container share host network stack (Linux)</td>
+<td>Container ចែក network stack របស់ host (Linux)</td>
 </tr>
 <tr>
 <td><code>none</code></td>
-<td>No networking</td>
+<td>គ្មាន networking</td>
 </tr>
 <tr>
 <td><code>overlay</code></td>
-<td>Multi-host (Swarm)</td>
+<td>ច្រើន host (Swarm)</td>
 </tr>
 </tbody></table>
-<h3>Port publishing ម្តងទៀត</h3>
-<p><code>-p HOST:CONTAINER</code> affects access <strong>from host / outside</strong>។ Containers same Docker network talk <em>container</em> port without <code>-p</code>។</p>
-<p>Example: app connects <code>postgres:5432</code> internally; publish <code>5432</code> only if host tools (psql GUI) connect។</p>
+<h3>ការផ្សាយ port ម្តងទៀត</h3>
+<p><code>-p HOST:CONTAINER</code> ប៉ះតែការចូល <strong>ពី host / ខាងក្រៅ</strong>។ Containers លើ Docker network ដូចគ្នា និយាយគ្នាតាម port <em>ក្នុង container</em> ដោយមិនចាំបាច់ <code>-p</code>។</p>
+<p>ឧទាហរណ៍៖ app ភ្ជាប់ <code>postgres:5432</code> ខាងក្នុង; ផ្សាយ <code>5432</code> តែពេលចង់ឱ្យឧបករណ៍លើ host (psql GUI) ភ្ជាប់។</p>
 <hr>
 
       </div>
