@@ -65,107 +65,107 @@ cd path/to/rean-docker
 
 ## 1. តើ Docker ដោះស្រាយបញ្ហាអ្វី?
 
-### ការឈឺចដែលជាប់ទម្លាប់
+### ការឈឺចាប់ដែលជួបញឹកញាប់
 
-អ្នក build app នៅ laptop។ វាដំណើរការ។ នៅ machine មិត្តរួមការ៖ ខូច។ នៅ server៖ ខូច។ មូលហេតុជាធរមានរួមមាន៖
+អ្នកសង់ app លើ laptop។ វាដើរ។ លើម៉ាស៊ីនមិត្តរួមការ៖ ខូច។ លើ server៖ ខូច។ មូលហេតុញឹកញាប់គឺ៖
 
-- OS packages ខុសគ្នា
-- Language runtime ខុសគ្នា (Node 20 vs 22, Python 3.10 vs 3.12)
-- System libraries ខ្វះ
-- Configuration drift «វាដំណើរការនៅ machine ខ្ញុំ»
+- កញ្ចប់ OS មិនដូចគ្នា
+- runtime ភាសាមិនដូចគ្នា (Node 20 ធៀប 22, Python 3.10 ធៀប 3.12)
+- បណ្ណាល័យប្រព័ន្ធខ្វះ
+- ការកំណត់រសាត់ — «ដើរលើម៉ាស៊ីនខ្ញុំ»
 
 ### ចម្លើយរបស់ Docker
 
-**Package application *និង* runtime dependencies របស់វាទៅក្នុង unit ដែលអាចផ្ទេរបាន ហៅថា container។**
+**ខ្ចប់ application *និង* dependencies ដែលវាត្រូវការ ទៅក្នុងឯកតាដែលយកទៅរត់ទីណាក៏បាន ហៅថា container។**
 
-Unit នោះ៖
+ឯកតានោះ៖
 
-- Run ដូចគ្នានៅ laptop, CI និង server
-- Start ក្នុងរយៈពេលពីរបីវិនាទី (ស្រាលជាង virtual machine ពេញ)
-- Isolate processes, filesystems និង (ជម្រើស) networks
+- រត់ដូចគ្នាលើ laptop, CI និង server
+- ចាប់ផ្តើមក្នុងពីរបីវិនាទី (ស្រាលជាង virtual machine ពេញលេញ)
+- បំបែក processes, filesystems និង (បើជ្រើស) networks
 
-### Containers vs ម៉ាស៊ីន virtual (VM)
+### Container ធៀបនឹង virtual machine (VM)
 
-| | Virtual Machine | Container |
+| | Virtual machine | Container |
 |--|-----------------|-----------|
-| រួមបញ្ចូល guest OS? | បាទ (OS ពេញ) | ទេ — share host kernel |
-| ទំហំ | GB | MB–រយៈរាប hundreds of MB |
-| ពេល start | នាទី | វិនាទី |
-| Isolation | រឹង (hypervisor) | Process-level (namespaces + cgroups) |
-| Density | តិច per host | ច្រើន per host |
+| រួម guest OS? | បាទ (OS ពេញ) | ទេ — ចែក host kernel |
+| ទំហំ | GB | MB ដល់រាប់រយ MB |
+| ពេលចាប់ផ្តើម | នាទី | វិនាទី |
+| ការបំបែក | រឹង (hypervisor) | កម្រិត process (namespaces + cgroups) |
+| ចំនួនក្នុងមួយ host | តិច | ច្រើន |
 
-**រូបភាព:** VM គឺជាផ្ទះពេញមួយ។ Container គឺជាបន្ទប់ក្នុងអគារដែល share plumbing និង electricity (host kernel) ប៉ុន្តែមានបន្ទប់ចាក់សោផ្ទាល់ (filesystem, process tree, network namespace)។
+**ឧបមា:** VM គឺផ្ទះមួយខ្នង។ Container គឺបន្ទប់ក្នុងអគារ ដែលចែកបំពង់ទឹក និងអគ្គិសនី (host kernel) ប៉ុន្តែមានបន្ទប់ចាក់សោផ្ទាល់ខ្លួន (filesystem, process tree, network namespace)។
 
-បន្ទាប់ **Chapter 2** ពន្យល់ containerization ជាភាសាសាមញ្ញ (មូលដ្ឋាន beginner) រួច **Lab 01** ឱ្យអ្នកមានអារម្មណ៍ isolation ជាមួយ commands សាមញ្ញ។
+បន្ទាប់ **ជំពូក 2** ពន្យល់ containerization ជាភាសាសាមញ្ញ (មូលដ្ឋានសម្រាប់អ្នកចាប់ផ្តើម) រួច **Lab 01** ឱ្យអ្នកមានអារម្មណ៍ពីការបំបែក តាមពាក្យបញ្ជាសាមញ្ញ។
 
 ### Docker គឺអ្វី (និងមិនមែនអ្វី)
 
 **Docker គឺ៖**
 
-- Platform ដើម្បី build, ship និង run containers
-- Client (`docker`) និយាយជាមួយ daemon (`dockerd`)
-- Ecosystem៖ images, registries (Docker Hub), Compose ជាដើម
+- វេទិកាសម្រាប់សង់ (build), ផ្ញើ (ship) និងរត់ (run) containers
+- client (`docker`) និយាយជាមួយ daemon (`dockerd`)
+- ប្រព័ន្ធជុំវិញ៖ images, registries (Docker Hub), Compose ជាដើម
 
 **Docker មិនមែន៖**
 
-- ជំនួស architecture application ល្អ
-- «Secure by default» ដោយវេទម្ម (អ្នកនៅតែ harden images និង configs)
-- ដូច Kubernetes (K8s *orchestrate* containers ក scale; Docker *run* ពួកវា)
+- ជំនួសស្ថាបត្យកម្ម application ដែលល្អ
+- «មានសុវត្ថិភាពតាំងពីដើម» ដោយខ្លួនឯង (អ្នកនៅតែត្រូវរឹត images និង configs)
+- ដូច Kubernetes (K8s *រៀបចំ* containers ពេលមានច្រើន; Docker *រត់* ពួកវា)
 
 ---
 
 ## 2. មូលដ្ឋាន containerization
 
-Containerization គឺ **គំនិត**។ Docker គឺ **tool** ដែលមនុស្សភាគច្រើនប្រើអនុវត្តគំនិតនោះ។
+Containerization គឺ **គំនិត**។ Docker គឺ **ឧបករណ៍** ដែលមនុស្សភាគច្រើនប្រើ ដើម្បីអនុវត្តគំនិតនោះ។
 
-**Chapter នេះគឺមូលដ្ឋាន beginner** មិនមែន course systems កម្រិតខ្ពស់ទេ។ Skim ផ្នែកជ្រៅ (namespaces, OCI, `runc`) ក្នុងការអានដំបូងបើចង់ — lab ដែលផ្គូផ្គងត្រូវការតែ commands `docker` សាមញ្ញ។
+**ជំពូកនេះជាមូលដ្ឋានសម្រាប់អ្នកចាប់ផ្តើម** មិនមែនវគ្គប្រព័ន្ធកម្រិតខ្ពស់ទេ។ ការអានដំបូង អាចមើលឆ្លងផ្នែកជ្រៅ (namespaces, OCI, `runc`) បើចង់ — lab ដែលផ្គូផ្គងត្រូវការតែពាក្យបញ្ជា `docker` សាមញ្ញ។
 
-**Lab pairing:** បន្ទាប់ (ឬកំឡុង) អាន chapter នេះ ធ្វើ **`labs/01-isolation-basics`** (Lab 01 — Isolation basics)។ រួចបន្ត Lab 02 សម្រាប់ workflow ប្រចាំថ្ងៃ។
+**Lab ដែលផ្គូផ្គង៖** បន្ទាប់ (ឬកំឡុងពេល) អានជំពូកនេះ ធ្វើ **`labs/01-isolation-basics`** (Lab 01 — Isolation basics)។ រួចបន្ត Lab 02 សម្រាប់ការងារប្រចាំថ្ងៃ។
 
-Chapter នេះពន្យល់ containerization ទូទៅ រួចឱ្យជ្រាលដូច្នេះ commands Docker ពេលក្រោយមានហេតុផល — មិនវេទម្ម។
+ជំពូកនេះពន្យល់ containerization ទូទៅ រួចលម្អិតគ្រប់គ្រាន់ ដើម្បីពាក្យបញ្ជា Docker ពេលក្រោយមានហេតុផល — មិនមែនវេទមន្តទេ។
 
-### មួយប្រយោគ
+### ក្នុងមួយប្រយោគ
 
-**Containerization** package application ជាមួយអ្វីដែលវាត្រូវការដើម្បី run (runtime, libraries, config) ទៅក្នុង unit ដែល isolated ដែល share OS kernel របស់ host ប៉ុន្តែមានទស្សនៈផ្ទាល់របស់ processes, files និង network។
+**Containerization** ខ្ចប់ application ជាមួយអ្វីដែលវាត្រូវការ ដើម្បីរត់ (runtime, libraries, config) ទៅក្នុងឯកតាដែលបំបែក។ ឯកតានោះចែក kernel របស់ OS លើ host ប៉ុន្តែមានទស្សនៈផ្ទាល់ខ្លួន ចំពោះ processes, files និង network។
 
-Unit នោះគឺ **container**។
+ឯកតានោះគឺ **container**។
 
 ### រូបភាពទូទៅ (ចាប់ផ្តើមទីនេះ)
 
-គិតពីបីស strata «run software យ៉ាងដូចម្តេច?»៖
+គិតពីបីជាន់ នៃសំណួរ «រត់ software យ៉ាងដូចម្តេច?»៖
 
-| វិធី | អ្វីដែលអ្នក ship | Isolation | ទំហំ / start ធម្មតា |
+| វិធី | អ្វីដែលអ្នកផ្ញើ | ការបំបែក | ទំហំ / ពេលចាប់ផ្តើម ធម្មតា |
 |----------|---------------|-----------|----------------------|
-| Bare metal / host install | App + សង្ឃឹម machine ផ្គូផ្គង | ជិតគ្មាន | លឿន ប៉ុន្តែ fragile |
-| Virtual machine | App + guest OS ពេញ | រឹង (kernel ដាច់) | ធ្ងន់ start យឺត |
-| Container | App + userland deps (គ្មាន guest OS ពេញ) | Process-level (share kernel) | ស្រាល start ក្នុងវិនាទី |
+| Bare metal / ដំឡើងលើ host | App + សង្ឃឹមថាម៉ាស៊ីនដូចគ្នា | ស្ទើរគ្មាន | លឿន ប៉ុន្តែងាយខូច |
+| Virtual machine | App + guest OS ពេញ | រឹង (kernel ដាច់ដោយឡែក) | ធ្ងន់ ចាប់ផ្តើមយឺត |
+| Container | App + dependencies កម្រិត userland (គ្មាន guest OS ពេញ) | កម្រិត process (ចែក kernel) | ស្រាល ចាប់ផ្តើមក្នុងវិនាទី |
 
-**Containerization bet:** apps ភាគច្រើនមិនត្រូវការ OS ទីពីរពេញទេ។ ពួកវាត្រូវការ **filesystem និង libraries ស្ថិតស្ថេរប្រាកដ** រួម **isolation គ្រប់គ្រាន់** ដើម្បី app មួយមិនធ្វើឱ្យ app ផ្សេងខូច។
+**គោលរបស់ containerization៖** app ភាគច្រើនមិនត្រូវការ OS ទីពីរពេញលេញទេ។ ពួកវាត្រូវការ **filesystem និង libraries ដែលដូចគ្នារាល់ដង** បូក **ការបំបែកគ្រប់គ្រាន់** ដើម្បី app មួយមិនធ្វើឱ្យ app ផ្សេងខូច។
 
-#### រូបភាពប្រចាំថ្ងៃ
+#### ឧបមាប្រចាំថ្ងៃ
 
-- **VM** គឺជួលផ្ទះពេញ (foundation, plumbing, electrical panel = guest OS)។
-- **Container** គឺបន្ទប់ក្នុងអគារ៖ បន្ទប់ឯកជន (files, processes, ports) share ប្រព័ន្ធ building (host kernel)។
-- **Image** គឺ blueprint បន្ទប់ដែលមាន furniture; **container** គឺ unit ដែល rent ហើយ start ពី blueprint នោះ។
+- **VM** គឺជួលផ្ទះមួយខ្នង (គ្រឹះ បំពង់ទឹក ផ្ទាំងភ្លើង = guest OS)។
+- **Container** គឺបន្ទប់ឧបទ្វីប៖ បន្ទប់ឯកជន (files, processes, ports) ចែកប្រព័ន្ធអគារ (host kernel)។
+- **Image** គឺប្លង់បន្ទប់ដែលមានគ្រឿងសង្ហារឹមរួច; **container** គឺបន្ទប់ដែលជួល ហើយចាប់ផ្តើមពីប្លង់នោះ។
 
-#### Containerization ដោះស្រាយបញ្ហាអ្វី (លើស «Docker»)
+#### បញ្ហាដែលវាដោះស្រាយ (លើសពីពាក្យ «Docker»)
 
-1. **Reproducibility** — bits ដូចគ្នា run នៅ laptop, CI និង server។
-2. **Density** — apps ច្រើន per machine ដោយមិនចាំបាច់ VM មួយ per app។
-3. **Speed** — start/stop ក្នុងវិនាទីសម្រាប់ deploy និង tests។
-4. **Portability** — ផ្ទេរ unit រវាង environments ដោយមិន reinstall ពិភពលូត។
-5. **Clear boundaries** — dependencies នៅ *ក្នុង* unit មិនមែន «នៅណាមួយនៅ host»។
+1. **ធ្វើឡើងវិញបានដូចគ្នា** — bits ដូចគ្នារត់លើ laptop, CI និង server។
+2. **ដាក់បានច្រើន** — apps ច្រើនក្នុងមួយម៉ាស៊ីន ដោយមិនចាំបាច់ VM មួយសម្រាប់ app មួយ។
+3. **ល្បឿន** — ចាប់ផ្តើម/ឈប់ក្នុងវិនាទី សម្រាប់ deploy និង tests។
+4. **យកទៅទីណាក៏បាន** — ផ្លាស់ឯកតារវាងបរិស្ថាន ដោយមិនដំឡើងអ្វីៗសាឡើងវិញ។
+5. **ព្រំដែនច្បាស់** — dependencies នៅ *ក្នុង* ឯកតា មិនមែន «នៅណាមួយលើ host»។
 
-#### Containerization vs Docker vs Kubernetes (ប្រៀបធៀប)
+#### Containerization ធៀប Docker ធៀប Kubernetes
 
 | ពាក្យ | គឺអ្វី |
 |------|------------|
-| **Containerization** | *Concept*៖ isolate + package + run ជាមួយ shared kernel |
-| **Docker** | *Platform* ពេញនិយម build, ship និង run containers |
-| **OCI** | Open standards សម្រាប់ images និង runtimes (tools interoperate) |
-| **Kubernetes** | *Orchestrator*៖ schedule containers ច្រើន across machines |
+| **Containerization** | *គំនិត*៖ បំបែក + ខ្ចប់ + រត់ ដោយចែក kernel |
+| **Docker** | *វេទិកា* ពេញនិយម សម្រាប់ build, ship និង run containers |
+| **OCI** | ស្តង់ដារបើក ចំពោះ images និង runtimes (ឧបករណ៍ធ្វើការជាមួយគ្នាបាន) |
+| **Kubernetes** | *អ្នករៀបចំ*៖ កំណត់ពេល containers ច្រើន លើម៉ាស៊ីនច្រើន |
 
-អ្នកអាច containerize ដោយមិនប្រើ Docker (Podman, containerd, nerdctl ជាដើម)។ ជាធរមានរៀន Docker មុន ពី workflow ច្បាស់ និង ecosystem ធំ។
+អ្នកអាចធ្វើ containerize ដោយមិនប្រើ Docker (Podman, containerd, nerdctl ជាដើម)។ ជាធម្មតារៀន Docker មុន ព្រោះជំហានច្បាស់ និងប្រព័ន្ធជុំវិញធំ។
 
 ```
   Concept: containerization
@@ -180,49 +180,49 @@ Unit នោះគឺ **container**។
   Orchestration (optional): Kubernetes, Swarm, Nomad, …
 ```
 
-### ប្រវត្តិសង្ខេប (ហេតុអ្វីមាន)
+### ប្រវត្តិខ្លី (ហេតុអ្វីវាមាន)
 
-1. **chroot** (Unix) — ផ្លាស់ប្តូរ root filesystem ដែល process ឃើញ (filesystem jail; ខ្សោយពីរបួស)។
-2. **Linux namespaces + cgroups** — kernel features ធ្វើ containers ពិតបាន (isolate identity; limit CPU/RAM)។
-3. **LXC** និងផ្សេងៗ — «Linux containers» ដំបូងៗ។
-4. **Docker (2013+)** — ធ្វើ *developer experience* mainstream៖ Dockerfile, images, Hub, CLI សាមញ្ញ។
-5. **OCI** — standardize image/runtime formats ដើម្បី ecosystem មិន lock ទៅ vendor មួយជារៀងរហូត។
+1. **chroot** (Unix) — ប្តូរ root filesystem ដែល process មើលឃើញ (គុក filesystem; ខ្សោយបើនៅម្នាក់ឯង)។
+2. **Linux namespaces + cgroups** — លក្ខណៈ kernel ដែលធ្វើឱ្យ containers ពិតអាចមាន (បំបែកអត្តសញ្ញាណ; កំណត់ CPU/RAM)។
+3. **LXC** និងផ្សេងទៀត — «Linux containers» ជំនាន់ដើម ដែលប្រើលក្ខណៈទាំងនោះ។
+4. **Docker (2013+)** — ធ្វើឱ្យ *បទពិសោធន៍អ្នកអភិវឌ្ឍ* ទូទៅ៖ Dockerfile, images, Hub, CLI សាមញ្ញ។
+5. **OCI** — កំណត់ទម្រង់ image/runtime ជាស្តង់ដារ ដើម្បីប្រព័ន្ធជុំវិញមិនជាប់អ្នកលក់តែមួយជារៀងរហូត។
 
-មិនចាំបាច់ memorize ប្រវត្តិ។ ចងចាំ៖ **containers = Linux kernel feature set + packaging format + UX ល្អ**។
+មិនចាំបាច់ទន្ទេញប្រវត្តិទេ។ ចងចាំ៖ **containers = សំណុំលក្ខណៈ kernel Linux + ទម្រង់ខ្ចប់ + វិធីប្រើដែលងាយ**។
 
-### Model លម្អិត៖ អ្វី isolated ពិត?
+### គំរូលម្អិត៖ អ្វីដែលពិតជាត្រូវបានបំបែក?
 
-នៅ Linux container ជារឿយៗ **processes ធម្មតា** ជាមួយ kernel controls បន្ថែម។
+លើ Linux, container ភាគច្រើនគឺ **processes ធម្មតា** បូកនឹងការគ្រប់គ្រង kernel បន្ថែម។
 
 #### Namespaces — «ខ្ញុំឃើញអ្វី?»
 
-Namespaces ផ្តល់ process ទស្សនៈផ្ទាល់របស់ system resources៖
+Namespaces ផ្តល់ឱ្យ process នូវទស្សនៈផ្ទាល់ខ្លួន ចំពោះធនធានប្រព័ន្ធ៖
 
-| Namespace | Isolates | ហេតុសំខាន់ |
+| Namespace | អ្វីដែលបំបែក | ហេតុអ្វីសំខាន់ |
 |-----------|----------|----------------|
-| **pid** | Process IDs | ក្នុង container app អាច PID 1 |
-| **mnt** | Mounts / filesystem tree | Container មាន `/` ផ្ទាល់ មិនមែន host |
-| **net** | Network stack | Interfaces, IPs, ports, routing ផ្ទាល់ |
-| **uts** | Hostname | Container hostname ≠ host hostname |
-| **ipc** | Shared memory / IPC | Apps មិន collide IPC objects |
-| **user** | User IDs (ជម្រើស) | Map container root → unprivileged host user |
+| **pid** | លេខ process | ក្នុង container, app អាចជា PID 1 |
+| **mnt** | mounts / មែកធាង filesystem | Container មាន `/` ផ្ទាល់ខ្លួន មិនមែនរបស់ host |
+| **net** | ជង់ network | interfaces, IPs, ports, routing ផ្ទាល់ខ្លួន |
+| **uts** | Hostname | hostname របស់ container ≠ hostname របស់ host |
+| **ipc** | shared memory / IPC | apps មិនប៉ះវត្ថុ IPC របស់គ្នា |
+| **user** | លេខ user (បើជ្រើស) | ផ្គូ root ក្នុង container ទៅ user គ្មានសិទ្ធិពិសេសលើ host |
 
-**គំនិតឧទាហរណ៍:** containers ពីរអាច listen port `80` *ក្នុង* network namespace ផ្ទាល់។ នៅ host publish ports ខុសគ្នា (`-p 8080:80` និង `-p 8081:80`)។
+**គំនិតឧទាហរណ៍៖** containers ពីរអាចស្តាប់ port `80` *ក្នុង* network namespace ផ្ទាល់ខ្លួន។ លើ host អ្នកផ្សាយ ports ខុសគ្នា (`-p 8080:80` និង `-p 8081:80`)។
 
 #### cgroups — «ខ្ញុំប្រើបានប៉ុន្មាន?»
 
-**Control groups (cgroups)** limit និង account resources៖
+**Control groups (cgroups)** កំណត់ និងរាប់ធនធាន៖
 
-- CPU time
+- ពេល CPU
 - Memory
-- PIDs / process count
+- PIDs / ចំនួន process
 - Block I/O (ពេលខ្លះ)
 
-គ្មាន cgroups container runaway អាច starve host។ មានពួកវា អ្នកអាចនិយាយ «API នេះយ៉ាងច្រើន 512MB RAM»។
+គ្មាន cgroups, container មួយដែលរត់ហួសអាចស៊ីអស់ធនធាន host។ មានវា អ្នកអាចនិយាយថា «API នេះបាន RAM យ៉ាងច្រើន 512MB»។
 
-#### Union filesystem / layers — «disk build យ៉ាងដូចម្តេច?»
+#### Union filesystem / layers — «ថាសត្រូវបានសង់យ៉ាងដូចម្តេច?»
 
-Images ជា **layers** stacked (read-only)។ Container run នោះ Docker បន្ថែម **writable layer** តូចពីលើ៖
+Images ជា **layers** ជង់គ្នា (អានបានតែ)។ ពេល container រត់ Docker បន្ថែម **writable layer** ស្តើងពីលើ៖
 
 ```
 [ writable container layer ]  ← changes while running (unless volumes)
@@ -233,19 +233,19 @@ Images ជា **layers** stacked (read-only)។ Container run នោះ Docker �
 
 ហេតុនេះ៖
 
-- Images share layers នៅ disk (មានប្រសិទ្ធភាព)។
-- Rebuilds លឿន (cache layers មិនផ្លាស់)។
-- Delete container បោះ writable layer (unless volumes)។
+- Images ចែក layers លើថាស (សន្សំកន្លែង)។
+- ការសង់ឡើងវិញអាចលឿន (cache layers ដែលមិនប្តូរ)។
+- លុប container ចោល writable layer (លុះត្រាតែអ្នកប្រើ volumes)។
 
-#### Shared kernel — tradeoff សំខាន់
+#### Kernel រួម — ការដោះដូរសំខាន់
 
-Containers **share host kernel**។ នោះមានន័យ៖
+Containers **ចែក host kernel**។ នោះមានន័យថា៖
 
 - ស្រាលជាង VMs។
-- Kernel bug ឬ privileged container misconfigured ធ្ងន់ជាង VM isolated ល្អ។
-- Run Windows container kernel លើ Linux kernel (ឬផ្ទុយ) មិនបានដោយគ្មាន virtualization (Docker Desktop ប្រើ VM តូច Mac/Windows)។
+- bug ក្នុង kernel ឬ container ដែលមានសិទ្ធិពិសេស ហើយកំណត់ខុស ធ្ងន់ជាង VM ដែលបំបែកបានល្អ។
+- រត់ Windows container kernel លើ Linux kernel (ឬផ្ទុយមកវិញ) មិនបាន ដោយគ្មាន virtualization នៅក្រោម (Docker Desktop ប្រើ VM តូចលើ Mac/Windows សម្រាប់ហេតុផលនេះ)។
 
-### Model លម្អិត៖ image vs container (lifecycle)
+### គំរូលម្អិត៖ image ធៀប container (វដ្តជីវិត)
 
 ```
 Build time                         Run time
@@ -261,13 +261,13 @@ Dockerfile  ──build──►  Image  ──run──►  Container (running)
                        Registry
 ```
 
-- **Image** = immutable template (ជាធរមាន)។
-- **Container** = instance មាន state (running ឬ stopped)។
-- **Registry** = shelf remote សម្រាប់ images (Docker Hub, GHCR, …)។
+- **Image** = គំរូដែលមិនប្តូរ (ជាធម្មតា)។
+- **Container** = ធាតុដែលមានស្ថានភាព (កំពុងរត់ ឬបានឈប់)។
+- **Registry** = ធ្នើពីចម្ងាយ សម្រាប់ images (Docker Hub, GHCR, …)។
 
-Image មួយ → containers ច្រើន (ដូច class → objects)។
+Image មួយ → containers ច្រើន (ដូច class មួយ → objects ច្រើន)។
 
-### Docker implement containerization (stack សាមញ្ញ)
+### Docker អនុវត្ត containerization យ៉ាងដូចម្តេច (stack សាមញ្ញ)
 
 អ្នកវាយ `docker …`។ ជារួម៖
 
@@ -277,26 +277,26 @@ docker CLI  →  dockerd (Docker daemon)  →  containerd  →  runc  →  Linux
 
 | ផ្នែក | តួនាទី |
 |-------|------|
-| **CLI** | Human interface (`docker run`, `build`, …) |
-| **dockerd** | Docker API/orchestrator នៅ machine មួយ |
-| **containerd** | Manage container lifecycle / images |
-| **runc** | Create container តាម OCI runtime + kernel features |
+| **CLI** | ចំណុចប្រទាក់សម្រាប់មនុស្ស (`docker run`, `build`, …) |
+| **dockerd** | API/អ្នករៀបចំរបស់ Docker លើម៉ាស៊ីនមួយ |
+| **containerd** | គ្រប់គ្រងវដ្តជីវិត container / images |
+| **runc** | បង្កើត container ពិត តាម OCI runtime + លក្ខណៈ kernel |
 
-Docker Desktop (Mac/Windows) stack run **ក្នុង Linux VM ស្រាល** ពី host kernel Mac/Windows មិនមែន Linux kernel containers រំពឹង។
+លើ Docker Desktop (Mac/Windows) stack នេះរត់ **ក្នុង Linux VM ស្រាល** ព្រោះ kernel របស់ Mac/Windows មិនមែន Linux kernel ដែល containers រំពឹង។
 
-កម្ម rare ប៉ះ `runc`។ យល់ stack ពន្យល់ error messages និង «ទីកន្លែង» run។
+អ្នកកម្រប៉ះ `runc` ផ្ទាល់។ ការយល់ stack ពន្យល់សារកំហុស និង «ទីកន្លែង» ដែលអ្វីៗរត់។
 
-### Lab៖ `labs/01-isolation-basics` (beginner)
+### Lab៖ `labs/01-isolation-basics` (អ្នកចាប់ផ្តើម)
 
-**Path ពេញចិត្ត:** បញ្ចប់ Lab 01 (Isolation basics)។ គំនិតដូច demos ខាងក្រោម ជាមួយ checklist និង «what to notice»។
+**ផ្លូវដែលគួរធ្វើ៖** បញ្ចប់ Lab 01 (Isolation basics)។ វាជាគំនិតដូចឧទាហរណ៍ខាងក្រោម បូក checklist និង «អ្វីដែលត្រូវកត់សម្គាល់»។
 
-**មិន**ត្រូវការចំណេះដឹងកម្រិតខ្ពស់ — តែ `docker run`, `exec`, `rm`។
+អ្នក **មិន**ត្រូវការចំណេះដឹងកម្រិតខ្ពស់ទេ — ត្រឹម `docker run`, `exec` និង `rm`។
 
-### Worked examples (reference ជម្រើស)
+### ឧទាហរណ៍អនុវត្ត (ឯកសារយោង បើចង់)
 
-Demos ដូច Lab 01 ទុកនៅ handbook។ សន្មត Docker installed (Chapter 4)។ Skim ឥឡូវ read ahead រួច re-run បន្ទាប់ install — ឬធ្វើ lab។
+ឧទាហរណ៍ដូច Lab 01 ទុកនៅទីនេះសម្រាប់សៀវភៅ។ ពួកវាសន្មតថា Docker បានដំឡើងរួច (ជំពូក 4)។ បើអ្នកកំពុងអានមុន អាចមើលឆ្លងឥឡូវ រួចរត់ម្តងទៀតក្រោយដំឡើង — ឬធ្វើ lab តែម្តង។
 
-#### ឧទាហរណ៍ A — Isolation process (pid namespace)
+#### ឧទាហរណ៍ A — បំបែក process (pid namespace)
 
 ```bash
 # Start a quiet container
@@ -311,17 +311,17 @@ ps aux | head
 docker rm -f rean-ps
 ```
 
-→ ក្នុង container **មិន**ឃើញ Chrome/Slack processes host។ នោះគឺ pid isolation។
+→ ក្នុង container អ្នក **មិន**ឃើញ processes ដូច Chrome/Slack របស់ host ទេ។ នោះគឺការបំបែក pid។
 
-#### ឧទាហរណ៍ B — Isolation filesystem (mnt namespace)
+#### ឧទាហរណ៍ B — បំបែក filesystem (mnt namespace)
 
 ```bash
 docker run --rm -it alpine:3.22 sh -c 'echo hello-from-container > /tmp/note.txt; cat /tmp/note.txt; ls /'
 ```
 
-→ Container មាន `/tmp` និង `/` ផ្ទាល់។ Create `/tmp/note.txt` ក្នុងមិន create file នៅ desktop host។
+→ Container មាន `/tmp` និង `/` ផ្ទាល់ខ្លួន។ ការបង្កើត `/tmp/note.txt` នៅក្នុង មិនបង្កើតឯកសារនោះលើផ្ទៃតុ host ទេ។
 
-Compare **bind mount** (folder share intentionally — live coding ពេលក្រោយ)៖
+ប្រៀបធៀបជាមួយ **bind mount** (ថតដែលចែកដោយចេតនា — អ្នកនឹងប្រើពេលក្រោយ សម្រាប់សរសេរកូដផ្ទាល់)៖
 
 ```bash
 mkdir -p /tmp/rean-share
@@ -330,9 +330,9 @@ docker run --rm -v /tmp/rean-share:/data alpine:3.22 cat /data/msg.txt
 # → from-host
 ```
 
-Isolation default; sharing opt-in។
+ការបំបែកជាលំនាំដើម; ការចែកត្រូវជ្រើស។
 
-#### ឧទាហរណ៍ C — Isolation network (net namespace)
+#### ឧទាហរណ៍ C — បំបែក network (net namespace)
 
 ```bash
 # Two containers, each with nginx on container-port 80
@@ -345,9 +345,9 @@ curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:18081/
 docker rm -f rean-web-a rean-web-b
 ```
 
-→ Container នីមួយៗគិតថាមាន port `80`។ Host map published ports ខុសគ្នា។ Network namespacing + port publishing។
+→ Container នីមួយៗគិតថាខ្លួនកាន់ port `80`។ Host ផ្គូ ports ដែលផ្សាយ ឱ្យខុសគ្នា។ នោះគឺ network namespace បូកការផ្សាយ port។
 
-#### ឧទាហរណ៍ D — Resource limits (cgroups)
+#### ឧទាហរណ៍ D — កំណត់ធនធាន (cgroups)
 
 ```bash
 # Limit memory; watch Docker enforce it
@@ -355,7 +355,7 @@ docker run --rm -m 128m --memory-swap 128m alpine:3.22 \
   sh -c 'echo "cgroup memory limit applied"; cat /sys/fs/cgroup/memory.max 2>/dev/null || cat /sys/fs/cgroup/memory/memory.limit_in_bytes 2>/dev/null || echo "(limit visible via docker inspect)"'
 ```
 
-Inspect ពីខាងក្រៅ៖
+ពិនិត្យពីខាងក្រៅ៖
 
 ```bash
 docker run -d --name rean-limited -m 256m alpine:3.22 sleep 60
@@ -364,9 +364,9 @@ docker inspect -f '{{.HostConfig.Memory}}' rean-limited
 docker rm -f rean-limited
 ```
 
-→ Containerization មិនតែ isolate *identity*; គឺ **controlled consumption**។
+→ Containerization មិនត្រឹមបំបែក *អត្តសញ្ញាណ* ទេ; វាក៏ជា **ការប្រើប្រាស់ដែលកំណត់បាន**។
 
-#### Example E — Image ដូចគ្នា containers ច្រើន (density)
+#### ឧទាហរណ៍ E — image ដូចគ្នា containers ច្រើន (ដាក់បានច្រើន)
 
 ```bash
 docker pull redis:7-alpine
@@ -377,9 +377,9 @@ docker ps --filter name=rean-r
 docker rm -f rean-r1 rean-r2 rean-r3
 ```
 
-→ Image មួយ Redis processes isolated បី។ Density win ធៀប VMs បី។
+→ Image មួយ, processes Redis ដែលបំបែកបី។ នោះជាអត្ថប្រយោជន៍នៃការដាក់ច្រើន ធៀបនឹង VMs បី។
 
-#### ឧទាហរណ៍ F — Packaging «works the same» (portable unit)
+#### ឧទាហរណ៍ F — ខ្ចប់ «ដើរដូចគ្នា» (ឯកតាយកទៅបាន)
 
 ```bash
 # Official image already packages Redis + its defaults
@@ -388,99 +388,99 @@ docker run --rm -p 6379:6379 redis:7-alpine
 # (On Linux you may use --network host or the container IP instead)
 ```
 
-Chapters ក្រោយ **build portable unit** ផ្ទាល់ Dockerfile។ គំនិតដូចគ្នា៖ ship environment ជាមួយ app។
+ជំពូកក្រោយបង្រៀនឱ្យ **សង់ឯកតាផ្ទាល់ខ្លួន** ដោយ Dockerfile។ គំនិតដូចគ្នា៖ ផ្ញើបរិស្ថានជាមួយ app។
 
-### *Inside* image container ធម្មតា?
+### ក្នុង image container ធម្មតាមានអ្វី?
 
-ជាធរមាន៖
+ជាធម្មតា៖
 
-- **Userland** minimal (Alpine, Debian slim, distroless, …) — *មិន* kernel ទីពីរ
-- Language runtime (Node, Python, JVM, …) បើត្រូវការ
-- Application files
-- Default command (`CMD` / `ENTRYPOINT`)
-- Metadata (ports, env defaults, labels)
+- **Userland** តូច (Alpine, Debian slim, distroless, …) — *មិនមែន* kernel ទីពីរ
+- runtime ភាសា (Node, Python, JVM, …) បើត្រូវការ
+- ឯកសារ application
+- ពាក្យបញ្ជាលំនាំដើម (`CMD` / `ENTRYPOINT`)
+- Metadata (ports, env លំនាំដើម, labels)
 
-**ជាធរមានមិនមាន**៖
+ជាធម្មតា **គ្មាន**៖
 
 - Hypervisor
-- `/home` host (unless mount)
-- Filesystems containers ផ្សេង
-- Desktop environment ពេញ
+- `/home` របស់ host (លុះត្រាតែអ្នក mount)
+- filesystems របស់ containers ផ្សេង
+- បរិស្ថាន desktop ពេញ
 
-### Containerization *មិន*មានន័យ
+### អ្វីដែល containerization *មិន*មានន័យ
 
-| Myth | Reality |
+| ជំនឿខុស | ការពិត |
 |------|---------|
-| «Containers = VMs» | ទេ — shared kernel, process-level isolation |
-| «Containers secure automatically» | Defaults ជួយ ប៉ុន្តែ harden (users, scans, least privilege) |
-| «Container មួយ = machine VM-sized» | Prefer **concern មួយ per container** (API, DB, worker) compose រួម |
-| «Docker តែវិធី» | Docker popularize; OCI-compatible tools run containers |
-| «Run Docker = production solved» | Config, secrets, networking, observability orchestrator |
+| «Containers = VMs» | ទេ — kernel រួម, ការបំបែកកម្រិត process |
+| «Containers មានសុវត្ថិភាពដោយស្វ័យប្រវត្តិ» | លំនាំដើមជួយ ប៉ុន្តែអ្នកនៅតែត្រូវរឹត (users, scans, សិទ្ធិតិចបំផុត) |
+| «Container មួយ = ម៉ាស៊ីនទំហំ VM» | ចូលចិត្ត **កង្វល់ចម្បងមួយក្នុងមួយ container** (API, DB, worker) រួចផ្គុំជាមួយគ្នា |
+| «មានតែ Docker» | Docker ធ្វើឱ្យវាទូទៅ; ឧបករណ៍ដែលត្រូវ OCI ក៏រត់ containers បាន |
+| «រត់ក្នុង Docker = production រួច» | អ្នកនៅតែត្រូវការ config, secrets, networking, observability និងជារឿយៗអ្នករៀបចំ |
 
-### ពេល containerize (និងពេលមិន)
+### ពេលណាគួរ containerize (និងពេលណាមិនគួរ)
 
-**Fit ល្អ**
+**សមល្អ**
 
 - Web APIs, workers, job runners
-- Sidecars (proxy, log shipper)
-- Databases *dev/test* (prod DB managed separately — team choice)
-- CI tasks environment clean repeatable
-- Ship artifact ដូចគ្នា laptop → staging → prod
+- Sidecars (proxy, អ្នកផ្ញើ log)
+- Databases ក្នុង *dev/test* (DB production ជារឿយៗគ្រប់គ្រងដាច់ — ជម្រើសក្រុម)
+- កិច្ចការ CI ដែលត្រូវការបរិស្ថានស្អាត ធ្វើឡើងវិញបាន
+- ផ្ញើ artifact ដូចគ្នា ពី laptop → staging → prod
 
-**Fit ខ្សោយ / careful**
+**សមខ្សោយ / ប្រយ័ត្ន**
 
-- GUI desktop apps (possible ប៉ុន្តែ awkward)
-- Apps ត្រូវការ host device / kernel module access
-- Ultra-low-latency kernel workloads VM/bare metal mandated
-- «Lift and shift» monolith messy *without* fix config — containers package chaos too
+- app desktop មាន GUI (ធ្វើបាន ប៉ុន្តែជារឿយៗរអាក់រអួល)
+- app ដែលត្រូវការឧបករណ៍ host ពេញ / kernel module
+- ការងារ kernel ដែលត្រូវ latency ទាបខ្លាំង ដែល VM ឬ bare metal ត្រូវបានកំណត់
+- «លើកទាំងដុំ» monolith រញ៉េរញ៉ៃ *ដោយមិន*កែ config — containers ខ្ចប់ភាពវឹកវរទៅជាមួយដែរ
 
-### Mental checklist មុន run container
+### បញ្ជីត្រួតពិនិត្យក្នុងចិត្ត មុនរាល់ container ដែលអ្នករត់
 
-1. **Image** អ្វី? (trust + tag/digest)
-2. **Isolated** vs **sharing**? (ports, volumes, env)
-3. **Resources** ប៉ុន្មាន? (memory/CPU limits prod)
-4. **Data** ពេល remove container? (volumes!)
-5. **Who reach**? (published ports, networks)
+1. **Image** អ្វី ដែលខ្ញុំចាប់ផ្តើម? (ទុកចិត្ត + tag/digest)
+2. **អ្វីបំបែក** ធៀប **អ្វីដែលខ្ញុំកំពុងចែក**? (ports, volumes, env)
+3. **ធនធាន** ប៉ុន្មាន ដែលវាប្រើបាន? (កំណត់ memory/CPU ក្នុង prod)
+4. **ទិន្នន័យ** ទៅណា ពេលលុប container? (volumes!)
+5. **អ្នកណាទៅដល់វា**? (ports ដែលផ្សាយ, networks)
 
-### Bridge ទៅ guide នេះ
+### ស្ពានទៅផ្នែកដែលនៅសល់នៃមគ្គុទ្ទេសក៍នេះ
 
-| Topic បន្ទាប់ | តភ្ជាប់ containerization |
+| ប្រធានបន្ទាប់ | វាភ្ជាប់នឹង containerization យ៉ាងដូចម្តេច |
 |------------|-------------------------------------|
-| Core mental model (Ch.3) | Image / container / Dockerfile / registry vocabulary |
-| Isolation basics (Lab 01) | Feel isolation commands `docker` |
-| First containers (Ch.5 / Lab 02) | Workflow run, logs, clean up |
-| Images & Dockerfiles | *Build* portable unit |
-| Volumes & networks | Controlled exceptions isolation |
-| Compose | Containers ច្រើន cooperate app |
-| Production & security | Harden shared-kernel world |
+| គំរូគំនិតស្នូល (ជំពូក 3) | វាក្យសព្ទ image / container / Dockerfile / registry |
+| Isolation basics (Lab 01) | មានអារម្មណ៍ពីការបំបែក តាមពាក្យបញ្ជា `docker` សាមញ្ញ |
+| Containers ដំបូង (ជំពូក 5 / Lab 02) | ការងារប្រចាំថ្ងៃ៖ រត់, logs, សម្អាត |
+| Images និង Dockerfiles | របៀប *សង់* ឯកតាដែលយកទៅបាន |
+| Volumes និង networks | ករណីលើកលែងដែលគ្រប់គ្រងបាន ពីការបំបែក |
+| Compose | Containers ច្រើន ធ្វើការជាមួយគ្នាជា app មួយ |
+| Production និងសុវត្ថិភាព | រឹតពិភព kernel រួម |
 
-**Takeaway:** Containerization = **package + isolate + limit + ship** shared kernel។ Docker practice នៅ `rean-docker`។
+**ចំណុចចងចាំ៖** Containerization = **ខ្ចប់ + បំបែក + កំណត់ + ផ្ញើ** លើ kernel រួម។ Docker គឺរបៀបដែលអ្នកនឹងអនុវត្តវា នៅសល់នៃ `rean-docker`។
 
 ---
 
 ## 3. គំរូគំនិតស្នូល
 
-Memorize ពាក្យបួន៖
+ទន្ទេញពាក្យបួននេះ៖
 
-### Image (រូបភាព)
+### Image (គំរូ)
 
-**Read-only template** — ដូច class ឬ snapshot filesystem + metadata (default command, env, exposed ports)។
+**គំរូអានបានតែ** — ដូច class ឬរូបថត filesystem បូក metadata (ពាក្យបញ្ជាលំនាំដើម, env, ports ដែលបើក)។
 
-Examples: `nginx:1.28-alpine`, `postgres:16`, `node:22-alpine`។
+ឧទាហរណ៍៖ `nginx:1.28-alpine`, `postgres:16`, `node:22-alpine`។
 
-### Container (ប្រៀបធៀប)
+### Container (ធាតុដែលរត់)
 
-**Running (ឬ stopped) instance** image — ដូច object ពី class។
+**ធាតុដែលកំពុងរត់ (ឬបានឈប់)** នៃ image មួយ — ដូច object ដែលបង្កើតពី class។
 
-Start containers ច្រើន image មួយ។
+អ្នកអាចចាប់ផ្តើម containers ច្រើនពី image តែមួយ។
 
-### Dockerfile (រូបភាព)
+### Dockerfile (រូបមន្ត)
 
-**Recipe** (text file) Dockerfile build image ជួរតាមជួរ។
+**រូបមន្ត** (ឯកសារអក្សរ) ប្រាប់ Docker ពីរបៀប build image មួយជួរម្តងៗ។
 
 ### Registry (ឃ្លាំង)
 
-**Storage/server images**។ Public default: [Docker Hub](https://hub.docker.com)។ Private: GHCR, ECR, GCR, Harbor ជាដើម។
+**កន្លែងផ្ទុក images**។ លំនាំដើមសាធារណៈ៖ [Docker Hub](https://hub.docker.com)។ ជម្រើសឯកជន៖ GHCR, ECR, GCR, Harbor ជាដើម។
 
 ```
 Dockerfile  →  docker build  →  Image  →  docker run  →  Container
@@ -490,132 +490,132 @@ Dockerfile  →  docker build  →  Image  →  docker run  →  Container
                                 Registry
 ```
 
-### Layers (រូបភាព)
+### Layers (ស្រទាប់)
 
-Images stack **layers**។ Dockerfile instruction ជាធរមាន layer។ Layers unchanged **cached** rebuilds លឿន order instructions wisely។
+Images ជាជង់ **layers**។ ពាក្យបញ្ជា Dockerfile នីមួយៗជារឿយៗបង្កើត layer មួយ។ Layers ដែលមិនប្តូរ ត្រូវបាន **cache** ដូច្នេះការសង់ឡើងវិញលឿន បើអ្នករៀបពាក្យបញ្ជាត្រូវ។
 
 ---
 
 ## 4. ដំឡើង និងផ្ទៀងផ្ទាត់
 
-ត្រូវការ Docker **computer អ្នក** មុន labs។ Learners ភាគច្រើន install **Docker Desktop** (Windows, macOS, Linux)។ Linux servers **Docker Engine**។
+ត្រូវការ Docker លើ **កុំព្យូទ័រអ្នក** មុន labs នឹងដើរ។ អ្នករៀនភាគច្រើនដំឡើង **Docker Desktop** (Windows, macOS ឬ Linux)។ លើ Linux server អាចដំឡើង **Docker Engine** វិញ។
 
-Official: [https://docs.docker.com/get-started/get-docker/](https://docs.docker.com/get-started/get-docker/)
+ទាញយក និងឯកសារផ្លូវការ៖ [https://docs.docker.com/get-started/get-docker/](https://docs.docker.com/get-started/get-docker/)
 
-Pick OS ខាងក្រោម រួច **Verify** shared។
+ជ្រើសប្រព័ន្ធប្រតិបត្តិការខាងក្រោម រួចបញ្ចប់ដោយជំហាន **ផ្ទៀងផ្ទាត់** រួម។
 
 ### Windows (ប្រព័ន្ធ)
 
-**Recommended:** Docker Desktop **WSL 2** backend។
+**ណែនាំ៖** Docker Desktop ជាមួយ backend **WSL 2**។
 
-1. **Check requirements**
-   - 64-bit Windows 10 (22H2+) or Windows 11
-   - Virtualization BIOS/UEFI (*Intel VT-x*, *AMD-V*, *SVM*)
-   - ~4 GB RAM free (8 GB+ recommended)
+1. **ពិនិត្យលក្ខខណ្ឌ**
+   - Windows 10 64-bit (កំណែ 22H2+) ឬ Windows 11
+   - បើក virtualization ក្នុង BIOS/UEFI (ជារឿយៗសរសេរ *Intel VT-x*, *AMD-V* ឬ *SVM*)
+   - RAM ទំនេរប្រហែល 4 GB (ណែនាំ 8 GB+)
 
-2. **Install WSL 2** (required)
-   - **PowerShell as Administrator**:
+2. **ដំឡើង WSL 2** (ចាំបាច់សម្រាប់ការរៀបចំដែលណែនាំ)
+   - បើក **PowerShell ជា Administrator** រួចរត់៖
 
 ```powershell
 wsl --install
 ```
 
-   - Restart when asked។
-   - After reboot finish Ubuntu first-time setup។
-   - Confirm WSL:
+   - Restart ពេល Windows សុំ។
+   - ក្រោយ reboot បញ្ចប់ការរៀបចំលើកដំបូងរបស់ Ubuntu (ឬ distro ផ្សេង) បើ terminal បើក។
+   - បញ្ជាក់ថា WSL រួចរាល់៖
 
 ```powershell
 wsl --status
 ```
 
-3. **Download Docker Desktop for Windows**
-   - [Docker Desktop for Windows](https://docs.docker.com/desktop/setup/install/windows-install/)
-   - AMD64 (most PCs) or ARM64 (Snapdragon/ARM)
+3. **ទាញយក Docker Desktop សម្រាប់ Windows**
+   - ចូល [Docker Desktop for Windows](https://docs.docker.com/desktop/setup/install/windows-install/)
+   - ទាញ installer តាម CPU (AMD64 សម្រាប់ PC ភាគច្រើន, ARM64 សម្រាប់ Snapdragon/ARM)
 
-4. **Run installer**
-   - `Docker Desktop Installer.exe`
-   - Default options
-   - **Use WSL 2 instead of Hyper-V** when offered
-   - Finish wizard start Docker Desktop
+4. **រត់ installer**
+   - ចុចពីរដង `Docker Desktop Installer.exe`
+   - ចូលចិត្តជម្រើសលំនាំដើម
+   - ប្រាកដថា **Use WSL 2 instead of Hyper-V** ត្រូវបានជ្រើស ពេលវាសួរ
+   - បញ្ចប់ wizard រួចចាប់ផ្តើម Docker Desktop ពេលវាសុំ
 
-5. **Accept terms wait engine**
-   - Start menu Docker Desktop
-   - Accept Docker Subscription Service Agreement (personal/learning allowed)
-   - Whale icon **running** (not «starting»)
+5. **ទទួលលក្ខខណ្ឌ រួចរង់ចាំ engine**
+   - បើក Docker Desktop ពី Start menu បើវាមិនទាន់រត់
+   - ទទួល Docker Subscription Service Agreement (ការប្រើផ្ទាល់ខ្លួន / រៀន ត្រូវបានអនុញ្ញាតតាមលក្ខខណ្ឌ Docker)
+   - រង់ចាំរូបត្រីបាឡែក្នុង system tray បង្ហាញ Docker **running** (មិនមែន «starting»)
 
-6. **Verify terminal**
-   - **PowerShell**, **Windows Terminal**, or **WSL** → Verify below
+6. **ផ្ទៀងផ្ទាត់ក្នុង terminal**
+   - បើក **PowerShell**, **Windows Terminal** ឬសែល **WSL** រួចបន្តផ្នែកផ្ទៀងផ្ទាត់ខាងក្រោម
 
-**Windows fails**
+**បើមានអ្វីខុសលើ Windows**
 
-- Restart PC after WSL start Docker Desktop
-- Docker Desktop → Settings → General WSL 2
-- Settings → Resources → WSL Integration enable distro
-- `wsl --update` elevated PowerShell
+- Restart PC ក្រោយដំឡើង WSL រួចចាប់ផ្តើម Docker Desktop ម្តងទៀត
+- ក្នុង Docker Desktop → Settings → General បញ្ជាក់ថា WSL 2 ត្រូវបានជ្រើស
+- ក្នុង Docker Desktop → Settings → Resources → WSL Integration បើក distro ដែលបានដំឡើង
+- រត់ `wsl --update` ក្នុង PowerShell ដែលមានសិទ្ធិខ្ពស់ បើ WSL ចាស់
 
 ### macOS (ប្រព័ន្ធ)
 
-**Recommended:** Docker Desktop for Mac។
+**ណែនាំ៖** Docker Desktop for Mac។
 
-1. **Check requirements**
-   - Supported macOS (current + two previous majors)
-   - Apple Silicon (M1/M2/M3/M4…) **or** Intel Mac
-   - ~4 GB RAM free (8 GB+ recommended)
+1. **ពិនិត្យលក្ខខណ្ឌ**
+   - កំណែ macOS ដែលគាំទ្រ (កំណែបច្ចុប្បន្ន និងពីរកំណែធំមុន ជាធម្មតាត្រូវបានគាំទ្រ)
+   - Apple Silicon (M1/M2/M3/M4…) **ឬ** Intel Mac
+   - RAM ទំនេរប្រហែល 4 GB (ណែនាំ 8 GB+)
 
-2. **Download installer**
-   - [Docker Desktop for Mac](https://docs.docker.com/desktop/setup/install/mac-install/)
-   - **Apple Silicon** or **Intel Chip**
-   - Apple menu → About This Mac chip type
+2. **ទាញ installer ឱ្យត្រូវ**
+   - ចូល [Docker Desktop for Mac](https://docs.docker.com/desktop/setup/install/mac-install/)
+   - ជ្រើស **Apple Silicon** ឬ **Intel Chip** ឱ្យត្រូវ Mac
+   - គន្លឹះ៖ ម៉ឺនុយ Apple → About This Mac បង្ហាញប្រភេទ chip
 
-3. **Install Docker Desktop**
-   - Open `Docker.dmg`
-   - Drag Docker → **Applications**
-   - Eject disk image
+3. **ដំឡើង Docker Desktop**
+   - បើក `Docker.dmg` ដែលទាញមក
+   - អូសរូប Docker ទៅក្នុង **Applications**
+   - ដក disk image ចេញពេលរួច
 
-4. **Start first time**
-   - **Applications → Docker**
-   - Approve security/privacy prompts
-   - Accept agreement
-   - Menu-bar whale **running**
+4. **ចាប់ផ្តើម Docker លើកដំបូង**
+   - បើក **Applications → Docker**
+   - យល់ព្រមសំណើសុវត្ថិភាព / ឯកជនភាពរបស់ macOS (អាចត្រូវការ Password ឬ Touch ID)
+   - ទទួល Docker Subscription Service Agreement
+   - រង់ចាំរូបត្រីបាឡែលើ menu bar បង្ហាញ Docker **running**
 
-5. **Verify Terminal**
-   - **Terminal** (or iTerm) → Verify below
+5. **ផ្ទៀងផ្ទាត់ក្នុង Terminal**
+   - បើក **Terminal** (ឬ iTerm) រួចបន្តផ្នែកផ្ទៀងផ្ទាត់ខាងក្រោម
 
-**macOS fails**
+**បើមានអ្វីខុសលើ macOS**
 
-- System Settings → Privacy & Security allow Docker
-- Quit Docker (whale → Quit) reopen
-- Apple Silicon build on M-series (Intel builds poor)
+- System Settings → Privacy & Security៖ អនុញ្ញាត Docker បើ macOS បានទប់វា
+- បិទ Docker អស់ (ម៉ឺនុយត្រីបាឡែ → Quit) រួចបើកម្តងទៀត
+- បញ្ជាក់ថាអ្នកដំឡើងកំណែ Apple Silicon លើ Mac ស៊េរី M (កំណែ Intel រត់មិនល្អនៅទីនោះ)
 
 ### Linux (ប្រព័ន្ធ)
 
-Two choices:
+មានជម្រើសពីរដែលជួបញឹកញាប់៖
 
-| Option | Best when |
+| ជម្រើស | សមពេលណា |
 |--------|-----------|
-| **Docker Desktop for Linux** | GUI easy all-in-one |
-| **Docker Engine** (daemon + CLI) | Lighter Ubuntu/Debian/Fedora |
+| **Docker Desktop for Linux** | ចង់បាន GUI និងការរៀបចំរួមមួយដែលងាយ |
+| **Docker Engine** (daemon + CLI) | ចង់ដំឡើងស្រាលជាង លើ Ubuntu/Debian/Fedora ជាដើម |
 
 #### ជម្រើស A — Docker Desktop សម្រាប់ Linux
 
-1. Distro supported (Ubuntu, Debian, Fedora): [Desktop for Linux](https://docs.docker.com/desktop/setup/install/linux/)
-2. Install `.deb` or `.rpm` official
-3. Launch app menu
-4. Accept agreement engine running
-5. Verify below
+1. បញ្ជាក់ថា distro ត្រូវបានគាំទ្រ (Ubuntu, Debian និង Fedora ជាជម្រើសញឹកញាប់)៖ [Desktop for Linux](https://docs.docker.com/desktop/setup/install/linux/)
+2. ដំឡើងកញ្ចប់តាម distro (`.deb` ឬ `.rpm`) ពីទំព័រផ្លូវការ
+3. បើក Docker Desktop ពីម៉ឺនុយ app
+4. ទទួលកិច្ចព្រមព្រៀង រួចរង់ចាំរហូត engine បង្ហាញថាកំពុងរត់
+5. បន្តផ្នែកផ្ទៀងផ្ទាត់ខាងក្រោម
 
-#### ជម្រើស B — Docker Engine (CLI) Ubuntu/Debian-family
+#### ជម្រើស B — Docker Engine (CLI) លើគ្រួសារ Ubuntu/Debian
 
-Steps usual Linux learners។ Other distros: [Install Docker Engine](https://docs.docker.com/engine/install/)។
+ជំហានទាំងនេះជាផ្លូវធម្មតា សម្រាប់អ្នករៀន Linux ច្រើន។ Distro ផ្សេង សូមធ្វើតាមឯកសារ Engine របស់ Docker សម្រាប់គ្រួសារនោះ ([Install Docker Engine](https://docs.docker.com/engine/install/))។
 
-1. **Update packages prerequisites**
+1. **ធ្វើបច្ចុប្បន្នភាពកញ្ចប់ រួចដំឡើងអ្វីដែលត្រូវមានមុន**
 
 ```bash
 sudo apt-get update
 sudo apt-get install ca-certificates curl
 ```
 
-2. **Add Docker GPG key apt repository**
+2. **បន្ថែម GPG key ផ្លូវការរបស់ Docker និង apt repository**
 
 ```bash
 sudo install -m 0755 -d /etc/apt/keyrings
@@ -631,34 +631,34 @@ echo \
 sudo apt-get update
 ```
 
-> Debian: use Debian instructions (`download.docker.com/linux/debian`) not Ubuntu URL។
+> លើ Debian ប្រើការណែនាំ Debian របស់ Docker (`download.docker.com/linux/debian`) មិនមែន URL Ubuntu ខាងលើទេ។
 
-3. **Install Engine, CLI, Compose plugin, helpers**
+3. **ដំឡើង Engine, CLI, Compose plugin និងឧបករណ៍ជំនួយ**
 
 ```bash
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 ```
 
-4. **Start Docker enable boot**
+4. **ចាប់ផ្តើម Docker រួចបើកឱ្យរត់ពេល boot**
 
 ```bash
 sudo systemctl enable --now docker
 sudo systemctl status docker
 ```
 
-Want `active (running)`។
+អ្នកចង់ឃើញ `active (running)`។
 
-5. **(Recommended) Docker without `sudo` every time**
+5. **(ណែនាំ) ប្រើ Docker ដោយមិនវាយ `sudo` រាល់ដង**
 
 ```bash
 sudo usermod -aG docker $USER
 ```
 
-**Log out log back in** (or reboot) group applies។ Until then `sudo docker …`។
+រួច **ចេញ ហើយចូលវិញ** (ឬ reboot) ដើម្បីសមាជិកភាពក្រុមមានប្រសិទ្ធភាព។ រហូតដល់ពេលនោះ បន្តប្រើ `sudo docker …`។
 
-### ផ្ទៀងផ្ទាត់ (គ្រប់ platform)
+### ផ្ទៀងផ្ទាត់ (គ្រប់ប្រព័ន្ធ)
 
-Docker installed running terminal:
+ក្រោយ Docker បានដំឡើង ហើយកំពុងរត់ បើក terminal រួចរត់៖
 
 ```bash
 docker --version
@@ -667,18 +667,18 @@ docker info
 docker run --rm hello-world
 ```
 
-**Should see**
+**អ្វីដែលអ្នកគួរឃើញ**
 
-- Docker version (Engine / Desktop)
-- Compose version (plugin `docker compose`, not only old `docker-compose`)
-- `docker info` server details
-- `hello-world` tiny image success message
+- កំណែ Docker (Engine / Desktop)
+- កំណែ Compose (plugin៖ `docker compose` មិនមែនត្រឹម binary ចាស់ `docker-compose`)
+- `docker info` បង្ហាញព័ត៌មាន server (storage driver, CPUs, memory)
+- `hello-world` ទាញ image តូច រួចបោះពុម្ពសារជោគជ័យ
 
-`docker info` or `hello-world` fails → Docker not fully running — start Docker Desktop (`sudo systemctl start docker` Linux Engine) retry។
+បើ `docker info` ឬ `hello-world` បរាជ័យ Docker មិនទាន់រត់ពេញទេ — ចាប់ផ្តើម Docker Desktop (ឬ `sudo systemctl start docker` លើ Linux Engine) រួចសាកម្តងទៀត។
 
-### ចំណាំ Linux សំខាន់៖ permissions
+### ចំណាំ Linux សំខាន់៖ សិទ្ធិ
 
-`permission denied` Docker socket:
+បើអ្នកបាន `permission denied` ពេលនិយាយជាមួយ Docker socket៖
 
 ```bash
 # Option A (common): add user docker group, log out/in
@@ -688,20 +688,19 @@ sudo usermod -aG docker $USER
 sudo docker ps
 ```
 
-### Daemon vs client (ប្រៀបធៀប)
+### Daemon ធៀប client
 
-- **Client:** `docker` CLI you type
-- **Daemon:** `dockerd` background creates containers
+- **Client៖** CLI `docker` ដែលអ្នកវាយ
+- **Daemon៖** សេវា `dockerd` នៅផ្ទៃខាងក្រោយ ដែលបង្កើត containers ពិត
 
 ```bash
 # Is the daemon running? (Linux Engine / many distros)
 sudo systemctl status docker
 ```
 
-Windows/macOS Docker Desktop daemon inside Desktop Linux VM — keep Desktop running while work។
+លើ Windows និង macOS ជាមួយ Docker Desktop, daemon រត់ក្នុង Linux VM របស់ Desktop — ទុក app Desktop ឱ្យរត់ ពេលអ្នកធ្វើការ។
 
 ---
-
 ## 5. Container ដំបូងរបស់អ្នក
 
 ### Lab៖ `labs/02-hello`

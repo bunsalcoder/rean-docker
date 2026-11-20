@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#f2f6fa" />
     <link rel="manifest" href="./site.webmanifest" />
     <title>តើ Docker ដោះស្រាយបញ្ហាអ្វី? — rean-docker</title>
-    <meta name="description" content="អ្នក build app នៅ laptop។ វាដំណើរការ។ នៅ machine មិត្តរួមការ៖ ខូច។ នៅ server៖ ខូច។ មូលហេតុជាធរមានរួមមាន៖" />
+    <meta name="description" content="អ្នកសង់ app លើ laptop។ វាដើរ។ លើម៉ាស៊ីនមិត្តរួមការ៖ ខូច។ លើ server៖ ខូច។ មូលហេតុញឹកញាប់គឺ៖" />
     <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/1.km.html" />
     <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/1.html" />
     <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/1.km.html" />
@@ -17,12 +17,12 @@
     <meta property="og:site_name" content="rean-docker" />
     <meta property="og:type" content="article" />
     <meta property="og:title" content="តើ Docker ដោះស្រាយបញ្ហាអ្វី? — rean-docker" />
-    <meta property="og:description" content="អ្នក build app នៅ laptop។ វាដំណើរការ។ នៅ machine មិត្តរួមការ៖ ខូច។ នៅ server៖ ខូច។ មូលហេតុជាធរមានរួមមាន៖" />
+    <meta property="og:description" content="អ្នកសង់ app លើ laptop។ វាដើរ។ លើម៉ាស៊ីនមិត្តរួមការ៖ ខូច។ លើ server៖ ខូច។ មូលហេតុញឹកញាប់គឺ៖" />
     <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/1.km.html" />
     <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="តើ Docker ដោះស្រាយបញ្ហាអ្វី? — rean-docker" />
-    <meta name="twitter:description" content="អ្នក build app នៅ laptop។ វាដំណើរការ។ នៅ machine មិត្តរួមការ៖ ខូច។ នៅ server៖ ខូច។ មូលហេតុជាធរមានរួមមាន៖" />
+    <meta name="twitter:description" content="អ្នកសង់ app លើ laptop។ វាដើរ។ លើម៉ាស៊ីនមិត្តរួមការ៖ ខូច។ លើ server៖ ខូច។ មូលហេតុញឹកញាប់គឺ៖" />
     <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
     <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
@@ -49,71 +49,71 @@
       </p>
       <p class="static-reader-hint">Checklist និងវឌ្ឍនភាពធ្វើសមកាលនៅអ្នកអានអន្តរកម្ម (និងនៅទំព័រនេះពេល JavaScript បើក).</p>
       <div class="md-body" data-checklist-scope="learn:1">
-<h3>ការឈឺចដែលជាប់ទម្លាប់</h3>
-<p>អ្នក build app នៅ laptop។ វាដំណើរការ។ នៅ machine មិត្តរួមការ៖ ខូច។ នៅ server៖ ខូច។ មូលហេតុជាធរមានរួមមាន៖</p>
+<h3>ការឈឺចាប់ដែលជួបញឹកញាប់</h3>
+<p>អ្នកសង់ app លើ laptop។ វាដើរ។ លើម៉ាស៊ីនមិត្តរួមការ៖ ខូច។ លើ server៖ ខូច។ មូលហេតុញឹកញាប់គឺ៖</p>
 <ul>
-<li>OS packages ខុសគ្នា</li>
-<li>Language runtime ខុសគ្នា (Node 20 vs 22, Python 3.10 vs 3.12)</li>
-<li>System libraries ខ្វះ</li>
-<li>Configuration drift «វាដំណើរការនៅ machine ខ្ញុំ»</li>
+<li>កញ្ចប់ OS មិនដូចគ្នា</li>
+<li>runtime ភាសាមិនដូចគ្នា (Node 20 ធៀប 22, Python 3.10 ធៀប 3.12)</li>
+<li>បណ្ណាល័យប្រព័ន្ធខ្វះ</li>
+<li>ការកំណត់រសាត់ — «ដើរលើម៉ាស៊ីនខ្ញុំ»</li>
 </ul>
 <h3>ចម្លើយរបស់ Docker</h3>
-<p><strong>Package application <em>និង</em> runtime dependencies របស់វាទៅក្នុង unit ដែលអាចផ្ទេរបាន ហៅថា container។</strong></p>
-<p>Unit នោះ៖</p>
+<p><strong>ខ្ចប់ application <em>និង</em> dependencies ដែលវាត្រូវការ ទៅក្នុងឯកតាដែលយកទៅរត់ទីណាក៏បាន ហៅថា container។</strong></p>
+<p>ឯកតានោះ៖</p>
 <ul>
-<li>Run ដូចគ្នានៅ laptop, CI និង server</li>
-<li>Start ក្នុងរយៈពេលពីរបីវិនាទី (ស្រាលជាង virtual machine ពេញ)</li>
-<li>Isolate processes, filesystems និង (ជម្រើស) networks</li>
+<li>រត់ដូចគ្នាលើ laptop, CI និង server</li>
+<li>ចាប់ផ្តើមក្នុងពីរបីវិនាទី (ស្រាលជាង virtual machine ពេញលេញ)</li>
+<li>បំបែក processes, filesystems និង (បើជ្រើស) networks</li>
 </ul>
-<h3>Containers vs ម៉ាស៊ីន virtual (VM)</h3>
+<h3>Container ធៀបនឹង virtual machine (VM)</h3>
 <table>
 <thead>
 <tr>
 <th></th>
-<th>Virtual Machine</th>
+<th>Virtual machine</th>
 <th>Container</th>
 </tr>
 </thead>
 <tbody><tr>
-<td>រួមបញ្ចូល guest OS?</td>
+<td>រួម guest OS?</td>
 <td>បាទ (OS ពេញ)</td>
-<td>ទេ — share host kernel</td>
+<td>ទេ — ចែក host kernel</td>
 </tr>
 <tr>
 <td>ទំហំ</td>
 <td>GB</td>
-<td>MB–រយៈរាប hundreds of MB</td>
+<td>MB ដល់រាប់រយ MB</td>
 </tr>
 <tr>
-<td>ពេល start</td>
+<td>ពេលចាប់ផ្តើម</td>
 <td>នាទី</td>
 <td>វិនាទី</td>
 </tr>
 <tr>
-<td>Isolation</td>
+<td>ការបំបែក</td>
 <td>រឹង (hypervisor)</td>
-<td>Process-level (namespaces + cgroups)</td>
+<td>កម្រិត process (namespaces + cgroups)</td>
 </tr>
 <tr>
-<td>Density</td>
-<td>តិច per host</td>
-<td>ច្រើន per host</td>
+<td>ចំនួនក្នុងមួយ host</td>
+<td>តិច</td>
+<td>ច្រើន</td>
 </tr>
 </tbody></table>
-<p><strong>រូបភាព:</strong> VM គឺជាផ្ទះពេញមួយ។ Container គឺជាបន្ទប់ក្នុងអគារដែល share plumbing និង electricity (host kernel) ប៉ុន្តែមានបន្ទប់ចាក់សោផ្ទាល់ (filesystem, process tree, network namespace)។</p>
-<p>បន្ទាប់ <strong>Chapter 2</strong> ពន្យល់ containerization ជាភាសាសាមញ្ញ (មូលដ្ឋាន beginner) រួច <strong>Lab 01</strong> ឱ្យអ្នកមានអារម្មណ៍ isolation ជាមួយ commands សាមញ្ញ។</p>
+<p><strong>ឧបមា:</strong> VM គឺផ្ទះមួយខ្នង។ Container គឺបន្ទប់ក្នុងអគារ ដែលចែកបំពង់ទឹក និងអគ្គិសនី (host kernel) ប៉ុន្តែមានបន្ទប់ចាក់សោផ្ទាល់ខ្លួន (filesystem, process tree, network namespace)។</p>
+<p>បន្ទាប់ <strong>ជំពូក 2</strong> ពន្យល់ containerization ជាភាសាសាមញ្ញ (មូលដ្ឋានសម្រាប់អ្នកចាប់ផ្តើម) រួច <strong>Lab 01</strong> ឱ្យអ្នកមានអារម្មណ៍ពីការបំបែក តាមពាក្យបញ្ជាសាមញ្ញ។</p>
 <h3>Docker គឺអ្វី (និងមិនមែនអ្វី)</h3>
 <p><strong>Docker គឺ៖</strong></p>
 <ul>
-<li>Platform ដើម្បី build, ship និង run containers</li>
-<li>Client (<code>docker</code>) និយាយជាមួយ daemon (<code>dockerd</code>)</li>
-<li>Ecosystem៖ images, registries (Docker Hub), Compose ជាដើម</li>
+<li>វេទិកាសម្រាប់សង់ (build), ផ្ញើ (ship) និងរត់ (run) containers</li>
+<li>client (<code>docker</code>) និយាយជាមួយ daemon (<code>dockerd</code>)</li>
+<li>ប្រព័ន្ធជុំវិញ៖ images, registries (Docker Hub), Compose ជាដើម</li>
 </ul>
 <p><strong>Docker មិនមែន៖</strong></p>
 <ul>
-<li>ជំនួស architecture application ល្អ</li>
-<li>«Secure by default» ដោយវេទម្ម (អ្នកនៅតែ harden images និង configs)</li>
-<li>ដូច Kubernetes (K8s <em>orchestrate</em> containers ក scale; Docker <em>run</em> ពួកវា)</li>
+<li>ជំនួសស្ថាបត្យកម្ម application ដែលល្អ</li>
+<li>«មានសុវត្ថិភាពតាំងពីដើម» ដោយខ្លួនឯង (អ្នកនៅតែត្រូវរឹត images និង configs)</li>
+<li>ដូច Kubernetes (K8s <em>រៀបចំ</em> containers ពេលមានច្រើន; Docker <em>រត់</em> ពួកវា)</li>
 </ul>
 <hr>
 
