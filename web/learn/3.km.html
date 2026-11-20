@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#f2f6fa" />
     <link rel="manifest" href="./site.webmanifest" />
     <title>គំរូគំនិតស្នូល — rean-docker</title>
-    <meta name="description" content="Read-only template — ដូច class ឬ snapshot filesystem + metadata (default command, env, exposed ports)។" />
+    <meta name="description" content="គំរូអានបានតែ — ដូច class ឬរូបថត filesystem បូក metadata (ពាក្យបញ្ជាលំនាំដើម, env, ports ដែលបើក)។" />
     <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/3.km.html" />
     <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/3.html" />
     <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/3.km.html" />
@@ -17,12 +17,12 @@
     <meta property="og:site_name" content="rean-docker" />
     <meta property="og:type" content="article" />
     <meta property="og:title" content="គំរូគំនិតស្នូល — rean-docker" />
-    <meta property="og:description" content="Read-only template — ដូច class ឬ snapshot filesystem + metadata (default command, env, exposed ports)។" />
+    <meta property="og:description" content="គំរូអានបានតែ — ដូច class ឬរូបថត filesystem បូក metadata (ពាក្យបញ្ជាលំនាំដើម, env, ports ដែលបើក)។" />
     <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/3.km.html" />
     <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="គំរូគំនិតស្នូល — rean-docker" />
-    <meta name="twitter:description" content="Read-only template — ដូច class ឬ snapshot filesystem + metadata (default command, env, exposed ports)។" />
+    <meta name="twitter:description" content="គំរូអានបានតែ — ដូច class ឬរូបថត filesystem បូក metadata (ពាក្យបញ្ជាលំនាំដើម, env, ports ដែលបើក)។" />
     <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
     <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
@@ -49,25 +49,25 @@
       </p>
       <p class="static-reader-hint">Checklist និងវឌ្ឍនភាពធ្វើសមកាលនៅអ្នកអានអន្តរកម្ម (និងនៅទំព័រនេះពេល JavaScript បើក).</p>
       <div class="md-body" data-checklist-scope="learn:3">
-<p>Memorize ពាក្យបួន៖</p>
-<h3>Image (រូបភាព)</h3>
-<p><strong>Read-only template</strong> — ដូច class ឬ snapshot filesystem + metadata (default command, env, exposed ports)។</p>
-<p>Examples: <code>nginx:1.28-alpine</code>, <code>postgres:16</code>, <code>node:22-alpine</code>។</p>
-<h3>Container (ប្រៀបធៀប)</h3>
-<p><strong>Running (ឬ stopped) instance</strong> image — ដូច object ពី class។</p>
-<p>Start containers ច្រើន image មួយ។</p>
-<h3>Dockerfile (រូបភាព)</h3>
-<p><strong>Recipe</strong> (text file) Dockerfile build image ជួរតាមជួរ។</p>
+<p>ទន្ទេញពាក្យបួននេះ៖</p>
+<h3>Image (គំរូ)</h3>
+<p><strong>គំរូអានបានតែ</strong> — ដូច class ឬរូបថត filesystem បូក metadata (ពាក្យបញ្ជាលំនាំដើម, env, ports ដែលបើក)។</p>
+<p>ឧទាហរណ៍៖ <code>nginx:1.28-alpine</code>, <code>postgres:16</code>, <code>node:22-alpine</code>។</p>
+<h3>Container (ធាតុដែលរត់)</h3>
+<p><strong>ធាតុដែលកំពុងរត់ (ឬបានឈប់)</strong> នៃ image មួយ — ដូច object ដែលបង្កើតពី class។</p>
+<p>អ្នកអាចចាប់ផ្តើម containers ច្រើនពី image តែមួយ។</p>
+<h3>Dockerfile (រូបមន្ត)</h3>
+<p><strong>រូបមន្ត</strong> (ឯកសារអក្សរ) ប្រាប់ Docker ពីរបៀប build image មួយជួរម្តងៗ។</p>
 <h3>Registry (ឃ្លាំង)</h3>
-<p><strong>Storage/server images</strong>។ Public default: <a href="https://hub.docker.com">Docker Hub</a>។ Private: GHCR, ECR, GCR, Harbor ជាដើម។</p>
+<p><strong>កន្លែងផ្ទុក images</strong>។ លំនាំដើមសាធារណៈ៖ <a href="https://hub.docker.com">Docker Hub</a>។ ជម្រើសឯកជន៖ GHCR, ECR, GCR, Harbor ជាដើម។</p>
 <pre><code>Dockerfile  →  docker build  →  Image  →  docker run  →  Container
                                     ↓
                               docker push/pull
                                     ↓
                                 Registry
 </code></pre>
-<h3>Layers (រូបភាព)</h3>
-<p>Images stack <strong>layers</strong>។ Dockerfile instruction ជាធរមាន layer។ Layers unchanged <strong>cached</strong> rebuilds លឿន order instructions wisely។</p>
+<h3>Layers (ស្រទាប់)</h3>
+<p>Images ជាជង់ <strong>layers</strong>។ ពាក្យបញ្ជា Dockerfile នីមួយៗជារឿយៗបង្កើត layer មួយ។ Layers ដែលមិនប្តូរ ត្រូវបាន <strong>cache</strong> ដូច្នេះការសង់ឡើងវិញលឿន បើអ្នករៀបពាក្យបញ្ជាត្រូវ។</p>
 <hr>
 
       </div>
