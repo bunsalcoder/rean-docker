@@ -49,7 +49,7 @@
       </p>
       <p class="static-reader-hint">Checklist និងវឌ្ឍនភាពធ្វើសមកាលនៅអ្នកអានអន្តរកម្ម (និងនៅទំព័រនេះពេល JavaScript បើក).</p>
       <div class="md-body" data-checklist-scope="learn:6">
-<h3>List និង inspect</h3>
+<h3>មើលបញ្ជី និង inspect</h3>
 <pre><code class="language-bash">docker images
 # or
 docker image ls
@@ -59,20 +59,20 @@ docker image inspect redis:7-alpine
 docker history redis:7-alpine
 </code></pre>
 <p><code>history</code> បង្ហាញ layers និងទំហំប្រហែល — មានប្រយោជន៍ខ្លាំងសម្រាប់មើលថាតើ image ធំហួសហេតុនៅណា។</p>
-<h3>Tags (រូបភាព)</h3>
-<p><code>nginx:alpine</code> មានន័យថា:</p>
+<h3>Tags (ស្លាក)</h3>
+<p><code>nginx:alpine</code> មានន័យថា៖</p>
 <ul>
-<li>Repository/name: <code>nginx</code></li>
-<li>Tag: <code>alpine</code> (variant ផ្អែកលើ Alpine Linux)</li>
+<li>Repository/ឈ្មោះ៖ <code>nginx</code></li>
+<li>Tag៖ <code>alpine</code> (ទម្រង់ផ្អែកលើ Alpine Linux)</li>
 </ul>
-<p>Tag ពិសេស: <code>latest</code> — <strong>កុំពឹងផ្អែកលើវាក្នុង production</strong>។ គួរប្រើ version ច្បាស់៖ <code>nginx:1.28-alpine</code>។ Labs ក្នុង repo នេះ pin tag បែបនោះសម្រាប់ commands ដែលអ្នក run។ <code>nginx:alpine</code> នៅតែជា tag ពិត; វាផ្លាស់ទីពេល publisher ផ្សាយឡើងវិញ។</p>
+<p>Tag ពិសេស៖ <code>latest</code> — <strong>កុំពឹងវាក្នុង production</strong>។ ចូលចិត្តកំណែច្បាស់៖ <code>nginx:1.28-alpine</code>។ Labs ក្នុង repo នេះ pin tag បែបនោះ សម្រាប់ពាក្យបញ្ជាដែលអ្នករត់។ <code>nginx:alpine</code> នៅតែជា tag ពិត; វាផ្លាស់ពេលអ្នកផ្សាយបោះពុម្ពឡើងវិញ។</p>
 <h3>Image ផ្លូវការ និងផ្ទាល់ខ្លួន</h3>
 <ul>
-<li><strong>Official images</strong> នៅ Docker Hub ត្រូវបាន curate (postgres, redis, python…)។</li>
-<li><strong>Images របស់អ្នក</strong> ត្រូវបាន build ពី Dockerfile ហើយ push ទៅ registry។</li>
+<li><strong>Official images</strong> លើ Docker Hub ត្រូវបានជ្រើសរើសហើយ (postgres, redis, python…)។</li>
+<li><strong>Images របស់អ្នក</strong> ត្រូវបាន build ពី Dockerfile រួច push ទៅ registry។</li>
 </ul>
 <h3>Image ID និងឈ្មោះ</h3>
-<p>Image មាន content digest / ID។ ឈ្មោះគឺស្លាកសម្រាប់មនុស្សដែលចង្អុលទៅ ID។ Retag មិនចម្លង layers ទេ — វាបន្ថែមឈ្មោះមួយទៀត។</p>
+<p>Image មាន content digest / ID។ ឈ្មោះគឺស្លាកសម្រាប់មនុស្ស ដែលចង្អុលទៅ ID។ ការដាក់ tag ថ្មីមិនចម្លង layers ទេ — វាបន្ថែមឈ្មោះមួយទៀត។</p>
 <pre><code class="language-bash">docker tag nginx:1.28-alpine my-nginx:dev
 docker images | grep nginx
 </code></pre>

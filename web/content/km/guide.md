@@ -705,21 +705,21 @@ sudo systemctl status docker
 
 ### Lab៖ `labs/02-hello`
 
-### Run container នៅ foreground
+### រត់ container នៅផ្ទៃមុខ (foreground)
 
 ```bash
 docker run -it ubuntu:24.04 bash
 ```
 
-| Flag | Meaning |
+| Flag | អត្ថន័យ |
 |------|---------|
-| `run` | Create + start container from image |
-| `-i` | Keep STDIN open |
-| `-t` | Allocate TTY (interactive terminal) |
-| `ubuntu:24.04` | Image name + tag |
-| `bash` | Command run inside |
+| `run` | បង្កើត ហើយចាប់ផ្តើម container ពី image |
+| `-i` | ទុក STDIN ឱ្យបើក |
+| `-t` | ផ្តល់ TTY (terminal អន្តរកម្ម) |
+| `ubuntu:24.04` | ឈ្មោះ image + tag |
+| `bash` | ពាក្យបញ្ជាដែលរត់នៅខាងក្នុង |
 
-Inside container try:
+ក្នុង container សាក៖
 
 ```bash
 cat /etc/os-release
@@ -727,23 +727,23 @@ whoami
 exit
 ```
 
-When `exit` container **stops**។ Still exists until remove។
+ពេលអ្នក `exit` container **ឈប់**។ វានៅមានរហូតដល់អ្នកលុប។
 
-### Run នៅ background (detached)
+### រត់នៅផ្ទៃខាងក្រោយ (detached)
 
 ```bash
 docker run -d --name my-nginx -p 8080:80 nginx:1.28-alpine
 ```
 
-| Flag | Meaning |
+| Flag | អត្ថន័យ |
 |------|---------|
-| `-d` | Detached (background) |
-| `--name` | Friendly name instead of random ID |
-| `-p 8080:80` | Map host port 8080 → container port 80 |
+| `-d` | Detached (ផ្ទៃខាងក្រោយ) |
+| `--name` | ឈ្មោះងាយចាំ ជំនួស ID ចៃដន្យ |
+| `-p 8080:80` | ផ្គូ port 8080 លើ host → port 80 ក្នុង container |
 
-Open: [http://localhost:8080](http://localhost:8080)
+បើក៖ [http://localhost:8080](http://localhost:8080)
 
-### ពាក្យបញ្ជា day-1 សំខាន់ៗ
+### ពាក្យបញ្ជាថ្ងៃដំបូងសំខាន់ៗ
 
 ```bash
 docker ps                 # running containers
@@ -757,14 +757,14 @@ docker rm my-nginx        # delete stopped container
 docker rm -f my-nginx     # force remove (stop + delete)
 ```
 
-### `--rm` containers ប្រើរួចលុប
+### `--rm` សម្រាប់ containers ប្រើរួចលុប
 
 ```bash
 docker run --rm -it alpine sh
 # when you exit, container is auto-deleted
 ```
 
-### សម្អាត (ទម្លាប់ សុវត្ថិភាព ពីដើម)
+### សម្អាត (ទម្លាប់សុវត្ថិភាពតាំងពីដើម)
 
 ```bash
 docker ps -a                      # see leftover containers
@@ -775,18 +775,18 @@ docker image prune                # remove dangling images
 docker system prune -a
 ```
 
-**Lab exercise**
+**លំហាត់ lab**
 
-1. Run Nginx port `8080`។
-2. `curl localhost:8080` confirm HTML។
-3. `docker exec` list `/usr/share/nginx/html`។
-4. Stop remove container។
+1. រត់ Nginx លើ port `8080`។
+2. `curl localhost:8080` រួចបញ្ជាក់ថាឃើញ HTML។
+3. `docker exec` ចូលទៅ រួចមើលបញ្ជី `/usr/share/nginx/html`។
+4. ឈប់ ហើយលុប container។
 
 ---
 
 ## 6. ពន្យល់ images ឱ្យជ្រៅ
 
-### List និង inspect
+### មើលបញ្ជី និង inspect
 
 ```bash
 docker images
@@ -800,23 +800,23 @@ docker history redis:7-alpine
 
 `history` បង្ហាញ layers និងទំហំប្រហែល — មានប្រយោជន៍ខ្លាំងសម្រាប់មើលថាតើ image ធំហួសហេតុនៅណា។
 
-### Tags (រូបភាព)
+### Tags (ស្លាក)
 
-`nginx:alpine` មានន័យថា:
+`nginx:alpine` មានន័យថា៖
 
-- Repository/name: `nginx`
-- Tag: `alpine` (variant ផ្អែកលើ Alpine Linux)
+- Repository/ឈ្មោះ៖ `nginx`
+- Tag៖ `alpine` (ទម្រង់ផ្អែកលើ Alpine Linux)
 
-Tag ពិសេស: `latest` — **កុំពឹងផ្អែកលើវាក្នុង production**។ គួរប្រើ version ច្បាស់៖ `nginx:1.28-alpine`។ Labs ក្នុង repo នេះ pin tag បែបនោះសម្រាប់ commands ដែលអ្នក run។ `nginx:alpine` នៅតែជា tag ពិត; វាផ្លាស់ទីពេល publisher ផ្សាយឡើងវិញ។
+Tag ពិសេស៖ `latest` — **កុំពឹងវាក្នុង production**។ ចូលចិត្តកំណែច្បាស់៖ `nginx:1.28-alpine`។ Labs ក្នុង repo នេះ pin tag បែបនោះ សម្រាប់ពាក្យបញ្ជាដែលអ្នករត់។ `nginx:alpine` នៅតែជា tag ពិត; វាផ្លាស់ពេលអ្នកផ្សាយបោះពុម្ពឡើងវិញ។
 
 ### Image ផ្លូវការ និងផ្ទាល់ខ្លួន
 
-- **Official images** នៅ Docker Hub ត្រូវបាន curate (postgres, redis, python…)។
-- **Images របស់អ្នក** ត្រូវបាន build ពី Dockerfile ហើយ push ទៅ registry។
+- **Official images** លើ Docker Hub ត្រូវបានជ្រើសរើសហើយ (postgres, redis, python…)។
+- **Images របស់អ្នក** ត្រូវបាន build ពី Dockerfile រួច push ទៅ registry។
 
 ### Image ID និងឈ្មោះ
 
-Image មាន content digest / ID។ ឈ្មោះគឺស្លាកសម្រាប់មនុស្សដែលចង្អុលទៅ ID។ Retag មិនចម្លង layers ទេ — វាបន្ថែមឈ្មោះមួយទៀត។
+Image មាន content digest / ID។ ឈ្មោះគឺស្លាកសម្រាប់មនុស្ស ដែលចង្អុលទៅ ID។ ការដាក់ tag ថ្មីមិនចម្លង layers ទេ — វាបន្ថែមឈ្មោះមួយទៀត។
 
 ```bash
 docker tag nginx:1.28-alpine my-nginx:dev
@@ -829,7 +829,7 @@ docker images | grep nginx
 
 ### Lab៖ `labs/03-dockerfile`
 
-Dockerfile គឺជា script នៃ instructions។ ឧទាហរណ៍ (កម្មវិធី Node សាមញ្ញ):
+Dockerfile គឺ script នៃ instruction។ ឧទាហរណ៍ (app Node សាមញ្ញ)៖
 
 ```dockerfile
 # Start from a small official base
@@ -859,32 +859,32 @@ CMD ["node", "server.js"]
 
 ### តារាងសង្ខេប instruction
 
-| Instruction | Purpose |
+| Instruction | គោលបំណង |
 |-------------|---------|
-| `FROM` | Base image (required first, except ARG before FROM) |
-| `WORKDIR` | Set working directory (creates if missing) |
-| `COPY` / `ADD` | Copy files into image (`COPY` preferred; `ADD` has extra magic) |
-| `RUN` | Execute build-time commands (install packages, etc.) |
-| `ENV` | Set environment variables |
-| `EXPOSE` | Document ports (documentation + tooling hint) |
-| `CMD` | Default command (easily overridden) |
-| `ENTRYPOINT` | Fixed main executable (args often appended) |
-| `USER` | Switch to non-root user |
-| `VOLUME` | Declare mount points |
-| `HEALTHCHECK` | How Docker probes container health |
-| `ARG` | Build-time variables |
+| `FROM` | Image មូលដ្ឋាន (ត្រូវនៅដើម លើកលែង `ARG` មុន `FROM`) |
+| `WORKDIR` | កំណត់ថតធ្វើការ (បង្កើតបើមិនទាន់មាន) |
+| `COPY` / `ADD` | ចម្លងឯកសារចូល image (`COPY` ល្អជាង; `ADD` មានឥរិយាបថបន្ថែម) |
+| `RUN` | រត់ពាក្យបញ្ជាពេល build (ដំឡើងកញ្ចប់ ជាដើម) |
+| `ENV` | កំណត់អថេរបរិស្ថាន |
+| `EXPOSE` | កត់ត្រា ports (ឯកសារ + គន្លឹះសម្រាប់ឧបករណ៍) |
+| `CMD` | ពាក្យបញ្ជាលំនាំដើម (ងាយសរសេរជាន់) |
+| `ENTRYPOINT` | កម្មវិធីចម្បងថេរ (args ជារឿយៗត្រូវបានបន្ថែមពីក្រោយ) |
+| `USER` | ប្តូរទៅ user មិនមែន root |
+| `VOLUME` | ប្រកាសចំណុច mount |
+| `HEALTHCHECK` | របៀបដែល Docker សាកសុខភាព container |
+| `ARG` | អថេរពេល build |
 
-### CMD vs ENTRYPOINT (ប្រៀបធៀប)
+### CMD ធៀប ENTRYPOINT
 
 ```dockerfile
 ENTRYPOINT ["nginx"]
 CMD ["-g", "daemon off;"]
 ```
 
-- `docker run img` → runs `nginx -g 'daemon off;'`
-- `docker run img -t` → runs `nginx -t` (CMD replaced, ENTRYPOINT kept)
+- `docker run img` → រត់ `nginx -g 'daemon off;'`
+- `docker run img -t` → រត់ `nginx -t` (`CMD` ត្រូវបានជំនួស, `ENTRYPOINT` នៅ)
 
-Prefer **exec form** (JSON array), not shell form, signals (SIGTERM) reach process correctly:
+ចូលចិត្ត **ទម្រង់ exec** (អារេ JSON) មិនមែនទម្រង់ shell ទេ ដើម្បីសញ្ញា (SIGTERM) ទៅដល់ process ត្រូវ៖
 
 ```dockerfile
 # Good
@@ -894,9 +894,9 @@ CMD ["node", "server.js"]
 CMD node server.js
 ```
 
-### Build និង run
+### Build និងរត់
 
-From `labs/03-dockerfile`:
+ពី `labs/03-dockerfile`៖
 
 ```bash
 cd labs/03-dockerfile
@@ -904,15 +904,15 @@ docker build -t rean-hello:1.0 .
 docker run --rm -p 3000:3000 rean-hello:1.0
 ```
 
-| Part | Meaning |
+| ផ្នែក | អត្ថន័យ |
 |------|---------|
-| `build` | Build image from Dockerfile |
-| `-t rean-hello:1.0` | Name:tag |
-| `.` | Build context (files sent to daemon) |
+| `build` | Build image ពី Dockerfile |
+| `-t rean-hello:1.0` | ឈ្មោះ:tag |
+| `.` | Build context (ឯកសារដែលផ្ញើទៅ daemon) |
 
 ### Build context និង `.dockerignore`
 
-Everything context directory sent Docker។ Exclude junk:
+អ្វីៗក្នុងថត context អាចត្រូវបានផ្ញើទៅ Docker។ ដករបស់មិនចាំបាច់ចេញ៖
 
 ```gitignore
 node_modules
@@ -922,18 +922,18 @@ node_modules
 npm-debug.log
 ```
 
-**Why it matters:** Smaller context = faster builds។ Never copy secrets into images accidentally។
+**ហេតុអ្វីសំខាន់៖** Context តូច = build លឿន។ កុំចម្លង secrets ចូល images ដោយចៃដន្យ។
 
-### ទម្លាប់ layer caching (សំខាន់)
+### យុទ្ធសាស្ត្រ layer caching (ជំនាញសំខាន់)
 
-**Bad order** (any code change busts `npm install` cache):
+**លំដាប់មិនល្អ** (ការប្តូរកូដណាមួយបំបែក cache របស់ `npm install`)៖
 
 ```dockerfile
 COPY . .
 RUN npm install
 ```
 
-**Good order**:
+**លំដាប់ល្អ**៖
 
 ```dockerfile
 COPY package.json package-lock.json ./
@@ -941,10 +941,9 @@ RUN npm ci --omit=dev
 COPY . .
 ```
 
-Rule: **ដាក់ជំហានដែលផ្លាស់ប្តូយក rare និង expensive មុន; ដាក់ source ផ្លាស់ប្តូយញឹកញាប់ពេលក្រោយ។**
+ច្បាប់៖ **ដាក់ជំហានដែលផ្លាស់កម្រ ហើយថ្លៃ នៅដើម; ដាក់ source ដែលផ្លាស់ញឹកញាប់នៅចុង។**
 
 ---
-
 ## 8. Volumes — រក្សាទិន្នន័យឱ្យនៅរស់
 
 ### Lab៖ `labs/07-volumes`

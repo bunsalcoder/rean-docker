@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#f2f6fa" />
     <link rel="manifest" href="./site.webmanifest" />
     <title>Dockerfile — បង្កើត image ផ្ទាល់ខ្លួន — rean-docker</title>
-    <meta name="description" content="Dockerfile គឺជា script នៃ instructions។ ឧទាហរណ៍ (កម្មវិធី Node សាមញ្ញ):" />
+    <meta name="description" content="Dockerfile គឺ script នៃ instruction។ ឧទាហរណ៍ (app Node សាមញ្ញ)៖" />
     <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/7.km.html" />
     <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/7.html" />
     <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/7.km.html" />
@@ -17,12 +17,12 @@
     <meta property="og:site_name" content="rean-docker" />
     <meta property="og:type" content="article" />
     <meta property="og:title" content="Dockerfile — បង្កើត image ផ្ទាល់ខ្លួន — rean-docker" />
-    <meta property="og:description" content="Dockerfile គឺជា script នៃ instructions។ ឧទាហរណ៍ (កម្មវិធី Node សាមញ្ញ):" />
+    <meta property="og:description" content="Dockerfile គឺ script នៃ instruction។ ឧទាហរណ៍ (app Node សាមញ្ញ)៖" />
     <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/7.km.html" />
     <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Dockerfile — បង្កើត image ផ្ទាល់ខ្លួន — rean-docker" />
-    <meta name="twitter:description" content="Dockerfile គឺជា script នៃ instructions។ ឧទាហរណ៍ (កម្មវិធី Node សាមញ្ញ):" />
+    <meta name="twitter:description" content="Dockerfile គឺ script នៃ instruction។ ឧទាហរណ៍ (app Node សាមញ្ញ)៖" />
     <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
     <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
@@ -50,7 +50,7 @@
       <p class="static-reader-hint">Checklist និងវឌ្ឍនភាពធ្វើសមកាលនៅអ្នកអានអន្តរកម្ម (និងនៅទំព័រនេះពេល JavaScript បើក).</p>
       <div class="md-body" data-checklist-scope="learn:7">
 <h3>Lab៖ <code>labs/03-dockerfile</code></h3>
-<p>Dockerfile គឺជា script នៃ instructions។ ឧទាហរណ៍ (កម្មវិធី Node សាមញ្ញ):</p>
+<p>Dockerfile គឺ script នៃ instruction។ ឧទាហរណ៍ (app Node សាមញ្ញ)៖</p>
 <pre><code class="language-dockerfile"># Start from a small official base
 FROM node:22-alpine
 
@@ -80,75 +80,75 @@ CMD [&quot;node&quot;, &quot;server.js&quot;]
 <thead>
 <tr>
 <th>Instruction</th>
-<th>Purpose</th>
+<th>គោលបំណង</th>
 </tr>
 </thead>
 <tbody><tr>
 <td><code>FROM</code></td>
-<td>Base image (required first, except ARG before FROM)</td>
+<td>Image មូលដ្ឋាន (ត្រូវនៅដើម លើកលែង <code>ARG</code> មុន <code>FROM</code>)</td>
 </tr>
 <tr>
 <td><code>WORKDIR</code></td>
-<td>Set working directory (creates if missing)</td>
+<td>កំណត់ថតធ្វើការ (បង្កើតបើមិនទាន់មាន)</td>
 </tr>
 <tr>
 <td><code>COPY</code> / <code>ADD</code></td>
-<td>Copy files into image (<code>COPY</code> preferred; <code>ADD</code> has extra magic)</td>
+<td>ចម្លងឯកសារចូល image (<code>COPY</code> ល្អជាង; <code>ADD</code> មានឥរិយាបថបន្ថែម)</td>
 </tr>
 <tr>
 <td><code>RUN</code></td>
-<td>Execute build-time commands (install packages, etc.)</td>
+<td>រត់ពាក្យបញ្ជាពេល build (ដំឡើងកញ្ចប់ ជាដើម)</td>
 </tr>
 <tr>
 <td><code>ENV</code></td>
-<td>Set environment variables</td>
+<td>កំណត់អថេរបរិស្ថាន</td>
 </tr>
 <tr>
 <td><code>EXPOSE</code></td>
-<td>Document ports (documentation + tooling hint)</td>
+<td>កត់ត្រា ports (ឯកសារ + គន្លឹះសម្រាប់ឧបករណ៍)</td>
 </tr>
 <tr>
 <td><code>CMD</code></td>
-<td>Default command (easily overridden)</td>
+<td>ពាក្យបញ្ជាលំនាំដើម (ងាយសរសេរជាន់)</td>
 </tr>
 <tr>
 <td><code>ENTRYPOINT</code></td>
-<td>Fixed main executable (args often appended)</td>
+<td>កម្មវិធីចម្បងថេរ (args ជារឿយៗត្រូវបានបន្ថែមពីក្រោយ)</td>
 </tr>
 <tr>
 <td><code>USER</code></td>
-<td>Switch to non-root user</td>
+<td>ប្តូរទៅ user មិនមែន root</td>
 </tr>
 <tr>
 <td><code>VOLUME</code></td>
-<td>Declare mount points</td>
+<td>ប្រកាសចំណុច mount</td>
 </tr>
 <tr>
 <td><code>HEALTHCHECK</code></td>
-<td>How Docker probes container health</td>
+<td>របៀបដែល Docker សាកសុខភាព container</td>
 </tr>
 <tr>
 <td><code>ARG</code></td>
-<td>Build-time variables</td>
+<td>អថេរពេល build</td>
 </tr>
 </tbody></table>
-<h3>CMD vs ENTRYPOINT (ប្រៀបធៀប)</h3>
+<h3>CMD ធៀប ENTRYPOINT</h3>
 <pre><code class="language-dockerfile">ENTRYPOINT [&quot;nginx&quot;]
 CMD [&quot;-g&quot;, &quot;daemon off;&quot;]
 </code></pre>
 <ul>
-<li><code>docker run img</code> → runs <code>nginx -g &#39;daemon off;&#39;</code></li>
-<li><code>docker run img -t</code> → runs <code>nginx -t</code> (CMD replaced, ENTRYPOINT kept)</li>
+<li><code>docker run img</code> → រត់ <code>nginx -g &#39;daemon off;&#39;</code></li>
+<li><code>docker run img -t</code> → រត់ <code>nginx -t</code> (<code>CMD</code> ត្រូវបានជំនួស, <code>ENTRYPOINT</code> នៅ)</li>
 </ul>
-<p>Prefer <strong>exec form</strong> (JSON array), not shell form, signals (SIGTERM) reach process correctly:</p>
+<p>ចូលចិត្ត <strong>ទម្រង់ exec</strong> (អារេ JSON) មិនមែនទម្រង់ shell ទេ ដើម្បីសញ្ញា (SIGTERM) ទៅដល់ process ត្រូវ៖</p>
 <pre><code class="language-dockerfile"># Good
 CMD [&quot;node&quot;, &quot;server.js&quot;]
 
 # Avoid for main process (PID 1 signal issues)
 CMD node server.js
 </code></pre>
-<h3>Build និង run</h3>
-<p>From <code>labs/03-dockerfile</code>:</p>
+<h3>Build និងរត់</h3>
+<p>ពី <code>labs/03-dockerfile</code>៖</p>
 <pre><code class="language-bash">cd labs/03-dockerfile
 docker build -t rean-hello:1.0 .
 docker run --rm -p 3000:3000 rean-hello:1.0
@@ -156,43 +156,43 @@ docker run --rm -p 3000:3000 rean-hello:1.0
 <table>
 <thead>
 <tr>
-<th>Part</th>
-<th>Meaning</th>
+<th>ផ្នែក</th>
+<th>អត្ថន័យ</th>
 </tr>
 </thead>
 <tbody><tr>
 <td><code>build</code></td>
-<td>Build image from Dockerfile</td>
+<td>Build image ពី Dockerfile</td>
 </tr>
 <tr>
 <td><code>-t rean-hello:1.0</code></td>
-<td>Name:tag</td>
+<td>ឈ្មោះ:tag</td>
 </tr>
 <tr>
 <td><code>.</code></td>
-<td>Build context (files sent to daemon)</td>
+<td>Build context (ឯកសារដែលផ្ញើទៅ daemon)</td>
 </tr>
 </tbody></table>
 <h3>Build context និង <code>.dockerignore</code></h3>
-<p>Everything context directory sent Docker។ Exclude junk:</p>
+<p>អ្វីៗក្នុងថត context អាចត្រូវបានផ្ញើទៅ Docker។ ដករបស់មិនចាំបាច់ចេញ៖</p>
 <pre><code class="language-gitignore">node_modules
 .git
 *.md
 .env
 npm-debug.log
 </code></pre>
-<p><strong>Why it matters:</strong> Smaller context = faster builds។ Never copy secrets into images accidentally។</p>
-<h3>ទម្លាប់ layer caching (សំខាន់)</h3>
-<p><strong>Bad order</strong> (any code change busts <code>npm install</code> cache):</p>
+<p><strong>ហេតុអ្វីសំខាន់៖</strong> Context តូច = build លឿន។ កុំចម្លង secrets ចូល images ដោយចៃដន្យ។</p>
+<h3>យុទ្ធសាស្ត្រ layer caching (ជំនាញសំខាន់)</h3>
+<p><strong>លំដាប់មិនល្អ</strong> (ការប្តូរកូដណាមួយបំបែក cache របស់ <code>npm install</code>)៖</p>
 <pre><code class="language-dockerfile">COPY . .
 RUN npm install
 </code></pre>
-<p><strong>Good order</strong>:</p>
+<p><strong>លំដាប់ល្អ</strong>៖</p>
 <pre><code class="language-dockerfile">COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 COPY . .
 </code></pre>
-<p>Rule: <strong>ដាក់ជំហានដែលផ្លាស់ប្តូយក rare និង expensive មុន; ដាក់ source ផ្លាស់ប្តូយញឹកញាប់ពេលក្រោយ។</strong></p>
+<p>ច្បាប់៖ <strong>ដាក់ជំហានដែលផ្លាស់កម្រ ហើយថ្លៃ នៅដើម; ដាក់ source ដែលផ្លាស់ញឹកញាប់នៅចុង។</strong></p>
 <hr>
 
       </div>
