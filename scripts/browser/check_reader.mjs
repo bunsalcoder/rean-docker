@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
  * Browser checks for the reader flows the Node sandbox does not exercise:
- * sidebar focus trap, search keyboard, locale switch, and progress import.
+ * sidebar focus trap, search keyboard, locale switch, progress import,
+ * next-lab prefetch, handbook cache paint, arrow-key paging, and copy buttons.
  */
 import { spawn } from "node:child_process";
 import { dirname, join } from "node:path";
@@ -47,8 +48,9 @@ function startServer() {
   });
 }
 
-async function withPage(browser, viewport, run) {
+async function withPage(browser, viewport, run, { permissions } = {}) {
   const context = await browser.newContext({ viewport });
+  if (permissions?.length) await context.grantPermissions(permissions);
   const page = await context.newPage();
   try {
     await run(page);
@@ -184,6 +186,127 @@ async function checkProgressImport(page, base) {
   assert(hidden.includes("Lab 14"), "progress map still names folder Lab 14");
 }
 
+async function checkNextLabPrefetch(page, base) {
+  let gets = 0;
+  let releaseHold = () => {};
+  const hold = new Promise((resolve) => {
+    releaseHold = resolve;
+  });
+  await page.route("**/content/en/labs/02-hello.md", async (route) => {
+    if (route.request().method() !== "GET") {
+      await route.continue();
+      return;
+    }
+    gets += 1;
+    if (gets === 1) {
+      await route.continue();
+      return;
+    }
+    await hold;
+    await route.continue();
+  });
+
+  try {
+    const prefetched = page.waitForResponse(
+      (res) => res.request().method() === "GET" && res.url().includes("/content/en/labs/02-hello.md") && res.ok()
+    );
+    await page.goto(`${base}/lab.html?id=01-isolation-basics`, { waitUntil: "networkidle" });
+    await page.locator("[data-lab-title]", { hasText: "Isolation basics" }).waitFor();
+    await prefetched;
+    assert(gets === 1, "opening Lab 01 prefetches Lab 02");
+
+    await page.locator("a.pager-next").click();
+    await page.locator("[data-lab-title]", { hasText: "Hello containers" }).waitFor({ timeout: 4000 });
+    await page.waitForURL(/id=02-hello/);
+    assert(gets === 1, "the prefetched lab opens without a second download");
+  } finally {
+    releaseHold();
+  }
+}
+
+async function checkPagerKeys(page, base) {
+  await page.goto(`${base}/learn.html?c=1`, { waitUntil: "networkidle" });
+  await page.locator("[data-chapter-title]", { hasText: "What problem does Docker solve?" }).waitFor();
+
+  await page.keyboard.press("ArrowRight");
+  await page.locator("[data-chapter-title]", { hasText: "Containerization foundations" }).waitFor();
+  await page.waitForURL(/[?&]c=2(?:&|$)/);
+  assert(true, "ArrowRight opens the next chapter");
+
+  await page.keyboard.press("]");
+  await page.locator("[data-chapter-title]", { hasText: "Core mental model" }).waitFor();
+  await page.waitForURL(/[?&]c=3(?:&|$)/);
+  assert(true, "] opens the following chapter");
+
+  await page.keyboard.press("[");
+  await page.locator("[data-chapter-title]", { hasText: "Containerization foundations" }).waitFor();
+  assert(true, "[ returns to the previous chapter");
+
+  await page.goto(`${base}/lab.html?id=02-hello`, { waitUntil: "networkidle" });
+  await page.locator("[data-lab-title]", { hasText: "Hello containers" }).waitFor();
+  await page.keyboard.press("ArrowRight");
+  await page.locator("[data-lab-title]", { hasText: "Your first Dockerfile" }).waitFor();
+  await page.waitForURL(/id=03-dockerfile/);
+  assert(true, "ArrowRight opens the next lab");
+}
+
+async function checkCachedHandbookPaints(page, base) {
+  await page.goto(`${base}/learn.html?c=1`, { waitUntil: "networkidle" });
+  await page.locator("[data-chapter-title]", { hasText: "What problem does Docker solve?" }).waitFor();
+
+  let releaseHold = () => {};
+  const hold = new Promise((resolve) => {
+    releaseHold = resolve;
+  });
+  let blocked = 0;
+  await page.route("**/content/en/guide.md", async (route) => {
+    blocked += 1;
+    await hold;
+    await route.continue();
+  });
+
+  try {
+    await page.evaluate(() => {
+      const title = document.querySelector("[data-chapter-title]");
+      if (title) title.textContent = "stale-before-reload";
+      const body = document.querySelector("[data-chapter-body]");
+      if (body) body.textContent = "";
+    });
+    const pending = page.reload({ waitUntil: "commit" });
+    await page.waitForFunction(
+      () => {
+        const title = document.querySelector("[data-chapter-title]")?.textContent || "";
+        const body = document.querySelector("[data-chapter-body]")?.textContent || "";
+        return title.includes("What problem does Docker solve?") && body.includes("Docker");
+      },
+      null,
+      { timeout: 3000 }
+    );
+    assert(blocked >= 1, "a cached chapter paints while the handbook revalidation is still in flight");
+    releaseHold();
+    await pending;
+  } finally {
+    releaseHold();
+  }
+}
+
+async function checkCopyButton(page, base) {
+  await page.goto(`${base}/lab/02-hello.html`, { waitUntil: "networkidle" });
+  const button = page.locator(".md-body .copy-btn").first();
+  await button.waitFor();
+  await button.click();
+  await page.locator(".md-body .copy-btn", { hasText: "Copied" }).first().waitFor({ timeout: 3000 });
+  const copied = await page.evaluate(() => navigator.clipboard.readText());
+  assert(copied.includes("docker run --rm hello-world"), "static lab copy button writes the fenced command");
+
+  await page.goto(`${base}/lab.html?id=02-hello`, { waitUntil: "networkidle" });
+  await page.locator("[data-lab-body] .copy-btn").first().waitFor();
+  await page.locator("[data-lab-body] .copy-btn").first().click();
+  await page.locator("[data-lab-body] .copy-btn", { hasText: "Copied" }).first().waitFor({ timeout: 3000 });
+  const readerCopied = await page.evaluate(() => navigator.clipboard.readText());
+  assert(readerCopied.includes("docker run --rm hello-world"), "lab reader copy button writes the same command");
+}
+
 async function main() {
   const { proc, base } = await startServer();
   let browser;
@@ -197,6 +320,12 @@ async function main() {
     await withPage(browser, desktop, (page) => checkSearchKeys(page, base));
     await withPage(browser, desktop, (page) => checkLocaleSwitch(page, base));
     await withPage(browser, desktop, (page) => checkProgressImport(page, base));
+    await withPage(browser, desktop, (page) => checkNextLabPrefetch(page, base));
+    await withPage(browser, desktop, (page) => checkPagerKeys(page, base));
+    await withPage(browser, desktop, (page) => checkCachedHandbookPaints(page, base));
+    await withPage(browser, desktop, (page) => checkCopyButton(page, base), {
+      permissions: ["clipboard-read", "clipboard-write"],
+    });
   } catch (err) {
     fail = 1;
     console.error(err instanceof Error ? err.message : err);
