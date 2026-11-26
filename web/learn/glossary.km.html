@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#f2f6fa" />
     <link rel="manifest" href="./site.webmanifest" />
     <title>វចនានុក្រម — rean-docker</title>
-    <meta name="description" content="Containerization: ការវេចខ្ចប់ app ជាមួយ deps ទៅជា unit ដាច់ដោយឡែកលើ kernel រួម. OCI: Open Container Initiative — ស្តង់ដារ images និង runtimes. Daemon: Docker…" />
+    <meta name="description" content="Containerization: ការវេចខ្ចប់ app ជាមួយ dependency របស់វា ទៅជាឯកតាដាច់ដោយឡែកលើ kernel រួម. OCI: Open Container Initiative គឺស្តង់ដារសម្រាប់ image និង runtime…" />
     <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/glossary.km.html" />
     <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/glossary.html" />
     <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/glossary.km.html" />
@@ -17,12 +17,12 @@
     <meta property="og:site_name" content="rean-docker" />
     <meta property="og:type" content="article" />
     <meta property="og:title" content="វចនានុក្រម — rean-docker" />
-    <meta property="og:description" content="Containerization: ការវេចខ្ចប់ app ជាមួយ deps ទៅជា unit ដាច់ដោយឡែកលើ kernel រួម. OCI: Open Container Initiative — ស្តង់ដារ images និង runtimes. Daemon: Docker…" />
+    <meta property="og:description" content="Containerization: ការវេចខ្ចប់ app ជាមួយ dependency របស់វា ទៅជាឯកតាដាច់ដោយឡែកលើ kernel រួម. OCI: Open Container Initiative គឺស្តង់ដារសម្រាប់ image និង runtime…" />
     <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/glossary.km.html" />
     <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="វចនានុក្រម — rean-docker" />
-    <meta name="twitter:description" content="Containerization: ការវេចខ្ចប់ app ជាមួយ deps ទៅជា unit ដាច់ដោយឡែកលើ kernel រួម. OCI: Open Container Initiative — ស្តង់ដារ images និង runtimes. Daemon: Docker…" />
+    <meta name="twitter:description" content="Containerization: ការវេចខ្ចប់ app ជាមួយ dependency របស់វា ទៅជាឯកតាដាច់ដោយឡែកលើ kernel រួម. OCI: Open Container Initiative គឺស្តង់ដារសម្រាប់ image និង runtime…" />
     <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
     <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
@@ -58,47 +58,47 @@
 </thead>
 <tbody><tr>
 <td>Containerization</td>
-<td>ការវេចខ្ចប់ app ជាមួយ deps ទៅជា unit ដាច់ដោយឡែកលើ kernel រួម</td>
+<td>ការវេចខ្ចប់ app ជាមួយ dependency របស់វា ទៅជាឯកតាដាច់ដោយឡែកលើ kernel រួម</td>
 </tr>
 <tr>
 <td>OCI</td>
-<td>Open Container Initiative — ស្តង់ដារ images និង runtimes</td>
+<td>Open Container Initiative គឺស្តង់ដារសម្រាប់ image និង runtime</td>
 </tr>
 <tr>
 <td>Daemon</td>
-<td>Docker engine ផ្ទៃខាងក្រោយ (<code>dockerd</code>)</td>
+<td>Engine របស់ Docker ដែលរត់នៅផ្ទៃខាងក្រោយ (<code>dockerd</code>)</td>
 </tr>
 <tr>
 <td>Layer</td>
-<td>ភាពខុសគ្នានៃ filesystem ដែលមិនប្តូរក្នុង image</td>
+<td>ភាពខុសគ្នានៃ filesystem ដែលមិនប្តូរ ក្នុង image</td>
 </tr>
 <tr>
 <td>Tag</td>
-<td>ស្លាកដែលប្តូរបានសម្រាប់កំណែ image</td>
+<td>ស្លាកដែលប្តូរបាន សម្រាប់កំណែ image</td>
 </tr>
 <tr>
 <td>Digest</td>
-<td>Hash មាតិកាដែលមិនប្តូរនៃ image</td>
+<td>Hash នៃមាតិកា image ដែលមិនប្តូរ</td>
 </tr>
 <tr>
 <td>Context</td>
-<td>ឯកសារផ្ញើទៅ daemon ពេល <code>build</code></td>
+<td>ឯកសារដែលផ្ញើទៅ daemon ពេល <code>build</code></td>
 </tr>
 <tr>
 <td>Registry</td>
-<td>ឃ្លាំងពីចម្ងាយសម្រាប់ images</td>
+<td>ឃ្លាំងពីចម្ងាយសម្រាប់ image</td>
 </tr>
 <tr>
 <td>Orchestrator</td>
-<td>ប្រព័ន្ធកំណត់ពេល containers លើម៉ាស៊ីនច្រើន</td>
+<td>ប្រព័ន្ធដែលកំណត់ពេល container លើម៉ាស៊ីនច្រើន</td>
 </tr>
 <tr>
 <td>Namespace</td>
-<td>Isolation ក្នុង Linux (pid, net, mnt, …)</td>
+<td>យន្តការ isolation ក្នុង Linux (pid, net, mnt, …)</td>
 </tr>
 <tr>
 <td>cgroups</td>
-<td>ដែនកំណត់ resource ក្នុង Linux (CPU, memory)</td>
+<td>យន្តការកំណត់ធនធានក្នុង Linux (CPU, memory)</td>
 </tr>
 </tbody></table>
 <hr>

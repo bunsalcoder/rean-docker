@@ -75,5 +75,8 @@
   "Secrets & supply chain in CI": "Secrets និង supply chain ក្នុង CI",
   "Observability after deploy": "មើលប្រព័ន្ធក្រោយ deploy",
   "End-to-end checklist (print this)": "Checklist ពីដើមដល់ចប់ (រក្សាទុក)",
-  "How this chapter connects": "របៀបដែលជំពូកនេះភ្ជាប់"
+  "How this chapter connects": "របៀបដែលជំពូកនេះភ្ជាប់",
+  "Beginner": "ថ្នាក់ដើម",
+  "Intermediate": "ថ្នាក់កណ្តាល",
+  "Advanced": "ថ្នាក់ខ្ពស់"
 }

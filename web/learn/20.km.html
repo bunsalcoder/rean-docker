@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#f2f6fa" />
     <link rel="manifest" href="./site.webmanifest" />
     <title>តារាងតាមដានផ្លូវរៀន — rean-docker</title>
-    <meta name="description" content="ពន្យល់ containerization vs VMs vs Docker vs Kubernetes. ពិពណ៌នា namespaces និង cgroups កម្រិតខ្ពស់. បញ្ចប់ labs/01-isolation-basics. ពន្យល់ image vs container…" />
+    <meta name="description" content="ពន្យល់ containerization ធៀប VM, Docker និង Kubernetes. ពណ៌នា namespace និង cgroup នៅកម្រិតខ្ពស់. បញ្ចប់ labs/01-isolation-basics. ពន្យល់ image ធៀប container…" />
     <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/20.km.html" />
     <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/20.html" />
     <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/20.km.html" />
@@ -17,12 +17,12 @@
     <meta property="og:site_name" content="rean-docker" />
     <meta property="og:type" content="article" />
     <meta property="og:title" content="តារាងតាមដានផ្លូវរៀន — rean-docker" />
-    <meta property="og:description" content="ពន្យល់ containerization vs VMs vs Docker vs Kubernetes. ពិពណ៌នា namespaces និង cgroups កម្រិតខ្ពស់. បញ្ចប់ labs/01-isolation-basics. ពន្យល់ image vs container…" />
+    <meta property="og:description" content="ពន្យល់ containerization ធៀប VM, Docker និង Kubernetes. ពណ៌នា namespace និង cgroup នៅកម្រិតខ្ពស់. បញ្ចប់ labs/01-isolation-basics. ពន្យល់ image ធៀប container…" />
     <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/20.km.html" />
     <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="តារាងតាមដានផ្លូវរៀន — rean-docker" />
-    <meta name="twitter:description" content="ពន្យល់ containerization vs VMs vs Docker vs Kubernetes. ពិពណ៌នា namespaces និង cgroups កម្រិតខ្ពស់. បញ្ចប់ labs/01-isolation-basics. ពន្យល់ image vs container…" />
+    <meta name="twitter:description" content="ពន្យល់ containerization ធៀប VM, Docker និង Kubernetes. ពណ៌នា namespace និង cgroup នៅកម្រិតខ្ពស់. បញ្ចប់ labs/01-isolation-basics. ពន្យល់ image ធៀប container…" />
     <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
     <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
@@ -51,34 +51,34 @@
       <div class="md-body" data-checklist-scope="learn:20">
 <h3>ថ្នាក់ដើម</h3>
 <ul>
-<li><input disabled="" type="checkbox"> ពន្យល់ containerization vs VMs vs Docker vs Kubernetes</li>
-<li><input disabled="" type="checkbox"> ពិពណ៌នា namespaces និង cgroups កម្រិតខ្ពស់</li>
+<li><input disabled="" type="checkbox"> ពន្យល់ containerization ធៀប VM, Docker និង Kubernetes</li>
+<li><input disabled="" type="checkbox"> ពណ៌នា namespace និង cgroup នៅកម្រិតខ្ពស់</li>
 <li><input disabled="" type="checkbox"> បញ្ចប់ <code>labs/01-isolation-basics</code></li>
-<li><input disabled="" type="checkbox"> ពន្យល់ image vs container vs Dockerfile</li>
-<li><input disabled="" type="checkbox"> Run, stop, remove containers; publish ports</li>
-<li><input disabled="" type="checkbox"> អាន logs និង <code>exec</code> ចូល container</li>
-<li><input disabled="" type="checkbox"> សរសេរ Dockerfile សាមញ្ញ និង <code>docker build</code></li>
+<li><input disabled="" type="checkbox"> ពន្យល់ image ធៀប container ធៀប Dockerfile</li>
+<li><input disabled="" type="checkbox"> រត់, ឈប់ និងលុប container ហើយផ្សាយ port</li>
+<li><input disabled="" type="checkbox"> អាន log និង <code>exec</code> ចូល container</li>
+<li><input disabled="" type="checkbox"> សរសេរ Dockerfile សាមញ្ញ រួច <code>docker build</code></li>
 <li><input disabled="" type="checkbox"> ប្រើ <code>.dockerignore</code></li>
 </ul>
 <h3>ថ្នាក់កណ្តាល</h3>
 <ul>
-<li><input disabled="" type="checkbox"> Named volumes + bind mounts</li>
-<li><input disabled="" type="checkbox"> User-defined networks + DNS តាមឈ្មោះ</li>
-<li><input disabled="" type="checkbox"> Env files និង config បែប 12-factor (<code>labs/04-env-secrets</code>)</li>
-<li><input disabled="" type="checkbox"> កម្មវិធី Compose ពហុសេវា</li>
-<li><input disabled="" type="checkbox"> ដោះស្រាយ «db not ready» ដោយ healthchecks</li>
+<li><input disabled="" type="checkbox"> ប្រើ named volume និង bind mount</li>
+<li><input disabled="" type="checkbox"> បង្កើត network ផ្ទាល់ខ្លួន ហើយហៅគ្នាតាមឈ្មោះ DNS</li>
+<li><input disabled="" type="checkbox"> ប្រើ env file និង config បែប 12-factor (<code>labs/04-env-secrets</code>)</li>
+<li><input disabled="" type="checkbox"> ដំណើរការ app Compose ដែលមានច្រើន service</li>
+<li><input disabled="" type="checkbox"> ដោះស្រាយ «db not ready» ដោយ healthcheck</li>
 </ul>
 <h3>ថ្នាក់ខ្ពស់</h3>
 <ul>
-<li><input disabled="" type="checkbox"> Multi-stage builds; បង្រួម images</li>
-<li><input disabled="" type="checkbox"> User មិនមែន root, healthchecks, restart policies</li>
-<li><input disabled="" type="checkbox"> Debug ដោយ <code>inspect</code>, <code>logs</code>, <code>stats</code>, shell បណ្ដោះអាសន្ន (<code>labs/10-debugging</code>)</li>
-<li><input disabled="" type="checkbox"> ស្កេន images; BuildKit secrets; pin tags/digests (<code>labs/11-security</code>)</li>
-<li><input disabled="" type="checkbox"> Compose Watch, SBOM peek, ឬ multi-arch inspect (<code>labs/14-advanced</code> / ជំពូក 16)</li>
-<li><input disabled="" type="checkbox"> Push/pull ពី registry</li>
-<li><input disabled="" type="checkbox"> បញ្ចប់ checklist deploy ជំពូក 17; បញ្ចប់ <code>labs/12-ci-cd</code></li>
-<li><input disabled="" type="checkbox"> ពន្យល់ CI vs CD និងផ្លូវ build → registry → pull → up</li>
-<li><input disabled="" type="checkbox"> បញ្ចប់ capstone stack (<code>labs/13-capstone</code>)</li>
+<li><input disabled="" type="checkbox"> ប្រើ multi-stage build ហើយបង្រួម image</li>
+<li><input disabled="" type="checkbox"> ដាក់ user មិនមែន root, healthcheck និង restart policy</li>
+<li><input disabled="" type="checkbox"> Debug ដោយ <code>inspect</code>, <code>logs</code>, <code>stats</code> និង shell បណ្ដោះអាសន្ន (<code>labs/10-debugging</code>)</li>
+<li><input disabled="" type="checkbox"> ស្កេន image, ប្រើ secret របស់ BuildKit និង pin tag ឬ digest (<code>labs/11-security</code>)</li>
+<li><input disabled="" type="checkbox"> សាក Compose Watch, មើល SBOM ឬ inspect multi-arch (<code>labs/14-advanced</code> / ជំពូក 16)</li>
+<li><input disabled="" type="checkbox"> Push និង pull ពី registry</li>
+<li><input disabled="" type="checkbox"> បញ្ចប់ checklist deploy ក្នុងជំពូក 17 និងបញ្ចប់ <code>labs/12-ci-cd</code></li>
+<li><input disabled="" type="checkbox"> ពន្យល់ CI ធៀប CD និងផ្លូវ build → registry → pull → up</li>
+<li><input disabled="" type="checkbox"> បញ្ចប់ stack capstone (<code>labs/13-capstone</code>)</li>
 </ul>
 <hr>
 
