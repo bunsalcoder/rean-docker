@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#f2f6fa" />
     <link rel="manifest" href="./site.webmanifest" />
     <title>Multi-stage builds និងទំហំ image — rean-docker</title>
-    <meta name="description" content="Problem: build tools (compilers, TypeScript/tsc, npm all deps, Go toolchain) bloat production images increase attack surface។" />
+    <meta name="description" content="បញ្ហា៖ ឧបករណ៍ build (compilers, TypeScript/tsc, npm ជាមួយ deps ទាំងអស់, Go toolchain) ធ្វើឱ្យ image production ធំ ហើយពង្រីកផ្ទៃដែលអាចវាយប្រហារ។" />
     <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/12.km.html" />
     <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/12.html" />
     <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/12.km.html" />
@@ -17,12 +17,12 @@
     <meta property="og:site_name" content="rean-docker" />
     <meta property="og:type" content="article" />
     <meta property="og:title" content="Multi-stage builds និងទំហំ image — rean-docker" />
-    <meta property="og:description" content="Problem: build tools (compilers, TypeScript/tsc, npm all deps, Go toolchain) bloat production images increase attack surface។" />
+    <meta property="og:description" content="បញ្ហា៖ ឧបករណ៍ build (compilers, TypeScript/tsc, npm ជាមួយ deps ទាំងអស់, Go toolchain) ធ្វើឱ្យ image production ធំ ហើយពង្រីកផ្ទៃដែលអាចវាយប្រហារ។" />
     <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/12.km.html" />
     <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Multi-stage builds និងទំហំ image — rean-docker" />
-    <meta name="twitter:description" content="Problem: build tools (compilers, TypeScript/tsc, npm all deps, Go toolchain) bloat production images increase attack surface។" />
+    <meta name="twitter:description" content="បញ្ហា៖ ឧបករណ៍ build (compilers, TypeScript/tsc, npm ជាមួយ deps ទាំងអស់, Go toolchain) ធ្វើឱ្យ image production ធំ ហើយពង្រីកផ្ទៃដែលអាចវាយប្រហារ។" />
     <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
     <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
@@ -50,9 +50,9 @@
       <p class="static-reader-hint">Checklist និងវឌ្ឍនភាពធ្វើសមកាលនៅអ្នកអានអន្តរកម្ម (និងនៅទំព័រនេះពេល JavaScript បើក).</p>
       <div class="md-body" data-checklist-scope="learn:12">
 <h3>Lab៖ <code>labs/08-multi-stage</code></h3>
-<p>Problem: build tools (compilers, TypeScript/<code>tsc</code>, npm all deps, Go toolchain) bloat production images increase attack surface។</p>
-<p><strong>Multi-stage builds</strong> use multiple <code>FROM</code> copy only artifacts forward។</p>
-<p>Lab 08 compile TypeScript ក្នុង build stage ដូច្នេះ <code>:fat</code> (compiler នៅក្នុង image) ធំជាង <code>:slim</code> (JS ដែល compile រួច + production deps តែប៉ុណ្ណោះ) ច្បាស់។</p>
+<p>បញ្ហា៖ ឧបករណ៍ build (compilers, TypeScript/<code>tsc</code>, npm ជាមួយ deps ទាំងអស់, Go toolchain) ធ្វើឱ្យ image production ធំ ហើយពង្រីកផ្ទៃដែលអាចវាយប្រហារ។</p>
+<p><strong>Multi-stage builds</strong> ប្រើ <code>FROM</code> ច្រើនជួរ ហើយចម្លងតែ artifacts ទៅមុខ។</p>
+<p>Lab 08 compile TypeScript ក្នុង build stage ដូច្នេះ <code>:fat</code> (compiler នៅសល់ក្នុង image) ធំជាង <code>:slim</code> (JS ដែល compile រួច + production deps តែប៉ុណ្ណោះ) ច្បាស់។</p>
 <pre><code class="language-dockerfile"># syntax=docker/dockerfile:1
 # ---- build stage ----
 FROM node:22-alpine AS build
@@ -75,40 +75,40 @@ USER node
 EXPOSE 3000
 CMD [&quot;node&quot;, &quot;dist/server.js&quot;]
 </code></pre>
-<p>Benefits:</p>
+<p>អត្ថប្រយោជន៍៖</p>
 <ul>
-<li>Final image no compilers / unused build deps</li>
-<li>Smaller attack surface</li>
-<li>Often much smaller downloads</li>
+<li>Image ចុងក្រោយគ្មាន compilers / build deps ដែលមិនប្រើ</li>
+<li>ផ្ទៃវាយប្រហារតូចជាង</li>
+<li>ការទាញយកតូចជាងញឹកញាប់</li>
 </ul>
-<p>បន្ទាត់ <code># syntax=docker/dockerfile:1</code> (Lab 08) បើកលក្ខណៈ BuildKit ដូច cache mounts។ <code>RUN --mount=type=cache,target=/root/.npm</code> រក្សា cache download npm រវាង builds <strong>ដោយមិន</strong> copy វាចូល image layer។</p>
-<h3>Alpine vs distroless vs slim (ប្រៀបធៀប)</h3>
+<p>បន្ទាត់ <code># syntax=docker/dockerfile:1</code> (Lab 08) បើកលក្ខណៈ BuildKit ដូច cache mounts។ <code>RUN --mount=type=cache,target=/root/.npm</code> រក្សា cache ទាញ npm រវាង builds <strong>ដោយមិន</strong> ចម្លងវាចូល image layer។</p>
+<h3>Alpine ធៀប distroless ធៀប slim</h3>
 <table>
 <thead>
 <tr>
-<th>Base</th>
-<th>Pros</th>
-<th>Cons</th>
+<th>មូលដ្ឋាន</th>
+<th>ចំណុចល្អ</th>
+<th>ចំណុចខ្វះ</th>
 </tr>
 </thead>
 <tbody><tr>
 <td><code>*-alpine</code></td>
-<td>Small</td>
-<td>musl quirks, fewer packages</td>
+<td>តូច</td>
+<td>musl មានលក្ខណៈពិសេស, កញ្ចប់តិច</td>
 </tr>
 <tr>
 <td><code>*-slim</code></td>
-<td>Debian-based, smaller than full</td>
-<td>Still larger than Alpine</td>
+<td>ផ្អែកលើ Debian, តូចជាងពេញ</td>
+<td>នៅតែធំជាង Alpine</td>
 </tr>
 <tr>
 <td>Distroless</td>
-<td>Minimal, very secure</td>
-<td>Harder to debug (no shell)</td>
+<td>តិចបំផុត, សុវត្ថិភាពខ្លាំង</td>
+<td>ពិបាក debug (គ្មាន shell)</td>
 </tr>
 </tbody></table>
-<p>Choose based on app needs; consistency across services helps ops។</p>
-<h3>ទម្លាប់ ពិនិត្យ ទំហំ</h3>
+<p>ជ្រើសតាមតម្រូវការ app; ការដូចគ្នារវាង services ជួយប្រតិបត្តិការ។</p>
+<h3>ទម្លាប់ពិនិត្យទំហំ</h3>
 <pre><code class="language-bash">docker images rean-hello
 docker history rean-hello:1.0
 dive rean-hello:1.0   # if you install dive — visual layer explorer

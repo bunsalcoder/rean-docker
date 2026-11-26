@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#f2f6fa" />
     <link rel="manifest" href="./site.webmanifest" />
     <title>Debug និងដោះស្រាយបញ្ហា — rean-docker</title>
-    <meta name="description" content="អនុវត្ត logs, inspect និង Compose client ដែលនិយាយទៅ localhost ខុស។ កែ hostname រួចត្រឡប់មកទីនេះសម្រាប់ pattern ផ្សេងទៀត។" />
+    <meta name="description" content="អនុវត្ត logs, inspect និង client Compose ដែលនិយាយទៅ localhost ខុស។ កែ hostname រួចត្រឡប់មកទីនេះសម្រាប់រោគសញ្ញាផ្សេងទៀត។" />
     <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/14.km.html" />
     <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/14.html" />
     <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/14.km.html" />
@@ -17,12 +17,12 @@
     <meta property="og:site_name" content="rean-docker" />
     <meta property="og:type" content="article" />
     <meta property="og:title" content="Debug និងដោះស្រាយបញ្ហា — rean-docker" />
-    <meta property="og:description" content="អនុវត្ត logs, inspect និង Compose client ដែលនិយាយទៅ localhost ខុស។ កែ hostname រួចត្រឡប់មកទីនេះសម្រាប់ pattern ផ្សេងទៀត។" />
+    <meta property="og:description" content="អនុវត្ត logs, inspect និង client Compose ដែលនិយាយទៅ localhost ខុស។ កែ hostname រួចត្រឡប់មកទីនេះសម្រាប់រោគសញ្ញាផ្សេងទៀត។" />
     <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/14.km.html" />
     <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Debug និងដោះស្រាយបញ្ហា — rean-docker" />
-    <meta name="twitter:description" content="អនុវត្ត logs, inspect និង Compose client ដែលនិយាយទៅ localhost ខុស។ កែ hostname រួចត្រឡប់មកទីនេះសម្រាប់ pattern ផ្សេងទៀត។" />
+    <meta name="twitter:description" content="អនុវត្ត logs, inspect និង client Compose ដែលនិយាយទៅ localhost ខុស។ កែ hostname រួចត្រឡប់មកទីនេះសម្រាប់រោគសញ្ញាផ្សេងទៀត។" />
     <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
     <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
@@ -50,25 +50,25 @@
       <p class="static-reader-hint">Checklist និងវឌ្ឍនភាពធ្វើសមកាលនៅអ្នកអានអន្តរកម្ម (និងនៅទំព័រនេះពេល JavaScript បើក).</p>
       <div class="md-body" data-checklist-scope="learn:14">
 <h3>Lab៖ <code>labs/10-debugging</code></h3>
-<p>អនុវត្ត <code>logs</code>, <code>inspect</code> និង Compose client ដែលនិយាយទៅ <code>localhost</code> ខុស។ កែ hostname រួចត្រឡប់មកទីនេះសម្រាប់ pattern ផ្សេងទៀត។</p>
-<h3>Container មិននៅ up</h3>
+<p>អនុវត្ត <code>logs</code>, <code>inspect</code> និង client Compose ដែលនិយាយទៅ <code>localhost</code> ខុស។ កែ hostname រួចត្រឡប់មកទីនេះសម្រាប់រោគសញ្ញាផ្សេងទៀត។</p>
+<h3>Container មិននៅរស់</h3>
 <pre><code class="language-bash">docker ps -a
 docker logs &lt;name&gt;
 docker inspect &lt;name&gt;   # look at State.ExitCode, Error, Mounts, NetworkSettings
 </code></pre>
-<h3>Debug បែប interactive</h3>
+<h3>Debug បែបអន្តរកម្ម</h3>
 <pre><code class="language-bash">docker run --rm -it --entrypoint sh myimage:tag
 docker compose run --rm web sh
 </code></pre>
-<h3>Copy files ចូល/ចេញ</h3>
+<h3>ចម្លងឯកសារចូល/ចេញ</h3>
 <pre><code class="language-bash">docker cp my-nginx:/etc/nginx/nginx.conf ./nginx.conf
 docker cp ./file.txt my-nginx:/tmp/
 </code></pre>
-<h3>មើល processes / ការប្រើ resource</h3>
+<h3>មើល processes / ការប្រើធនធាន</h3>
 <pre><code class="language-bash">docker top my-nginx
 docker stats
 </code></pre>
-<h3>Failure patterns ធម្មតា</h3>
+<h3>រោគសញ្ញាធម្មតា</h3>
 <table>
 <thead>
 <tr>
@@ -77,36 +77,36 @@ docker stats
 </tr>
 </thead>
 <tbody><tr>
-<td>Port already allocated</td>
+<td>Port ត្រូវបានយកហើយ</td>
 <td>Process/container ផ្សេងកំពុងប្រើ host port</td>
 </tr>
 <tr>
-<td>Connection refused to <code>db</code></td>
-<td>Network ខុស, hostname ខុស, db មិនទាន់ ready</td>
+<td>ការភ្ជាប់ទៅ <code>db</code> ត្រូវបានបដិសេធ</td>
+<td>Network ខុស, hostname ខុស, db មិនទាន់រួច</td>
 </tr>
 <tr>
-<td>Permission denied on volume</td>
-<td>UID mismatch លើ bind mount</td>
+<td>សិទ្ធិត្រូវបានបដិសេធលើ volume</td>
+<td>UID មិនផ្គូលើ bind mount</td>
 </tr>
 <tr>
-<td>Huge image</td>
+<td>Image ធំខ្លាំង</td>
 <td>Base ធំ, ឧបករណ៍ build នៅសល់, គ្មាន multi-stage</td>
 </tr>
 <tr>
-<td>Changes not appearing</td>
-<td>Image ចាស់នៅ cache; rebuild; ឬ mount ខុស</td>
+<td>ការផ្លាស់មិនលេច</td>
+<td>Image ចាស់នៅ cache; build ឡើងវិញ; ឬ mount ខុស</td>
 </tr>
 <tr>
-<td><code>localhost</code> ក្នុង browser ដំណើរការ តែ app មិនទៅដល់ db</td>
+<td><code>localhost</code> ក្នុង browser ដើរ តែ app មិនទៅដល់ db</td>
 <td>App ប្រើ <code>localhost</code> មិនមែនឈ្មោះ service</td>
 </tr>
 </tbody></table>
-<h3>ការប្រណាំង «Database not ready»</h3>
-<p><code>depends_on</code> រង់ចាំតែ <strong>start</strong> មិនមែន <strong>ready</strong>។ ដោះស្រាយដោយ៖</p>
+<h3>ការប្រណាំង «Database មិនទាន់រួច»</h3>
+<p><code>depends_on</code> រង់ចាំតែ <strong>ការចាប់ផ្តើម</strong> មិនមែន <strong>រួចរាល់</strong>។ ដោះស្រាយដោយ៖</p>
 <ul>
 <li>Healthcheck + <code>depends_on: condition: service_healthy</code> (Compose)</li>
-<li>Retry/backoff ក្នុង app</li>
-<li>Init containers / wait scripts</li>
+<li>សាកឡើងវិញ/backoff ក្នុង app</li>
+<li>Init containers / scripts រង់ចាំ</li>
 </ul>
 <pre><code class="language-yaml">depends_on:
   db:
