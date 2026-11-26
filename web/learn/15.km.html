@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#f2f6fa" />
     <link rel="manifest" href="./site.webmanifest" />
     <title>សុវត្ថិភាពសំខាន់ៗ — rean-docker</title>
-    <meta name="description" content="ប្រៀបធៀប whoami លើ image ដែលមិនមែន root vs Alpine, build ជាមួយ BuildKit --secret (គ្មានអ្វីក្នុង docker history) ហើយស្កេនដោយ Trivy បើចង់។ Lab 04 បានបង្ហាញ…" />
+    <meta name="description" content="ប្រៀបធៀប whoami លើ image ដែលមិនមែន root ធៀប Alpine, build ជាមួយ BuildKit --secret (គ្មានអ្វីក្នុង docker history) ហើយស្កេនដោយ Trivy បើចង់។ Lab 04 បានបង្ហាញ…" />
     <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/15.km.html" />
     <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/15.html" />
     <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/15.km.html" />
@@ -17,12 +17,12 @@
     <meta property="og:site_name" content="rean-docker" />
     <meta property="og:type" content="article" />
     <meta property="og:title" content="សុវត្ថិភាពសំខាន់ៗ — rean-docker" />
-    <meta property="og:description" content="ប្រៀបធៀប whoami លើ image ដែលមិនមែន root vs Alpine, build ជាមួយ BuildKit --secret (គ្មានអ្វីក្នុង docker history) ហើយស្កេនដោយ Trivy បើចង់។ Lab 04 បានបង្ហាញ…" />
+    <meta property="og:description" content="ប្រៀបធៀប whoami លើ image ដែលមិនមែន root ធៀប Alpine, build ជាមួយ BuildKit --secret (គ្មានអ្វីក្នុង docker history) ហើយស្កេនដោយ Trivy បើចង់។ Lab 04 បានបង្ហាញ…" />
     <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/15.km.html" />
     <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="សុវត្ថិភាពសំខាន់ៗ — rean-docker" />
-    <meta name="twitter:description" content="ប្រៀបធៀប whoami លើ image ដែលមិនមែន root vs Alpine, build ជាមួយ BuildKit --secret (គ្មានអ្វីក្នុង docker history) ហើយស្កេនដោយ Trivy បើចង់។ Lab 04 បានបង្ហាញ…" />
+    <meta name="twitter:description" content="ប្រៀបធៀប whoami លើ image ដែលមិនមែន root ធៀប Alpine, build ជាមួយ BuildKit --secret (គ្មានអ្វីក្នុង docker history) ហើយស្កេនដោយ Trivy បើចង់។ Lab 04 បានបង្ហាញ…" />
     <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
     <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
@@ -50,13 +50,13 @@
       <p class="static-reader-hint">Checklist និងវឌ្ឍនភាពធ្វើសមកាលនៅអ្នកអានអន្តរកម្ម (និងនៅទំព័រនេះពេល JavaScript បើក).</p>
       <div class="md-body" data-checklist-scope="learn:15">
 <h3>Lab៖ <code>labs/11-security</code></h3>
-<p>ប្រៀបធៀប <code>whoami</code> លើ image ដែលមិនមែន root vs Alpine, build ជាមួយ BuildKit <code>--secret</code> (គ្មានអ្វីក្នុង <code>docker history</code>) ហើយស្កេនដោយ Trivy បើចង់។ Lab 04 បានបង្ហាញ anti-pattern <code>ENV</code> ដែលលេច secret រួចហើយ។</p>
+<p>ប្រៀបធៀប <code>whoami</code> លើ image ដែលមិនមែន root ធៀប Alpine, build ជាមួយ BuildKit <code>--secret</code> (គ្មានអ្វីក្នុង <code>docker history</code>) ហើយស្កេនដោយ Trivy បើចង់។ Lab 04 បានបង្ហាញ anti-pattern <code>ENV</code> ដែលលេច secret រួចហើយ។</p>
 <ol>
-<li><strong>កុំ run ជា root</strong> ក្នុង production containers នៅពេលអាចជៀសបាន។</li>
+<li><strong>កុំរត់ជា root</strong> ក្នុង containers production ពេលអាចជៀសបាន។</li>
 <li><strong>ស្កេន images</strong> រក CVEs (<code>docker scout</code>, Trivy, Grype)។</li>
 <li><strong>Base images តូច</strong> + multi-stage។</li>
 <li><strong>កុំ commit secrets</strong>; កុំ <code>ENV PASSWORD=...</code> ជាមួយ secret ពិតក្នុង Dockerfile។</li>
-<li><strong>Pin digests</strong> សម្រាប់គ្រប់គ្រង supply-chain៖</li>
+<li><strong>Pin digests</strong> សម្រាប់គ្រប់គ្រង supply-chain ដែលសំខាន់៖</li>
 </ol>
 <pre><code class="language-bash">docker image inspect alpine:3.22 --format &#39;{{index .RepoDigests 0}}&#39;
 # Labs 05/08(slim)/09/12/13 pin FROM node:22-alpine@sha256:…; Lab 13 Compose pin Postgres/Redis ដែរ។
@@ -64,8 +64,8 @@
 <pre><code class="language-bash">docker pull nginx@sha256:...
 </code></pre>
 <ol start="6">
-<li><strong>Drop capabilities</strong> / ប្រើ security options ពេលត្រូវ (<code>--cap-drop ALL</code>)។</li>
-<li><strong>Update Engine</strong> ឱ្យទាន់។</li>
+<li><strong>ដក capabilities</strong> / ប្រើជម្រើសសុវត្ថិភាពពេលត្រូវ (<code>--cap-drop ALL</code>)។</li>
+<li><strong>ធ្វើបច្ចុប្បន្នភាព Engine</strong> ឱ្យទាន់។</li>
 <li><strong>ចាត់ Docker socket ដូច root</strong> — mount <code>/var/run/docker.sock</code> ចូល container ស្ទើរតែដូចឱ្យ container នោះ root លើ host។</li>
 </ol>
 <hr>

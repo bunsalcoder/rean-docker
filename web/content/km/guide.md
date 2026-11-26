@@ -1185,11 +1185,11 @@ docker compose --profile tools up -d
 
 ### Lab៖ `labs/08-multi-stage`
 
-Problem: build tools (compilers, TypeScript/`tsc`, npm all deps, Go toolchain) bloat production images increase attack surface។
+បញ្ហា៖ ឧបករណ៍ build (compilers, TypeScript/`tsc`, npm ជាមួយ deps ទាំងអស់, Go toolchain) ធ្វើឱ្យ image production ធំ ហើយពង្រីកផ្ទៃដែលអាចវាយប្រហារ។
 
-**Multi-stage builds** use multiple `FROM` copy only artifacts forward។
+**Multi-stage builds** ប្រើ `FROM` ច្រើនជួរ ហើយចម្លងតែ artifacts ទៅមុខ។
 
-Lab 08 compile TypeScript ក្នុង build stage ដូច្នេះ `:fat` (compiler នៅក្នុង image) ធំជាង `:slim` (JS ដែល compile រួច + production deps តែប៉ុណ្ណោះ) ច្បាស់។
+Lab 08 compile TypeScript ក្នុង build stage ដូច្នេះ `:fat` (compiler នៅសល់ក្នុង image) ធំជាង `:slim` (JS ដែល compile រួច + production deps តែប៉ុណ្ណោះ) ច្បាស់។
 
 ```dockerfile
 # syntax=docker/dockerfile:1
@@ -1215,25 +1215,25 @@ EXPOSE 3000
 CMD ["node", "dist/server.js"]
 ```
 
-Benefits:
+អត្ថប្រយោជន៍៖
 
-- Final image no compilers / unused build deps
-- Smaller attack surface
-- Often much smaller downloads
+- Image ចុងក្រោយគ្មាន compilers / build deps ដែលមិនប្រើ
+- ផ្ទៃវាយប្រហារតូចជាង
+- ការទាញយកតូចជាងញឹកញាប់
 
-បន្ទាត់ `# syntax=docker/dockerfile:1` (Lab 08) បើកលក្ខណៈ BuildKit ដូច cache mounts។ `RUN --mount=type=cache,target=/root/.npm` រក្សា cache download npm រវាង builds **ដោយមិន** copy វាចូល image layer។
+បន្ទាត់ `# syntax=docker/dockerfile:1` (Lab 08) បើកលក្ខណៈ BuildKit ដូច cache mounts។ `RUN --mount=type=cache,target=/root/.npm` រក្សា cache ទាញ npm រវាង builds **ដោយមិន** ចម្លងវាចូល image layer។
 
-### Alpine vs distroless vs slim (ប្រៀបធៀប)
+### Alpine ធៀប distroless ធៀប slim
 
-| Base | Pros | Cons |
+| មូលដ្ឋាន | ចំណុចល្អ | ចំណុចខ្វះ |
 |------|------|------|
-| `*-alpine` | Small | musl quirks, fewer packages |
-| `*-slim` | Debian-based, smaller than full | Still larger than Alpine |
-| Distroless | Minimal, very secure | Harder to debug (no shell) |
+| `*-alpine` | តូច | musl មានលក្ខណៈពិសេស, កញ្ចប់តិច |
+| `*-slim` | ផ្អែកលើ Debian, តូចជាងពេញ | នៅតែធំជាង Alpine |
+| Distroless | តិចបំផុត, សុវត្ថិភាពខ្លាំង | ពិបាក debug (គ្មាន shell) |
 
-Choose based on app needs; consistency across services helps ops។
+ជ្រើសតាមតម្រូវការ app; ការដូចគ្នារវាង services ជួយប្រតិបត្តិការ។
 
-### ទម្លាប់ ពិនិត្យ ទំហំ
+### ទម្លាប់ពិនិត្យទំហំ
 
 ```bash
 docker images rean-hello
@@ -1247,12 +1247,12 @@ dive rean-hello:1.0   # if you install dive — visual layer explorer
 
 ### Lab៖ `labs/09-production`
 
-### Checklist មុន deploy «real»
+### បញ្ជីត្រួតពិនិត្យមុន deploy «ពិត»
 
-1. **Pin versions** — `postgres:16-alpine` មិនមែន `postgres:latest`។ Labs ដើមប្រើ series tag (`redis:7-alpine`, `node:22-alpine`, `nginx:1.28-alpine`)។ Labs CRITICAL-gated / គិតបែប production pin digest (`FROM node:22-alpine@sha256:…` ក្នុង Labs 05, 08 slim, 09, 12, និង 13; Postgres/Redis ក្នុង Lab 13 Compose — Lab 05 Compose នៅ float tags ទាំងនោះដោយចេតនា)។ ជំពូក 15 ពន្យល់ tag vs digest។
-2. **Non-root user** — `USER node` or custom UID
-3. **Read-only root filesystem** where possible (`--read-only` + writable tmp mounts)
-4. **Healthchecks** — Alpine Node images ភាគច្រើនគ្មាន `wget`/`curl`។ Probe ដោយ Node runtime ដូច app:
+1. **Pin កំណែ** — `postgres:16-alpine` មិនមែន `postgres:latest`។ Labs ដើមប្រើ series tag (`redis:7-alpine`, `node:22-alpine`, `nginx:1.28-alpine`)។ Labs ដែលមានច្រក CRITICAL / គិតបែប production pin digest (`FROM node:22-alpine@sha256:…` ក្នុង Labs 05, 08 slim, 09, 12, និង 13; Postgres/Redis ក្នុង Lab 13 Compose — Lab 05 Compose នៅអណ្តែត tags ទាំងនោះដោយចេតនា)។ ជំពូក 15 ពន្យល់ tag ធៀប digest។
+2. **User មិនមែន root** — `USER node` ឬ UID ផ្ទាល់ខ្លួន
+3. **Root filesystem អានបានតែ** ពេលអាច (`--read-only` + mounts សរសេរបានសម្រាប់ tmp)
+4. **Healthchecks** — images Node លើ Alpine ភាគច្រើនគ្មាន `wget`/`curl`។ សាកដោយ Node runtime ដូច app៖
 
 ```dockerfile
 HEALTHCHECK --interval=15s --timeout=3s --start-period=5s --retries=3 \
@@ -1274,7 +1274,7 @@ healthcheck:
   start_period: 5s
 ```
 
-5. **Resource limits** — Compose V2 (`docker compose`) apply `deploy.resources` លើ single node។ មិនត្រូវការ Swarm ឬ key ចាស់ `mem_limit` / `cpus`។
+5. **កំណត់ធនធាន** — Compose V2 (`docker compose`) អនុវត្ត `deploy.resources` លើ node តែមួយ។ មិនត្រូវការ Swarm ឬ key ចាស់ `mem_limit` / `cpus`។
 
 ```yaml
 deploy:
@@ -1284,19 +1284,19 @@ deploy:
       memory: 256M
 ```
 
-6. **Restart policy**
+6. **ច្បាប់ restart**
 
 ```yaml
 restart: unless-stopped
 ```
 
-7. **Init process** — `init: true` (ឬ `docker run --init`) ដើម្បីឱ្យ PID 1 reap zombies និង forward `SIGTERM` ពី `docker stop`។ គូជាមួយ exec-form `CMD` និង graceful shutdown ក្នុង app។
+7. **Init process** — `init: true` (ឬ `docker run --init`) ដើម្បីឱ្យ PID 1 ប្រមូល zombies និងបញ្ជូន `SIGTERM` ពី `docker stop`។ ផ្គូជាមួយ `CMD` ទម្រង់ exec និងការបិទថ្នមៗក្នុង app។
 
 ```yaml
 init: true
 ```
 
-8. **Logging** — don't log secrets; ship logs collector; cap Docker json-file logs ដើម្បីកុំឱ្យ app សរសេរពេញថាស។
+8. **Logging** — កុំកត់ត្រា secrets; ផ្ញើ logs ទៅអ្នកប្រមូល; កំណត់ logs json-file របស់ Docker ដើម្បីកុំឱ្យ app សរសេរពេញថាស។
 
 ```yaml
 logging:
@@ -1306,22 +1306,22 @@ logging:
     max-file: "3"
 ```
 
-9. **One process per container** (guideline) — app one, db another; use Compose/K8s compose them.
+9. **Process មួយក្នុងមួយ container** (គោលណែនាំ) — app មួយ, db មួយទៀត; ប្រើ Compose/K8s ផ្គុំពួកវា។
 
-10. **Immutable images** — rebuild redeploy; don't «hotfix» running containers.
+10. **Images មិនប្តូរពេលរត់** — build ឡើងវិញ រួច deploy ឡើងវិញ; កុំ «ជួសជុល» containers ដែលកំពុងរត់។
 
-11. **Publish នៅ localhost** ពេល reverse proxy នឹង terminate TLS — `127.0.0.1:3000:3000` ដើម្បីកុំឱ្យ API លេចនៅគ្រប់ interface របស់ host។ Lab 09 និង Compose prod របស់ Lab 12 ធ្វើបែបនេះ។
+11. **ផ្សាយនៅ localhost** ពេល reverse proxy នឹងបញ្ចប់ TLS — `127.0.0.1:3000:3000` ដើម្បីកុំឱ្យ API លេចនៅគ្រប់ interface របស់ host។ Lab 09 និង Compose prod របស់ Lab 12 ធ្វើបែបនេះ។
 
-12. **Drop Linux capabilities** — `cap_drop: [ALL]` (ឬ `docker run --cap-drop ALL`) ដើម្បីកុំឱ្យ process ទទួលសិទ្ធិ kernel ដែលវាមិនត្រូវការ។ គូជាមួយ `no-new-privileges`។
+12. **ដក Linux capabilities** — `cap_drop: [ALL]` (ឬ `docker run --cap-drop ALL`) ដើម្បីកុំឱ្យ process ទទួលសិទ្ធិ kernel ដែលវាមិនត្រូវការ។ ផ្គូជាមួយ `no-new-privileges`។
 
-### Restart policies (ច្បាប់ restart)
+### ច្បាប់ restart
 
-| Policy | Behavior |
+| ច្បាប់ | អាកប្បកិរិយា |
 |--------|----------|
-| `no` | Never restart |
-| `always` | Always restart |
-| `on-failure` | Restart on non-zero exit |
-| `unless-stopped` | Always, except manually stopped |
+| `no` | មិន restart |
+| `always` | restart ជានិច្ច |
+| `on-failure` | restart ពេលចេញដោយលេខមិនមែនសូន្យ |
+| `unless-stopped` | ជានិច្ច លើកលែងពេលអ្នកឈប់ដោយដៃ |
 
 ---
 
@@ -1329,9 +1329,9 @@ logging:
 
 ### Lab៖ `labs/10-debugging`
 
-អនុវត្ត `logs`, `inspect` និង Compose client ដែលនិយាយទៅ `localhost` ខុស។ កែ hostname រួចត្រឡប់មកទីនេះសម្រាប់ pattern ផ្សេងទៀត។
+អនុវត្ត `logs`, `inspect` និង client Compose ដែលនិយាយទៅ `localhost` ខុស។ កែ hostname រួចត្រឡប់មកទីនេះសម្រាប់រោគសញ្ញាផ្សេងទៀត។
 
-### Container មិននៅ up
+### Container មិននៅរស់
 
 ```bash
 docker ps -a
@@ -1339,45 +1339,45 @@ docker logs <name>
 docker inspect <name>   # look at State.ExitCode, Error, Mounts, NetworkSettings
 ```
 
-### Debug បែប interactive
+### Debug បែបអន្តរកម្ម
 
 ```bash
 docker run --rm -it --entrypoint sh myimage:tag
 docker compose run --rm web sh
 ```
 
-### Copy files ចូល/ចេញ
+### ចម្លងឯកសារចូល/ចេញ
 
 ```bash
 docker cp my-nginx:/etc/nginx/nginx.conf ./nginx.conf
 docker cp ./file.txt my-nginx:/tmp/
 ```
 
-### មើល processes / ការប្រើ resource
+### មើល processes / ការប្រើធនធាន
 
 ```bash
 docker top my-nginx
 docker stats
 ```
 
-### Failure patterns ធម្មតា
+### រោគសញ្ញាធម្មតា
 
 | រោគសញ្ញា | មូលហេតុទំនង |
 |---------|----------------|
-| Port already allocated | Process/container ផ្សេងកំពុងប្រើ host port |
-| Connection refused to `db` | Network ខុស, hostname ខុស, db មិនទាន់ ready |
-| Permission denied on volume | UID mismatch លើ bind mount |
-| Huge image | Base ធំ, ឧបករណ៍ build នៅសល់, គ្មាន multi-stage |
-| Changes not appearing | Image ចាស់នៅ cache; rebuild; ឬ mount ខុស |
-| `localhost` ក្នុង browser ដំណើរការ តែ app មិនទៅដល់ db | App ប្រើ `localhost` មិនមែនឈ្មោះ service |
+| Port ត្រូវបានយកហើយ | Process/container ផ្សេងកំពុងប្រើ host port |
+| ការភ្ជាប់ទៅ `db` ត្រូវបានបដិសេធ | Network ខុស, hostname ខុស, db មិនទាន់រួច |
+| សិទ្ធិត្រូវបានបដិសេធលើ volume | UID មិនផ្គូលើ bind mount |
+| Image ធំខ្លាំង | Base ធំ, ឧបករណ៍ build នៅសល់, គ្មាន multi-stage |
+| ការផ្លាស់មិនលេច | Image ចាស់នៅ cache; build ឡើងវិញ; ឬ mount ខុស |
+| `localhost` ក្នុង browser ដើរ តែ app មិនទៅដល់ db | App ប្រើ `localhost` មិនមែនឈ្មោះ service |
 
-### ការប្រណាំង «Database not ready»
+### ការប្រណាំង «Database មិនទាន់រួច»
 
-`depends_on` រង់ចាំតែ **start** មិនមែន **ready**។ ដោះស្រាយដោយ៖
+`depends_on` រង់ចាំតែ **ការចាប់ផ្តើម** មិនមែន **រួចរាល់**។ ដោះស្រាយដោយ៖
 
 - Healthcheck + `depends_on: condition: service_healthy` (Compose)
-- Retry/backoff ក្នុង app
-- Init containers / wait scripts
+- សាកឡើងវិញ/backoff ក្នុង app
+- Init containers / scripts រង់ចាំ
 
 ```yaml
 depends_on:
@@ -1391,13 +1391,13 @@ depends_on:
 
 ### Lab៖ `labs/11-security`
 
-ប្រៀបធៀប `whoami` លើ image ដែលមិនមែន root vs Alpine, build ជាមួយ BuildKit `--secret` (គ្មានអ្វីក្នុង `docker history`) ហើយស្កេនដោយ Trivy បើចង់។ Lab 04 បានបង្ហាញ anti-pattern `ENV` ដែលលេច secret រួចហើយ។
+ប្រៀបធៀប `whoami` លើ image ដែលមិនមែន root ធៀប Alpine, build ជាមួយ BuildKit `--secret` (គ្មានអ្វីក្នុង `docker history`) ហើយស្កេនដោយ Trivy បើចង់។ Lab 04 បានបង្ហាញ anti-pattern `ENV` ដែលលេច secret រួចហើយ។
 
-1. **កុំ run ជា root** ក្នុង production containers នៅពេលអាចជៀសបាន។
+1. **កុំរត់ជា root** ក្នុង containers production ពេលអាចជៀសបាន។
 2. **ស្កេន images** រក CVEs (`docker scout`, Trivy, Grype)។
 3. **Base images តូច** + multi-stage។
 4. **កុំ commit secrets**; កុំ `ENV PASSWORD=...` ជាមួយ secret ពិតក្នុង Dockerfile។
-5. **Pin digests** សម្រាប់គ្រប់គ្រង supply-chain៖
+5. **Pin digests** សម្រាប់គ្រប់គ្រង supply-chain ដែលសំខាន់៖
 
 ```bash
 docker image inspect alpine:3.22 --format '{{index .RepoDigests 0}}'
@@ -1408,8 +1408,8 @@ docker image inspect alpine:3.22 --format '{{index .RepoDigests 0}}'
 docker pull nginx@sha256:...
 ```
 
-6. **Drop capabilities** / ប្រើ security options ពេលត្រូវ (`--cap-drop ALL`)។
-7. **Update Engine** ឱ្យទាន់។
+6. **ដក capabilities** / ប្រើជម្រើសសុវត្ថិភាពពេលត្រូវ (`--cap-drop ALL`)។
+7. **ធ្វើបច្ចុប្បន្នភាព Engine** ឱ្យទាន់។
 8. **ចាត់ Docker socket ដូច root** — mount `/var/run/docker.sock` ចូល container ស្ទើរតែដូចឱ្យ container នោះ root លើ host។
 
 ---
@@ -1418,19 +1418,19 @@ docker pull nginx@sha256:...
 
 ### Lab៖ `labs/14-advanced`
 
-Cache mounts របស់ BuildKit, ការពិនិត្យ multi-arch, Compose Watch និងការមើល SBOM។ ធ្វើបន្ទាប់ពី Lab 11 (secrets បានអនុវត្តនៅ §2) និងមុន Lab 12។ Profiles បានបង្ហាញខ្លីក្នុងជំពូក 11 — ត្រឡប់មកវិញពេល service ស្រេចចិត្តធ្វើឱ្យ Compose រាលថ្ងៃរញ៉េរញ៉ៃ។
+Cache mounts របស់ BuildKit, ការពិនិត្យ multi-arch, Compose Watch និងការមើល SBOM។ ធ្វើបន្ទាប់ពី Lab 11 (secrets បានអនុវត្តនៅ §2) និងមុន Lab 12។ Profiles បានបង្ហាញខ្លីក្នុងជំពូក 11 — ត្រឡប់មកវិញពេល service ស្រេចចិត្តធ្វើឱ្យឯកសារ Compose ប្រចាំថ្ងៃរញ៉េរញ៉ៃ។
 
 > **គន្លឹះ:** CTA អនុវត្តខាងលើជំពូកនេះបើក Lab 14។
 
 ### BuildKit (សំខាន់)
 
-Builder ទំនើប (ធម្មតាជា default ឥឡូវ)៖
+Builder ទំនើប (ធម្មតាជាលំនាំដើមឥឡូវ)៖
 
 ```bash
 DOCKER_BUILDKIT=1 docker build -t myapp .
 ```
 
-លក្ខណៈ៖ cache ល្អជាង, build ទន្ទឹមគ្នា, mount secrets ពេល build (មិនទុក secrets ក្នុង layers) និង cache mounts សម្រាប់ package managers។
+លក្ខណៈ៖ cache ល្អជាង, build ស្របគ្នា, mount secrets ពេល build (មិនទុក secrets ក្នុង layers) និង cache mounts សម្រាប់ package managers។
 
 ```dockerfile
 # syntax=docker/dockerfile:1
@@ -1445,7 +1445,7 @@ RUN --mount=type=cache,target=/root/.npm \
 docker build --secret id=npmrc,src=$HOME/.npmrc -t myapp .
 ```
 
-### Build multi-arch (ប្រៀបធៀប)
+### Build ច្រើនស្ថាបត្យកម្ម
 
 ```bash
 docker buildx create --use
@@ -1463,11 +1463,11 @@ docker push youruser/rean-hello:1.0
 docker pull youruser/rean-hello:1.0
 ```
 
-ឧទាហរណ៍ GHCR tag: `ghcr.io/you/rean-hello:1.0`
+ឧទាហរណ៍ tag GHCR៖ `ghcr.io/you/rean-hello:1.0`
 
-### Compose Watch (iteration មូលដ្ឋាន)
+### Compose Watch (ធ្វើឡើងវិញលើម៉ាស៊ីន)
 
-`docker compose up` rebuild ពេលអ្នកស្នើ។ **Compose Watch** rebuild ឬ sync ពេលឯកសារផ្លាស់ — មានប្រយោជន៍សម្រាប់ iteration បែប bind-mount ដោយមិនត្រូវ file watcher ផ្ទាល់ខ្លួន។
+`docker compose up` build ឡើងវិញពេលអ្នកស្នើ។ **Compose Watch** build ឡើងវិញ ឬ sync ពេលឯកសារផ្លាស់ — មានប្រយោជន៍សម្រាប់ការសាកបែប bind-mount ដោយមិនត្រូវ file watcher ផ្ទាល់ខ្លួន។
 
 ```yaml
 # sketch — see labs/14-advanced/compose.watch.yaml
@@ -1486,7 +1486,7 @@ docker compose -f compose.watch.yaml up -d
 docker compose -f compose.watch.yaml watch
 ```
 
-ប្រើ Watch សម្រាប់ **feedback loop លើ laptop**។ ទុក production Compose គ្មាន `develop:` — ship images មិនមែន laptop sync rules (ជំពូក 17)។
+ប្រើ Watch សម្រាប់ **រង្វិលត្រឡប់មតិលើ laptop**។ ទុក Compose production គ្មាន `develop:` — ផ្ញើ images មិនមែនច្បាប់ sync របស់ laptop (ជំពូក 17)។
 
 ### SBOM និង provenance
 
@@ -1504,7 +1504,7 @@ docker buildx build --sbom=true --provenance=true -t you/app:1.0 --push .
 
 មិនត្រូវចាំ SPDX។ ត្រូវមានទម្លាប់៖ **បង្កើត ឬភ្ជាប់ SBOM មុនចាត់ image ថា «release candidate»។**
 
-### Signing images (ទិដ្ឋភាព)
+### ចុះហត្ថលេខា images (ទិសដៅ)
 
 Tags និង digests និយាយ *bits ណា*។ **Signatures** និយាយ *នរណាបោះផ្សាយ* (និងថាវាមិនត្រូវបានប្តូរ)។ ឧបករណ៍ដូច [Sigstore Cosign](https://docs.sigstore.dev/cosign/system_config/installation/) verify signature ក្នុង CI ឬពេល deploy។
 
@@ -1514,11 +1514,11 @@ cosign sign ghcr.io/you/app@sha256:...
 cosign verify ghcr.io/you/app@sha256:...
 ```
 
-Signing ផ្គូផ្គង digests (ជំពូក 15) និង registry push (ជំពូក 17)។ កុំ install Cosign នៅថ្ងៃទីមួយ; ដឹងថា «pull by digest + verify signature» គឺរឿង trust កម្រិត production។
+ការចុះហត្ថលេខាផ្គូជាមួយ digests (ជំពូក 15) និងការផ្ញើទៅ registry (ជំពូក 17)។ កុំដំឡើង Cosign នៅថ្ងៃទីមួយ; ដឹងថា «pull តាម digest + verify signature» គឺរឿងទុកចិត្តកម្រិត production។
 
-### Rootless Docker (ទិដ្ឋភាព)
+### Rootless Docker (ទិសដៅ)
 
-តាមលំនាំដើម Docker daemon ច្រើនតែ run ជា root លើ host។ **Rootless mode** រត់ daemon ជា user របស់អ្នក ដើម្បីឱ្យ container ដែលត្រូវគេវាយប្រហារពិបាកជាងក្នុងការគ្រប់គ្រងម៉ាស៊ីន។ Trade-off: feature ខ្លះ (port ជាក់លាក់, storage driver, GPU) ត្រូវ setup បន្ថែម។
+តាមលំនាំដើម Docker daemon ច្រើនតែរត់ជា root លើ host។ **Rootless mode** រត់ daemon ជា user របស់អ្នក ដើម្បីឱ្យ container ដែលត្រូវគេវាយប្រហារពិបាកជាងក្នុងការគ្រប់គ្រងម៉ាស៊ីន។ ការដោះដូរ៖ លក្ខណៈខ្លះ (port ជាក់លាក់, storage driver, GPU) ត្រូវរៀបចំបន្ថែម។
 
 ```bash
 # After installing rootless extras (distro-specific — see Docker docs):
@@ -1527,13 +1527,13 @@ export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
 docker info
 ```
 
-ចូលចិត្ត non-root **ក្នុង** images មុន (Lab 11 §1 / Lab 09)។ ទៅ rootless Engine ពេល harden laptop រួម ឬ CI runner។
+ចូលចិត្ត non-root **ក្នុង** images មុន (Lab 11 §1 / Lab 09)។ ទៅ rootless Engine ពេលរឹត laptop រួម ឬ CI runner។
 
-### Docker Swarm vs Kubernetes (ទិដ្ឋភាព)
+### Docker Swarm ធៀប Kubernetes (ទិសដៅ)
 
 | ឧបករណ៍ | តួនាទី |
 |------|------|
-| Docker Compose | Stack មូលដ្ឋាន / host តែមួយ |
+| Docker Compose | Stack ក្នុងម៉ាស៊ីន / host តែមួយ |
 | Docker Swarm | Clustering ក្នុង Docker (ប្រើតិចជាងសព្វថ្ងៃ) |
 | Kubernetes | Orchestration ស្តង់ដារឧស្សាហកម្មនៅទំហំធំ |
 
@@ -1541,7 +1541,7 @@ docker info
 
 ### Init process និង zombies
 
-ប្រើ `tini` ឬ Docker `--init` ដើម្បីឱ្យ PID 1 ប្រមូល zombie processes និងបញ្ជូន signals៖
+ប្រើ `tini` ឬ `--init` របស់ Docker ដើម្បីឱ្យ PID 1 ប្រមូល zombie processes និងបញ្ជូន signals៖
 
 ```bash
 docker run --init ...

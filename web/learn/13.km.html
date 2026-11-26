@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#f2f6fa" />
     <link rel="manifest" href="./site.webmanifest" />
     <title>ទម្លាប់គិតបែប production — rean-docker</title>
-    <meta name="description" content="Pin versions — postgres:16-alpine មិនមែន postgres:latest។ Labs ដើមប្រើ series tag (redis:7-alpine, node:22-alpine, nginx:1.28-alpine)។ Labs CRITICAL-gated /…" />
+    <meta name="description" content="Pin កំណែ — postgres:16-alpine មិនមែន postgres:latest។ Labs ដើមប្រើ series tag (redis:7-alpine, node:22-alpine, nginx:1.28-alpine)។ Labs ដែលមានច្រក CRITICAL /…" />
     <link rel="canonical" href="https://bunsalcoder.github.io/rean-docker/learn/13.km.html" />
     <link rel="alternate" hreflang="en" href="https://bunsalcoder.github.io/rean-docker/learn/13.html" />
     <link rel="alternate" hreflang="km" href="https://bunsalcoder.github.io/rean-docker/learn/13.km.html" />
@@ -17,12 +17,12 @@
     <meta property="og:site_name" content="rean-docker" />
     <meta property="og:type" content="article" />
     <meta property="og:title" content="ទម្លាប់គិតបែប production — rean-docker" />
-    <meta property="og:description" content="Pin versions — postgres:16-alpine មិនមែន postgres:latest។ Labs ដើមប្រើ series tag (redis:7-alpine, node:22-alpine, nginx:1.28-alpine)។ Labs CRITICAL-gated /…" />
+    <meta property="og:description" content="Pin កំណែ — postgres:16-alpine មិនមែន postgres:latest។ Labs ដើមប្រើ series tag (redis:7-alpine, node:22-alpine, nginx:1.28-alpine)។ Labs ដែលមានច្រក CRITICAL /…" />
     <meta property="og:url" content="https://bunsalcoder.github.io/rean-docker/learn/13.km.html" />
     <meta property="og:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="ទម្លាប់គិតបែប production — rean-docker" />
-    <meta name="twitter:description" content="Pin versions — postgres:16-alpine មិនមែន postgres:latest។ Labs ដើមប្រើ series tag (redis:7-alpine, node:22-alpine, nginx:1.28-alpine)។ Labs CRITICAL-gated /…" />
+    <meta name="twitter:description" content="Pin កំណែ — postgres:16-alpine មិនមែន postgres:latest។ Labs ដើមប្រើ series tag (redis:7-alpine, node:22-alpine, nginx:1.28-alpine)។ Labs ដែលមានច្រក CRITICAL /…" />
     <meta name="twitter:image" content="https://bunsalcoder.github.io/rean-docker/assets/img/hero-harbor.jpg" />
     <link rel="icon" href="./assets/img/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="./assets/img/favicon.ico" sizes="any" />
@@ -50,12 +50,12 @@
       <p class="static-reader-hint">Checklist និងវឌ្ឍនភាពធ្វើសមកាលនៅអ្នកអានអន្តរកម្ម (និងនៅទំព័រនេះពេល JavaScript បើក).</p>
       <div class="md-body" data-checklist-scope="learn:13">
 <h3>Lab៖ <code>labs/09-production</code></h3>
-<h3>Checklist មុន deploy «real»</h3>
+<h3>បញ្ជីត្រួតពិនិត្យមុន deploy «ពិត»</h3>
 <ol>
-<li><strong>Pin versions</strong> — <code>postgres:16-alpine</code> មិនមែន <code>postgres:latest</code>។ Labs ដើមប្រើ series tag (<code>redis:7-alpine</code>, <code>node:22-alpine</code>, <code>nginx:1.28-alpine</code>)។ Labs CRITICAL-gated / គិតបែប production pin digest (<code>FROM node:22-alpine@sha256:…</code> ក្នុង Labs 05, 08 slim, 09, 12, និង 13; Postgres/Redis ក្នុង Lab 13 Compose — Lab 05 Compose នៅ float tags ទាំងនោះដោយចេតនា)។ ជំពូក 15 ពន្យល់ tag vs digest។</li>
-<li><strong>Non-root user</strong> — <code>USER node</code> or custom UID</li>
-<li><strong>Read-only root filesystem</strong> where possible (<code>--read-only</code> + writable tmp mounts)</li>
-<li><strong>Healthchecks</strong> — Alpine Node images ភាគច្រើនគ្មាន <code>wget</code>/<code>curl</code>។ Probe ដោយ Node runtime ដូច app:</li>
+<li><strong>Pin កំណែ</strong> — <code>postgres:16-alpine</code> មិនមែន <code>postgres:latest</code>។ Labs ដើមប្រើ series tag (<code>redis:7-alpine</code>, <code>node:22-alpine</code>, <code>nginx:1.28-alpine</code>)។ Labs ដែលមានច្រក CRITICAL / គិតបែប production pin digest (<code>FROM node:22-alpine@sha256:…</code> ក្នុង Labs 05, 08 slim, 09, 12, និង 13; Postgres/Redis ក្នុង Lab 13 Compose — Lab 05 Compose នៅអណ្តែត tags ទាំងនោះដោយចេតនា)។ ជំពូក 15 ពន្យល់ tag ធៀប digest។</li>
+<li><strong>User មិនមែន root</strong> — <code>USER node</code> ឬ UID ផ្ទាល់ខ្លួន</li>
+<li><strong>Root filesystem អានបានតែ</strong> ពេលអាច (<code>--read-only</code> + mounts សរសេរបានសម្រាប់ tmp)</li>
+<li><strong>Healthchecks</strong> — images Node លើ Alpine ភាគច្រើនគ្មាន <code>wget</code>/<code>curl</code>។ សាកដោយ Node runtime ដូច app៖</li>
 </ol>
 <pre><code class="language-dockerfile">HEALTHCHECK --interval=15s --timeout=3s --start-period=5s --retries=3 \
   CMD node -e &quot;fetch(&#39;http://127.0.0.1:3000/health&#39;).then(r=&gt;process.exit(r.ok?0:1)).catch(()=&gt;process.exit(1))&quot;
@@ -74,7 +74,7 @@
   start_period: 5s
 </code></pre>
 <ol start="5">
-<li><strong>Resource limits</strong> — Compose V2 (<code>docker compose</code>) apply <code>deploy.resources</code> លើ single node។ មិនត្រូវការ Swarm ឬ key ចាស់ <code>mem_limit</code> / <code>cpus</code>។</li>
+<li><strong>កំណត់ធនធាន</strong> — Compose V2 (<code>docker compose</code>) អនុវត្ត <code>deploy.resources</code> លើ node តែមួយ។ មិនត្រូវការ Swarm ឬ key ចាស់ <code>mem_limit</code> / <code>cpus</code>។</li>
 </ol>
 <pre><code class="language-yaml">deploy:
   resources:
@@ -83,17 +83,17 @@
       memory: 256M
 </code></pre>
 <ol start="6">
-<li><strong>Restart policy</strong></li>
+<li><strong>ច្បាប់ restart</strong></li>
 </ol>
 <pre><code class="language-yaml">restart: unless-stopped
 </code></pre>
 <ol start="7">
-<li><strong>Init process</strong> — <code>init: true</code> (ឬ <code>docker run --init</code>) ដើម្បីឱ្យ PID 1 reap zombies និង forward <code>SIGTERM</code> ពី <code>docker stop</code>។ គូជាមួយ exec-form <code>CMD</code> និង graceful shutdown ក្នុង app។</li>
+<li><strong>Init process</strong> — <code>init: true</code> (ឬ <code>docker run --init</code>) ដើម្បីឱ្យ PID 1 ប្រមូល zombies និងបញ្ជូន <code>SIGTERM</code> ពី <code>docker stop</code>។ ផ្គូជាមួយ <code>CMD</code> ទម្រង់ exec និងការបិទថ្នមៗក្នុង app។</li>
 </ol>
 <pre><code class="language-yaml">init: true
 </code></pre>
 <ol start="8">
-<li><strong>Logging</strong> — don&#39;t log secrets; ship logs collector; cap Docker json-file logs ដើម្បីកុំឱ្យ app សរសេរពេញថាស។</li>
+<li><strong>Logging</strong> — កុំកត់ត្រា secrets; ផ្ញើ logs ទៅអ្នកប្រមូល; កំណត់ logs json-file របស់ Docker ដើម្បីកុំឱ្យ app សរសេរពេញថាស។</li>
 </ol>
 <pre><code class="language-yaml">logging:
   driver: json-file
@@ -102,38 +102,38 @@
     max-file: &quot;3&quot;
 </code></pre>
 <ol start="9">
-<li><p><strong>One process per container</strong> (guideline) — app one, db another; use Compose/K8s compose them.</p>
+<li><p><strong>Process មួយក្នុងមួយ container</strong> (គោលណែនាំ) — app មួយ, db មួយទៀត; ប្រើ Compose/K8s ផ្គុំពួកវា។</p>
 </li>
-<li><p><strong>Immutable images</strong> — rebuild redeploy; don&#39;t «hotfix» running containers.</p>
+<li><p><strong>Images មិនប្តូរពេលរត់</strong> — build ឡើងវិញ រួច deploy ឡើងវិញ; កុំ «ជួសជុល» containers ដែលកំពុងរត់។</p>
 </li>
-<li><p><strong>Publish នៅ localhost</strong> ពេល reverse proxy នឹង terminate TLS — <code>127.0.0.1:3000:3000</code> ដើម្បីកុំឱ្យ API លេចនៅគ្រប់ interface របស់ host។ Lab 09 និង Compose prod របស់ Lab 12 ធ្វើបែបនេះ។</p>
+<li><p><strong>ផ្សាយនៅ localhost</strong> ពេល reverse proxy នឹងបញ្ចប់ TLS — <code>127.0.0.1:3000:3000</code> ដើម្បីកុំឱ្យ API លេចនៅគ្រប់ interface របស់ host។ Lab 09 និង Compose prod របស់ Lab 12 ធ្វើបែបនេះ។</p>
 </li>
-<li><p><strong>Drop Linux capabilities</strong> — <code>cap_drop: [ALL]</code> (ឬ <code>docker run --cap-drop ALL</code>) ដើម្បីកុំឱ្យ process ទទួលសិទ្ធិ kernel ដែលវាមិនត្រូវការ។ គូជាមួយ <code>no-new-privileges</code>។</p>
+<li><p><strong>ដក Linux capabilities</strong> — <code>cap_drop: [ALL]</code> (ឬ <code>docker run --cap-drop ALL</code>) ដើម្បីកុំឱ្យ process ទទួលសិទ្ធិ kernel ដែលវាមិនត្រូវការ។ ផ្គូជាមួយ <code>no-new-privileges</code>។</p>
 </li>
 </ol>
-<h3>Restart policies (ច្បាប់ restart)</h3>
+<h3>ច្បាប់ restart</h3>
 <table>
 <thead>
 <tr>
-<th>Policy</th>
-<th>Behavior</th>
+<th>ច្បាប់</th>
+<th>អាកប្បកិរិយា</th>
 </tr>
 </thead>
 <tbody><tr>
 <td><code>no</code></td>
-<td>Never restart</td>
+<td>មិន restart</td>
 </tr>
 <tr>
 <td><code>always</code></td>
-<td>Always restart</td>
+<td>restart ជានិច្ច</td>
 </tr>
 <tr>
 <td><code>on-failure</code></td>
-<td>Restart on non-zero exit</td>
+<td>restart ពេលចេញដោយលេខមិនមែនសូន្យ</td>
 </tr>
 <tr>
 <td><code>unless-stopped</code></td>
-<td>Always, except manually stopped</td>
+<td>ជានិច្ច លើកលែងពេលអ្នកឈប់ដោយដៃ</td>
 </tr>
 </tbody></table>
 <hr>

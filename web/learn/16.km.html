@@ -50,7 +50,7 @@
       <p class="static-reader-hint">Checklist និងវឌ្ឍនភាពធ្វើសមកាលនៅអ្នកអានអន្តរកម្ម (និងនៅទំព័រនេះពេល JavaScript បើក).</p>
       <div class="md-body" data-checklist-scope="learn:16">
 <h3>Lab៖ <code>labs/14-advanced</code></h3>
-<p>Cache mounts របស់ BuildKit, ការពិនិត្យ multi-arch, Compose Watch និងការមើល SBOM។ ធ្វើបន្ទាប់ពី Lab 11 (secrets បានអនុវត្តនៅ §2) និងមុន Lab 12។ Profiles បានបង្ហាញខ្លីក្នុងជំពូក 11 — ត្រឡប់មកវិញពេល service ស្រេចចិត្តធ្វើឱ្យ Compose រាលថ្ងៃរញ៉េរញ៉ៃ។</p>
+<p>Cache mounts របស់ BuildKit, ការពិនិត្យ multi-arch, Compose Watch និងការមើល SBOM។ ធ្វើបន្ទាប់ពី Lab 11 (secrets បានអនុវត្តនៅ §2) និងមុន Lab 12។ Profiles បានបង្ហាញខ្លីក្នុងជំពូក 11 — ត្រឡប់មកវិញពេល service ស្រេចចិត្តធ្វើឱ្យឯកសារ Compose ប្រចាំថ្ងៃរញ៉េរញ៉ៃ។</p>
 <aside class="md-callout md-callout-hint" role="note">
 <div class="md-callout-body">
 <p class="md-callout-title">គន្លឹះ</p>
@@ -58,10 +58,10 @@
 </div>
 </aside>
 <h3>BuildKit (សំខាន់)</h3>
-<p>Builder ទំនើប (ធម្មតាជា default ឥឡូវ)៖</p>
+<p>Builder ទំនើប (ធម្មតាជាលំនាំដើមឥឡូវ)៖</p>
 <pre><code class="language-bash">DOCKER_BUILDKIT=1 docker build -t myapp .
 </code></pre>
-<p>លក្ខណៈ៖ cache ល្អជាង, build ទន្ទឹមគ្នា, mount secrets ពេល build (មិនទុក secrets ក្នុង layers) និង cache mounts សម្រាប់ package managers។</p>
+<p>លក្ខណៈ៖ cache ល្អជាង, build ស្របគ្នា, mount secrets ពេល build (មិនទុក secrets ក្នុង layers) និង cache mounts សម្រាប់ package managers។</p>
 <pre><code class="language-dockerfile"># syntax=docker/dockerfile:1
 RUN --mount=type=secret,id=npmrc \
     npm ci
@@ -71,7 +71,7 @@ RUN --mount=type=cache,target=/root/.npm \
 </code></pre>
 <pre><code class="language-bash">docker build --secret id=npmrc,src=$HOME/.npmrc -t myapp .
 </code></pre>
-<h3>Build multi-arch (ប្រៀបធៀប)</h3>
+<h3>Build ច្រើនស្ថាបត្យកម្ម</h3>
 <pre><code class="language-bash">docker buildx create --use
 docker buildx build --platform linux/amd64,linux/arm64 -t you/app:1.0 --push .
 </code></pre>
@@ -82,9 +82,9 @@ docker tag rean-hello:1.0 youruser/rean-hello:1.0
 docker push youruser/rean-hello:1.0
 docker pull youruser/rean-hello:1.0
 </code></pre>
-<p>ឧទាហរណ៍ GHCR tag: <code>ghcr.io/you/rean-hello:1.0</code></p>
-<h3>Compose Watch (iteration មូលដ្ឋាន)</h3>
-<p><code>docker compose up</code> rebuild ពេលអ្នកស្នើ។ <strong>Compose Watch</strong> rebuild ឬ sync ពេលឯកសារផ្លាស់ — មានប្រយោជន៍សម្រាប់ iteration បែប bind-mount ដោយមិនត្រូវ file watcher ផ្ទាល់ខ្លួន។</p>
+<p>ឧទាហរណ៍ tag GHCR៖ <code>ghcr.io/you/rean-hello:1.0</code></p>
+<h3>Compose Watch (ធ្វើឡើងវិញលើម៉ាស៊ីន)</h3>
+<p><code>docker compose up</code> build ឡើងវិញពេលអ្នកស្នើ។ <strong>Compose Watch</strong> build ឡើងវិញ ឬ sync ពេលឯកសារផ្លាស់ — មានប្រយោជន៍សម្រាប់ការសាកបែប bind-mount ដោយមិនត្រូវ file watcher ផ្ទាល់ខ្លួន។</p>
 <pre><code class="language-yaml"># sketch — see labs/14-advanced/compose.watch.yaml
 services:
   demo:
@@ -98,7 +98,7 @@ services:
 <pre><code class="language-bash">docker compose -f compose.watch.yaml up -d
 docker compose -f compose.watch.yaml watch
 </code></pre>
-<p>ប្រើ Watch សម្រាប់ <strong>feedback loop លើ laptop</strong>។ ទុក production Compose គ្មាន <code>develop:</code> — ship images មិនមែន laptop sync rules (ជំពូក 17)។</p>
+<p>ប្រើ Watch សម្រាប់ <strong>រង្វិលត្រឡប់មតិលើ laptop</strong>។ ទុក Compose production គ្មាន <code>develop:</code> — ផ្ញើ images មិនមែនច្បាប់ sync របស់ laptop (ជំពូក 17)។</p>
 <h3>SBOM និង provenance</h3>
 <p><strong>SBOM</strong> (Software Bill of Materials) រាយអ្វីដែល image មាន ដើម្បីឱ្យ scanner និង auditor វិភាគ supply chain។ <strong>Provenance</strong> / attestations កត់ត្រា <em>របៀប</em> ដែលវាត្រូវបាន build (Dockerfile, git commit, builder)។</p>
 <p>វិធីមើលដោយមិនត្រូវដំឡើងឧបករណ៍បន្ថែម៖</p>
@@ -109,22 +109,22 @@ docker run --rm aquasec/trivy:0.63.0 image --format spdx alpine:3.22 | head
 docker buildx build --sbom=true --provenance=true -t you/app:1.0 --push .
 </code></pre>
 <p>មិនត្រូវចាំ SPDX។ ត្រូវមានទម្លាប់៖ <strong>បង្កើត ឬភ្ជាប់ SBOM មុនចាត់ image ថា «release candidate»។</strong></p>
-<h3>Signing images (ទិដ្ឋភាព)</h3>
+<h3>ចុះហត្ថលេខា images (ទិសដៅ)</h3>
 <p>Tags និង digests និយាយ <em>bits ណា</em>។ <strong>Signatures</strong> និយាយ <em>នរណាបោះផ្សាយ</em> (និងថាវាមិនត្រូវបានប្តូរ)។ ឧបករណ៍ដូច <a href="https://docs.sigstore.dev/cosign/system_config/installation/">Sigstore Cosign</a> verify signature ក្នុង CI ឬពេល deploy។</p>
 <pre><code class="language-bash"># Shape only — install cosign separately if you try this for real
 cosign sign ghcr.io/you/app@sha256:...
 cosign verify ghcr.io/you/app@sha256:...
 </code></pre>
-<p>Signing ផ្គូផ្គង digests (ជំពូក 15) និង registry push (ជំពូក 17)។ កុំ install Cosign នៅថ្ងៃទីមួយ; ដឹងថា «pull by digest + verify signature» គឺរឿង trust កម្រិត production។</p>
-<h3>Rootless Docker (ទិដ្ឋភាព)</h3>
-<p>តាមលំនាំដើម Docker daemon ច្រើនតែ run ជា root លើ host។ <strong>Rootless mode</strong> រត់ daemon ជា user របស់អ្នក ដើម្បីឱ្យ container ដែលត្រូវគេវាយប្រហារពិបាកជាងក្នុងការគ្រប់គ្រងម៉ាស៊ីន។ Trade-off: feature ខ្លះ (port ជាក់លាក់, storage driver, GPU) ត្រូវ setup បន្ថែម។</p>
+<p>ការចុះហត្ថលេខាផ្គូជាមួយ digests (ជំពូក 15) និងការផ្ញើទៅ registry (ជំពូក 17)។ កុំដំឡើង Cosign នៅថ្ងៃទីមួយ; ដឹងថា «pull តាម digest + verify signature» គឺរឿងទុកចិត្តកម្រិត production។</p>
+<h3>Rootless Docker (ទិសដៅ)</h3>
+<p>តាមលំនាំដើម Docker daemon ច្រើនតែរត់ជា root លើ host។ <strong>Rootless mode</strong> រត់ daemon ជា user របស់អ្នក ដើម្បីឱ្យ container ដែលត្រូវគេវាយប្រហារពិបាកជាងក្នុងការគ្រប់គ្រងម៉ាស៊ីន។ ការដោះដូរ៖ លក្ខណៈខ្លះ (port ជាក់លាក់, storage driver, GPU) ត្រូវរៀបចំបន្ថែម។</p>
 <pre><code class="language-bash"># After installing rootless extras (distro-specific — see Docker docs):
 dockerd-rootless-setuptool.sh install
 export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
 docker info
 </code></pre>
-<p>ចូលចិត្ត non-root <strong>ក្នុង</strong> images មុន (Lab 11 §1 / Lab 09)។ ទៅ rootless Engine ពេល harden laptop រួម ឬ CI runner។</p>
-<h3>Docker Swarm vs Kubernetes (ទិដ្ឋភាព)</h3>
+<p>ចូលចិត្ត non-root <strong>ក្នុង</strong> images មុន (Lab 11 §1 / Lab 09)។ ទៅ rootless Engine ពេលរឹត laptop រួម ឬ CI runner។</p>
+<h3>Docker Swarm ធៀប Kubernetes (ទិសដៅ)</h3>
 <table>
 <thead>
 <tr>
@@ -134,7 +134,7 @@ docker info
 </thead>
 <tbody><tr>
 <td>Docker Compose</td>
-<td>Stack មូលដ្ឋាន / host តែមួយ</td>
+<td>Stack ក្នុងម៉ាស៊ីន / host តែមួយ</td>
 </tr>
 <tr>
 <td>Docker Swarm</td>
@@ -147,7 +147,7 @@ docker info
 </tbody></table>
 <p>រៀន Compose ឱ្យជ្រៅមុន។ ទៅ K8s ពេលត្រូវការ scheduling ច្រើន node, rolling updates, service meshes ជាដើម។</p>
 <h3>Init process និង zombies</h3>
-<p>ប្រើ <code>tini</code> ឬ Docker <code>--init</code> ដើម្បីឱ្យ PID 1 ប្រមូល zombie processes និងបញ្ជូន signals៖</p>
+<p>ប្រើ <code>tini</code> ឬ <code>--init</code> របស់ Docker ដើម្បីឱ្យ PID 1 ប្រមូល zombie processes និងបញ្ជូន signals៖</p>
 <pre><code class="language-bash">docker run --init ...
 </code></pre>
 <h3>Custom bridge និង aliases</h3>
