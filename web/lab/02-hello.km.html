@@ -50,13 +50,13 @@
       <p class="static-reader-hint">Checklist និងវឌ្ឍនភាពធ្វើសមកាលនៅអ្នកអានអន្តរកម្ម (និងនៅទំព័រនេះពេល JavaScript បើក).</p>
       <div class="md-body" data-checklist-scope="lab:02-hello">
 <h2>កម្រិត</h2>
-<p><strong>ថ្នាក់ដើម។</strong> Workflow Docker ប្រចាំថ្ងៃ។</p>
+<p><strong>ថ្នាក់ដើម។</strong> នេះជាផ្លូវ Docker ប្រចាំថ្ងៃ។</p>
 <h2>គោលដៅ</h2>
-<p>អនុវត្តពាក្យបញ្ជាដែលអ្នកនឹងប្រើញឹកញាប់៖ run container, publish port, អាន logs, <code>exec</code> ចូលក្នុង និង clean up។</p>
-<p><strong>ធ្វើ Lab 01 រួច?</strong> ល្អ — lab នោះបង្ហាញ <em>isolation</em>។ Lab នេះគឺ <em>workflow ប្រចាំថ្ងៃ</em> (មិនមែនទ្រឹស្តីបន្ថែម)។</p>
+<p>អនុវត្តពាក្យបញ្ជាដែលអ្នកនឹងប្រើញឹកញាប់៖ រត់ container, ផ្សាយ port, អាន log, <code>exec</code> ចូលក្នុង និងសម្អាត។</p>
+<p><strong>ធ្វើ Lab 01 រួចហើយ?</strong> ល្អ។ Lab នោះបង្ហាញ <em>isolation</em>។ Lab នេះគឺ <em>ផ្លូវប្រចាំថ្ងៃ</em> មិនមែនទ្រឹស្តីបន្ថែមទេ។</p>
 <h2>ជំហាន</h2>
-<p><strong>ជំនួយស្រេចចិត្ត:</strong> <code>./run.sh</code> គ្រប hello-world + nginx។ នៅតែធ្វើ Ubuntu interactive និង <code>docker exec -it</code> ដោយដៃ។</p>
-<h3>1. Hello World</h3>
+<p><strong>ជំនួយស្រេចចិត្ត៖</strong> <code>./run.sh</code> គ្រប hello-world និង nginx រួមទាំងការសម្អាត។ នៅតែធ្វើជំហាន Ubuntu ដែលវាយអន្តរកម្ម និង <code>docker exec -it</code> ដោយដៃ។</p>
+<h3>1. Hello World (សួស្តី)</h3>
 <pre><code class="language-bash">docker run --rm hello-world
 </code></pre>
 <details class="md-callout md-callout-expected">
@@ -83,15 +83,15 @@ docker rm lab02-nginx
 <details class="md-callout md-callout-error">
 <summary class="md-callout-title">កំហុសទូទៅ</summary>
 <div class="md-callout-body">
-<p><code>Bind for 0.0.0.0:8080 failed: port is already allocated</code> — process ផ្សេង (ឬ <code>lab02-nginx</code> ចាស់) កំពុងប្រើ 8080។ រត់ <code>docker rm -f lab02-nginx</code> និង/ឬជ្រើស host port ទំនេរ (<code>-p 8081:80</code>)។</p>
+<p><code>Bind for 0.0.0.0:8080 failed: port is already allocated</code> មានន័យថា process ផ្សេង ឬ <code>lab02-nginx</code> ចាស់ កំពុងប្រើ 8080។ រត់ <code>docker rm -f lab02-nginx</code> ឬជ្រើស host port ទំនេរ (<code>-p 8081:80</code>)។</p>
 </div>
 </details>
 <h2>លក្ខខណ្ឌជោគជ័យ</h2>
 <ul>
-<li><input disabled="" type="checkbox"> អ្នកឃើញសារជោគជ័យ hello-world</li>
-<li><input disabled="" type="checkbox"> Nginx បាន HTTP 200 នៅ port 8080</li>
-<li><input disabled="" type="checkbox"> អ្នក list files ក្នុង container ដោយ <code>docker exec</code></li>
-<li><input disabled="" type="checkbox"> Container ត្រូវបានលុប (<code>docker ps -a</code> មិនបង្ហាញ <code>lab02-nginx</code>)</li>
+<li><input disabled="" type="checkbox"> អ្នកឃើញសារជោគជ័យរបស់ hello-world</li>
+<li><input disabled="" type="checkbox"> Nginx ត្រឡប់ HTTP 200 នៅ port 8080</li>
+<li><input disabled="" type="checkbox"> អ្នកមើលបញ្ជី file ក្នុង container ដោយ <code>docker exec</code></li>
+<li><input disabled="" type="checkbox"> Container ត្រូវបានលុប។ <code>docker ps -a</code> មិនបង្ហាញ <code>lab02-nginx</code></li>
 </ul>
 <h2>បន្ទាប់</h2>
 <p>ទៅ <strong>Lab 03 — Dockerfile ដំបូងរបស់អ្នក</strong> ហើយ build image ផ្ទាល់ខ្លួន។</p>

@@ -2,19 +2,19 @@
 
 ## កម្រិត
 
-**ថ្នាក់ដើម។** Workflow Docker ប្រចាំថ្ងៃ។
+**ថ្នាក់ដើម។** នេះជាផ្លូវ Docker ប្រចាំថ្ងៃ។
 
 ## គោលដៅ
 
-អនុវត្តពាក្យបញ្ជាដែលអ្នកនឹងប្រើញឹកញាប់៖ run container, publish port, អាន logs, `exec` ចូលក្នុង និង clean up។
+អនុវត្តពាក្យបញ្ជាដែលអ្នកនឹងប្រើញឹកញាប់៖ រត់ container, ផ្សាយ port, អាន log, `exec` ចូលក្នុង និងសម្អាត។
 
-**ធ្វើ Lab 01 រួច?** ល្អ — lab នោះបង្ហាញ *isolation*។ Lab នេះគឺ *workflow ប្រចាំថ្ងៃ* (មិនមែនទ្រឹស្តីបន្ថែម)។
+**ធ្វើ Lab 01 រួចហើយ?** ល្អ។ Lab នោះបង្ហាញ *isolation*។ Lab នេះគឺ *ផ្លូវប្រចាំថ្ងៃ* មិនមែនទ្រឹស្តីបន្ថែមទេ។
 
 ## ជំហាន
 
-**ជំនួយស្រេចចិត្ត:** `./run.sh` គ្រប hello-world + nginx។ នៅតែធ្វើ Ubuntu interactive និង `docker exec -it` ដោយដៃ។
+**ជំនួយស្រេចចិត្ត៖** `./run.sh` គ្រប hello-world និង nginx រួមទាំងការសម្អាត។ នៅតែធ្វើជំហាន Ubuntu ដែលវាយអន្តរកម្ម និង `docker exec -it` ដោយដៃ។
 
-### 1. Hello World
+### 1. Hello World (សួស្តី)
 
 ```bash
 docker run --rm hello-world
@@ -43,14 +43,14 @@ docker stop lab02-nginx
 docker rm lab02-nginx
 ```
 
-> **កំហុសទូទៅ:** `Bind for 0.0.0.0:8080 failed: port is already allocated` — process ផ្សេង (ឬ `lab02-nginx` ចាស់) កំពុងប្រើ 8080។ រត់ `docker rm -f lab02-nginx` និង/ឬជ្រើស host port ទំនេរ (`-p 8081:80`)។
+> **កំហុសទូទៅ:** `Bind for 0.0.0.0:8080 failed: port is already allocated` មានន័យថា process ផ្សេង ឬ `lab02-nginx` ចាស់ កំពុងប្រើ 8080។ រត់ `docker rm -f lab02-nginx` ឬជ្រើស host port ទំនេរ (`-p 8081:80`)។
 
 ## លក្ខខណ្ឌជោគជ័យ
 
-- [ ] អ្នកឃើញសារជោគជ័យ hello-world
-- [ ] Nginx បាន HTTP 200 នៅ port 8080
-- [ ] អ្នក list files ក្នុង container ដោយ `docker exec`
-- [ ] Container ត្រូវបានលុប (`docker ps -a` មិនបង្ហាញ `lab02-nginx`)
+- [ ] អ្នកឃើញសារជោគជ័យរបស់ hello-world
+- [ ] Nginx ត្រឡប់ HTTP 200 នៅ port 8080
+- [ ] អ្នកមើលបញ្ជី file ក្នុង container ដោយ `docker exec`
+- [ ] Container ត្រូវបានលុប។ `docker ps -a` មិនបង្ហាញ `lab02-nginx`
 
 ## បន្ទាប់
 

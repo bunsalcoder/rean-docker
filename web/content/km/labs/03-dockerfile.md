@@ -2,16 +2,15 @@
 
 ## កម្រិត
 
-**ថ្នាក់ដើម។** សរសេរ និង build Dockerfile សាមញ្ញសម្រាប់ Node API។  
-Labs ក្រោយនឹង harden គំនិតដូចគ្នា — កុំចាត់លំនាំ Lab 03 ថាជា production-ready។
+**ថ្នាក់ដើម។** សរសេរ និង build Dockerfile សាមញ្ញសម្រាប់ Node API។ Lab ក្រោយនឹងរឹតគំនិតដូចគ្នា។ កុំចាត់លំនាំ Lab 03 ថាជា production-ready។
 
 ## គោលដៅ
 
-Build image ផ្ទាល់ខ្លួនសម្រាប់ Node/Express API តូចមួយ ហើយ run វា។
+Build image ផ្ទាល់ខ្លួនសម្រាប់ Node/Express API តូចមួយ ហើយរត់វា។
 
-Dockerfile នេះ **សាមញ្ញ** ដោយចេតនា (`FROM` តាម tag, គ្មាន digest pin, គ្មាន healthcheck, npm នៅក្នុង image)។ Labs ក្រោយរឹតគំនិតដូចគ្នា៖ Lab 08 multi-stage + non-root, Lab 09 healthchecks / read-only / digest pins, Lab 11 secrets + scanning។ កុំ copy pattern Lab 03 ទៅ production ដោយមិនកែ។
+Dockerfile នេះ **សាមញ្ញ** ដោយចេតនា។ `FROM` ប្រើ tag គ្មាន digest pin, គ្មាន healthcheck ហើយ npm នៅក្នុង image។ Lab ក្រោយរឹតគំនិតដូចគ្នា៖ Lab 08 ធ្វើ multi-stage និង user មិនមែន root, Lab 09 ធ្វើ healthcheck, filesystem អានបានតែ និង digest pin, Lab 11 ធ្វើ secret និងការស្កេន។ កុំ copy លំនាំ Lab 03 ទៅ production ដោយមិនកែ។
 
-**ជំនួយស្រេចចិត្ត:** `./run.sh` build, run និង curl `/` + `/health`។ ចូលចិត្តវាយពាក្យបញ្ជាពី README ដោយខ្លួនឯងលើកដំបូង។
+**ជំនួយស្រេចចិត្ត៖** `./run.sh` build, រត់ និង curl `/` ជាមួយ `/health`។ ចូលចិត្តវាយពាក្យបញ្ជាពី README ដោយខ្លួនឯងលើកដំបូង។
 
 ## ជំហាន
 
@@ -32,11 +31,11 @@ curl http://127.0.0.1:3000/
 curl http://127.0.0.1:3000/health
 ```
 
-> **លទ្ធផលដែលរំពឹងទុក:** `/` ត្រឡប់ JSON (សារសួស្តី)។ `/health` ត្រឡប់ `{"status":"ok"}`។
+> **លទ្ធផលដែលរំពឹងទុក:** `/` ត្រឡប់ JSON ដែលជាសារសួស្តី។ `/health` ត្រឡប់ `{"status":"ok"}`។
 
-> **កំហុសទូទៅ:** `failed to solve: failed to read dockerfile` — អ្នកមិននៅក្នុង `labs/03-dockerfile` ឬភ្លេច `.` នៅចុង build context។ `cd` ចូលថត lab រួចរត់ `docker build -t rean-hello:1.0 .` ម្ដងទៀត។
+> **កំហុសទូទៅ:** `failed to solve: failed to read dockerfile` មានន័យថាអ្នកមិននៅក្នុង `labs/03-dockerfile` ឬភ្លេច `.` នៅចុង build context។ `cd` ចូលថត lab រួចរត់ `docker build -t rean-hello:1.0 .` ម្ដងទៀត។
 
-ពិនិត្យ layers៖
+ពិនិត្យ layer៖
 
 ```bash
 docker history rean-hello:1.0
@@ -44,10 +43,10 @@ docker history rean-hello:1.0
 
 ## ការសាកល្បង
 
-1. ប្ដូរសារក្នុង `server.js`, rebuild, rerun — សង្កេតថា layers ណាខ្លះ rebuild។
-2. រៀប Dockerfile ឡើងវិញឱ្យ `COPY . .` *មុន* `npm ci` ហើយ rebuild ពីរដងបន្ទាប់ពីកែ code តិច — មានអារម្មណ៍ «cache pain»។ (ឯកសារពិតប្រើ `npm ci` ដែលត្រូវការ `package-lock.json` ហើយគួរប្រើជាង `npm install` ក្នុង Dockerfiles។)
+1. ប្ដូរសារក្នុង `server.js` រួច rebuild និង rerun។ សង្កេតថា layer ណាខ្លះ rebuild។
+2. រៀប Dockerfile ឡើងវិញឱ្យ `COPY . .` *មុន* `npm ci` ហើយ rebuild ពីរដងបន្ទាប់ពីកែ code តិច។ អ្នកនឹងឃើញ cache បែក ហើយ build យឺតឡើងវិញ។ ឯកសារពិតប្រើ `npm ci` ដែលត្រូវការ `package-lock.json` ហើយគួរប្រើជាង `npm install` ក្នុង Dockerfile។
 3. បន្ថែម instruction `ENV PORT=3000` ហើយបញ្ជាក់ដោយ `docker inspect`។
-4. បើក `.dockerignore` ក្នុងថតនេះ។ វារក្សា `node_modules`, `.env` និង `*.md` ចេញពី build context។ ពន្យល់ខ្លីថាហេតុអ្វីមិនគួរដឹក host `node_modules` ចូល image រួចបញ្ជាក់ថា paths ទាំងនោះមិននៅក្នុង context៖
+4. បើក `.dockerignore` ក្នុងថតនេះ។ វារក្សា `node_modules`, `.env` និង `*.md` ចេញពី build context។ ពន្យល់ខ្លីថាហេតុអ្វីមិនគួរដឹក `node_modules` ពី host ចូល image រួចបញ្ជាក់ថា path ទាំងនោះមិននៅក្នុង context៖
 
 ```bash
 # paths listed in .dockerignore should not appear
@@ -60,9 +59,9 @@ docker build -t rean-hello:1.0 . 2>&1 | head -n 5
 - [ ] Image build ដោយគ្មាន error
 - [ ] `/` ត្រឡប់ JSON
 - [ ] `/health` ត្រឡប់ `{"status":"ok"}`
-- [ ] អ្នកអាចពន្យល់ហេតុអ្វី `package.json` / `package-lock.json` ត្រូវ copy មុន source
-- [ ] អ្នកអាចពន្យល់ហេតុអ្វី lab នេះមាន `.dockerignore` (អ្វីដែលវារក្សាចេញពី context)
+- [ ] អ្នកអាចពន្យល់ថាហេតុអ្វី `package.json` និង `package-lock.json` ត្រូវ copy មុន source
+- [ ] អ្នកអាចពន្យល់ថាហេតុអ្វី lab នេះមាន `.dockerignore` និងអ្វីដែលវារក្សាចេញពី context
 
 ## បន្ទាប់
 
-ទៅ **Lab 04 — Environment, secrets និង config** មុន Compose។ អ្នកនឹងផ្ទេរ config ពេល run ហើយមើលថាហេតុអ្វី secrets មិនត្រូវនៅក្នុង image layers។
+ទៅ **Lab 04 — Environment, secrets និង config** មុន Compose។ អ្នកនឹងផ្ញើ config ពេលរត់ ហើយឃើញថាហេតុអ្វី secret មិនត្រូវនៅក្នុង layer របស់ image។

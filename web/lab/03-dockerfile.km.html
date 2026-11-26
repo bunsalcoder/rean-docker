@@ -50,11 +50,11 @@
       <p class="static-reader-hint">Checklist និងវឌ្ឍនភាពធ្វើសមកាលនៅអ្នកអានអន្តរកម្ម (និងនៅទំព័រនេះពេល JavaScript បើក).</p>
       <div class="md-body" data-checklist-scope="lab:03-dockerfile">
 <h2>កម្រិត</h2>
-<p><strong>ថ្នាក់ដើម។</strong> សរសេរ និង build Dockerfile សាមញ្ញសម្រាប់ Node API។<br>Labs ក្រោយនឹង harden គំនិតដូចគ្នា — កុំចាត់លំនាំ Lab 03 ថាជា production-ready។</p>
+<p><strong>ថ្នាក់ដើម។</strong> សរសេរ និង build Dockerfile សាមញ្ញសម្រាប់ Node API។ Lab ក្រោយនឹងរឹតគំនិតដូចគ្នា។ កុំចាត់លំនាំ Lab 03 ថាជា production-ready។</p>
 <h2>គោលដៅ</h2>
-<p>Build image ផ្ទាល់ខ្លួនសម្រាប់ Node/Express API តូចមួយ ហើយ run វា។</p>
-<p>Dockerfile នេះ <strong>សាមញ្ញ</strong> ដោយចេតនា (<code>FROM</code> តាម tag, គ្មាន digest pin, គ្មាន healthcheck, npm នៅក្នុង image)។ Labs ក្រោយរឹតគំនិតដូចគ្នា៖ Lab 08 multi-stage + non-root, Lab 09 healthchecks / read-only / digest pins, Lab 11 secrets + scanning។ កុំ copy pattern Lab 03 ទៅ production ដោយមិនកែ។</p>
-<p><strong>ជំនួយស្រេចចិត្ត:</strong> <code>./run.sh</code> build, run និង curl <code>/</code> + <code>/health</code>។ ចូលចិត្តវាយពាក្យបញ្ជាពី README ដោយខ្លួនឯងលើកដំបូង។</p>
+<p>Build image ផ្ទាល់ខ្លួនសម្រាប់ Node/Express API តូចមួយ ហើយរត់វា។</p>
+<p>Dockerfile នេះ <strong>សាមញ្ញ</strong> ដោយចេតនា។ <code>FROM</code> ប្រើ tag គ្មាន digest pin, គ្មាន healthcheck ហើយ npm នៅក្នុង image។ Lab ក្រោយរឹតគំនិតដូចគ្នា៖ Lab 08 ធ្វើ multi-stage និង user មិនមែន root, Lab 09 ធ្វើ healthcheck, filesystem អានបានតែ និង digest pin, Lab 11 ធ្វើ secret និងការស្កេន។ កុំ copy លំនាំ Lab 03 ទៅ production ដោយមិនកែ។</p>
+<p><strong>ជំនួយស្រេចចិត្ត៖</strong> <code>./run.sh</code> build, រត់ និង curl <code>/</code> ជាមួយ <code>/health</code>។ ចូលចិត្តវាយពាក្យបញ្ជាពី README ដោយខ្លួនឯងលើកដំបូង។</p>
 <h2>ជំហាន</h2>
 <pre><code class="language-bash">cd labs/03-dockerfile
 
@@ -71,24 +71,24 @@ curl http://127.0.0.1:3000/health
 <details class="md-callout md-callout-expected">
 <summary class="md-callout-title">លទ្ធផលដែលរំពឹងទុក</summary>
 <div class="md-callout-body">
-<p><code>/</code> ត្រឡប់ JSON (សារសួស្តី)។ <code>/health</code> ត្រឡប់ <code>{&quot;status&quot;:&quot;ok&quot;}</code>។</p>
+<p><code>/</code> ត្រឡប់ JSON ដែលជាសារសួស្តី។ <code>/health</code> ត្រឡប់ <code>{&quot;status&quot;:&quot;ok&quot;}</code>។</p>
 </div>
 </details>
 <details class="md-callout md-callout-error">
 <summary class="md-callout-title">កំហុសទូទៅ</summary>
 <div class="md-callout-body">
-<p><code>failed to solve: failed to read dockerfile</code> — អ្នកមិននៅក្នុង <code>labs/03-dockerfile</code> ឬភ្លេច <code>.</code> នៅចុង build context។ <code>cd</code> ចូលថត lab រួចរត់ <code>docker build -t rean-hello:1.0 .</code> ម្ដងទៀត។</p>
+<p><code>failed to solve: failed to read dockerfile</code> មានន័យថាអ្នកមិននៅក្នុង <code>labs/03-dockerfile</code> ឬភ្លេច <code>.</code> នៅចុង build context។ <code>cd</code> ចូលថត lab រួចរត់ <code>docker build -t rean-hello:1.0 .</code> ម្ដងទៀត។</p>
 </div>
 </details>
-<p>ពិនិត្យ layers៖</p>
+<p>ពិនិត្យ layer៖</p>
 <pre><code class="language-bash">docker history rean-hello:1.0
 </code></pre>
 <h2>ការសាកល្បង</h2>
 <ol>
-<li>ប្ដូរសារក្នុង <code>server.js</code>, rebuild, rerun — សង្កេតថា layers ណាខ្លះ rebuild។</li>
-<li>រៀប Dockerfile ឡើងវិញឱ្យ <code>COPY . .</code> <em>មុន</em> <code>npm ci</code> ហើយ rebuild ពីរដងបន្ទាប់ពីកែ code តិច — មានអារម្មណ៍ «cache pain»។ (ឯកសារពិតប្រើ <code>npm ci</code> ដែលត្រូវការ <code>package-lock.json</code> ហើយគួរប្រើជាង <code>npm install</code> ក្នុង Dockerfiles។)</li>
+<li>ប្ដូរសារក្នុង <code>server.js</code> រួច rebuild និង rerun។ សង្កេតថា layer ណាខ្លះ rebuild។</li>
+<li>រៀប Dockerfile ឡើងវិញឱ្យ <code>COPY . .</code> <em>មុន</em> <code>npm ci</code> ហើយ rebuild ពីរដងបន្ទាប់ពីកែ code តិច។ អ្នកនឹងឃើញ cache បែក ហើយ build យឺតឡើងវិញ។ ឯកសារពិតប្រើ <code>npm ci</code> ដែលត្រូវការ <code>package-lock.json</code> ហើយគួរប្រើជាង <code>npm install</code> ក្នុង Dockerfile។</li>
 <li>បន្ថែម instruction <code>ENV PORT=3000</code> ហើយបញ្ជាក់ដោយ <code>docker inspect</code>។</li>
-<li>បើក <code>.dockerignore</code> ក្នុងថតនេះ។ វារក្សា <code>node_modules</code>, <code>.env</code> និង <code>*.md</code> ចេញពី build context។ ពន្យល់ខ្លីថាហេតុអ្វីមិនគួរដឹក host <code>node_modules</code> ចូល image រួចបញ្ជាក់ថា paths ទាំងនោះមិននៅក្នុង context៖</li>
+<li>បើក <code>.dockerignore</code> ក្នុងថតនេះ។ វារក្សា <code>node_modules</code>, <code>.env</code> និង <code>*.md</code> ចេញពី build context។ ពន្យល់ខ្លីថាហេតុអ្វីមិនគួរដឹក <code>node_modules</code> ពី host ចូល image រួចបញ្ជាក់ថា path ទាំងនោះមិននៅក្នុង context៖</li>
 </ol>
 <pre><code class="language-bash"># paths listed in .dockerignore should not appear
 docker build -t rean-hello:1.0 . 2&gt;&amp;1 | head -n 5
@@ -99,11 +99,11 @@ docker build -t rean-hello:1.0 . 2&gt;&amp;1 | head -n 5
 <li><input disabled="" type="checkbox"> Image build ដោយគ្មាន error</li>
 <li><input disabled="" type="checkbox"> <code>/</code> ត្រឡប់ JSON</li>
 <li><input disabled="" type="checkbox"> <code>/health</code> ត្រឡប់ <code>{&quot;status&quot;:&quot;ok&quot;}</code></li>
-<li><input disabled="" type="checkbox"> អ្នកអាចពន្យល់ហេតុអ្វី <code>package.json</code> / <code>package-lock.json</code> ត្រូវ copy មុន source</li>
-<li><input disabled="" type="checkbox"> អ្នកអាចពន្យល់ហេតុអ្វី lab នេះមាន <code>.dockerignore</code> (អ្វីដែលវារក្សាចេញពី context)</li>
+<li><input disabled="" type="checkbox"> អ្នកអាចពន្យល់ថាហេតុអ្វី <code>package.json</code> និង <code>package-lock.json</code> ត្រូវ copy មុន source</li>
+<li><input disabled="" type="checkbox"> អ្នកអាចពន្យល់ថាហេតុអ្វី lab នេះមាន <code>.dockerignore</code> និងអ្វីដែលវារក្សាចេញពី context</li>
 </ul>
 <h2>បន្ទាប់</h2>
-<p>ទៅ <strong>Lab 04 — Environment, secrets និង config</strong> មុន Compose។ អ្នកនឹងផ្ទេរ config ពេល run ហើយមើលថាហេតុអ្វី secrets មិនត្រូវនៅក្នុង image layers។</p>
+<p>ទៅ <strong>Lab 04 — Environment, secrets និង config</strong> មុន Compose។ អ្នកនឹងផ្ញើ config ពេលរត់ ហើយឃើញថាហេតុអ្វី secret មិនត្រូវនៅក្នុង layer របស់ image។</p>
 
       </div>
       <nav class="pager static-reader-pager">
