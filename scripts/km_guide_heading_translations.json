@@ -63,5 +63,17 @@
   "Lab: `labs/11-security`": "Lab៖ `labs/11-security`",
   "Lab: `labs/14-advanced`": "Lab៖ `labs/14-advanced`",
   "Lab: `labs/12-ci-cd`": "Lab៖ `labs/12-ci-cd`",
-  "Lab: `labs/13-capstone`": "Lab៖ `labs/13-capstone`"
+  "Lab: `labs/13-capstone`": "Lab៖ `labs/13-capstone`",
+  "What “deploy with Docker” means": "Deploy ជាមួយ Docker មានន័យដូចម្តេច",
+  "Environments: same image, different config": "Environments (បរិយាកាស)៖ image ដូចគ្នា config ផ្សេង",
+  "Server bootstrap (single VPS checklist)": "រៀបចំ server (checklist VPS តែមួយ)",
+  "Reverse proxy (why it belongs next to Docker)": "Reverse proxy (ហេតុអ្វីនៅជាប់ Docker)",
+  "Releases without drama": "Release ដោយគ្មានរឿងរ៉ាវ",
+  "CI/CD: what each stage should do": "CI/CD៖ ជំហាននីមួយៗធ្វើអ្វី",
+  "GitHub Actions — complete pattern": "GitHub Actions — គំរូពេញ",
+  "Optional CD: deploy over SSH after push": "CD ស្រេចចិត្ត៖ deploy តាម SSH ក្រោយ push",
+  "Secrets & supply chain in CI": "Secrets និង supply chain ក្នុង CI",
+  "Observability after deploy": "មើលប្រព័ន្ធក្រោយ deploy",
+  "End-to-end checklist (print this)": "Checklist ពីដើមដល់ចប់ (រក្សាទុក)",
+  "How this chapter connects": "របៀបដែលជំពូកនេះភ្ជាប់"
 }
