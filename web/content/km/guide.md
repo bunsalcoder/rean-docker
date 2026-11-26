@@ -1916,29 +1916,29 @@ curl -fsS https://your.domain/health
 
 ### Lab៖ `labs/13-capstone`
 
-បង្កើត stack តូចក្នុង repo នេះ។ **Day-one runnable baseline** (Compose + Node API) មានរួចក្នុងថត capstone ដើម្បី `up` ភ្លាម — រួច **own** វា (`CAPSTONE_OWN` ក្នុង Lab 13)៖ បន្ថែម routes, កែ Compose/Dockerfile ឬបន្ថែម proxy។ ចូលចិត្តកែថតនោះជាងទុក Lab 05 ដដែល (ឬចាប់ផ្ដើមស្អាតពី `labs/05-compose` បើចង់)។
+បង្កើត stack តូចក្នុង repo នេះ។ **Baseline ដែលរត់បានតាំងពីថ្ងៃដំបូង** (Compose បូក Node API) មានរួចក្នុងថត capstone ដើម្បីឱ្យអ្នក `up` ភ្លាម។ បន្ទាប់មកធ្វើឱ្យវា **ជារបស់អ្នក** (`CAPSTONE_OWN` ក្នុង Lab 13)៖ បន្ថែម route, កែ Compose ឬ Dockerfile ឬបន្ថែម proxy។ ចូលចិត្តកែថតនោះ ជាងទុក Lab 05 ដដែល។ បើចង់ចាប់ផ្ដើមស្អាត សូមចាប់ពី `labs/05-compose`។
 
-Baseline `compose.yaml` ទន់ជាង Lab 09 / `compose.prod.yaml` ដោយចេតនា។ ឈប់បន្ទាប់ពី `/health` បៃតងលើ soft stack មិនមែន Capstone — own ផលិតផល **និង** validate (ឬយក) ទម្លាប់ prod Compose។
+`compose.yaml` របស់ baseline ទន់ជាង Lab 09 និង `compose.prod.yaml` ដោយចេតនា។ ការឈប់ពេល `/health` បៃតងលើ stack ទន់នោះ មិនទាន់ជា Capstone ទេ។ អ្នកត្រូវធ្វើឱ្យផលិតផលជារបស់អ្នក **និង** validate ឬយកមកប្រើទម្លាប់ Compose សម្រាប់ production។
 
-**គោលដៅ:** Web API + Postgres + Redis ដែលមិត្តរួមការដឹងថាជារបស់អ្នក
+**គោលដៅ៖** Web API បូក Postgres បូក Redis ដែលមិត្តរួមមើលហើយដឹងថាជារបស់អ្នក។
 
 តម្រូវការ៖
 
-1. `Dockerfile` សម្រាប់ API (multi-stage បើអ្នក compile/build)។
-2. `compose.yaml` មាន `api`, `db`, `redis`។
-3. Named volumes សម្រាប់ Postgres។
-4. `.env.example` រាយ variables ដែលត្រូវការ (គ្មាន secrets ពិត)។
-5. Healthchecks លើ API និង Postgres។
+1. `Dockerfile` សម្រាប់ API។ ប្រើ multi-stage បើអ្នក compile ឬ build។
+2. `compose.yaml` មាន service `api`, `db` និង `redis`។
+3. Named volume សម្រាប់ Postgres។
+4. `.env.example` រាយអថេរដែលត្រូវការ ដោយគ្មាន secret ពិត។
+5. Healthcheck លើ API និង Postgres។
 6. API ភ្ជាប់តាម hostname `db` និង `redis`។
-7. ផ្នែក `README`: របៀប `up`, migrate (បើមាន) និង `down`។
-8. ការផ្លាស់ប្តូរ ownership យ៉ាងហោចពីរពីបញ្ជី `CAPSTONE_OWN` ក្នុង Lab 13 (កត់ក្នុង lab README)។
-9. Validate `compose.prod.yaml` ដោយកំណត់ `IMAGE_REF` ឬយក hardening យ៉ាងហោចមួយពីវាដាក់ចូល stack ដែលអ្នកផ្ញើ។
+7. ផ្នែក `README` សរសេររបៀប `up`, migrate (បើមាន) និង `down`។
+8. ផ្លាស់ ownership យ៉ាងហោចពីរយ៉ាងពីបញ្ជី `CAPSTONE_OWN` ក្នុង Lab 13 ហើយកត់ក្នុង README របស់ lab។
+9. Validate `compose.prod.yaml` ដោយកំណត់ `IMAGE_REF` ឬយកទម្លាប់រឹតយ៉ាងហោចមួយពីឯកសារនោះដាក់ចូល stack ដែលអ្នកផ្ញើ។
 
-Stretch goals៖
+គោលបន្ថែម៖
 
-- `compose.prod.yaml` ដាច់ដោយឡែក ជាមួយ restart policies និង resource limits (មើលជំពូក 17)
-- Nginx ឬ Caddy reverse proxy មុខ API
-- CI job ពី Lab 12 / ជំពូក 17: `docker compose config` + build + smoke + push
+- `compose.prod.yaml` ដាច់ដោយឡែក មាន restart policy និង resource limit (មើលជំពូក 17)
+- Nginx ឬ Caddy ជា reverse proxy នៅមុខ API
+- CI job ពី Lab 12 និងជំពូក 17៖ `docker compose config` បូក build, smoke និង push
 
 ---
 
@@ -1987,34 +1987,34 @@ docker system prune
 
 ### ថ្នាក់ដើម
 
-- [ ] ពន្យល់ containerization vs VMs vs Docker vs Kubernetes
-- [ ] ពិពណ៌នា namespaces និង cgroups កម្រិតខ្ពស់
+- [ ] ពន្យល់ containerization ធៀប VM, Docker និង Kubernetes
+- [ ] ពណ៌នា namespace និង cgroup នៅកម្រិតខ្ពស់
 - [ ] បញ្ចប់ `labs/01-isolation-basics`
-- [ ] ពន្យល់ image vs container vs Dockerfile
-- [ ] Run, stop, remove containers; publish ports
-- [ ] អាន logs និង `exec` ចូល container
-- [ ] សរសេរ Dockerfile សាមញ្ញ និង `docker build`
+- [ ] ពន្យល់ image ធៀប container ធៀប Dockerfile
+- [ ] រត់, ឈប់ និងលុប container ហើយផ្សាយ port
+- [ ] អាន log និង `exec` ចូល container
+- [ ] សរសេរ Dockerfile សាមញ្ញ រួច `docker build`
 - [ ] ប្រើ `.dockerignore`
 
 ### ថ្នាក់កណ្តាល
 
-- [ ] Named volumes + bind mounts
-- [ ] User-defined networks + DNS តាមឈ្មោះ
-- [ ] Env files និង config បែប 12-factor (`labs/04-env-secrets`)
-- [ ] កម្មវិធី Compose ពហុសេវា
-- [ ] ដោះស្រាយ «db not ready» ដោយ healthchecks
+- [ ] ប្រើ named volume និង bind mount
+- [ ] បង្កើត network ផ្ទាល់ខ្លួន ហើយហៅគ្នាតាមឈ្មោះ DNS
+- [ ] ប្រើ env file និង config បែប 12-factor (`labs/04-env-secrets`)
+- [ ] ដំណើរការ app Compose ដែលមានច្រើន service
+- [ ] ដោះស្រាយ «db not ready» ដោយ healthcheck
 
 ### ថ្នាក់ខ្ពស់
 
-- [ ] Multi-stage builds; បង្រួម images
-- [ ] User មិនមែន root, healthchecks, restart policies
-- [ ] Debug ដោយ `inspect`, `logs`, `stats`, shell បណ្ដោះអាសន្ន (`labs/10-debugging`)
-- [ ] ស្កេន images; BuildKit secrets; pin tags/digests (`labs/11-security`)
-- [ ] Compose Watch, SBOM peek, ឬ multi-arch inspect (`labs/14-advanced` / ជំពូក 16)
-- [ ] Push/pull ពី registry
-- [ ] បញ្ចប់ checklist deploy ជំពូក 17; បញ្ចប់ `labs/12-ci-cd`
-- [ ] ពន្យល់ CI vs CD និងផ្លូវ build → registry → pull → up
-- [ ] បញ្ចប់ capstone stack (`labs/13-capstone`)
+- [ ] ប្រើ multi-stage build ហើយបង្រួម image
+- [ ] ដាក់ user មិនមែន root, healthcheck និង restart policy
+- [ ] Debug ដោយ `inspect`, `logs`, `stats` និង shell បណ្ដោះអាសន្ន (`labs/10-debugging`)
+- [ ] ស្កេន image, ប្រើ secret របស់ BuildKit និង pin tag ឬ digest (`labs/11-security`)
+- [ ] សាក Compose Watch, មើល SBOM ឬ inspect multi-arch (`labs/14-advanced` / ជំពូក 16)
+- [ ] Push និង pull ពី registry
+- [ ] បញ្ចប់ checklist deploy ក្នុងជំពូក 17 និងបញ្ចប់ `labs/12-ci-cd`
+- [ ] ពន្យល់ CI ធៀប CD និងផ្លូវ build → registry → pull → up
+- [ ] បញ្ចប់ stack capstone (`labs/13-capstone`)
 
 ---
 
@@ -2022,13 +2022,13 @@ docker system prune
 
 | ថ្ងៃ | ផ្តោត | Lab |
 |-----|--------|-----|
-| 1 | Isolation basics + hello workflow | `labs/01-isolation-basics`, `labs/02-hello` |
-| 2 | Dockerfile + env/secrets | `labs/03-dockerfile`, `labs/04-env-secrets` |
+| 1 | មូលដ្ឋាន isolation និងផ្លូវ hello | `labs/01-isolation-basics`, `labs/02-hello` |
+| 2 | Dockerfile បូក env និង secrets | `labs/03-dockerfile`, `labs/04-env-secrets` |
 | 3 | Compose មូលដ្ឋាន | `labs/05-compose` |
-| 4 | Networks និង volumes | `labs/06-networks`, `labs/07-volumes` |
-| 5 | Multi-stage + ទម្លាប់ prod | `labs/08-multi-stage`, `labs/09-production` |
-| 6 | Debug, សុវត្ថិភាព, ជំពូក 16 | `labs/10-debugging`, `labs/11-security`, `labs/14-advanced` |
-| 7 | Deploy + CI/CD (ពិសេស) | `labs/12-ci-cd` |
+| 4 | Network និង volume | `labs/06-networks`, `labs/07-volumes` |
+| 5 | Multi-stage និងទម្លាប់ production | `labs/08-multi-stage`, `labs/09-production` |
+| 6 | Debug, សុវត្ថិភាព និងជំពូក 16 | `labs/10-debugging`, `labs/11-security`, `labs/14-advanced` |
+| 7 | Deploy និង CI/CD (ជំពូកពិសេស) | `labs/12-ci-cd` |
 | 8–9 | Capstone | `labs/13-capstone` |
 
 ---
@@ -2037,29 +2037,29 @@ docker system prune
 
 | ពាក្យ | និយមន័យ |
 |------|------------|
-| Containerization | ការវេចខ្ចប់ app ជាមួយ deps ទៅជា unit ដាច់ដោយឡែកលើ kernel រួម |
-| OCI | Open Container Initiative — ស្តង់ដារ images និង runtimes |
-| Daemon | Docker engine ផ្ទៃខាងក្រោយ (`dockerd`) |
-| Layer | ភាពខុសគ្នានៃ filesystem ដែលមិនប្តូរក្នុង image |
-| Tag | ស្លាកដែលប្តូរបានសម្រាប់កំណែ image |
-| Digest | Hash មាតិកាដែលមិនប្តូរនៃ image |
-| Context | ឯកសារផ្ញើទៅ daemon ពេល `build` |
-| Registry | ឃ្លាំងពីចម្ងាយសម្រាប់ images |
-| Orchestrator | ប្រព័ន្ធកំណត់ពេល containers លើម៉ាស៊ីនច្រើន |
-| Namespace | Isolation ក្នុង Linux (pid, net, mnt, …) |
-| cgroups | ដែនកំណត់ resource ក្នុង Linux (CPU, memory) |
+| Containerization | ការវេចខ្ចប់ app ជាមួយ dependency របស់វា ទៅជាឯកតាដាច់ដោយឡែកលើ kernel រួម |
+| OCI | Open Container Initiative គឺស្តង់ដារសម្រាប់ image និង runtime |
+| Daemon | Engine របស់ Docker ដែលរត់នៅផ្ទៃខាងក្រោយ (`dockerd`) |
+| Layer | ភាពខុសគ្នានៃ filesystem ដែលមិនប្តូរ ក្នុង image |
+| Tag | ស្លាកដែលប្តូរបាន សម្រាប់កំណែ image |
+| Digest | Hash នៃមាតិកា image ដែលមិនប្តូរ |
+| Context | ឯកសារដែលផ្ញើទៅ daemon ពេល `build` |
+| Registry | ឃ្លាំងពីចម្ងាយសម្រាប់ image |
+| Orchestrator | ប្រព័ន្ធដែលកំណត់ពេល container លើម៉ាស៊ីនច្រើន |
+| Namespace | យន្តការ isolation ក្នុង Linux (pid, net, mnt, …) |
+| cgroups | យន្តការកំណត់ធនធានក្នុង Linux (CPU, memory) |
 
 ---
 
 ## ជំហានបន្ទាប់បន្ទាប់ពីមគ្គុទ្ទេសក៍នេះ
 
-1. អនុវត្ត labs តាមលំដាប់ក្រោម `labs/` (Lab 04 ជាមួយជំពូក 10; Lab 12 សម្រាប់ deploy/CI; Lab 13 សម្រាប់ capstone)។
-2. រត់ឧទាហរណ៍ isolation ជំពូក 2 ឡើងវិញរហូតមានអារម្មណ៍ច្បាស់។
-3. Containerize app ពិតដែលអ្នកស្គាល់ — រួចភ្ជាប់ pipeline ជំពូក 17។
-4. អានឯកសារផ្លូវការ: [https://docs.docker.com/](https://docs.docker.com/)
-5. ប្រើរង្វិលជុំ Compose Watch របស់ Lab 14 ប្រចាំថ្ងៃ រួចមើល Dev Containers។
-6. រឹត CD: ស្កេន image ក្នុង CI, ការយល់ព្រម prod ដោយដៃ, រួច Kubernetes ច្រើន node (Pods, Deployments, Services)។
+1. អនុវត្ត lab តាមលំដាប់ក្រោម `labs/`។ Lab 04 ទៅជាមួយជំពូក 10, Lab 12 សម្រាប់ deploy និង CI, Lab 13 សម្រាប់ capstone។
+2. រត់ឧទាហរណ៍ isolation ក្នុងជំពូក 2 ឡើងវិញ រហូតទាល់តែវាច្បាស់។
+3. ដាក់ app ពិតដែលអ្នកស្គាល់ចូលក្នុង container រួចភ្ជាប់ pipeline ពីជំពូក 17។
+4. អានឯកសារផ្លូវការ៖ [https://docs.docker.com/](https://docs.docker.com/)
+5. ប្រើរង្វិល Compose Watch របស់ Lab 14 ជារៀងរាល់ថ្ងៃ រួចមើល Dev Containers បន្ត។
+6. រឹត CD៖ ស្កេន image ក្នុង CI, ទុកការយល់ព្រម production ដោយដៃ រួចទៅ Kubernetes ច្រើន node (Pod, Deployment, Service)។
 
 ---
 
-*បង្កើតសម្រាប់គម្រោងរៀន `rean-docker`។ ធ្វើតាមជំពូក; ចូលចិត្តការយល់ដឹងជាងការប្រញាប់ពាក្យបញ្ជា។*
+*បង្កើតសម្រាប់គម្រោងរៀន `rean-docker`។ ធ្វើតាមជំពូក។ ចូលចិត្តការយល់ដឹងជាងការប្រញាប់ពាក្យបញ្ជា។*
